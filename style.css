@@ -1,8 +1,8 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.28.0
-Description: Fixes "Broken Header" by compensating for WP Admin Bar and ensuring full width.
+Version: 1.31.0
+Description: Safe Header Styling (Relative Default). Toggle Transparent via body class.
 */
 
 /* --- THE BRAND DNA --- */
@@ -21,35 +21,34 @@ Description: Fixes "Broken Header" by compensating for WP Admin Bar and ensuring
 
 body { background-color: var(--wedding-bg); color: var(--wedding-text); font-family: 'Lato', sans-serif; margin: 0; overflow-x: hidden; }
 
-/* --- HEADER --- */
+/* --- HEADER (SAFE DEFAULT) --- */
 .site-header { 
     background-size: cover; 
     background-position: center; 
     border-bottom: 1px solid rgba(255,255,255,0.1); 
     width: 100%; 
-    z-index: 999; /* Increased Z-Index to stay above everything */
-    position: relative; /* Default for sub-pages */
+    z-index: 999;
+    /* Default is Relative (Safe, In Flow) */
+    position: relative; 
+    background-color: #fff;
 }
 
-/* FIX: Absolute positioning for Homepage Transparency */
-.home .site-header, .page-template-front-page .site-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+/* FIX: Only switch to Absolute if the Customizer Toggle is Checked */
+.header-transparent-active .site-header {
+    position: absolute !important;
+    top: 0; left: 0; right: 0;
     width: 100%;
-    background-color: transparent; 
+    background-color: transparent !important; 
+    border-bottom: none;
 }
 
-/* FIX: Admin Bar Compensation (Prevents header from being hidden) */
-body.admin-bar .home .site-header, 
-body.admin-bar .page-template-front-page .site-header {
-    top: 32px;
+/* FIX: Admin Bar Compensation (Only needed when transparent/absolute) */
+body.admin-bar.header-transparent-active .site-header {
+    top: 32px !important;
 }
 @media screen and (max-width: 782px) {
-    body.admin-bar .home .site-header,
-    body.admin-bar .page-template-front-page .site-header {
-        top: 46px;
+    body.admin-bar.header-transparent-active .site-header {
+        top: 46px !important;
     }
 }
 
@@ -86,7 +85,7 @@ body.admin-bar .page-template-front-page .site-header {
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 100vh; /* Fills screen behind header */
+    height: 100vh;
     background: #ffffff !important; 
 }
 
@@ -106,12 +105,9 @@ body.admin-bar .page-template-front-page .site-header {
     width: 70%; 
     height: 100%;
     background-color: #ffffff; 
-    
-    /* Image stays contained and centered */
     background-size: contain !important; 
     background-repeat: no-repeat;
     background-position: center center;
-    
     opacity: 0;
     z-index: 0;
     transform: scale(0.8);
@@ -120,9 +116,7 @@ body.admin-bar .page-template-front-page .site-header {
     justify-content: center;
     text-align: center;
     transition: none; 
-    
-    /* Padding ensures text content isn't hidden under the absolute header */
-    padding-top: 140px; 
+    padding-top: 140px; /* Safe padding for content */
 }
 
 .hero-carousel.loaded .hero-slide {

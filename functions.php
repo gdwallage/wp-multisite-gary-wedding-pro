@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.28.0
- * Fixes: Bumps version number to force browser to reload CSS cache.
+ * Version: 1.31.0
+ * Fixes: Adds "Transparent Header" toggle and injects body class for safe styling.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -40,6 +40,15 @@ if ( ! function_exists( 'gary_hex2rgb' ) ) {
     }
 }
 
+// BODY CLASS INJECTION FOR TRANSPARENT HEADER
+function gary_add_body_classes( $classes ) {
+    if ( is_front_page() && get_theme_mod( 'header_transparent_enabled', false ) ) {
+        $classes[] = 'header-transparent-active';
+    }
+    return $classes;
+}
+add_filter( 'body_class', 'gary_add_body_classes' );
+
 function gary_force_webp_output( $formats ) {
     $formats['image/jpeg'] = 'image/webp';
     $formats['image/png']  = 'image/webp';
@@ -47,10 +56,11 @@ function gary_force_webp_output( $formats ) {
 }
 add_filter( 'image_editor_output_format', 'gary_force_webp_output' );
 
+// Enqueue with version 1.31.0
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.28.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.31.0>; rel=preload; as=style", false );
     header( "Link: <{$template_uri}/fonts/Blacksword.woff2>; rel=preload; as=font; crossorigin", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
@@ -111,6 +121,11 @@ function gary_sanitize_checkbox( $input ) {
 function gary_customize_register( $wp_customize ) {
     // 1. Header Options
     $wp_customize->add_section( 'gary_header_options', array( 'title' => 'Header Background & Spacing', 'priority' => 35 ) );
+    
+    // NEW TOGGLE: Transparent Header
+    $wp_customize->add_setting( 'header_transparent_enabled', array( 'default' => false, 'sanitize_callback' => 'gary_sanitize_checkbox', 'transport' => 'refresh' ) );
+    $wp_customize->add_control( 'header_transparent_enabled', array( 'label' => 'Enable Transparent Overlay on Home?', 'section' => 'gary_header_options', 'type' => 'checkbox', 'description' => 'If checked, header floats over the hero image. If unchecked, it sits above it (safer).' ) );
+
     $wp_customize->add_setting( 'header_bg_image', array( 'sanitize_callback' => 'esc_url_raw' ) );
     $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'header_bg_image', array( 'label' => 'Upload Header Image', 'section' => 'gary_header_options' ) ) );
     $wp_customize->add_setting( 'header_overlay_opacity', array( 'default' => '0.85', 'sanitize_callback' => 'gary_sanitize_opacity', 'transport' => 'refresh' ) );
@@ -118,98 +133,69 @@ function gary_customize_register( $wp_customize ) {
     $wp_customize->add_setting( 'header_padding_val', array( 'default' => '80', 'sanitize_callback' => 'absint', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'header_padding_val', array( 'label' => 'Header Spacing (px)', 'section' => 'gary_header_options', 'type' => 'range', 'input_attrs' => array( 'min' => 20, 'max' => 300, 'step' => 5 ) ) );
 
-    // 2. Front Page Hero Slider
-    $wp_customize->add_section( 'gary_hero_slider_options', array( 'title' => 'Front Page Hero Slider', 'priority' => 38, 'description' => 'Slide 1 uses Featured Image. Each slide has independent box styling.' ) );
-
-    // Global Typography
+    // [KEEP EXISTING SECTIONS for Hero, Gallery, Footer]
+    $wp_customize->add_section( 'gary_hero_slider_options', array( 'title' => 'Front Page Hero Slider', 'priority' => 38, 'description' => 'Slide 1 uses Featured Image.' ) );
     $wp_customize->add_setting( 'hero_title_font', array( 'default' => 'Blacksword', 'sanitize_callback' => 'gary_sanitize_font_family', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'hero_title_font', array( 'label' => 'Title Font Family', 'section' => 'gary_hero_slider_options', 'type' => 'select', 'choices' => array( 'Blacksword' => 'Blacksword', 'Lato' => 'Lato', 'Playfair Display' => 'Playfair Display' ) ) );
-    
     $wp_customize->add_setting( 'hero_title_bold', array( 'default' => false, 'sanitize_callback' => 'gary_sanitize_checkbox', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'hero_title_bold', array( 'label' => 'Bold Title?', 'section' => 'gary_hero_slider_options', 'type' => 'checkbox' ) );
-
     $wp_customize->add_setting( 'hero_subtitle_font', array( 'default' => 'Lato', 'sanitize_callback' => 'gary_sanitize_font_family', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'hero_subtitle_font', array( 'label' => 'Subtitle Font Family', 'section' => 'gary_hero_slider_options', 'type' => 'select', 'choices' => array( 'Blacksword' => 'Blacksword', 'Lato' => 'Lato', 'Playfair Display' => 'Playfair Display' ) ) );
-
     $wp_customize->add_setting( 'hero_subtitle_bold', array( 'default' => false, 'sanitize_callback' => 'gary_sanitize_checkbox', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'hero_subtitle_bold', array( 'label' => 'Bold Subtitle?', 'section' => 'gary_hero_slider_options', 'type' => 'checkbox' ) );
-
-    // Loop for 5 Slides
     for ($i = 1; $i <= 5; $i++) {
         $label_prefix = ($i === 1) ? "Slide 1 (Featured) " : "Slide $i ";
-        
         if ($i > 1) {
             $wp_customize->add_setting( "hero_slide_{$i}_img", array( 'sanitize_callback' => 'esc_url_raw' ) );
             $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, "hero_slide_{$i}_img", array( 'label' => "Slide $i Image", 'section' => 'gary_hero_slider_options' ) ) );
         }
-        
         $wp_customize->add_setting( "hero_slide_{$i}_title", array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
         $wp_customize->add_control( "hero_slide_{$i}_title", array( 'label' => $label_prefix . "Title", 'section' => 'gary_hero_slider_options', 'type' => 'text' ) );
-        
         $wp_customize->add_setting( "hero_slide_{$i}_subtitle", array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
         $wp_customize->add_control( "hero_slide_{$i}_subtitle", array( 'label' => $label_prefix . "Subtitle", 'section' => 'gary_hero_slider_options', 'type' => 'text' ) );
-        
         $wp_customize->add_setting( "hero_slide_{$i}_btn", array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
         $wp_customize->add_control( "hero_slide_{$i}_btn", array( 'label' => $label_prefix . "Button Text", 'section' => 'gary_hero_slider_options', 'type' => 'text' ) );
-        
         $wp_customize->add_setting( "hero_slide_{$i}_link", array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
         $wp_customize->add_control( "hero_slide_{$i}_link", array( 'label' => $label_prefix . "Link", 'section' => 'gary_hero_slider_options', 'type' => 'text' ) );
-
-        // TITLE BOX COLORS
         $wp_customize->add_setting( "hero_slide_{$i}_text_color", array( 'default' => '#ffffff', 'sanitize_callback' => 'sanitize_hex_color' ) );
         $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, "hero_slide_{$i}_text_color", array( 'label' => $label_prefix . "Title Text Color", 'section' => 'gary_hero_slider_options' ) ) );
-
         $wp_customize->add_setting( "hero_slide_{$i}_box_color", array( 'default' => '#8C6D2D', 'sanitize_callback' => 'sanitize_hex_color' ) );
         $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, "hero_slide_{$i}_box_color", array( 'label' => $label_prefix . "Title Box Background", 'section' => 'gary_hero_slider_options' ) ) );
-
         $wp_customize->add_setting( "hero_slide_{$i}_box_opacity", array( 'default' => '0.9', 'sanitize_callback' => 'gary_sanitize_opacity', 'transport' => 'refresh' ) );
         $wp_customize->add_control( "hero_slide_{$i}_box_opacity", array( 'label' => $label_prefix . "Title Box Opacity", 'section' => 'gary_hero_slider_options', 'type' => 'range', 'input_attrs' => array( 'min' => 0, 'max' => 1, 'step' => 0.05 ) ) );
-
-        // BUTTON COLORS
         $wp_customize->add_setting( "hero_slide_{$i}_btn_text_color", array( 'default' => '#ffffff', 'sanitize_callback' => 'sanitize_hex_color' ) );
         $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, "hero_slide_{$i}_btn_text_color", array( 'label' => $label_prefix . "Button Text Color", 'section' => 'gary_hero_slider_options' ) ) );
-
         $wp_customize->add_setting( "hero_slide_{$i}_btn_bg_color", array( 'default' => '#8C6D2D', 'sanitize_callback' => 'sanitize_hex_color' ) );
         $wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, "hero_slide_{$i}_btn_bg_color", array( 'label' => $label_prefix . "Button Background", 'section' => 'gary_hero_slider_options' ) ) );
-        
         $wp_customize->add_setting( "hero_slide_{$i}_btn_bg_opacity", array( 'default' => '0.9', 'sanitize_callback' => 'gary_sanitize_opacity', 'transport' => 'refresh' ) );
         $wp_customize->add_control( "hero_slide_{$i}_btn_bg_opacity", array( 'label' => $label_prefix . "Button Opacity", 'section' => 'gary_hero_slider_options', 'type' => 'range', 'input_attrs' => array( 'min' => 0, 'max' => 1, 'step' => 0.05 ) ) );
     }
 
-    // 3. Gallery Layouts
     $wp_customize->add_section( 'gary_gallery_options', array( 'title' => 'Gallery Layouts', 'priority' => 40 ) );
     $wp_customize->add_setting( 'category_layout_type', array( 'default' => 'masonry', 'transport' => 'refresh', 'sanitize_callback' => 'gary_sanitize_layout' ) );
     $wp_customize->add_control( 'category_layout_type', array( 'label' => 'Category Page Layout', 'section' => 'gary_gallery_options', 'type' => 'select', 'choices' => array( 'masonry' => 'Masonry', 'grid-square' => 'Square Grid', 'grid-portrait' => 'Portrait Grid', 'grid-landscape'=> 'Landscape Grid' ) ) );
     $wp_customize->add_setting( 'tag_layout_type', array( 'default' => 'masonry', 'transport' => 'refresh', 'sanitize_callback' => 'gary_sanitize_layout' ) );
     $wp_customize->add_control( 'tag_layout_type', array( 'label' => 'Tag Page Layout', 'section' => 'gary_gallery_options', 'type' => 'select', 'choices' => array( 'masonry' => 'Masonry', 'grid-square' => 'Square Grid', 'grid-portrait' => 'Portrait Grid', 'grid-landscape'=> 'Landscape Grid' ) ) );
 
-    // 4. Footer Content
     $wp_customize->add_section( 'gary_footer_options', array( 'title' => 'Footer Content & Sizing', 'priority' => 120 ) );
     $wp_customize->add_setting( 'footer_heading', array( 'default' => 'Preserving Legacies', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'footer_heading', array( 'label' => 'Footer Heading', 'section' => 'gary_footer_options', 'type' => 'text' ) );
     $wp_customize->add_setting( 'footer_text', array( 'default' => 'A visual historian...', 'sanitize_callback' => 'sanitize_textarea_field', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'footer_text', array( 'label' => 'Footer Description', 'section' => 'gary_footer_options', 'type' => 'textarea' ) );
-    
-    // CONTACT
     $wp_customize->add_setting( 'footer_contact', array( 'default' => '', 'sanitize_callback' => 'sanitize_textarea_field', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'footer_contact', array( 'label' => 'Address / Location', 'section' => 'gary_footer_options', 'type' => 'textarea' ) );
     $wp_customize->add_setting( 'footer_email', array( 'default' => '', 'sanitize_callback' => 'sanitize_email', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'footer_email', array( 'label' => 'Email Address', 'section' => 'gary_footer_options', 'type' => 'email' ) );
     $wp_customize->add_setting( 'footer_phone', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'footer_phone', array( 'label' => 'Phone Number', 'section' => 'gary_footer_options', 'type' => 'text' ) );
-    
     $wp_customize->add_setting( 'footer_copyright', array( 'default' => 'Gary Wallage Digital Ecosystem', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'footer_copyright', array( 'label' => 'Copyright Text', 'section' => 'gary_footer_options', 'type' => 'text' ) );
-    
-    // LEGAL
     $wp_customize->add_setting( 'legal_page_privacy', array( 'default' => 0, 'sanitize_callback' => 'absint' ) );
     $wp_customize->add_control( 'legal_page_privacy', array( 'label' => 'Privacy Policy Page', 'section' => 'gary_footer_options', 'type' => 'dropdown-pages' ) );
     $wp_customize->add_setting( 'legal_page_terms', array( 'default' => 0, 'sanitize_callback' => 'absint' ) );
     $wp_customize->add_control( 'legal_page_terms', array( 'label' => 'Terms & Conditions Page', 'section' => 'gary_footer_options', 'type' => 'dropdown-pages' ) );
     $wp_customize->add_setting( 'legal_page_cookies', array( 'default' => 0, 'sanitize_callback' => 'absint' ) );
     $wp_customize->add_control( 'legal_page_cookies', array( 'label' => 'Cookie Policy Page', 'section' => 'gary_footer_options', 'type' => 'dropdown-pages' ) );
-    
-    // SIZING
     $wp_customize->add_setting( 'footer_padding', array( 'default' => '100', 'sanitize_callback' => 'absint', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'footer_padding', array( 'label' => 'Footer Vertical Padding (px)', 'section' => 'gary_footer_options', 'type' => 'number', 'input_attrs' => array( 'min' => 20, 'max' => 200, 'step' => 10 ) ) );
     $wp_customize->add_setting( 'footer_heading_size', array( 'default' => '1.8', 'sanitize_callback' => 'gary_sanitize_opacity', 'transport' => 'refresh' ) );
@@ -239,11 +225,18 @@ add_action( 'wp_head', function() {
             <?php if($bg_img): ?>
                 background-image: linear-gradient(rgba(255,255,255, <?php echo $opacity; ?>), rgba(255,255,255, <?php echo $opacity; ?>)), url('<?php echo esc_url($bg_img); ?>');
             <?php else: ?>
-                background-color: transparent;
+                background-color: #fff; /* Default Safe White */
             <?php endif; ?>
             padding: <?php echo $padding; ?>px 0 !important;
         }
         
+        /* IF TRANSPARENT TOGGLE IS ON */
+        .header-transparent-active .site-header {
+            background-color: transparent !important;
+            position: absolute !important;
+            top: 0; left: 0; right: 0; width: 100%;
+        }
+
         .hero-title {
             font-family: '<?php echo esc_attr($title_font); ?>', sans-serif !important;
             font-weight: <?php echo esc_attr($title_bold); ?> !important;
@@ -289,9 +282,8 @@ function gary_register_visual_legacies() {
 }
 add_action( 'init', 'gary_register_visual_legacies' );
 
-// Enqueue with version 1.28.0
 function gary_wedding_scripts() {
-    wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.28.0' );
+    wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.31.0' );
     wp_enqueue_style( 'gary-google-fonts', 'https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital@0;1&display=swap', array(), null );
 }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
