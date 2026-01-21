@@ -1,0 +1,251 @@
+/*
+File: style.css
+Theme Name: Gary Wallage Wedding Pro
+Version: 1.28.0
+Description: Fixes "Broken Header" by compensating for WP Admin Bar and ensuring full width.
+*/
+
+/* --- THE BRAND DNA --- */
+@font-face {
+    font-family: 'Blacksword';
+    src: url('fonts/Blacksword.woff2') format('woff2'), url('fonts/Blacksword.ttf') format('truetype');
+    font-weight: normal; font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --wedding-bg: #F9F9F7;
+    --wedding-text: #1a1a1a;
+    --wedding-accent: #8C6D2D;
+}
+
+body { background-color: var(--wedding-bg); color: var(--wedding-text); font-family: 'Lato', sans-serif; margin: 0; overflow-x: hidden; }
+
+/* --- HEADER --- */
+.site-header { 
+    background-size: cover; 
+    background-position: center; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    width: 100%; 
+    z-index: 999; /* Increased Z-Index to stay above everything */
+    position: relative; /* Default for sub-pages */
+}
+
+/* FIX: Absolute positioning for Homepage Transparency */
+.home .site-header, .page-template-front-page .site-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: transparent; 
+}
+
+/* FIX: Admin Bar Compensation (Prevents header from being hidden) */
+body.admin-bar .home .site-header, 
+body.admin-bar .page-template-front-page .site-header {
+    top: 32px;
+}
+@media screen and (max-width: 782px) {
+    body.admin-bar .home .site-header,
+    body.admin-bar .page-template-front-page .site-header {
+        top: 46px;
+    }
+}
+
+.header-focal-container { display: flex; align-items: center; justify-content: space-between; max-width: 1800px; margin: 0 auto; padding: 0 60px; }
+.focal-side { flex: 1 1 0; min-width: 0; display: flex; }
+.focal-left { justify-content: center; }
+.focal-right { justify-content: center; }
+.focal-center { flex: 0 0 auto; padding: 0 40px; display: flex; justify-content: center; align-items: center; }
+
+/* --- BRANDING --- */
+.branding-group { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.site-title-blacksword { font-family: 'Blacksword', "Times New Roman", serif; font-size: 3.8rem; color: var(--wedding-accent); line-height: 1; margin-bottom: 25px; font-weight: normal; }
+.site-tagline-lato { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 5px; color: #333; }
+.focal-center .custom-logo-link img { width: 280px !important; height: auto !important; aspect-ratio: 1 / 1; display: block !important; object-fit: contain; }
+
+/* --- NAV --- */
+.nav-menu-focal { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px 40px; max-width: 500px; }
+.nav-menu-focal li { white-space: nowrap; }
+.nav-menu-focal li a { text-decoration: none; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1.5px; color: var(--wedding-text); font-weight: 700; }
+
+/* --- MOBILE --- */
+@media (max-width: 1024px) {
+    .header-focal-container { flex-direction: column; padding: 40px 20px; }
+    .focal-side, .focal-center { flex: none; width: 100%; margin-bottom: 50px; }
+    .focal-left { order: 1; } .focal-center { order: 2; } .focal-right { order: 3; margin-bottom: 0; }
+    .site-title-blacksword { font-size: 2.8rem; }
+    .focal-center .custom-logo-link img { width: 180px !important; }
+}
+
+.container { max-width: 1200px; margin: 100px auto; padding: 0 20px; }
+
+/* --- HERO CAROUSEL --- */
+.hero-carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100vh; /* Fills screen behind header */
+    background: #ffffff !important; 
+}
+
+.hero-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 70%; 
+    height: 100%;
+    background-color: #ffffff; 
+    
+    /* Image stays contained and centered */
+    background-size: contain !important; 
+    background-repeat: no-repeat;
+    background-position: center center;
+    
+    opacity: 0;
+    z-index: 0;
+    transform: scale(0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: none; 
+    
+    /* Padding ensures text content isn't hidden under the absolute header */
+    padding-top: 140px; 
+}
+
+.hero-carousel.loaded .hero-slide {
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hero-slide-overlay { display: none; }
+
+/* --- DYNAMIC CONTENT BOX --- */
+.hero-slide-content {
+    position: relative; z-index: 10;
+    opacity: 0; 
+    transition: opacity 0.5s ease;
+    padding: 0; 
+}
+
+/* ACTIVE STATE */
+.hero-slide.active {
+    opacity: 1;
+    z-index: 10;
+    transform: scale(1) translateX(0);
+}
+.hero-slide.active .hero-slide-content { opacity: 1; }
+
+/* SIDE STATES */
+.hero-slide.prev {
+    opacity: 0.4;
+    z-index: 5;
+    transform: scale(0.85) translateX(-75%); 
+    filter: grayscale(100%); 
+}
+.hero-slide.next {
+    opacity: 0.4;
+    z-index: 5;
+    transform: scale(0.85) translateX(75%);
+    filter: grayscale(100%);
+}
+
+.hero-title { font-size: 4rem; line-height: 1.1; margin-bottom: 20px; text-shadow: none; }
+.hero-subtitle { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 30px; text-shadow: none; }
+
+.carousel-nav button {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.1);
+    color: #000; font-size: 2rem; padding: 15px 20px; cursor: pointer;
+    z-index: 20; transition: all 0.3s;
+    border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.carousel-nav button:hover { background: #000; color: #fff; }
+#prevSlide { left: 40px; }
+#nextSlide { right: 40px; }
+
+/* --- BUTTONS --- */
+.button {
+    display: inline-block; 
+    background: #fff; 
+    color: var(--wedding-accent);
+    padding: 15px 35px; text-decoration: none; text-transform: uppercase;
+    font-size: 0.8rem; letter-spacing: 2px; border: 1px solid #fff;
+    transition: all 0.3s;
+}
+.button:hover { opacity: 0.9; }
+
+.button-outline { display: inline-block; border: 1px solid #333; color: #333; padding: 12px 30px; text-decoration: none; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; transition: all 0.3s; }
+.button-outline:hover { background: #333; color: #fff; }
+
+.hero-btn { box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+.hero-btn:hover { transform: translateY(-2px); }
+
+/* Standard Gallery Styles */
+.gallery-item { position: relative; overflow: hidden; background: #eee; transition: transform 0.3s ease; border-radius: 2px; }
+.gallery-item img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 0.5s ease; }
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: #fff; padding: 20px; opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: flex-end; }
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+
+.layout-masonry { column-count: 3; column-gap: 20px; }
+.layout-masonry .gallery-item { break-inside: avoid; margin-bottom: 20px; }
+.layout-masonry .gallery-item img { height: auto; }
+
+.layout-grid-square { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.layout-grid-square .gallery-item { aspect-ratio: 1 / 1; }
+.layout-grid-portrait { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.layout-grid-portrait .gallery-item { aspect-ratio: 2 / 3; }
+.layout-grid-landscape { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+.layout-grid-landscape .gallery-item { aspect-ratio: 16 / 9; }
+
+/* --- OTHER --- */
+.about-grid { display: flex; gap: 60px; align-items: center; margin-top: 60px; }
+.about-image { flex: 1; }
+.about-content { flex: 1; }
+.portrait-frame { padding: 20px; background: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.05); transform: rotate(-2deg); }
+.portrait-frame img { width: 100%; height: auto; display: block; }
+
+@media (max-width: 768px) {
+    .about-grid { flex-direction: column; }
+    .hero-title { font-size: 3rem; }
+    .hero-carousel-wrapper { height: 60vh; }
+    .layout-masonry { column-count: 2; }
+    .layout-grid-square, .layout-grid-portrait, .layout-grid-landscape { grid-template-columns: repeat(2, 1fr); }
+    .hero-slide { width: 100%; transform: scale(1) translateX(0); opacity: 0; padding-top: 100px; }
+    .hero-slide.active { opacity: 1; }
+    .hero-slide.prev { transform: translateX(-100%); opacity: 0; }
+    .hero-slide.next { transform: translateX(100%); opacity: 0; }
+}
+@media (max-width: 480px) {
+    .layout-masonry { column-count: 1; }
+    .layout-grid-square, .layout-grid-portrait, .layout-grid-landscape { grid-template-columns: 1fr; }
+}
+
+#gw-lightbox { position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 26, 0.95); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+#gw-lightbox.active { opacity: 1; pointer-events: auto; }
+#gw-lightbox img { max-width: 90%; max-height: 90vh; box-shadow: 0 0 50px rgba(0,0,0,0.5); user-select: none; }
+#gw-lightbox-close { position: absolute; top: 30px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; font-family: 'Lato', sans-serif; line-height: 1; }
+
+.faq-trigger { cursor: pointer; position: relative; padding: 20px 0; border-bottom: 1px solid #eee; margin: 0; font-family: 'Lato'; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+.faq-trigger::after { content: '+'; font-size: 1.5rem; color: var(--wedding-accent); }
+.faq-trigger.active::after { content: '-'; }
+.faq-trigger.active { color: var(--wedding-accent); border-bottom: none; }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; border-bottom: 1px solid #eee; }
+.faq-answer.open { max-height: 500px; }
+.faq-answer p { padding: 0 0 20px 0; margin: 0; opacity: 0.8; }
+
+.services-content h2, .services-content h3 { text-align: center; margin-top: 40px; }
+.services-content ul { max-width: 600px; margin: 0 auto 40px; }
+.services-content li { margin-bottom: 10px; }
