@@ -3,37 +3,45 @@
  * File: page-about.php
  * Template Name: About Me
  * Theme: Gary Wallage Wedding Pro
- * Description: Split layout for bio and portrait.
+ * Version: 1.81.0
+ * Description: Precision alignment and synced 3D Gold Frame for the portrait.
  */
 
 get_header(); ?>
 
-<main id="primary" class="site-main container">
+<main id="primary" class="site-main container page-template-page-about">
 
     <?php while ( have_posts() ) : the_post(); ?>
         
+        <!-- Page Title Unified with Global Styles -->
+        <h1 class="entry-title about-title"><?php the_title(); ?></h1>
+
         <div class="about-grid">
-            <!-- Left: Portrait -->
+            <!-- Left: Portrait (Locked at 30% Width) -->
             <div class="about-image">
                 <?php if ( has_post_thumbnail() ) : ?>
-                    <div class="portrait-frame">
-                        <?php the_post_thumbnail('large'); ?>
+                    <div class="portrait-frame-wrapper">
+                        <div class="portrait-frame">
+                            <?php the_post_thumbnail('large'); ?>
+                            
+                            <!-- Gold Plaque Integrated into Frame -->
+                            <div class="frame-plaque">
+                                <span>Your Photographer</span>
+                            </div>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>
 
-            <!-- Right: Bio Content -->
+            <!-- Right: Bio Content (Strict Top-Align via align-items: flex-start) -->
             <div class="about-content">
-                <span class="sub-heading" style="color:var(--wedding-accent);">The Photographer</span>
-                <h1 class="entry-title" style="margin-top:10px; font-size:3rem;"><?php the_title(); ?></h1>
-                
                 <div class="entry-content">
                     <?php the_content(); ?>
                 </div>
 
-                <div class="about-sig">
-                    <!-- Placeholder for signature image if you have one -->
-                    <span style="font-family:'Blacksword'; font-size:2rem; margin-top:20px; display:block;">Gary Wallage</span>
+                <!-- Personal Sign-off -->
+                <div class="about-sig" style="margin-top:60px;">
+                    <span style="font-family:'Blacksword'; font-size:2.8rem; color:var(--wedding-accent);">Gary Wallage</span>
                 </div>
             </div>
         </div>

@@ -5,13 +5,7 @@
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <!-- PERFORMANCE: DNS Prefetch & Preconnect for External Assets -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://images.unsplash.com">
-    
-    <!-- PRELOAD CRITICAL FONT -->
-    <link rel="preload" href="<?php echo get_template_directory_uri(); ?>/fonts/Blacksword.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- PERFORMANCE: Preload Critical Assets (Fonts/Images) handled in functions.php via Early Hints -->
     
     <?php wp_head(); ?>
 </head>
@@ -20,7 +14,7 @@
 
 <header class="site-header">
     <div class="header-focal-container">
-        
+
         <!-- Zone 1: Branding (25% Focal Line) -->
         <div class="focal-side focal-left">
             <div class="branding-group">
