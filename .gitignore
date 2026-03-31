@@ -1,5 +1,6 @@
-OS generated files
+# WordPress Theme .gitignore
 
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -7,41 +8,28 @@ OS generated files
 .Trashes
 ehthumbs.db
 Thumbs.db
-Desktop.ini
 
-Editor directories and files
-
-.idea/
-.vscode/
-*.sublime-project
-*.sublime-workspace
-*.swp
-*.swo
-
-Logs
-
-*.log
-error_log
-debug.log
-
-Node/NPM (If you add build tools later)
-
+# Node / npm (If you use build tools like Webpack/Gulp)
 node_modules/
 npm-debug.log
-yarn-error.log
 package-lock.json
 yarn.lock
 
-Composer (If you add PHP dependencies later)
-
+# Composer (If you use PHP dependencies)
 vendor/
+composer.lock
 
-SASS/CSS preprocessors (if used later)
+# IDE / Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-.sass-cache/
-*.css.map
+# Log files
+*.log
+debug.log
 
-Local environment configs (never commit credentials)
-
-wp-config-local.php
-.env
+# Compiled CSS/JS (Optional, uncomment if you only want to track source files)
+# css/style.css
+# js/dist/
