@@ -70,7 +70,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 
 /* --- 4. SERVICES PAGE (GALLERY FRAMES) --- */
 .page-template-page-services .site-main.container { max-width: 1550px !important; margin: 80px auto; text-align: center; }
-.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 60px; margin-top: 20px; justify-content: center !important; align-items: stretch; }
+.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 20px; justify-content: center !important; align-items: stretch; }
 
 /* Link Hard-Reset (No blue, No underlines) */
 .page-template-page-services .service-card-link,
@@ -83,7 +83,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; transition: 0.4s ease;
 }
 
-.page-template-page-services .service-card-image { width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px 15px 5px 15px; }
+.page-template-page-services .service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px 15px 5px 15px; }
 .page-template-page-services .service-card-image img { width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain !important; }
 
 /* Price/Duration Alignment */
