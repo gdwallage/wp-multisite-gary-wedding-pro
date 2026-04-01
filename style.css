@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.96.0
+Version: 1.97.0
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -308,3 +308,69 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     .page-template-page-about .about-grid { flex-direction: column; gap: 40px; text-align: center; }
     .page-template-page-about .about-image { flex: none; width: 100%; max-width: 100%; padding: 0 40px; }
 }
+
+/* --- 10. EDITORIAL BLOCK PATTERNS (GUTENBERG) --- */
+
+/* 10.1: Placeholder Image State (Until User Replaces It) */
+.gw-img-placeholder img {
+    background-color: var(--wedding-bg) !important;
+    border: 1px solid var(--wedding-gold-light) !important;
+    min-height: 400px;
+    object-fit: contain;
+    background-image: repeating-linear-gradient( 45deg, rgba(197, 160, 89, 0.05), rgba(197, 160, 89, 0.05) 1px, transparent 1px, transparent 20px ) !important;
+}
+
+/* 10.2: Z-Pattern Editorial Split */
+.gw-z-pattern {
+    display: flex !important;
+    align-items: center;
+    max-width: 1200px;
+    margin: 80px auto !important;
+    gap: 0;
+    position: relative;
+    box-sizing: border-box;
+}
+.gw-z-pattern .gw-z-image { width: 55%; position: relative; z-index: 1; margin: 0; }
+.gw-z-pattern .gw-z-image img { width: 100%; height: auto; border: 10px solid #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.08); display: block; }
+.gw-z-pattern .gw-z-text { 
+    width: 50%; margin-left: -5%; background: var(--wedding-bg); padding: 60px; 
+    position: relative; z-index: 2; border-top: 2px solid var(--wedding-gold-light); 
+    box-shadow: 0 15px 50px rgba(0,0,0,0.05); text-align: center;
+}
+.gw-z-reverse .gw-z-image { margin-left: auto; order: 2; z-index: 1; }
+.gw-z-reverse .gw-z-text { margin-left: 0; margin-right: -5%; order: 1; z-index: 2; }
+@media (max-width: 900px) {
+    .gw-z-pattern { flex-direction: column !important; margin: 40px auto !important; }
+    .gw-z-pattern .gw-z-image, .gw-z-pattern .gw-z-text { width: 100%; margin-left: 0; margin-right: 0; order: unassigned; }
+    .gw-z-pattern .gw-z-text { padding: 40px 20px; }
+}
+
+/* 10.3: Cinematic Bleed Wrap */
+.gw-cinematic-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    max-width: none !important;
+    margin-top: 80px !important;
+    margin-bottom: 80px !important;
+}
+.gw-cinematic-bleed img { width: 100% !important; height: 75vh !important; object-fit: cover; box-shadow: 0 20px 60px rgba(0,0,0,0.15); display: block; }
+
+/* 10.4: Asymmetric Masonry Trio */
+.gw-masonry-trio {
+    display: flex; gap: 30px; max-width: 1200px; margin: 80px auto !important; align-items: stretch;
+}
+.gw-masonry-trio .gw-trio-main { flex: 2; margin: 0; }
+.gw-masonry-trio .gw-trio-main img { width: 100%; height: 100%; min-height: 600px; object-fit: cover; border: 8px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: block; }
+.gw-masonry-trio .gw-trio-side { flex: 1; display: flex; flex-direction: column; gap: 30px; margin: 0; }
+.gw-masonry-trio .gw-trio-side img { width: 100%; flex: 1; object-fit: cover; border: 8px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.06); display: block; }
+@media (max-width: 900px) {
+    .gw-masonry-trio { flex-direction: column; }
+    .gw-masonry-trio .gw-trio-side { flex-direction: row; }
+}
+
+/* 10.5: Quote Overlap Background */
+.gw-quote-capture { position: relative; padding: 120px 40px; margin: 80px auto !important; max-width: 1200px; background: #fff; border: 1px solid var(--wedding-gold-light); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.gw-quote-capture::before { content: ''; position: absolute; inset: 15px; border: 1px solid rgba(197, 160, 89, 0.3); z-index: 1; pointer-events: none; }
+.gw-quote-capture .wp-block-quote { border: none; background: transparent; padding: 0; margin: 0; max-width: 800px; position: relative; z-index: 2; }
+.gw-quote-capture .wp-block-quote p { font-size: 2rem !important; color: var(--wedding-accent); line-height: 1.4; text-align: center; }

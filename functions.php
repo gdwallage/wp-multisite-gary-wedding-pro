@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.96.0
- * Fixes: Softened H3-H6 typography to a more elegant non-block Lato style.
+ * Version: 1.97.0
+ * Fixes: Registered Custom Editorial Gutenberg Patterns for seamless site structuring.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -119,14 +119,67 @@ add_action( 'wp_head', function() {
     <?php
 });
 
+/**
+ * REGISTER EDITORIAL BLOCK PATTERNS
+ */
+function gary_register_block_patterns() {
+    if ( ! function_exists( 'register_block_pattern_category' ) ) return;
+
+    register_block_pattern_category(
+        'gary-editorial',
+        array( 'label' => __( 'Gary Wallage Editorial', 'garywedding' ) )
+    );
+
+    // 1. Z-Pattern
+    register_block_pattern(
+        'garywedding/z-pattern',
+        array(
+            'title'       => __( 'The Z-Pattern Story', 'garywedding' ),
+            'categories'  => array( 'gary-editorial' ),
+            'content'     => '<!-- wp:group {"className":"gw-z-pattern","layout":{"type":"constrained"}} --><div class="wp-block-group gw-z-pattern"><!-- wp:image {"className":"gw-z-image gw-img-placeholder"} --><figure class="wp-block-image size-large gw-z-image gw-img-placeholder"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/></figure><!-- /wp:image --><!-- wp:group {"className":"gw-z-text","layout":{"type":"constrained"}} --><div class="wp-block-group gw-z-text"><!-- wp:heading {"level":3,"textAlign":"center"} --><h3 class="wp-block-heading has-text-align-center">A Moment in Time</h3><!-- /wp:heading --><!-- wp:paragraph {"align":"center"} --><p class="has-text-align-center">Replace this text with your story. This layout naturally draws the eye back and forth across the beautiful fine-art imagery.</p><!-- /wp:paragraph --></div><!-- /wp:group --></div><!-- /wp:group -->',
+        )
+    );
+
+    // 2. Cinematic Bleed
+    register_block_pattern(
+        'garywedding/cinematic-bleed',
+        array(
+            'title'       => __( 'The Cinematic Break', 'garywedding' ),
+            'categories'  => array( 'gary-editorial' ),
+            'content'     => '<!-- wp:group {"className":"gw-cinematic-bleed","layout":{"type":"constrained"}} --><div class="wp-block-group gw-cinematic-bleed"><!-- wp:image {"className":"gw-img-placeholder"} --><figure class="wp-block-image size-full gw-img-placeholder"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/></figure><!-- /wp:image --></div><!-- /wp:group -->',
+        )
+    );
+
+    // 3. Masonry Trio
+    register_block_pattern(
+        'garywedding/masonry-trio',
+        array(
+            'title'       => __( 'Asymmetric Masonry Trio', 'garywedding' ),
+            'categories'  => array( 'gary-editorial' ),
+            'content'     => '<!-- wp:group {"className":"gw-masonry-trio","layout":{"type":"constrained"}} --><div class="wp-block-group gw-masonry-trio"><!-- wp:image {"className":"gw-trio-main gw-img-placeholder"} --><figure class="wp-block-image size-large gw-trio-main gw-img-placeholder"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/></figure><!-- /wp:image --><!-- wp:group {"className":"gw-trio-side","layout":{"type":"constrained"}} --><div class="wp-block-group gw-trio-side"><!-- wp:image {"className":"gw-img-placeholder"} --><figure class="wp-block-image size-large gw-img-placeholder"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/></figure><!-- /wp:image --><!-- wp:image {"className":"gw-img-placeholder"} --><figure class="wp-block-image size-large gw-img-placeholder"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="/></figure><!-- /wp:image --></div><!-- /wp:group --></div><!-- /wp:group -->',
+        )
+    );
+
+    // 4. Quote Capture
+    register_block_pattern(
+        'garywedding/quote-capture',
+        array(
+            'title'       => __( 'Quote & Capture', 'garywedding' ),
+            'categories'  => array( 'gary-editorial' ),
+            'content'     => '<!-- wp:group {"className":"gw-quote-capture","layout":{"type":"constrained"}} --><div class="wp-block-group gw-quote-capture"><!-- wp:quote {"textAlign":"center"} --><blockquote class="wp-block-quote has-text-align-center"><p>“Gary captured the atmosphere perfectly... it’s the emotions he caught that we love the most.”</p><cite>— Sarah &amp; Tom</cite></blockquote><!-- /wp:quote --></div><!-- /wp:group -->',
+        )
+    );
+}
+add_action( 'init', 'gary_register_block_patterns' );
+
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.96.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.97.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.96.0' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.97.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
