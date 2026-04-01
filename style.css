@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.88.0
+Version: 1.89.0
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -172,7 +172,91 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 
 @media (max-width: 1100px) { .menu-close { top: 20px; right: 20px; font-size: 2.5rem; } .nav-menu-overlay li a { font-size: 1.5rem; } }
 
-/* --- 8. FOOTER (HARD RESET FOR BULLETS & LINKS) --- */
+/* --- 8. GLOBAL EDITOR TYPESETTING --- */
+.entry-content > p, 
+.entry-content > h2, 
+.entry-content > h3, 
+.entry-content > h4, 
+.entry-content > ul, 
+.entry-content > ol,
+.entry-content > blockquote,
+.entry-content > .wp-block-separator { 
+    max-width: 850px; 
+    margin-left: auto; 
+    margin-right: auto; 
+}
+
+/* Paragraphs & Spacing */
+.entry-content p { 
+    font-size: 1.15rem; 
+    line-height: 1.8; 
+    color: #333; 
+    margin-bottom: 25px; 
+}
+
+/* Headings */
+.entry-content h2 { 
+    font-family: 'Lato', sans-serif; 
+    font-size: 1.5rem; 
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    color: var(--wedding-text); 
+    font-weight: 700; 
+    margin-top: 50px; 
+    margin-bottom: 25px; 
+    text-align: center; 
+}
+.entry-content h3 { 
+    font-family: 'Blacksword', serif; 
+    font-size: 2.8rem; 
+    color: var(--wedding-accent); 
+    font-weight: normal; 
+    margin-top: 40px; 
+    margin-bottom: 15px; 
+    text-align: center; 
+}
+.entry-content h4 { 
+    font-family: 'Lato', sans-serif; 
+    font-size: 1.1rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    color: var(--wedding-gold-light); 
+    margin-top: 30px; 
+    margin-bottom: 15px; 
+}
+
+/* Premium Bullets inside Editor */
+.entry-content ul { list-style: none; padding-left: 0; margin-bottom: 30px; }
+.entry-content ul li { position: relative; padding-left: 20px; margin-bottom: 10px; color: #333; font-size: 1.1rem; line-height: 1.6; }
+.entry-content ul li::before { content: '—'; position: absolute; left: 0; color: var(--wedding-gold-light); font-weight: bold; }
+
+/* Blockquotes */
+.entry-content blockquote, .wp-block-quote { 
+    font-family: 'Lato', sans-serif; 
+    font-style: italic; 
+    font-size: 1.4rem; 
+    line-height: 1.8; 
+    color: var(--wedding-accent); 
+    text-align: center; 
+    border-top: 1px solid var(--wedding-gold-light); 
+    border-bottom: 1px solid var(--wedding-gold-light); 
+    padding: 30px 40px; 
+    margin: 50px auto; 
+    background: transparent;
+    border-left: none; /* override default WP styles */
+}
+.entry-content blockquote p, .wp-block-quote p { font-size: inherit; color: inherit; margin: 0; }
+
+/* Separators */
+.entry-content hr, .wp-block-separator { 
+    border: none; 
+    border-top: 1px solid var(--wedding-gold-light); 
+    width: 150px; 
+    margin: 60px auto; 
+    opacity: 0.6; 
+}
+
+/* --- 9. FOOTER (HARD RESET FOR BULLETS & LINKS) --- */
 .site-footer { padding: 80px 40px !important; background: #1a1a1a !important; color: #fff !important; margin-top: 120px; font-family: 'Lato', sans-serif !important; }
 .footer-grid { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; max-width: 1600px; margin: 0 auto; gap: 40px; }
 
