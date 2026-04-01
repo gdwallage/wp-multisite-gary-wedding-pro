@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.86.0
+Version: 1.88.0
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -92,6 +92,12 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .page-template-page-services .service-card-price.is-free { background: var(--wedding-crimson) !important; border: 2px solid var(--wedding-gold-light); }
 .page-template-page-services .service-card-price.is-free span,
 .page-template-page-services .service-card-price.is-free .duration-label { color: var(--wedding-gold-light) !important; opacity: 1 !important; font-weight: 700; }
+
+/* Service Card Inclusions (Dynamic Bookly Info) */
+.page-template-page-services .service-card-inclusions { padding: 20px 20px 0 20px; font-size: 0.9rem; text-align: left; }
+.page-template-page-services .service-card-inclusions ul { list-style: none; padding-left: 0; margin-bottom: 0; }
+.page-template-page-services .service-card-inclusions li { position: relative; padding-left: 20px; margin-bottom: 8px; color: var(--wedding-text); opacity: 0.9; line-height: 1.4; }
+.page-template-page-services .service-card-inclusions li::before { content: '—'; position: absolute; left: 0; color: var(--wedding-gold-light); font-weight: bold; }
 
 /* --- 5. ABOUT PAGE (3D GALLERY FRAME & TOP ALIGN) --- */
 .page-template-page-about .about-grid { display: flex !important; gap: 80px; align-items: flex-start !important; margin-top: 80px; text-align: left; }
