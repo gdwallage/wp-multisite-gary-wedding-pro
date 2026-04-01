@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.89.0
+Version: 1.90.0
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -103,6 +103,18 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .page-template-page-about .about-grid { display: flex !important; gap: 80px; align-items: flex-start !important; margin-top: 80px; text-align: left; }
 .page-template-page-about .about-image { flex: 0 0 30% !important; max-width: 30% !important; padding-left: 60px; } 
 .page-template-page-about .about-content { flex: 1; padding-top: 25px; } /* Aligns text with frame top */
+
+/* Override Global Typesetting for About Page (Keep it Left Aligned) */
+.page-template-page-about .entry-content h2,
+.page-template-page-about .entry-content h3,
+.page-template-page-about .entry-content h4,
+.page-template-page-about .entry-content p,
+.page-template-page-about .entry-content ul {
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+}
 
 .page-template-page-about .portrait-frame-wrapper { position: relative; padding: 15px; }
 
@@ -210,7 +222,8 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     font-family: 'Blacksword', serif; 
     font-size: 2.8rem; 
     color: var(--wedding-accent); 
-    font-weight: normal; 
+    font-weight: normal !important; 
+    -webkit-font-smoothing: antialiased; 
     margin-top: 40px; 
     margin-bottom: 15px; 
     text-align: center; 
