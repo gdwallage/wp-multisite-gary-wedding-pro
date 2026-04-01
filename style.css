@@ -42,11 +42,12 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 /* --- 2. GLOBAL TITLES --- */
 .entry-title, .archive-header h1, .about-title {
     font-family: 'Blacksword', serif !important;
-    font-size: 4.2rem !important;
+    font-size: 3.2rem !important;
     text-align: center !important;
     line-height: 1.3;
     display: block !important;
     width: 100%;
+    margin-bottom: 0px !important;
 }
 
 /* --- 3. HOME HERO SLIDER --- */
@@ -69,8 +70,8 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 #nextSlide { right: 50px; }
 
 /* --- 4. SERVICES PAGE (GALLERY FRAMES) --- */
-.page-template-page-services .site-main.container { max-width: 1550px !important; margin: 80px auto; text-align: center; }
-.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 20px; justify-content: center !important; align-items: stretch; }
+.page-template-page-services .site-main.container { max-width: 1100px !important; margin: 40px auto; text-align: center; }
+.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; }
 
 /* Link Hard-Reset (No blue, No underlines) */
 .page-template-page-services .service-card-link,
