@@ -36,15 +36,29 @@
         </div>
 
         <!-- Zone 3: Navigation (75% Focal Line) -->
-        <nav id="site-navigation" class="focal-side focal-right">
+        <div class="focal-side focal-right nav-toggle-container">
+            <button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+                <span class="menu-text" style="font-family:'Lato', sans-serif; font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; margin-left:10px; font-weight:700;">MENU</span>
+            </button>
+        </div>
+
+    </div>
+</header>
+
+<div class="menu-overlay" id="primary-menu" aria-hidden="true">
+    <div class="menu-overlay-inner">
+        <button class="menu-close" aria-label="Close navigation">&times;</button>
+        <nav class="overlay-nav">
             <?php
             wp_nav_menu( array(
                 'theme_location' => 'primary',
                 'container'      => false,
-                'menu_class'     => 'nav-menu-focal',
+                'menu_class'     => 'nav-menu-overlay',
             ) );
             ?>
         </nav>
-
     </div>
-</header>
+</div>
