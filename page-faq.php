@@ -9,7 +9,7 @@
 
 get_header(); ?>
 
-<main id="primary" class="site-main container" style="max-width:800px;">
+<main id="primary" class="site-main container page-template-page-faq">
 
     <header class="archive-header" style="text-align:center; margin-bottom:60px;">
         <!-- Clean Title (Blacksword font handled by global CSS) -->

@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.84.0
+Version: 1.85.0
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -120,7 +120,16 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 }
 .page-template-page-about .frame-plaque span { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; color: #422a00; font-weight: 700; display: block; }
 
-/* --- 6. FOOTER (HARD RESET FOR BULLETS & LINKS) --- */
+/* --- 6. FAQ PAGE --- */
+.page-template-page-faq.site-main.container { max-width: 800px; margin: 40px auto 80px auto; padding: 0 40px; }
+.faq-trigger { cursor: pointer; background: #ffffff; padding: 20px 60px 20px 20px; margin: 0 0 10px 0; border: 1px solid var(--wedding-gold-light); font-size: 1.1rem; font-weight: 700; position: relative; transition: all 0.3s; border-radius: 2px; }
+.faq-trigger:hover { background: var(--wedding-bg); border-color: var(--wedding-accent); }
+.faq-trigger::after { content: '+'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: var(--wedding-accent); font-weight: normal; }
+.faq-trigger.active::after { content: '-'; }
+.faq-answer { max-height: 0; overflow: hidden; padding: 0 20px; border-left: 2px solid var(--wedding-gold-light); margin-left: 10px; opacity: 0; transition: max-height 0.4s ease-out, padding 0.4s ease-out, opacity 0.3s ease-out, margin-bottom 0.4s ease-out; margin-bottom: 0px; }
+.faq-answer.open { max-height: 2000px; padding: 20px; opacity: 1; margin-bottom: 30px; }
+
+/* --- 7. FOOTER (HARD RESET FOR BULLETS & LINKS) --- */
 .site-footer { padding: 80px 40px !important; background: #1a1a1a !important; color: #fff !important; margin-top: 120px; font-family: 'Lato', sans-serif !important; }
 .footer-grid { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; max-width: 1600px; margin: 0 auto; gap: 40px; }
 
