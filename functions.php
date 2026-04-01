@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.82.0
+ * Version: 1.83.0
  * Fixes: Layout adjustments and cache busting.
  */
 
@@ -104,7 +104,7 @@ add_action( 'wp_head', function() {
             font-weight: normal !important;
             text-align: center !important;
         }
-        .entry-title, .about-title, .archive-header h1 { margin-top: 100px !important; margin-bottom: 0px !important; }
+        .entry-title, .about-title, .archive-header h1 { margin-top: 30px !important; margin-bottom: 0px !important; }
         .site-header .site-title-blacksword { font-size: 3.2rem !important; line-height: 1.8 !important; }
         .footer-branding h3 { font-size: 3.2rem !important; color: var(--wedding-gold-light) !important; }
     </style>
@@ -114,9 +114,9 @@ add_action( 'wp_head', function() {
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.82.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.83.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.82.0' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.83.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
