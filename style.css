@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.94.0
+Version: 1.96.0
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -16,8 +16,8 @@ Description: Precision Gallery Frames. Restored About Me Alignment and Hard Rese
 :root {
     --wedding-bg: #F9F9F7;
     --wedding-text: #1a1a1a;
-    --wedding-accent: #8C6D2D;
-    --wedding-gold-light: #C5A059;
+    --wedding-accent: #B08D55; 
+    --wedding-gold-light: #C5A059; 
     --wedding-crimson: #630000;
 }
 
@@ -88,7 +88,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .page-template-page-services .service-card-image img { width: 100%; height: 100%; object-fit: contain !important; display: block; margin: 0 auto; }
 
 /* Price/Duration Alignment */
-.page-template-page-services .service-card-price { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 15px 45px; background: linear-gradient(135deg, #a67c00 0%, #bf9b30 50%, #ffcf40 100%); border-radius: 2px; }
+.page-template-page-services .service-card-price { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 15px 45px; background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); border-radius: 2px; }
 .page-template-page-services .service-card-price.is-free { background: var(--wedding-crimson) !important; border: 2px solid var(--wedding-gold-light); }
 .page-template-page-services .service-card-price.is-free span,
 .page-template-page-services .service-card-price.is-free .duration-label { color: var(--wedding-gold-light) !important; opacity: 1 !important; font-weight: 700; }
@@ -133,7 +133,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 /* Plaque Restored within Gold Frame */
 .page-template-page-about .frame-plaque { 
     position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 70%; text-align: center; padding: 8px 15px; 
-    background: linear-gradient(135deg, #a67c00 0%, #bf9b30 50%, #ffcf40 100%); 
+    background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); 
     border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
 }
 .page-template-page-about .frame-plaque span { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; color: #422a00; font-weight: 700; display: block; }
@@ -222,16 +222,16 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     line-height: 1.2;
 }
 
-/* H3 to H6 (Subheaders): Lato Clean Block */
+/* H3 to H6 (Subheaders): Elegant, Soft Lato */
 .entry-content h3, 
 .entry-content h4, 
 .entry-content h5, 
 .entry-content h6 { 
     font-family: 'Lato', sans-serif; 
-    text-transform: uppercase; 
-    letter-spacing: 3px; 
+    text-transform: none; 
+    letter-spacing: normal; 
     color: var(--wedding-text); 
-    font-weight: 700; 
+    font-weight: 400; 
     text-align: center; 
     margin-top: 35px; 
     margin-bottom: 15px; 
