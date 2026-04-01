@@ -42,6 +42,7 @@ get_header(); ?>
                 
                 $display_price = '';
                 $display_duration = '';
+                $bookly_info = '';
                 $is_free = false;
 
                 if ( $bookly_data ) {
@@ -52,6 +53,7 @@ get_header(); ?>
                         $display_price = 'From £' . number_format($bookly_data['price'], 0);
                     }
                     $display_duration = 'Typically ' . $bookly_data['duration'];
+                    $bookly_info = isset($bookly_data['info']) ? $bookly_data['info'] : '';
                 } else {
                     if ( !empty($manual_price) || $manual_price === '0' ) {
                         if ( $manual_price === '0' || strtolower($manual_price) === 'free' ) {
@@ -94,6 +96,15 @@ get_header(); ?>
                                     <small class="duration-label"><?php echo esc_html($display_duration); ?></small>
                                 <?php endif; ?>
                             </div>
+
+                            <?php if ( !empty($bookly_info) ) : ?>
+                                <div class="service-card-inclusions">
+                                    <?php 
+                                    // Bookly info may contain HTML lists. Output cleanly.
+                                    echo wp_kses_post( $bookly_info ); 
+                                    ?>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="service-card-teaser">
                                 <p><?php echo $teaser; ?></p>
