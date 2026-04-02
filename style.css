@@ -355,7 +355,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     padding: 40px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.05);
     position: sticky; top: 40px;
 }
-.investment-plaque h2 { font-family: 'Blacksword', serif !important; font-size: 2.8rem; margin: 0 0 5px; color: var(--wedding-text); }
+.investment-plaque h2 { font-family: 'Lato', sans-serif !important; font-size: 1.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 10px; color: var(--wedding-gold-light); }
 .investment-plaque .subtitle { font-family: 'Lato', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--wedding-gold-light); margin-bottom: 25px; display: block; }
 .investment-plaque .price-wrap { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
 .investment-plaque .price-val { font-size: 2.2rem; font-weight: 700; color: var(--wedding-text); }

@@ -336,7 +336,8 @@ function gary_save_editorial_meta_box_data( $post_id ) {
     );
     foreach ($fields as $key => $meta) {
         if ( isset( $_POST[$key] ) ) {
-            update_post_meta( $post_id, $meta, sanitize_text_field( $_POST[$key] ) );
+            $sanitized = ($key === 'gary_service_highlights') ? sanitize_textarea_field( $_POST[$key] ) : sanitize_text_field( $_POST[$key] );
+            update_post_meta( $post_id, $meta, $sanitized );
         }
     }
     

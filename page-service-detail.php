@@ -98,7 +98,7 @@ $grid_pages = array_unique($grid_pages);
             <!-- Right: Investment Plaque -->
             <aside class="investment-sidebar" style="flex: 0 0 380px;">
                 <div class="investment-plaque">
-                    <h2>Estimated Price</h2>
+                    <h2>Estimated</h2>
                     <?php if($subtitle): ?><span class="subtitle"><?php echo esc_html($subtitle); ?></span><?php endif; ?>
                     
                     <div class="price-wrap">
@@ -170,12 +170,12 @@ $grid_pages = array_unique($grid_pages);
                 endforeach; 
                 ?>
             </div>
-
-            <div style="margin-top: 80px;">
-                <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--wedding-gold-light); text-decoration:none; font-weight:700;">Back to top level packages &rarr;</a>
-            </div>
         </div>
         <?php endif; ?>
+
+        <div style="margin-top: 80px; text-align: center;">
+            <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--wedding-gold-light); text-decoration:none; font-weight:700;">Back to top level packages &rarr;</a>
+        </div>
 
     </div>
 
