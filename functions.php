@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.99.1
- * Fixes: Fixed mobile slider overlap issue.
+ * Version: 1.100.0
+ * Fixes: Introduced internal Bookly Linker meta box to Gutenberg Editor sidebars.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -174,3 +174,58 @@ function gary_wedding_footer_scripts() {
     <?php
 }
 add_action( 'wp_footer', 'gary_wedding_footer_scripts' );
+
+/**
+ * EDITOR BOOKLY LINKER UI
+ */
+function gary_add_bookly_meta_box() {
+    add_meta_box(
+        'gary_bookly_integration_box',
+        __( 'Bookly Service Link', 'garywedding' ),
+        'gary_bookly_meta_box_html',
+        'page',
+        'side',
+        'high'
+    );
+}
+add_action( 'add_meta_boxes', 'gary_add_bookly_meta_box' );
+
+function gary_bookly_meta_box_html( $post ) {
+    global $wpdb;
+    $value = get_post_meta( $post->ID, '_gary_bookly_id', true );
+    wp_nonce_field( 'gary_bookly_meta_box_nonce', 'gary_bookly_meta_box_nonce' );
+
+    $table_name = $wpdb->prefix . 'bookly_services';
+    $services_exist = ( $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name );
+    
+    echo '<label for="gary_bookly_service_dropdown"><strong>' . __( 'Select Bookly Service to Link:', 'garywedding' ) . '</strong></label><br /><br />';
+    echo '<select name="gary_bookly_id" id="gary_bookly_service_dropdown" style="width:100%; border-radius: 3px; padding: 5px;">';
+    echo '<option value="">' . __( '-- No Service Linked --', 'garywedding' ) . '</option>';
+    
+    if ( $services_exist ) {
+        $services = $wpdb->get_results( "SELECT id, title, price FROM $table_name ORDER BY title ASC" );
+        foreach ( $services as $service ) {
+            $selected = selected( $value, $service->id, false );
+            echo '<option value="' . esc_attr($service->id) . '" ' . $selected . '>' . esc_html($service->title) . ' (&pound;' . esc_html( number_format($service->price, 0) ) . ')</option>';
+        }
+    }
+    
+    echo '</select>';
+    echo '<p style="font-size: 12px; color: #666; margin-top: 10px;">Select the Bookly service to magically pull Live Pricing and standard durations directly into the Page.</p>';
+    
+    if ( ! $services_exist ) {
+        echo '<p style="color:red;">' . __( 'Bookly plugin data not found. Please install Bookly.', 'garywedding' ) . '</p>';
+    }
+}
+
+function gary_save_bookly_meta_box_data( $post_id ) {
+    if ( ! isset( $_POST['gary_bookly_meta_box_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['gary_bookly_meta_box_nonce'], 'gary_bookly_meta_box_nonce' ) ) return;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( ! current_user_can( 'edit_page', $post_id ) ) return;
+    
+    if ( ! isset( $_POST['gary_bookly_id'] ) ) return;
+    $my_data = sanitize_text_field( $_POST['gary_bookly_id'] );
+    update_post_meta( $post_id, '_gary_bookly_id', $my_data );
+}
+add_action( 'save_post', 'gary_save_bookly_meta_box_data' );
