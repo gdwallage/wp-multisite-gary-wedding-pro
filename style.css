@@ -1,9 +1,16 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.110.0
+Version: 1.130.0
 Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
 */
+
+.page-template-page-services .service-card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding-bottom: 40px !important;
+}
 
 /* --- THE BRAND DNA --- */
 @font-face {
