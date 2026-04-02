@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.110.0
- * Fixes: Advanced Editorial Layout supports data-driven sub-service linking.
+ * Version: 1.120.0
+ * Fixes: Infinite Tag-Driven Service Grid with Tag Priority logic.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -33,20 +33,57 @@ function gary_get_bookly_service_data( $service_id ) {
     $table_name = $wpdb->prefix . 'bookly_services';
     if ( $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name ) return false;
     
-    // Select price, duration, and info for inclusions
-    $service = $wpdb->get_row( $wpdb->prepare( "SELECT price, duration, info FROM $table_name WHERE id = %d", $service_id ) );
+    // Select price, duration, title, and info for inclusions + tags for linking
+    $service = $wpdb->get_row( $wpdb->prepare( "SELECT title, price, duration, info FROM $table_name WHERE id = %d", $service_id ) );
     
+    // Check for tags column (may vary by version)
+    $tags = "";
+    $cols = $wpdb->get_col("DESCRIBE $table_name", 0);
+    if (in_array('tags', $cols)) {
+        $tags = $wpdb->get_var( $wpdb->prepare( "SELECT tags FROM $table_name WHERE id = %d", $service_id ) );
+    }
+
     if ( $service ) {
         $hours = floor($service->duration / 3600);
         $mins  = ($service->duration % 3600) / 60;
         $duration_label = ($hours > 0 ? $hours . 'h ' : '') . ($mins > 0 ? $mins . 'm' : '');
         
         return array( 
-            'price' => (float) $service->price, 
+            'title'    => $service->title,
+            'price'    => (float) $service->price, 
             'duration' => $duration_label,
-            'info' => (isset($service->info) ? $service->info : '')
+            'info'     => (isset($service->info) ? $service->info : ''),
+            'tags'     => $tags
         );
     }
+    return false;
+}
+
+/**
+ * HELPER: Find the WP Page linked to a Bookly Service Name
+ */
+function gary_find_page_by_bookly_title( $title ) {
+    if ( empty($title) ) return false;
+    global $wpdb;
+    
+    // 1. Exact Title Match (Highest Priority)
+    $page = get_page_by_title( $title, OBJECT, 'page' );
+    if ( $page ) return $page->ID;
+
+    // 2. Reverse Metadata lookup (Match by Bookly ID to catch renamed pages)
+    // First find the Bookly ID for this name
+    $table_name = $wpdb->prefix . 'bookly_services';
+    $bookly_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_name WHERE title = %s LIMIT 1", $title ) );
+    
+    if ( $bookly_id ) {
+        $found = get_pages(array(
+            'meta_key'   => '_gary_bookly_id',
+            'meta_value' => $bookly_id,
+            'number'     => 1
+        ));
+        if ( !empty($found) ) return $found[0]->ID;
+    }
+
     return false;
 }
 
@@ -127,11 +164,11 @@ require_once get_template_directory() . '/inc/editorial-patterns.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.110.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.120.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.110.0' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.120.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
