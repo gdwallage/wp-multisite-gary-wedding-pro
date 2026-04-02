@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.97.0
+Version: 1.98.0
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -32,7 +32,8 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .focal-right { justify-content: flex-end; }
 .focal-center { flex: 0 0 auto; padding: 0 80px; text-align: center; }
 
-.site-title-blacksword { line-height: 1.7 !important; margin-bottom: 5px !important; white-space: nowrap; color: var(--wedding-accent); }
+.site-title-blacksword { line-height: 1.7 !important; margin-bottom: 5px !important; color: var(--wedding-accent); font-size: 3.2rem; }
+.footer-branding h3 { font-size: 3.2rem; }
 .site-tagline-lato { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 5px; opacity: 0.5; }
 
 .nav-menu-focal { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 15px 35px; }
@@ -374,3 +375,28 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .gw-quote-capture::before { content: ''; position: absolute; inset: 15px; border: 1px solid rgba(197, 160, 89, 0.3); z-index: 1; pointer-events: none; }
 .gw-quote-capture .wp-block-quote { border: none; background: transparent; padding: 0; margin: 0; max-width: 800px; position: relative; z-index: 2; }
 .gw-quote-capture .wp-block-quote p { font-size: 2rem !important; color: var(--wedding-accent); line-height: 1.4; text-align: center; }
+
+/* --- 11. MOBILE RESPONSIVENESS OVERRIDES --- */
+@media (max-width: 768px) {
+    /* Header & Titles */
+    .site-title-blacksword { font-size: 2.2rem !important; line-height: 1.4 !important; white-space: normal; }
+    .footer-branding h3 { font-size: 2.2rem !important; }
+    .entry-title, .archive-header h1, .about-title { font-size: 2.4rem !important; }
+    
+    /* Global Typography */
+    .entry-content h1 { font-size: 2.0rem; margin-top: 15px; }
+    .entry-content h2 { font-size: 1.8rem; }
+    
+    /* Services Grid */
+    .page-template-page-services .services-grid { grid-template-columns: 1fr !important; gap: 20px; }
+    
+    /* Editorial Block Padding & Margins */
+    .gw-z-pattern, .gw-masonry-trio, .gw-quote-capture { margin: 40px auto !important; }
+    .gw-z-pattern .gw-z-text { padding: 30px 20px !important; }
+    .gw-quote-capture { padding: 60px 20px !important; }
+    .gw-quote-capture .wp-block-quote p { font-size: 1.4rem !important; }
+    
+    /* Container Adjustments */
+    .header-focal-container { padding: 20px 10px; }
+    .site-footer { padding: 40px 20px !important; margin-top: 60px; }
+}

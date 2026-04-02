@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.97.0
- * Fixes: Registered Custom Editorial Gutenberg Patterns for seamless site structuring.
+ * Version: 1.98.0
+ * Fixes: Fixed strict header and template-wide mobile overflow limits.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -113,8 +113,8 @@ add_action( 'wp_head', function() {
             text-align: center !important;
         }
         .entry-title, .about-title, .archive-header h1 { margin-top: 30px !important; margin-bottom: 0px !important; }
-        .site-header .site-title-blacksword { font-size: 3.2rem !important; line-height: 1.8 !important; }
-        .footer-branding h3 { font-size: 3.2rem !important; color: var(--wedding-gold-light) !important; }
+        .site-header .site-title-blacksword { line-height: 1.8 !important; }
+        .footer-branding h3 { color: var(--wedding-gold-light) !important; }
     </style>
     <?php
 });
@@ -175,11 +175,11 @@ add_action( 'init', 'gary_register_block_patterns' );
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.97.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.98.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.97.0' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.98.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
