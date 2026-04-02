@@ -39,6 +39,7 @@ get_header(); ?>
                 $bookly_data = gary_get_bookly_service_data( $bookly_id );
                 $manual_price = get_post_meta( get_the_ID(), '_gary_service_price', true );
                 $manual_dur   = get_post_meta( get_the_ID(), '_gary_service_duration', true );
+                $highlights   = get_post_meta( get_the_ID(), '_gary_service_highlights', true );
                 
                 $display_price = '';
                 $display_duration = '';
@@ -99,10 +100,25 @@ get_header(); ?>
 
                             <?php if ( !empty($bookly_info) ) : ?>
                                 <div class="service-card-inclusions">
-                                    <?php 
-                                    // Bookly info may contain HTML lists. Output cleanly.
-                                    echo wp_kses_post( $bookly_info ); 
-                                    ?>
+                                    <?php echo wp_kses_post( $bookly_info ); ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ( !empty($highlights) ) : ?>
+                                <div class="service-card-highlights" style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px;">
+                                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; line-height: 1.6; color: var(--wedding-text); opacity: 0.9;">
+                                        <?php 
+                                        $lines = explode("\n", $highlights);
+                                        foreach($lines as $line) {
+                                            if (trim($line)) {
+                                                echo '<li style="margin-bottom: 5px; padding-left: 20px; position: relative;">';
+                                                echo '<span style="position: absolute; left: 0; color: var(--wedding-gold-light);">✓</span>';
+                                                echo esc_html(trim($line));
+                                                echo '</li>';
+                                            }
+                                        }
+                                        ?>
+                                    </ul>
                                 </div>
                             <?php endif; ?>
 
