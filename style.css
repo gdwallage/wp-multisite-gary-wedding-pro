@@ -84,6 +84,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     box-sizing: border-box;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 20px 40px rgba(0,0,0,0.1); 
     display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; transition: 0.4s ease;
+    padding-bottom: 25px;
 }
 
 .page-template-page-services .service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
