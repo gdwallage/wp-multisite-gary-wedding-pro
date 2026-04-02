@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.99.0
+Version: 1.99.1
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -331,4 +331,9 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     /* About Mobile Image Fixes */
     .page-template-page-about .about-image { width: 90% !important; margin: 0 auto; padding: 0 !important; }
     .page-template-page-about .portrait-frame { transform: rotate(-1.5deg) !important; padding: 10px 10px 50px 10px !important; }
+    
+    /* Home Slider Native 100% Fix */
+    .home .hero-slide { width: 100% !important; }
+    .home .hero-slide.prev { transform: translateX(-120%) !important; opacity: 0 !important; }
+    .home .hero-slide.next { transform: translateX(120%) !important; opacity: 0 !important; }
 }
