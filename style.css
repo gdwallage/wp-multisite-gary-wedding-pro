@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.98.0
+Version: 1.98.1
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -71,8 +71,8 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 #nextSlide { right: 50px; }
 
 /* --- 4. SERVICES PAGE (GALLERY FRAMES) --- */
-.page-template-page-services .site-main.container { max-width: 1100px !important; margin: 20px auto; text-align: center; }
-.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; }
+.page-template-page-services .site-main.container { max-width: 1100px !important; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; overflow: hidden; }
+.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; box-sizing: border-box; }
 
 /* Link Hard-Reset (No blue, No underlines) */
 .page-template-page-services .service-card-link,
@@ -81,6 +81,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .page-template-page-services .service-card { 
     background: #ffffff !important; 
     border: 8px solid var(--wedding-gold-light); 
+    box-sizing: border-box;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 20px 40px rgba(0,0,0,0.1); 
     display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; transition: 0.4s ease;
 }
