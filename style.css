@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.98.1
+Version: 1.98.2
 Description: Precision Gallery Frames. Restored About Me Alignment and Hard Reset for Footer Links.
 */
 
@@ -106,17 +106,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .page-template-page-about .about-image { flex: 0 0 30% !important; max-width: 30% !important; padding-left: 60px; } 
 .page-template-page-about .about-content { flex: 1; padding-top: 25px; } /* Aligns text with frame top */
 
-/* Override Global Typesetting for About Page (Keep it Left Aligned) */
-.page-template-page-about .entry-content h2,
-.page-template-page-about .entry-content h3,
-.page-template-page-about .entry-content h4,
-.page-template-page-about .entry-content p,
-.page-template-page-about .entry-content ul {
-    text-align: left;
-    margin-left: 0;
-    margin-right: 0;
-    max-width: 100%;
-}
+/* Overrides Removed: Utilizing Global Center Styling */
 
 .page-template-page-about .portrait-frame-wrapper { position: relative; padding: 15px; }
 
@@ -206,6 +196,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     line-height: 1.8; 
     color: #333; 
     margin-bottom: 25px; 
+    text-align: center !important; 
 }
 
 /* Custom Content Headings */
@@ -254,7 +245,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .entry-content h6 { font-size: 0.9rem; }
 
 /* Premium Bullets inside Editor */
-.entry-content ul { list-style: none; padding-left: 0; margin-bottom: 30px; }
+.entry-content ul { list-style: none; padding-left: 0; margin-bottom: 30px; display: inline-block; text-align: left; }
 .entry-content ul li { position: relative; padding-left: 20px; margin-bottom: 10px; color: #333; font-size: 1.1rem; line-height: 1.6; }
 .entry-content ul li::before { content: '—'; position: absolute; left: 0; color: var(--wedding-gold-light); font-weight: bold; }
 
@@ -308,7 +299,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     .footer-grid { flex-direction: column; align-items: center; text-align: center; }
     .contact-row { text-align: center; }
     .page-template-page-about .about-grid { flex-direction: column; gap: 40px; text-align: center; }
-    .page-template-page-about .about-image { flex: none; width: 100%; max-width: 100%; padding: 0 40px; }
+    .page-template-page-about .about-image { flex: none; width: 100%; max-width: 100%; padding: 0 10px; }
 }
 
 /* --- 10. EDITORIAL BLOCK PATTERNS (GUTENBERG) --- */
@@ -400,4 +391,8 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     /* Container Adjustments */
     .header-focal-container { padding: 20px 10px; }
     .site-footer { padding: 40px 20px !important; margin-top: 60px; }
+    
+    /* About Mobile Image Fixes */
+    .page-template-page-about .about-image { width: 90% !important; margin: 0 auto; padding: 0 !important; }
+    .page-template-page-about .portrait-frame { transform: rotate(-1.5deg) !important; padding: 10px 10px 50px 10px !important; }
 }

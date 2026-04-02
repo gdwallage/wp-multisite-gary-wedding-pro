@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.98.1
- * Fixes: Horizontal scroll strict box-sizing fix.
+ * Version: 1.98.2
+ * Fixes: Central global alignment enforced. Enlarged mobile about image.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -175,11 +175,11 @@ add_action( 'init', 'gary_register_block_patterns' );
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.98.1>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.98.2>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.98.1' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.98.2' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
