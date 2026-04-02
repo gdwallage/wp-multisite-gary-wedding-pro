@@ -71,7 +71,7 @@ if ( $bookly_data ) {
             <!-- Right: Investment Plaque -->
             <aside class="investment-sidebar" style="flex: 0 0 380px;">
                 <div class="investment-plaque">
-                    <h2>Service Investment</h2>
+                    <h2>Estimated Price</h2>
                     <?php if($subtitle): ?><span class="subtitle"><?php echo esc_html($subtitle); ?></span><?php endif; ?>
                     
                     <div class="price-wrap">
