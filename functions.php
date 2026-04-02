@@ -112,8 +112,13 @@ function gary_customize_register( $wp_customize ) {
     $wp_customize->add_section( 'gary_header_options', array( 'title' => 'Header Background & Logo', 'priority' => 35 ) );
     $wp_customize->add_setting( 'logo_size_px', array( 'default' => '280', 'sanitize_callback' => 'absint', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'logo_size_px', array( 'label' => 'Logo Width (px)', 'section' => 'gary_header_options', 'type' => 'range', 'input_attrs' => array( 'min' => 50, 'max' => 600, 'step' => 5 ) ) );
-    $wp_customize->add_setting( 'header_padding_val', array( 'default' => '80', 'sanitize_callback' => 'absint', 'transport' => 'refresh' ) );
     $wp_customize->add_control( 'header_padding_val', array( 'label' => 'Header Spacing (px)', 'section' => 'gary_header_options', 'type' => 'range', 'input_attrs' => array( 'min' => 10, 'max' => 200, 'step' => 5 ) ) );
+
+    $wp_customize->add_setting( 'site_title_size_rem', array( 'default' => '3.2', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'refresh' ) );
+    $wp_customize->add_control( 'site_title_size_rem', array( 'label' => 'Site Title Size (rem)', 'section' => 'gary_header_options', 'type' => 'range', 'input_attrs' => array( 'min' => 1, 'max' => 6, 'step' => 0.1 ) ) );
+
+    $wp_customize->add_setting( 'tagline_size_rem', array( 'default' => '0.75', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'refresh' ) );
+    $wp_customize->add_control( 'tagline_size_rem', array( 'label' => 'Tagline/Sub-bar Size (rem)', 'section' => 'gary_header_options', 'type' => 'range', 'input_attrs' => array( 'min' => 0.5, 'max' => 2, 'step' => 0.05 ) ) );
 
     // Slider controls
     $wp_customize->add_section( 'gary_hero_slider_options', array( 'title' => 'Front Page Hero Slider', 'priority' => 39 ) );
@@ -137,10 +142,15 @@ add_action( 'wp_head', function() {
     $logo_size = get_theme_mod( 'logo_size_px', '280' ); 
     $padding = get_theme_mod( 'header_padding_val', '80' );
     $brand_font = get_theme_mod('brand_font_family', 'Blacksword');
+    $title_size = get_theme_mod('site_title_size_rem', '3.2');
+    $tagline_size = get_theme_mod('tagline_size_rem', '0.75');
     ?>
     <style type="text/css">
         .site-header { padding: <?php echo $padding; ?>px 0 !important; }
         .focal-center .custom-logo-link img { width: <?php echo $logo_size; ?>px !important; height: auto !important; margin: 0 auto; }
+        
+        .site-header .site-title-blacksword { font-size: <?php echo $title_size; ?>rem !important; }
+        .site-header .site-tagline-lato { font-size: <?php echo $tagline_size; ?>rem !important; }
         
         /* UNIFIED BRAND TITLES */
         .entry-title, .archive-header h1, .about-title, .site-header .site-title-blacksword, .footer-branding h3 { 
@@ -160,6 +170,7 @@ add_action( 'wp_head', function() {
  * Core Native Gutenberg Block Patterns Registration
  */
 require_once get_template_directory() . '/inc/editorial-patterns.php';
+require_once get_template_directory() . '/inc/seo-engine.php';
 
 function gary_send_performance_headers() {
     if ( is_admin() ) return;

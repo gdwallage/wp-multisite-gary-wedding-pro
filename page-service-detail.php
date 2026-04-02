@@ -140,7 +140,7 @@ $grid_pages = array_unique($grid_pages);
                 ?>
                     <a href="<?php echo get_permalink($sub_id); ?>" class="component-card">
                         <div class="coin-icon-wrap">
-                            <img src="<?php echo $thumb ? esc_url($thumb) : 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23f0f0f0"/></svg>'; ?>" alt="" />
+                            <img src="<?php echo $thumb ? esc_url($thumb) : 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23f0f0f0"/></svg>'; ?>" alt="<?php echo esc_attr($sub_post->post_title); ?> - Editorial Wedding Photography" />
                         </div>
                         <div class="component-info">
                             <h4><?php echo esc_html($sub_post->post_title); ?></h4>

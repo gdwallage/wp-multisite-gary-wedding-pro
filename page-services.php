@@ -77,7 +77,7 @@ get_header(); ?>
                     <div class="service-card">
                         <div class="service-card-image">
                             <?php if ( has_post_thumbnail() ) : ?>
-                                <?php the_post_thumbnail('large'); ?>
+                                <?php the_post_thumbnail('large', array('alt' => get_the_title() . ' - Gary Wallage Editorial Wedding Photography')); ?>
                             <?php else : 
                                 $logo_id = get_theme_mod( 'custom_logo' );
                                 if ( $logo_id ) :
