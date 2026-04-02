@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.100.0
- * Fixes: Introduced internal Bookly Linker meta box to Gutenberg Editor sidebars.
+ * Version: 1.110.0
+ * Fixes: Advanced Editorial Layout supports data-driven sub-service linking.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -127,11 +127,11 @@ require_once get_template_directory() . '/inc/editorial-patterns.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.99.1>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.110.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.99.1' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.110.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
@@ -229,3 +229,85 @@ function gary_save_bookly_meta_box_data( $post_id ) {
     update_post_meta( $post_id, '_gary_bookly_id', $my_data );
 }
 add_action( 'save_post', 'gary_save_bookly_meta_box_data' );
+
+/**
+ * ADVANCED EDITORIAL LAYOUT DATA
+ */
+function gary_add_editorial_meta_box() {
+    add_meta_box(
+        'gary_editorial_layout_box',
+        __( 'Editorial Layout Data (Mockup Style)', 'garywedding' ),
+        'gary_editorial_meta_box_html',
+        'page',
+        'side',
+        'high'
+    );
+}
+add_action( 'add_meta_boxes', 'gary_add_editorial_meta_box' );
+
+function gary_editorial_meta_box_html( $post ) {
+    wp_nonce_field( 'gary_editorial_meta_box_nonce', 'gary_editorial_meta_box_nonce' );
+
+    $subtitle = get_post_meta( $post->ID, '_gary_service_subtitle', true );
+    $highlights = get_post_meta( $post->ID, '_gary_service_highlights', true );
+    $bg_img = get_post_meta( $post->ID, '_gary_service_bg_img', true );
+    
+    // Sub-services 1-4
+    $sub_services = array();
+    for($i=1; $i<=4; $i++) {
+        $sub_services[$i] = get_post_meta( $post->ID, '_gary_sub_service_' . $i, true );
+    }
+
+    echo '<p><strong>' . __( 'Investment Subtitle:', 'garywedding' ) . '</strong><br /><input type="text" name="gary_service_subtitle" value="' . esc_attr($subtitle) . '" style="width:100%;" placeholder="e.g. Bespoke Guidance" /></p>';
+    
+    echo '<p><strong>' . __( 'Personalized Experience Highlights:', 'garywedding' ) . '</strong><br /><textarea name="gary_service_highlights" style="width:100%; height:80px;" placeholder="One item per line (Icons are automatic)">' . esc_textarea($highlights) . '</textarea></p>';
+
+    echo '<hr />';
+    echo '<p><strong>' . __( 'Link 4 Sub-Service Pages (The 2x2 Grid):', 'garywedding' ) . '</strong></p>';
+    
+    // Get all pages using the Service template or as children of a Service page
+    $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-service-detail.php'));
+    if (empty($pages)) { $pages = get_pages(); } // Fallback to all pages
+
+    for($i=1; $i<=4; $i++) {
+        echo '<div style="margin-bottom:10px;"><label>Slot ' . $i . ':</label><br />';
+        echo '<select name="gary_sub_service_' . $i . '" style="width:100%;">';
+        echo '<option value="">' . __( '-- No Page Linked --', 'garywedding' ) . '</option>';
+        foreach ( $pages as $p ) {
+            if ($p->ID == $post->ID) continue; // Don't link to self
+            $selected = selected( $sub_services[$i], $p->ID, false );
+            echo '<option value="' . $p->ID . '" ' . $selected . '>' . esc_html($p->post_title) . '</option>';
+        }
+        echo '</select></div>';
+    }
+
+    echo '<hr />';
+    echo '<p><strong>' . __( 'Background Illustration URL:', 'garywedding' ) . '</strong><br /><input type="text" name="gary_service_bg_img" value="' . esc_attr($bg_img) . '" style="width:100%;" placeholder="Link to a faint .png illustration" /></p>';
+}
+
+function gary_save_editorial_meta_box_data( $post_id ) {
+    if ( ! isset( $_POST['gary_editorial_meta_box_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['gary_editorial_meta_box_nonce'], 'gary_editorial_meta_box_nonce' ) ) return;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( ! current_user_can( 'edit_page', $post_id ) ) return;
+    
+    // Save fields
+    $fields = array(
+        'gary_service_subtitle'   => '_gary_service_subtitle',
+        'gary_service_highlights' => '_gary_service_highlights',
+        'gary_service_bg_img'      => '_gary_service_bg_img'
+    );
+    foreach ($fields as $key => $meta) {
+        if ( isset( $_POST[$key] ) ) {
+            update_post_meta( $post_id, $meta, sanitize_text_field( $_POST[$key] ) );
+        }
+    }
+    
+    // Save sub-services
+    for($i=1; $i<=4; $i++) {
+        if ( isset( $_POST['gary_sub_service_' . $i] ) ) {
+            update_post_meta( $post_id, '_gary_sub_service_' . $i, sanitize_text_field( $_POST['gary_sub_service_' . $i] ) );
+        }
+    }
+}
+add_action( 'save_post', 'gary_save_editorial_meta_box_data' );

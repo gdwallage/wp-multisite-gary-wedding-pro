@@ -1,108 +1,147 @@
 <?php
 /**
  * Template Name: Service Detail
- * Description: For individual services, with a right-hand Bookly details dynamically sourced.
+ * Description: High-fidelity Advanced Editorial layout with data-driven sub-service components.
  * File: page-service-detail.php
  */
 
 get_header(); ?>
 
-<main id="primary" class="site-main container page-template-service-detail">
-    
-    <header class="entry-header" style="text-align:center; margin-bottom: 60px;">
-        <h1 class="entry-title"><?php the_title(); ?></h1>
-    </header>
+<?php
+$post_id = get_the_ID();
+$bg_img = get_post_meta( $post_id, '_gary_service_bg_img', true );
+$subtitle = get_post_meta( $post_id, '_gary_service_subtitle', true );
+$highlights = get_post_meta( $post_id, '_gary_service_highlights', true );
 
-    <div class="service-detail-layout" style="display:flex; flex-wrap:wrap; gap:60px; max-width:1200px; margin:0 auto 80px;">
+// Bookly Data for Main Investment
+$bookly_id = get_post_meta( $post_id, '_gary_bookly_id', true );
+$bookly_data = gary_get_bookly_service_data( $bookly_id );
+$manual_price = get_post_meta( $post_id, '_gary_service_price', true );
+$manual_dur   = get_post_meta( $post_id, '_gary_service_duration', true );
+
+$display_price = 'On Request';
+$display_duration = '';
+if ( $bookly_data ) {
+    $display_price = ( (float)$bookly_data['price'] <= 0 ) ? 'FREE' : 'From £' . number_format($bookly_data['price'], 0);
+    $display_duration = $bookly_data['duration'];
+} elseif ( !empty($manual_price) ) {
+    $display_price = 'From £' . $manual_price;
+    $display_duration = $manual_dur;
+}
+?>
+
+<main id="primary" class="site-main page-template-service-detail">
+
+    <?php if ( $bg_img ) : ?>
+        <div class="service-bg-layer" style="background-image: url('<?php echo esc_url($bg_img); ?>');"></div>
+    <?php endif; ?>
+
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
         
-        <!-- Left: Raw WP Content -->
-        <div class="service-main-content" style="flex: 1; min-width:300px; font-size:1.1rem; line-height:1.8; color:var(--wedding-text);">
-            <?php
-            while ( have_posts() ) :
-                the_post();
-                the_content();
-            endwhile;
-            ?>
+        <header class="service-hero-header" style="text-align:center; margin-bottom: 80px;">
+            <h1 class="entry-title"><?php the_title(); ?></h1>
+            <p style="opacity:0.6; text-transform:uppercase; letter-spacing:3px; font-size:0.8rem; margin-top:10px;">Comprehensive collections designed to cover every nuance of your celebration</p>
+        </header>
+
+        <div class="service-hero-split" style="display:flex; gap:80px; align-items: flex-start; margin-bottom:100px;">
+            
+            <!-- Left: Intro & Highlights -->
+            <div class="experience-intro-wrap" style="flex:1;">
+                <div class="main-body-text" style="font-size:1.15rem; line-height:1.8; margin-bottom:40px;">
+                    <?php 
+                    while ( have_posts() ) : the_post(); 
+                        the_content(); 
+                    endwhile; 
+                    ?>
+                </div>
+
+                <?php if ( !empty($highlights) ) : ?>
+                    <h3 style="font-family:'Lato', sans-serif; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">Your personalized experience includes:</h3>
+                    <ul class="highlights-list">
+                        <?php 
+                        $lines = explode("\n", $highlights);
+                        foreach($lines as $line) {
+                            if (trim($line)) echo '<li>' . esc_html(trim($line)) . '</li>';
+                        }
+                        ?>
+                    </ul>
+                <?php endif; ?>
+            </div>
+
+            <!-- Right: Investment Plaque -->
+            <aside class="investment-sidebar" style="flex: 0 0 380px;">
+                <div class="investment-plaque">
+                    <h2>Service Investment</h2>
+                    <?php if($subtitle): ?><span class="subtitle"><?php echo esc_html($subtitle); ?></span><?php endif; ?>
+                    
+                    <div class="price-wrap">
+                        <div class="price-val"><?php echo esc_html($display_price); ?></div>
+                    </div>
+
+                    <?php if($display_duration): ?>
+                        <div class="duration-val" style="margin-bottom:20px;">
+                            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23C5A059' viewBox='0 0 24 24'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/></svg>" style="vertical-align:middle; margin-right:5px;"/>
+                            TYPICALLY <?php echo esc_html($display_duration); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if($bookly_data && !empty($bookly_data['info'])): ?>
+                        <div class="service-card-inclusions" style="text-align:left; border-top:1px solid #eee; padding-top:20px;">
+                            <?php echo wp_kses_post($bookly_data['info']); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="investment-buttons">
+                        <a href="#request" class="btn-black">Request Details</a>
+                        <a href="/booking/" class="btn-black" style="background:var(--wedding-accent);">Book Consultation</a>
+                    </div>
+                </div>
+            </aside>
         </div>
 
-        <!-- Right: Bookly Injection -->
-        <aside class="service-sidebar" style="flex: 0 0 320px; min-width:300px;">
-            <div class="bookly-sticky-box" style="position:sticky; top:40px; background:#fff; border:4px solid var(--wedding-gold-light); padding:40px 30px; box-shadow:0 10px 30px rgba(0,0,0,0.05); text-align:center;">
-                
-                <h3 style="font-family:'Blacksword', serif; font-size:2.5rem; color:var(--wedding-text); margin-bottom:10px; font-weight:normal;">Investment</h3>
-                
-                <?php
-                // Get dynamic data
-                $bookly_id = get_post_meta( get_the_ID(), '_gary_bookly_id', true );
-                $bookly_data = gary_get_bookly_service_data( $bookly_id );
-                
-                $manual_price = get_post_meta( get_the_ID(), '_gary_service_price', true );
-                $manual_dur   = get_post_meta( get_the_ID(), '_gary_service_duration', true );
-
-                $display_price = '';
-                $display_duration = '';
-                $bookly_info = '';
-
-                if ( $bookly_data ) {
-                    if ( (float)$bookly_data['price'] <= 0 ) {
-                        $display_price = 'FREE';
-                    } else {
-                        $display_price = 'From £' . number_format($bookly_data['price'], 0);
-                    }
-                    $display_duration = 'Typically ' . $bookly_data['duration'];
-                    $bookly_info = isset($bookly_data['info']) ? $bookly_data['info'] : '';
-                } else {
-                    if ( !empty($manual_price) || $manual_price === '0' ) {
-                        if ( $manual_price === '0' || strtolower($manual_price) === 'free' ) {
-                            $display_price = 'FREE';
-                        } else {
-                            $clean_p = trim($manual_price);
-                            $display_price = 'From ' . (strpos($clean_p, '£') === false && is_numeric($clean_p) ? '£' : '') . $clean_p;
-                        }
-                    } else {
-                        $display_price = 'On Request';
-                    }
-                    if ( $manual_dur ) { $display_duration = 'Typically ' . $manual_dur; }
-                }
+        <!-- Section: Detailed Components Grid -->
+        <div class="detailed-components-section">
+            <h2 style="font-family:'Lato', sans-serif !important; font-size:2rem; font-weight:700;">Detailed Service Components</h2>
+            
+            <div class="component-grid">
+                <?php 
+                for($i=1; $i<=4; $i++) : 
+                    $sub_id = get_post_meta($post_id, '_gary_sub_service_' . $i, true);
+                    if($sub_id) :
+                        $sub_post = get_post($sub_id);
+                        if($sub_post) :
+                            $thumb = get_the_post_thumbnail_url($sub_id, 'large');
                 ?>
-                
-                <!-- Display Data -->
-                <div style="font-size:2rem; font-weight:700; color:var(--wedding-text); margin: 20px 0;">
-                    <?php echo esc_html($display_price); ?>
-                </div>
-                
-                <?php if ( !empty($display_duration) ) : ?>
-                <div style="margin-bottom:30px; opacity:0.8; font-family:'Lato', sans-serif; text-transform:uppercase; letter-spacing:2px; font-size:0.8rem;">
-                    <?php echo esc_html($display_duration); ?>
-                </div>
-                <?php endif; ?>
-
-                <?php if ( !empty($bookly_info) ) : ?>
-                <div class="service-card-inclusions" style="padding:0; margin-bottom:30px;">
-                    <?php echo wp_kses_post($bookly_info); ?>
-                </div>
-                <?php endif; ?>
-
-                <?php if ( empty($bookly_data) && empty($manual_price) ) : ?>
-                    <p style="opacity:0.7; font-size:0.9rem;">Please contact us for custom bespoke pricing details.</p>
-                <?php endif; ?>
-
-                <a href="/booking/" class="wedding-button" style="display:inline-block; margin-top:20px; padding:15px 30px; background:var(--wedding-text); color:#fff; text-decoration:none; text-transform:uppercase; font-family:'Lato', sans-serif; letter-spacing:2px; font-size:0.8rem; transition:0.3s; width:100%; box-sizing:border-box;">Book Consultation</a>
-                
+                    <a href="<?php echo get_permalink($sub_id); ?>" class="component-card">
+                        <div class="coin-icon-wrap">
+                            <img src="<?php echo $thumb ? esc_url($thumb) : 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23f0f0f0"/></svg>'; ?>" alt="" />
+                        </div>
+                        <div class="component-info">
+                            <h4><?php echo esc_html($sub_post->post_title); ?></h4>
+                            <p><?php echo wp_trim_words($sub_post->post_content, 18); ?></p>
+                        </div>
+                    </a>
+                <?php 
+                        endif;
+                    endif;
+                endfor; 
+                ?>
             </div>
-        </aside>
+
+            <div style="margin-top: 80px;">
+                <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--wedding-gold-light); text-decoration:none; font-weight:700;">Back to top level packages &rarr;</a>
+            </div>
+        </div>
 
     </div>
 
 </main>
 
 <style>
-/* Local CSS overlay for sticky right rail */
 @media (max-width: 900px) {
-    .service-detail-layout { flex-direction: column; }
-    .service-sidebar { width: 100%; min-width: unset !important; }
+    .service-hero-split { flex-direction: column; }
+    .investment-sidebar { width: 100%; flex: none; }
 }
-.wedding-button:hover { background: var(--wedding-gold-light) !important; color:#000 !important; }
 </style>
 
 <?php get_footer(); ?>
