@@ -105,8 +105,8 @@ get_header(); ?>
                             <?php endif; ?>
 
                             <?php if ( !empty($highlights) ) : ?>
-                                <div class="service-card-highlights" style="margin-top: 15px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px;">
-                                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; line-height: 1.6; color: var(--wedding-text); opacity: 0.9;">
+                                <div class="service-card-highlights" style="margin-top: 20px; padding: 0 25px;">
+                                    <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Lato', sans-serif; font-size: 0.85rem; line-height: 1.7; color: var(--wedding-text); opacity: 0.9;">
                                         <?php 
                                         $lines = explode("\n", $highlights);
                                         foreach($lines as $line) {
