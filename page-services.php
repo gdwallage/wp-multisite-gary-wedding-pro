@@ -121,10 +121,6 @@ get_header(); ?>
                                     </ul>
                                 </div>
                             <?php endif; ?>
-
-                            <div class="service-card-teaser">
-                                <p><?php echo $teaser; ?></p>
-                            </div>
                         </div>
                     </div>
                 </a>
