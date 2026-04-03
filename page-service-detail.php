@@ -32,50 +32,103 @@ if ( $bookly_data ) {
 /**
  * LOGIC: SUB-SERVICE GRID
  *
- * Priority:
- * 1. Manual sub-service slots (ALWAYS run — these are your explicit choices)
- * 2. Bookly tag auto-detection ADDS any extra matched pages on top
+ * Each slot stores a Bookly service ID. We resolve it to a renderable item
+ * via a three-tier lookup — nothing is silently dropped:
  *
- * Both sources are merged and deduplicated.
+ * Tier 1 → Find WP page where _gary_bookly_id = slot value (explicit link)
+ * Tier 2 → Find WP page whose title matches the Bookly service title
+ * Tier 3 → Render a card directly from Bookly data (no WP page needed)
+ *
+ * After manual slots, Bookly tags supplement the list (deduped).
  */
-$grid_pages = array();
+$grid_items  = array(); // array of arrays: [ type=>'page'|'bookly', ... ]
+$seen_pages  = array(); // track page IDs already added
+$seen_bookly = array(); // track Bookly IDs already added
 
-// 1. Manual slot selections (slots 1-8) — run ALWAYS, not as a fallback
+// 1. Manual slot selections (slots 1–8) — ALWAYS run
 for ( $i = 1; $i <= 8; $i++ ) {
-    $manual_bookly_id = get_post_meta( $post_id, '_gary_sub_service_' . $i, true );
-    if ( empty( $manual_bookly_id ) ) continue;
+    $slot_bookly_id = get_post_meta( $post_id, '_gary_sub_service_' . $i, true );
+    if ( empty( $slot_bookly_id ) ) continue;
+    if ( in_array( $slot_bookly_id, $seen_bookly ) ) continue; // skip exact duplicate slots
+    $seen_bookly[] = $slot_bookly_id;
 
-    // Resolve Bookly service ID → the WP page that has _gary_bookly_id matching it
+    // --- Tier 1: page linked via _gary_bookly_id meta ---
     $linked = get_posts( array(
         'post_type'      => 'page',
         'posts_per_page' => 1,
         'meta_key'       => '_gary_bookly_id',
-        'meta_value'     => $manual_bookly_id,
+        'meta_value'     => $slot_bookly_id,
         'fields'         => 'ids',
         'post_status'    => 'publish',
     ) );
 
-    if ( ! empty( $linked ) && $linked[0] != $post_id ) {
-        $grid_pages[] = (int) $linked[0];
+    if ( ! empty( $linked ) && $linked[0] != $post_id && ! in_array( (int) $linked[0], $seen_pages ) ) {
+        $seen_pages[]  = (int) $linked[0];
+        $grid_items[]  = array( 'type' => 'page', 'page_id' => (int) $linked[0], 'bookly_id' => $slot_bookly_id );
+        continue;
+    }
+
+    // --- Tier 2: page matched by Bookly service title ---
+    $raw = gary_get_bookly_service_data( $slot_bookly_id );
+    if ( $raw && ! empty( $raw['title'] ) ) {
+        $title_match = gary_find_page_by_bookly_title( $raw['title'] );
+        if ( $title_match && $title_match != $post_id && ! in_array( (int) $title_match, $seen_pages ) ) {
+            $seen_pages[] = (int) $title_match;
+            $grid_items[] = array( 'type' => 'page', 'page_id' => (int) $title_match, 'bookly_id' => $slot_bookly_id );
+            continue;
+        }
+    }
+
+    // --- Tier 3: no linked page found — render directly from Bookly data ---
+    if ( $raw ) {
+        $grid_items[] = array( 'type' => 'bookly', 'bookly_id' => $slot_bookly_id, 'data' => $raw );
     }
 }
 
 // 2. Bookly tag auto-detection — supplements manual selections
-// Only adds pages not already in the list
 if ( ! empty( $bookly_data['tags'] ) ) {
     $tags = explode( ',', $bookly_data['tags'] );
     foreach ( $tags as $tag_name ) {
         $tag_name = trim( $tag_name );
         if ( empty( $tag_name ) ) continue;
         $matched_id = gary_find_page_by_bookly_title( $tag_name );
-        if ( $matched_id && $matched_id != $post_id && ! in_array( (int) $matched_id, $grid_pages ) ) {
-            $grid_pages[] = (int) $matched_id;
+        if ( $matched_id && $matched_id != $post_id && ! in_array( (int) $matched_id, $seen_pages ) ) {
+            $seen_pages[] = (int) $matched_id;
+            $grid_items[] = array( 'type' => 'page', 'page_id' => (int) $matched_id, 'bookly_id' => null );
         }
     }
 }
 
-// Deduplicate (preserves order)
-$grid_pages = array_values( array_unique( $grid_pages ) );
+// --- CALCULATE CUMULATIVE VALUE & SAVINGS ---
+$package_price_num = 0;
+if ( $bookly_data ) {
+    $package_price_num = (float) $bookly_data['price'];
+} elseif ( ! empty( $manual_price ) ) {
+    $package_price_num = (float) str_replace( array(',', '£'), '', $manual_price );
+}
+
+$total_included_value = 0;
+foreach ( $grid_items as $item ) {
+    $sub_p = 0;
+    if ( $item['type'] === 'page' ) {
+        // Resolve Bookly ID for price
+        $sub_b_id = $item['bookly_id'] ?: get_post_meta( $item['page_id'], '_gary_bookly_id', true );
+        $sub_b_data = $sub_b_id ? gary_get_bookly_service_data( $sub_b_id ) : false;
+        if ( $sub_b_data ) {
+            $sub_p = (float) $sub_b_data['price'];
+        } else {
+            $sub_m = get_post_meta( $item['page_id'], '_gary_service_price', true );
+            $sub_p = (float) str_replace( array(',', '£'), '', $sub_m );
+        }
+    } else {
+        // Bookly-only card
+        $sub_p = (float) $item['data']['price'];
+    }
+    $total_included_value += $sub_p;
+}
+
+$final_total_value = $package_price_num + $total_included_value;
+$final_savings     = $total_included_value;
 ?>
 
 <main id="primary" class="site-main page-template-service-detail">
@@ -120,6 +173,12 @@ $grid_pages = array_values( array_unique( $grid_pages ) );
                     
                     <div class="price-wrap">
                         <div class="price-val"><?php echo esc_html($display_price); ?></div>
+                        
+                        <?php if ( $final_savings > 0 ) : ?>
+                            <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 10px; font-weight: normal; font-family: 'Lato', sans-serif;">
+                                (Total Value if booked separately: £<?php echo number_format($final_total_value, 0); ?> &mdash; Save £<?php echo number_format($final_savings, 0); ?>)
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                     <?php if($display_duration): ?>
@@ -143,74 +202,81 @@ $grid_pages = array_values( array_unique( $grid_pages ) );
             </aside>
         </div>
 
-        <?php if ( !empty($grid_pages) ) : ?>
+        <?php if ( ! empty( $grid_items ) ) : ?>
         <!-- Section: Detailed Components Grid -->
         <div class="detailed-components-section">
             <h2 style="font-family:'Lato', sans-serif !important; font-size:2rem; font-weight:700;">Detailed Service Components</h2>
             
             <div class="component-grid">
-                <?php 
-                foreach($grid_pages as $sub_id) : 
-                    $sub_post = get_post($sub_id);
-                    if($sub_post) :
-                        $thumb = get_the_post_thumbnail_url($sub_id, 'large');
+                <?php foreach ( $grid_items as $item ) :
+
+                    // ── SHARED: resolve price, badge, description ──────────────────
+                    if ( $item['type'] === 'page' ) {
+                        $sub_page    = get_post( $item['page_id'] );
+                        if ( ! $sub_page ) continue;
+                        $card_title  = $sub_page->post_title;
+                        $card_url    = get_permalink( $item['page_id'] );
+                        $card_thumb  = get_the_post_thumbnail_url( $item['page_id'], 'large' );
+                        // Get Bookly data: prefer item bookly_id, fall back to page meta
+                        $b_id        = $item['bookly_id'] ?: get_post_meta( $item['page_id'], '_gary_bookly_id', true );
+                        $b_data      = $b_id ? gary_get_bookly_service_data( $b_id ) : false;
+                        $manual_p    = get_post_meta( $item['page_id'], '_gary_service_price', true );
+                        // Description fallback chain
+                        if ( $b_data && ! empty( $b_data['info'] ) ) {
+                            $card_desc = wp_trim_words( wp_strip_all_tags( $b_data['info'] ), 20 );
+                        } elseif ( ! empty( $sub_page->post_excerpt ) ) {
+                            $card_desc = wp_trim_words( $sub_page->post_excerpt, 20 );
+                        } else {
+                            $card_desc = wp_trim_words( $sub_page->post_content, 20 );
+                        }
+                    } else {
+                        // Bookly-only card — no linked WP page
+                        $b_data      = $item['data'];
+                        $card_title  = $b_data['title'];
+                        $card_url    = '/booking/';
+                        $card_thumb  = ! empty( $b_data['image'] ) ? $b_data['image'] : '';
+                        $manual_p    = '';
+                        $card_desc   = ! empty( $b_data['info'] ) ? wp_trim_words( wp_strip_all_tags( $b_data['info'] ), 20 ) : '';
+                    }
+
+                    // Price badge logic
+                    $sub_price = '';
+                    $is_free   = false;
+                    if ( $b_data ) {
+                        if ( (float) $b_data['price'] > 0 ) {
+                            $sub_price = '£' . number_format( $b_data['price'], 0 );
+                        } else {
+                            $is_free = true;
+                        }
+                    } elseif ( ! empty( $manual_p ) ) {
+                        $sub_price = '£' . $manual_p;
+                    }
+
+                    $svg_placeholder = 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23f0f0f0"/></svg>';
                 ?>
-                    <a href="<?php echo get_permalink($sub_id); ?>" class="component-card">
+                    <a href="<?php echo esc_url( $card_url ); ?>" class="component-card">
                         <div class="coin-icon-wrap">
-                            <img src="<?php echo $thumb ? esc_url($thumb) : 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23f0f0f0"/></svg>'; ?>" alt="<?php echo esc_attr($sub_post->post_title); ?> - Editorial Wedding Photography" />
+                            <img src="<?php echo $card_thumb ? esc_url( $card_thumb ) : $svg_placeholder; ?>"
+                                 alt="<?php echo esc_attr( $card_title ); ?> - Editorial Wedding Photography" />
                         </div>
                         <div class="component-info">
-                            <h4><?php echo esc_html($sub_post->post_title); ?></h4>
-                            <?php 
-                            // --- Bookly data for this sub-service ---
-                            $sub_bookly_id = get_post_meta( $sub_id, '_gary_bookly_id', true );
-                            $sub_data      = gary_get_bookly_service_data( $sub_bookly_id );
-                            $sub_manual    = get_post_meta( $sub_id, '_gary_service_price', true );
-
-                            // Determine price display
-                            $sub_price = '';
-                            $is_free   = false;
-                            if ( $sub_data ) {
-                                if ( (float) $sub_data['price'] > 0 ) {
-                                    $sub_price = '£' . number_format( $sub_data['price'], 0 );
-                                } else {
-                                    $is_free = true; // Bookly says it's FREE
-                                }
-                            } elseif ( ! empty( $sub_manual ) ) {
-                                $sub_price = '£' . $sub_manual;
-                            }
-
-                            // Paid — struck price + INCLUDED badge
-                            if ( $sub_price ) : ?>
+                            <h4><?php echo esc_html( $card_title ); ?></h4>
+                            <?php if ( $sub_price ) : ?>
                                 <div style="font-size:0.8rem; margin-bottom:8px; letter-spacing:1px; color:var(--wedding-gold-light); font-weight:700;">
                                     <span style="text-decoration:line-through; opacity:0.5; margin-right:8px;"><?php echo esc_html( $sub_price ); ?></span>
                                     <span>INCLUDED</span>
                                 </div>
-                            <?php // FREE — distinct badge
-                            elseif ( $is_free ) : ?>
+                            <?php elseif ( $is_free ) : ?>
                                 <div style="font-size:0.75rem; margin-bottom:8px; letter-spacing:2px; font-weight:700; color:#fff; background:var(--wedding-crimson); display:inline-block; padding:3px 10px; border-radius:2px;">
                                     FREE &mdash; INCLUDED
                                 </div>
-                            <?php endif;
-
-                            // --- Description: Bookly info → WP excerpt → trimmed content ---
-                            $sub_desc = '';
-                            if ( $sub_data && ! empty( $sub_data['info'] ) ) {
-                                // Strip HTML tags from Bookly info for the card snippet
-                                $sub_desc = wp_trim_words( wp_strip_all_tags( $sub_data['info'] ), 20 );
-                            } elseif ( ! empty( $sub_post->post_excerpt ) ) {
-                                $sub_desc = wp_trim_words( $sub_post->post_excerpt, 20 );
-                            } else {
-                                $sub_desc = wp_trim_words( $sub_post->post_content, 20 );
-                            }
-                            ?>
-                            <p style="margin-top:6px;"><?php echo esc_html( $sub_desc ); ?></p>
+                            <?php endif; ?>
+                            <?php if ( $card_desc ) : ?>
+                                <p style="margin-top:6px;"><?php echo esc_html( $card_desc ); ?></p>
+                            <?php endif; ?>
                         </div>
                     </a>
-                <?php 
-                    endif;
-                endforeach; 
-                ?>
+                <?php endforeach; ?>
             </div>
         </div>
         <?php endif; ?>
