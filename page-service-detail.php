@@ -50,10 +50,25 @@ if ( !empty($bookly_data['tags']) ) {
 }
 
 // 2. Fallback to Manual Selections if no tags matched
+// Stored values are now Bookly service IDs — resolve each to its linked WP page
 if ( empty($grid_pages) ) {
-    for($i=1; $i<=4; $i++) {
-        $manual_sub = get_post_meta($post_id, '_gary_sub_service_' . $i, true);
-        if ( $manual_sub ) $grid_pages[] = $manual_sub;
+    for ( $i = 1; $i <= 4; $i++ ) {
+        $manual_bookly_id = get_post_meta( $post_id, '_gary_sub_service_' . $i, true );
+        if ( empty($manual_bookly_id) ) continue;
+
+        // Find the WP page that has this Bookly service ID set via the Bookly Link meta box
+        $linked_pages = get_posts( array(
+            'post_type'      => 'page',
+            'posts_per_page' => 1,
+            'meta_key'       => '_gary_bookly_id',
+            'meta_value'     => $manual_bookly_id,
+            'fields'         => 'ids',
+            'post_status'    => 'publish',
+        ) );
+
+        if ( ! empty($linked_pages) && $linked_pages[0] != $post_id ) {
+            $grid_pages[] = $linked_pages[0];
+        }
     }
 }
 

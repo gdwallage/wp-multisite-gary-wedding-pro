@@ -7,12 +7,21 @@
  */
 
 // ---------------------------------------------------------------------------
+// SUPPRESS DUPLICATE HEAD TAGS
+// WordPress core outputs its own canonical via rel_canonical (priority 10).
+// We output our own at priority 2, so we must remove core's version.
+// ---------------------------------------------------------------------------
+remove_action( 'wp_head', 'rel_canonical' );              // WP core canonical
+remove_action( 'wp_head', 'rsd_link' );                   // Not needed
+remove_action( 'wp_head', 'wlwmanifest_link' );           // Not needed
+
+// ---------------------------------------------------------------------------
 // TITLE LENGTH FILTER — keeps <title> under 58 chars for on-page SEO
 // ---------------------------------------------------------------------------
 add_filter( 'pre_get_document_title', 'gary_optimised_title', 10 );
 function gary_optimised_title( $title ) {
     if ( is_front_page() || is_home() ) {
-        return 'Gary Wallage | Wedding Photographer, Wiltshire';
+        return 'Gary Wallage | Wedding Photographer Swindon & Wiltshire';
     }
     return $title; // Let other pages use their default title
 }
@@ -44,9 +53,9 @@ function gary_wedding_seo_engine() {
 
     // --- Page-specific title / description / url ---
     if ( is_front_page() || is_home() ) {
-        $title       = 'Gary Wallage | Wedding Photographer, Wiltshire';
+        $title       = 'Gary Wallage | Wedding Photographer Swindon & Wiltshire';
         // ≤130 chars (currently 128)
-        $description = 'Award-winning wedding photographer in Wiltshire & South West England. Editorial storytelling, precise framing & unforgettable memories.';
+        $description = 'Wedding photographer in Swindon, Wiltshire & the South West. Editorial storytelling, precise framing & unforgettable memories.';
         $url         = trailingslashit( home_url() );      // canonical: https://wedding.garywallage.uk/
         $og_type     = 'website';
     } elseif ( is_page() || is_single() ) {

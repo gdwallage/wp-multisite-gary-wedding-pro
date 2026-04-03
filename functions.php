@@ -339,21 +339,37 @@ function gary_editorial_meta_box_html( $post ) {
     echo '<p><strong>' . __( 'Personalized Experience Highlights:', 'garywedding' ) . '</strong><br /><textarea name="gary_service_highlights" style="width:100%; height:80px;" placeholder="One item per line (Icons are automatic)">' . esc_textarea($highlights) . '</textarea></p>';
 
     echo '<hr />';
-    echo '<p><strong>' . __( 'Link 4 Sub-Service Pages (The 2x2 Grid):', 'garywedding' ) . '</strong></p>';
-    
-    // Get all pages using the Service template or as children of a Service page
-    $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-service-detail.php'));
-    if (empty($pages)) { $pages = get_pages(); } // Fallback to all pages
+    echo '<p><strong>' . __( 'Link Bookly Sub-Services (The 2x2 Grid):', 'garywedding' ) . '</strong></p>';
+    echo '<p style="font-size:11px; color:#888; margin-top:-8px;">Select Bookly services to appear as sub-service components. Each will automatically link to its corresponding detail page (matched via the Bookly Service Link meta box on that page).</p>';
 
-    for($i=1; $i<=4; $i++) {
+    // Load Bookly services for the dropdown
+    global $wpdb;
+    $bookly_table = $wpdb->prefix . 'bookly_services';
+    $bookly_exists = ( $wpdb->get_var( "SHOW TABLES LIKE '$bookly_table'" ) == $bookly_table );
+    $bookly_services = array();
+    if ( $bookly_exists ) {
+        $bookly_services = $wpdb->get_results( "SELECT id, title, price FROM $bookly_table ORDER BY title ASC" );
+    }
+
+    // Get parent service's own Bookly ID so we can exclude it from sub-service slots
+    $own_bookly_id = get_post_meta( $post->ID, '_gary_bookly_id', true );
+
+    for ( $i = 1; $i <= 4; $i++ ) {
         echo '<div style="margin-bottom:10px;"><label>Slot ' . $i . ':</label><br />';
         echo '<select name="gary_sub_service_' . $i . '" style="width:100%;">';
-        echo '<option value="">' . __( '-- No Page Linked --', 'garywedding' ) . '</option>';
-        foreach ( $pages as $p ) {
-            if ($p->ID == $post->ID) continue; // Don't link to self
-            $selected = selected( $sub_services[$i], $p->ID, false );
-            echo '<option value="' . $p->ID . '" ' . $selected . '>' . esc_html($p->post_title) . '</option>';
+        echo '<option value="">' . __( '-- No Bookly Service --', 'garywedding' ) . '</option>';
+
+        if ( $bookly_exists && ! empty( $bookly_services ) ) {
+            foreach ( $bookly_services as $svc ) {
+                if ( $svc->id == $own_bookly_id ) continue; // Don't link to self
+                $price_label = ( (float) $svc->price > 0 ) ? ' (£' . number_format( $svc->price, 0 ) . ')' : ' (FREE)';
+                $selected = selected( $sub_services[$i], $svc->id, false );
+                echo '<option value="' . esc_attr( $svc->id ) . '" ' . $selected . '>' . esc_html( $svc->title ) . esc_html( $price_label ) . '</option>';
+            }
+        } else {
+            echo '<option disabled>' . __( 'Bookly not found — install & activate Bookly plugin', 'garywedding' ) . '</option>';
         }
+
         echo '</select></div>';
     }
 
