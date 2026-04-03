@@ -5,14 +5,58 @@ Version: 1.150.0
 Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
 */
 
-.page-template-page-services .service-card-content {
+/* Service Card Content Positioning */
+.page-template-page-services .service-card-content { 
+    position: relative; 
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     padding: 0 10px 10px 10px !important;
+    overflow: hidden; /* Clips the ribbon */
 }
 
-/* --- THE BRAND DNA --- */
+/* Diagonal Saving Ribbon */
+.card-saving-ribbon {
+    position: absolute;
+    top: 15px;
+    right: -35px;
+    background: var(--wedding-crimson);
+    color: #fff;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+    text-transform: uppercase;
+}
+
+/* Elegant Included List */
+.card-included-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
+    text-align: left;
+}
+.card-included-items li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 6px;
+    color: var(--wedding-accent);
+    font-weight: 700;
+    line-height: 1.4;
+}
+.card-included-items li::before {
+    content: '◆'; /* Gold Diamond Icon */
+    position: absolute;
+    left: 0;
+    color: var(--wedding-gold-light);
+    font-size: 0.7rem;
+    top: 1px;
+}
 @font-face {
     font-family: 'Blacksword';
     src: url('fonts/Blacksword.woff2') format('woff2'), url('fonts/Blacksword.ttf') format('truetype');

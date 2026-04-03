@@ -494,6 +494,7 @@ function gary_get_sub_service_summary( $post_id ) {
 
     return array(
         'grid_items'   => $grid_items,
+        'titles'       => $titles,
         'total_value'  => $parent_price + $total_included_value,
         'savings'      => $total_included_value,
         'included_str' => ! empty($titles) ? implode(', ', $titles) : ''
