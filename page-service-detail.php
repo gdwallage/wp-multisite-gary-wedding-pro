@@ -253,7 +253,8 @@ $final_savings     = $total_included_value;
                         $sub_price = 'From £' . $manual_p;
                     }
 
-                    $svg_placeholder = 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><path d="M50 30 L70 70 L30 70 Z" fill="%23C5A059" opacity="0.3"/></svg>';
+                    $svg_raw = '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#f0f0f0"/><path d="M50 30 L70 70 L30 70 Z" fill="#C5A059" opacity="0.3"/></svg>';
+                    $svg_placeholder = 'data:image/svg+xml;base64,' . base64_encode($svg_raw);
                 ?>
                     <a href="<?php echo esc_url( $card_url ); ?>" class="component-card">
                         <div class="coin-icon-wrap">
