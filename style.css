@@ -1,9 +1,23 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.150.0
-Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
+Version: 1.151.0
+Description: Precision Gallery Frames & Advanced Boutique Service Redesign.
 */
+
+:root {
+    --wedding-bg: #F9F9F7;
+    --wedding-text: #1a1a1a;
+    --wedding-accent: #B08D55; 
+    --wedding-gold-light: #C5A059; 
+    --wedding-crimson: #630000;
+}
+
+body { background-color: var(--wedding-bg); color: var(--wedding-text); font-family: 'Lato', sans-serif; margin: 0; overflow-x: hidden; }
+
+/* --- 1. BOUTIQUE SERVICE GRID (GALLERY FRAMES) --- */
+.page-template-page-services .site-main.container { max-width: 1100px !important; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; overflow: hidden; }
+.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; box-sizing: border-box; }
 
 /* Service Card Main Frame (Absolute Cornering) */
 .page-template-page-services .service-card { 
@@ -19,8 +33,8 @@ Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
 /* 3D Diagonal Saving Ribbon (Pinned to Card Frame) */
 .service-card-ribbon {
     position: absolute;
-    top: 25px;
-    right: -45px;
+    top: 22px;
+    right: -42px;
     background: var(--wedding-crimson);
     color: #fff;
     padding: 6px 45px;
@@ -34,9 +48,12 @@ Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
     border-top: 1px solid rgba(255,255,255,0.2);
     border-bottom: 1px solid rgba(0,0,0,0.2);
     pointer-events: none;
+    line-height: 1;
 }
 
-/* Service Card Content */
+.page-template-page-services .service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
+.page-template-page-services .service-card-image img { width: 100%; height: 100%; object-fit: contain !important; display: block; margin: 0 auto; }
+
 .page-template-page-services .service-card-content { 
     display: flex;
     flex-direction: column;
@@ -44,11 +61,19 @@ Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
     padding: 0 15px 15px 15px !important;
 }
 
+.page-template-page-services .service-card-title { margin-bottom: 10px; font-size: 1.4rem; color: var(--wedding-text); }
+
+/* Price/Duration Alignment */
+.page-template-page-services .service-card-price { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 15px 45px; background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); border-radius: 2px; margin-bottom: 20px; }
+.page-template-page-services .service-card-price.is-free { background: var(--wedding-crimson) !important; border: 2px solid var(--wedding-gold-light); }
+.page-template-page-services .service-card-price.is-free span,
+.page-template-page-services .service-card-price.is-free .duration-label { color: var(--wedding-gold-light) !important; opacity: 1 !important; font-weight: 700; }
+
 /* Premium Inclusive List (Editorial Style) */
 .card-included-items {
     list-style: none !important;
     padding: 0 !important;
-    margin: 0 auto 20px auto !important; /* Centered layout for quality */
+    margin: 0 auto 20px auto !important;
     max-width: 90%;
     font-family: 'Lato', sans-serif;
     text-align: left;
@@ -64,111 +89,25 @@ Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
     text-transform: uppercase;
     line-height: 1.4;
 }
-
-/* Gold Sparkle Icon (The boutique indicator) */
 .card-included-items li::before {
-    content: '✵'; /* 8-Point Star Sparkle */
+    content: '✵'; /* Gold 8-Point Sparkle */
     position: absolute;
     left: 0;
     color: var(--wedding-gold-light);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     top: -2px;
 }
+
+/* Service Card Inclusions (Dynamic Bookly Info) */
+.page-template-page-services .service-card-inclusions { padding: 0 10px; font-size: 0.85rem; text-align: left; opacity: 0.8; }
+
+/* --- 2. THE BRAND DNA --- */
 @font-face {
     font-family: 'Blacksword';
     src: url('fonts/Blacksword.woff2') format('woff2'), url('fonts/Blacksword.ttf') format('truetype');
     font-weight: normal; font-style: normal;
     font-display: swap;
 }
-
-:root {
-    --wedding-bg: #F9F9F7;
-    --wedding-text: #1a1a1a;
-    --wedding-accent: #B08D55; 
-    --wedding-gold-light: #C5A059; 
-    --wedding-crimson: #630000;
-}
-
-body { background-color: var(--wedding-bg); color: var(--wedding-text); font-family: 'Lato', sans-serif; margin: 0; overflow-x: hidden; }
-
-/* --- 1. HEADER (BRAND OVERLAP FIX) --- */
-.site-header { border-bottom: 1px solid rgba(0,0,0,0.05); width: 100%; z-index: 999; position: relative; background-color: #fff; }
-.header-focal-container { display: flex; align-items: center; justify-content: space-between; max-width: 1800px; margin: 0 auto; padding: 0 40px; }
-
-.focal-side { flex: 1 1 0%; display: flex; align-items: center; }
-.focal-left { justify-content: flex-start; }
-.focal-right { justify-content: flex-end; }
-.focal-center { flex: 0 0 auto; padding: 0 80px; text-align: center; }
-
-.site-title-blacksword { line-height: 1.7 !important; margin-bottom: 5px !important; color: var(--wedding-accent); font-size: 3.2rem; }
-.footer-branding h3 { font-size: 3.2rem; }
-.site-tagline-lato { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 5px; opacity: 0.5; }
-
-.nav-menu-focal { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 15px 35px; }
-.nav-menu-focal li { white-space: nowrap; }
-.nav-menu-focal li a { text-decoration: none !important; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; color: var(--wedding-text); font-weight: 700; }
-
-/* --- 2. GLOBAL TITLES --- */
-.entry-title, .archive-header h1, .about-title {
-    font-family: 'Blacksword', serif !important;
-    font-size: 3.2rem !important;
-    text-align: center !important;
-    line-height: 1.3;
-    display: block !important;
-    width: 100%;
-    margin-bottom: 0px !important;
-}
-
-/* --- 3. HOME HERO SLIDER --- */
-.home .hero-carousel-wrapper { position: relative; overflow: hidden; width: 100%; height: 60vh; min-height: 500px; max-height: 800px; background: #fff; }
-.home .hero-carousel { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-.home .hero-slide { position: absolute; top: 0; bottom: 0; width: 70%; height: 100%; background-size: contain !important; background-repeat: no-repeat; background-position: center center; opacity: 0; z-index: 0; transform: scale(0.8); display: flex; align-items: center; justify-content: center; text-align: center; transition: all 0.8s ease; }
-.home .hero-slide.active { opacity: 1; z-index: 10; transform: scale(1); }
-.home .hero-slide.prev { opacity: 0.4; z-index: 5; transform: scale(0.85) translateX(-75%); }
-.home .hero-slide.next { opacity: 0.4; z-index: 5; transform: scale(0.85) translateX(75%); }
-
-/* Navigation Arrows (Forced visibility) */
-.home .carousel-nav button { 
-    position: absolute; top: 50%; transform: translateY(-50%); 
-    background: #fff; color: #000; border: 1px solid #ddd; 
-    font-size: 2.5rem; width: 70px; height: 70px; border-radius: 50%; 
-    cursor: pointer; z-index: 1000; opacity: 0.8; transition: all 0.3s;
-}
-.home .carousel-nav button:hover { opacity: 1; transform: translateY(-50%) scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-#prevSlide { left: 50px; }
-#nextSlide { right: 50px; }
-
-/* --- 4. SERVICES PAGE (GALLERY FRAMES) --- */
-.page-template-page-services .site-main.container { max-width: 1100px !important; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; overflow: hidden; }
-.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; box-sizing: border-box; }
-
-/* Link Hard-Reset (No blue, No underlines) */
-.page-template-page-services .service-card-link,
-.site-footer a { text-decoration: none !important; color: inherit !important; box-shadow: none !important; }
-
-.page-template-page-services .service-card { 
-    background: #ffffff !important; 
-    border: 8px solid var(--wedding-gold-light); 
-    box-sizing: border-box;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 20px 40px rgba(0,0,0,0.1); 
-    display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; transition: 0.4s ease;
-    padding-bottom: 25px;
-}
-
-.page-template-page-services .service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
-.page-template-page-services .service-card-image img { width: 100%; height: 100%; object-fit: contain !important; display: block; margin: 0 auto; }
-
-/* Price/Duration Alignment */
-.page-template-page-services .service-card-price { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 15px 45px; background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); border-radius: 2px; }
-.page-template-page-services .service-card-price.is-free { background: var(--wedding-crimson) !important; border: 2px solid var(--wedding-gold-light); }
-.page-template-page-services .service-card-price.is-free span,
-.page-template-page-services .service-card-price.is-free .duration-label { color: var(--wedding-gold-light) !important; opacity: 1 !important; font-weight: 700; }
-
-/* Service Card Inclusions (Dynamic Bookly Info) */
-.page-template-page-services .service-card-inclusions { padding: 20px 20px 0 20px; font-size: 0.9rem; text-align: left; }
-.page-template-page-services .service-card-inclusions ul { list-style: none; padding-left: 0; margin-bottom: 0; }
-.page-template-page-services .service-card-inclusions li { position: relative; padding-left: 20px; margin-bottom: 8px; color: var(--wedding-text); opacity: 0.9; line-height: 1.4; }
-.page-template-page-services .service-card-inclusions li::before { content: '—'; position: absolute; left: 0; color: var(--wedding-gold-light); font-weight: bold; }
 
 /* --- 5. ABOUT PAGE (3D GALLERY FRAME & TOP ALIGN) --- */
 .page-template-page-about .about-grid { display: flex !important; gap: 80px; align-items: flex-start !important; margin-top: 80px; text-align: left; }
