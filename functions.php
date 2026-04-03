@@ -404,3 +404,98 @@ function gary_save_editorial_meta_box_data( $post_id ) {
     }
 }
 add_action( 'save_post', 'gary_save_editorial_meta_box_data' );
+/**
+ * Helper: Aggregate sub-services, calculate value, and generate narrative string.
+ * Used for both Service Detail and Services Grid cards.
+ */
+function gary_get_sub_service_summary( $post_id ) {
+    $bookly_id = get_post_meta( $post_id, '_gary_bookly_id', true );
+    $bookly_data = gary_get_bookly_service_data( $bookly_id );
+    $manual_price = get_post_meta( $post_id, '_gary_service_price', true );
+    
+    // 1. Calculate parent price
+    $parent_price = 0;
+    if ( $bookly_data ) {
+        $parent_price = (float) $bookly_data['price'];
+    } elseif ( ! empty( $manual_price ) ) {
+        $parent_price = (float) str_replace( array(',', '£'), '', $manual_price );
+    }
+
+    // 2. Resolve sub-services (3-tier lookup)
+    $grid_items  = array();
+    $seen_pages  = array();
+    $seen_bookly = array();
+
+    for ( $i = 1; $i <= 8; $i++ ) {
+        $slot_id = get_post_meta( $post_id, '_gary_sub_service_' . $i, true );
+        if ( empty( $slot_id ) || in_array( $slot_id, $seen_bookly ) ) continue;
+        $seen_bookly[] = $slot_id;
+
+        // Tier 1: Page match via meta
+        $linked = get_posts( array(
+            'post_type' => 'page', 'posts_per_page' => 1, 'meta_key' => '_gary_bookly_id', 'meta_value' => $slot_id, 'fields' => 'ids', 'post_status' => 'publish'
+        ) );
+        if ( ! empty( $linked ) && $linked[0] != $post_id && ! in_array( (int) $linked[0], $seen_pages ) ) {
+            $seen_pages[] = (int) $linked[0];
+            $grid_items[] = array( 'type' => 'page', 'page_id' => (int) $linked[0], 'bookly_id' => $slot_id );
+            continue;
+        }
+
+        // Tier 2: Page match via title
+        $raw = gary_get_bookly_service_data( $slot_id );
+        if ( $raw && ! empty( $raw['title'] ) ) {
+            $title_match = gary_find_page_by_bookly_title( $raw['title'] );
+            if ( $title_match && $title_match != $post_id && ! in_array( (int) $title_match, $seen_pages ) ) {
+                $seen_pages[] = (int) $title_match;
+                $grid_items[] = array( 'type' => 'page', 'page_id' => (int) $title_match, 'bookly_id' => $slot_id );
+                continue;
+            }
+        }
+
+        // Tier 3: Bookly only
+        if ( $raw ) {
+            $grid_items[] = array( 'type' => 'bookly', 'bookly_id' => $slot_id, 'data' => $raw );
+        }
+    }
+
+    // Bookly tags
+    if ( $bookly_data && ! empty( $bookly_data['tags'] ) ) {
+        $tags = explode( ',', $bookly_data['tags'] );
+        foreach ( $tags as $tag ) {
+            $tag = trim($tag);
+            if ( empty($tag) ) continue;
+            $matched_id = gary_find_page_by_bookly_title( $tag );
+            if ( $matched_id && $matched_id != $post_id && ! in_array( (int) $matched_id, $seen_pages ) ) {
+                $seen_pages[] = (int) $matched_id;
+                $grid_items[] = array( 'type' => 'page', 'page_id' => (int) $matched_id, 'bookly_id' => null );
+            }
+        }
+    }
+
+    // 3. Summarize
+    $total_included_value = 0;
+    $titles = array();
+    foreach ( $grid_items as $item ) {
+        $p = 0;
+        $t = '';
+        if ( $item['type'] === 'page' ) {
+            $pg = get_post( $item['page_id'] );
+            $t = $pg ? $pg->post_title : '';
+            $b_id = $item['bookly_id'] ?: get_post_meta( $item['page_id'], '_gary_bookly_id', true );
+            $b_data = $b_id ? gary_get_bookly_service_data( $b_id ) : false;
+            $p = $b_data ? (float)$b_data['price'] : (float)str_replace( array(',', '£'), '', get_post_meta( $item['page_id'], '_gary_service_price', true ) );
+        } else {
+            $p = (float)$item['data']['price'];
+            $t = $item['data']['title'];
+        }
+        $total_included_value += $p;
+        if ( ! empty($t) ) $titles[] = $t;
+    }
+
+    return array(
+        'grid_items'   => $grid_items,
+        'total_value'  => $parent_price + $total_included_value,
+        'savings'      => $total_included_value,
+        'included_str' => ! empty($titles) ? implode(', ', $titles) : ''
+    );
+}

@@ -71,6 +71,9 @@ get_header(); ?>
                 }
 
                 $teaser = wp_trim_words( get_the_content(), 30 );
+                $summary = gary_get_sub_service_summary( get_the_ID() );
+                $card_savings = $summary['savings'];
+                $card_included = $summary['included_str'];
             ?>
 
                 <a href="<?php the_permalink(); ?>" class="service-card-link">
@@ -93,10 +96,19 @@ get_header(); ?>
                             
                             <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
                                 <span><?php echo esc_html($display_price); ?></span>
+                                <?php if ( $card_savings > 0 ) : ?>
+                                    <span class="card-saving-badge" style="margin-left:12px; background:var(--wedding-crimson); color:#fff; font-size:0.7rem; padding:3px 8px; border-radius:2px; font-weight:700; letter-spacing:1px;">SAVE £<?php echo number_format($card_savings,0); ?></span>
+                                <?php endif; ?>
                                 <?php if($display_duration): ?>
                                     <small class="duration-label"><?php echo esc_html($display_duration); ?></small>
                                 <?php endif; ?>
                             </div>
+
+                            <?php if ( ! empty( $card_included ) ) : ?>
+                                <div class="card-included-list" style="font-size:0.85rem; font-weight:700; color:var(--wedding-accent); margin-bottom:15px; font-family:'Lato', sans-serif;">
+                                    Includes: <?php echo esc_html( $card_included ); ?>
+                                </div>
+                            <?php endif; ?>
 
                             <?php if ( !empty($bookly_info) ) : ?>
                                 <div class="service-card-inclusions">

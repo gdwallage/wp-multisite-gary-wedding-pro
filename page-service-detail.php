@@ -29,106 +29,13 @@ if ( $bookly_data ) {
     $display_duration = $manual_dur;
 }
 
-/**
- * LOGIC: SUB-SERVICE GRID
- *
- * Each slot stores a Bookly service ID. We resolve it to a renderable item
- * via a three-tier lookup — nothing is silently dropped:
- *
- * Tier 1 → Find WP page where _gary_bookly_id = slot value (explicit link)
- * Tier 2 → Find WP page whose title matches the Bookly service title
- * Tier 3 → Render a card directly from Bookly data (no WP page needed)
- *
- * After manual slots, Bookly tags supplement the list (deduped).
- */
-$grid_items  = array(); // array of arrays: [ type=>'page'|'bookly', ... ]
-$seen_pages  = array(); // track page IDs already added
-$seen_bookly = array(); // track Bookly IDs already added
-
-// 1. Manual slot selections (slots 1–8) — ALWAYS run
-for ( $i = 1; $i <= 8; $i++ ) {
-    $slot_bookly_id = get_post_meta( $post_id, '_gary_sub_service_' . $i, true );
-    if ( empty( $slot_bookly_id ) ) continue;
-    if ( in_array( $slot_bookly_id, $seen_bookly ) ) continue; // skip exact duplicate slots
-    $seen_bookly[] = $slot_bookly_id;
-
-    // --- Tier 1: page linked via _gary_bookly_id meta ---
-    $linked = get_posts( array(
-        'post_type'      => 'page',
-        'posts_per_page' => 1,
-        'meta_key'       => '_gary_bookly_id',
-        'meta_value'     => $slot_bookly_id,
-        'fields'         => 'ids',
-        'post_status'    => 'publish',
-    ) );
-
-    if ( ! empty( $linked ) && $linked[0] != $post_id && ! in_array( (int) $linked[0], $seen_pages ) ) {
-        $seen_pages[]  = (int) $linked[0];
-        $grid_items[]  = array( 'type' => 'page', 'page_id' => (int) $linked[0], 'bookly_id' => $slot_bookly_id );
-        continue;
-    }
-
-    // --- Tier 2: page matched by Bookly service title ---
-    $raw = gary_get_bookly_service_data( $slot_bookly_id );
-    if ( $raw && ! empty( $raw['title'] ) ) {
-        $title_match = gary_find_page_by_bookly_title( $raw['title'] );
-        if ( $title_match && $title_match != $post_id && ! in_array( (int) $title_match, $seen_pages ) ) {
-            $seen_pages[] = (int) $title_match;
-            $grid_items[] = array( 'type' => 'page', 'page_id' => (int) $title_match, 'bookly_id' => $slot_bookly_id );
-            continue;
-        }
-    }
-
-    // --- Tier 3: no linked page found — render directly from Bookly data ---
-    if ( $raw ) {
-        $grid_items[] = array( 'type' => 'bookly', 'bookly_id' => $slot_bookly_id, 'data' => $raw );
-    }
-}
-
-// 2. Bookly tag auto-detection — supplements manual selections
-if ( ! empty( $bookly_data['tags'] ) ) {
-    $tags = explode( ',', $bookly_data['tags'] );
-    foreach ( $tags as $tag_name ) {
-        $tag_name = trim( $tag_name );
-        if ( empty( $tag_name ) ) continue;
-        $matched_id = gary_find_page_by_bookly_title( $tag_name );
-        if ( $matched_id && $matched_id != $post_id && ! in_array( (int) $matched_id, $seen_pages ) ) {
-            $seen_pages[] = (int) $matched_id;
-            $grid_items[] = array( 'type' => 'page', 'page_id' => (int) $matched_id, 'bookly_id' => null );
-        }
-    }
-}
-
-// --- CALCULATE CUMULATIVE VALUE & SAVINGS ---
-$package_price_num = 0;
-if ( $bookly_data ) {
-    $package_price_num = (float) $bookly_data['price'];
-} elseif ( ! empty( $manual_price ) ) {
-    $package_price_num = (float) str_replace( array(',', '£'), '', $manual_price );
-}
-
-$total_included_value = 0;
-foreach ( $grid_items as $item ) {
-    $sub_p = 0;
-    if ( $item['type'] === 'page' ) {
-        // Resolve Bookly ID for price
-        $sub_b_id = $item['bookly_id'] ?: get_post_meta( $item['page_id'], '_gary_bookly_id', true );
-        $sub_b_data = $sub_b_id ? gary_get_bookly_service_data( $sub_b_id ) : false;
-        if ( $sub_b_data ) {
-            $sub_p = (float) $sub_b_data['price'];
-        } else {
-            $sub_m = get_post_meta( $item['page_id'], '_gary_service_price', true );
-            $sub_p = (float) str_replace( array(',', '£'), '', $sub_m );
-        }
-    } else {
-        // Bookly-only card
-        $sub_p = (float) $item['data']['price'];
-    }
-    $total_included_value += $sub_p;
-}
-
-$final_total_value = $package_price_num + $total_included_value;
-$final_savings     = $total_included_value;
+// --- LOGIC: SUB-SERVICE SUMMARY ---
+$summary = gary_get_sub_service_summary( $post_id );
+$grid_items         = $summary['grid_items'];
+$final_total_value  = $summary['total_value'];
+$final_savings      = $summary['savings'];
+$included_titles_str = $summary['included_str'];
+?>
 ?>
 
 <main id="primary" class="site-main page-template-service-detail">
@@ -152,8 +59,14 @@ $final_savings     = $total_included_value;
                     <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
                 </div>
 
+                <?php if ( ! empty( $included_titles ) ) : ?>
+                    <p style="font-family:'Lato', sans-serif; font-size:1rem; line-height:1.6; color:var(--wedding-accent); font-weight:700; margin-bottom: 30px; border-left: 2px solid var(--wedding-gold-light); padding-left: 15px;">
+                        This collection includes: <?php echo esc_html( implode(', ', $included_titles) ); ?>
+                    </p>
+                <?php endif; ?>
+
                 <?php if ( !empty($highlights) ) : ?>
-                    <h3 style="font-family:'Lato', sans-serif; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">Your personalized experience includes:</h3>
+                    <h3 style="font-family:'Lato', sans-serif; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">The finer details of your day:</h3>
                     <ul class="highlights-list">
                         <?php 
                         $lines = explode("\n", $highlights);
@@ -172,12 +85,17 @@ $final_savings     = $total_included_value;
                     <?php if($subtitle): ?><span class="subtitle"><?php echo esc_html($subtitle); ?></span><?php endif; ?>
                     
                     <div class="price-wrap">
+                        <?php if ( $final_savings > 0 ) : ?>
+                            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--wedding-crimson); margin-bottom: 10px;">
+                                Bundle Saving: £<?php echo number_format($final_savings, 0); ?>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="price-val"><?php echo esc_html($display_price); ?></div>
                         
                         <?php if ( $final_savings > 0 ) : ?>
-                            <div style="font-size: 0.75rem; opacity: 0.85; margin-top: 12px; font-weight: 700; font-family: 'Lato', sans-serif; text-transform: uppercase; letter-spacing: 1px; color: var(--wedding-gold-light);">
-                                Total combined value: £<?php echo number_format($final_total_value, 0); ?><br/>
-                                <span style="color: var(--wedding-crimson); display: block; margin-top: 2px;">YOUR SAVING: £<?php echo number_format($final_savings, 0); ?></span>
+                            <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 10px; font-weight: normal; font-family: 'Lato', sans-serif; text-transform: uppercase; letter-spacing: 1px;">
+                                Combined Individual Value: £<?php echo number_format($final_total_value, 0); ?>
                             </div>
                         <?php endif; ?>
                     </div>
