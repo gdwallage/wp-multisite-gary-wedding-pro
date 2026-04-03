@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.153.0
+Version: 1.154.0
 Description: Precision Gallery Frames & Advanced Boutique Service Redesign.
 */
 
@@ -81,7 +81,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     top: 22px;
     right: -42px;
     background: var(--wedding-crimson);
-    color: #fff;
+    color: #fff !important;
     padding: 6px 45px;
     transform: rotate(45deg);
     font-size: 0.7rem;
