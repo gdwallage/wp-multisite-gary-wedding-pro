@@ -328,9 +328,9 @@ function gary_editorial_meta_box_html( $post ) {
     $highlights = get_post_meta( $post->ID, '_gary_service_highlights', true );
     $bg_img = get_post_meta( $post->ID, '_gary_service_bg_img', true );
     
-    // Sub-services 1-4
+    // Sub-services 1-8
     $sub_services = array();
-    for($i=1; $i<=4; $i++) {
+    for ( $i = 1; $i <= 8; $i++ ) {
         $sub_services[$i] = get_post_meta( $post->ID, '_gary_sub_service_' . $i, true );
     }
 
@@ -354,7 +354,7 @@ function gary_editorial_meta_box_html( $post ) {
     // Get parent service's own Bookly ID so we can exclude it from sub-service slots
     $own_bookly_id = get_post_meta( $post->ID, '_gary_bookly_id', true );
 
-    for ( $i = 1; $i <= 4; $i++ ) {
+    for ( $i = 1; $i <= 8; $i++ ) {
         echo '<div style="margin-bottom:10px;"><label>Slot ' . $i . ':</label><br />';
         echo '<select name="gary_sub_service_' . $i . '" style="width:100%;">';
         echo '<option value="">' . __( '-- No Bookly Service --', 'garywedding' ) . '</option>';
@@ -396,8 +396,8 @@ function gary_save_editorial_meta_box_data( $post_id ) {
         }
     }
     
-    // Save sub-services
-    for($i=1; $i<=4; $i++) {
+    // Save sub-services (slots 1-8)
+    for ( $i = 1; $i <= 8; $i++ ) {
         if ( isset( $_POST['gary_sub_service_' . $i] ) ) {
             update_post_meta( $post_id, '_gary_sub_service_' . $i, sanitize_text_field( $_POST['gary_sub_service_' . $i] ) );
         }

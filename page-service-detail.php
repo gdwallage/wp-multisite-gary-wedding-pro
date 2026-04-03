@@ -30,50 +30,52 @@ if ( $bookly_data ) {
 }
 
 /**
- * LOGIC: SUB-SERVICE GRID (DATA-DRIVEN TAG PRIORITY)
+ * LOGIC: SUB-SERVICE GRID
+ *
+ * Priority:
+ * 1. Manual sub-service slots (ALWAYS run — these are your explicit choices)
+ * 2. Bookly tag auto-detection ADDS any extra matched pages on top
+ *
+ * Both sources are merged and deduplicated.
  */
 $grid_pages = array();
 
-// 1. Check for Bookly Tags on current service
-if ( !empty($bookly_data['tags']) ) {
-    $tags = explode(',', $bookly_data['tags']);
-    foreach ($tags as $tag_name) {
-        $tag_name = trim($tag_name);
-        if ( empty($tag_name) ) continue;
-        
-        // Find WP Page by this tag (Name Match)
+// 1. Manual slot selections (slots 1-8) — run ALWAYS, not as a fallback
+for ( $i = 1; $i <= 8; $i++ ) {
+    $manual_bookly_id = get_post_meta( $post_id, '_gary_sub_service_' . $i, true );
+    if ( empty( $manual_bookly_id ) ) continue;
+
+    // Resolve Bookly service ID → the WP page that has _gary_bookly_id matching it
+    $linked = get_posts( array(
+        'post_type'      => 'page',
+        'posts_per_page' => 1,
+        'meta_key'       => '_gary_bookly_id',
+        'meta_value'     => $manual_bookly_id,
+        'fields'         => 'ids',
+        'post_status'    => 'publish',
+    ) );
+
+    if ( ! empty( $linked ) && $linked[0] != $post_id ) {
+        $grid_pages[] = (int) $linked[0];
+    }
+}
+
+// 2. Bookly tag auto-detection — supplements manual selections
+// Only adds pages not already in the list
+if ( ! empty( $bookly_data['tags'] ) ) {
+    $tags = explode( ',', $bookly_data['tags'] );
+    foreach ( $tags as $tag_name ) {
+        $tag_name = trim( $tag_name );
+        if ( empty( $tag_name ) ) continue;
         $matched_id = gary_find_page_by_bookly_title( $tag_name );
-        if ( $matched_id && $matched_id != $post_id ) {
-            $grid_pages[] = $matched_id;
+        if ( $matched_id && $matched_id != $post_id && ! in_array( (int) $matched_id, $grid_pages ) ) {
+            $grid_pages[] = (int) $matched_id;
         }
     }
 }
 
-// 2. Fallback to Manual Selections if no tags matched
-// Stored values are now Bookly service IDs — resolve each to its linked WP page
-if ( empty($grid_pages) ) {
-    for ( $i = 1; $i <= 4; $i++ ) {
-        $manual_bookly_id = get_post_meta( $post_id, '_gary_sub_service_' . $i, true );
-        if ( empty($manual_bookly_id) ) continue;
-
-        // Find the WP page that has this Bookly service ID set via the Bookly Link meta box
-        $linked_pages = get_posts( array(
-            'post_type'      => 'page',
-            'posts_per_page' => 1,
-            'meta_key'       => '_gary_bookly_id',
-            'meta_value'     => $manual_bookly_id,
-            'fields'         => 'ids',
-            'post_status'    => 'publish',
-        ) );
-
-        if ( ! empty($linked_pages) && $linked_pages[0] != $post_id ) {
-            $grid_pages[] = $linked_pages[0];
-        }
-    }
-}
-
-// Unique and filter
-$grid_pages = array_unique($grid_pages);
+// Deduplicate (preserves order)
+$grid_pages = array_values( array_unique( $grid_pages ) );
 ?>
 
 <main id="primary" class="site-main page-template-service-detail">
@@ -160,24 +162,49 @@ $grid_pages = array_unique($grid_pages);
                         <div class="component-info">
                             <h4><?php echo esc_html($sub_post->post_title); ?></h4>
                             <?php 
-                            // Fetch Price for Slashed effect
-                            $sub_bookly_id = get_post_meta($sub_id, '_gary_bookly_id', true);
-                            $sub_data = gary_get_bookly_service_data($sub_bookly_id);
-                            $sub_manual = get_post_meta($sub_id, '_gary_service_price', true);
+                            // --- Bookly data for this sub-service ---
+                            $sub_bookly_id = get_post_meta( $sub_id, '_gary_bookly_id', true );
+                            $sub_data      = gary_get_bookly_service_data( $sub_bookly_id );
+                            $sub_manual    = get_post_meta( $sub_id, '_gary_service_price', true );
+
+                            // Determine price display
                             $sub_price = '';
-                            if($sub_data && $sub_data['price'] > 0) {
-                                $sub_price = '£' . number_format($sub_data['price'], 0);
-                            } elseif(!empty($sub_manual)) {
+                            $is_free   = false;
+                            if ( $sub_data ) {
+                                if ( (float) $sub_data['price'] > 0 ) {
+                                    $sub_price = '£' . number_format( $sub_data['price'], 0 );
+                                } else {
+                                    $is_free = true; // Bookly says it's FREE
+                                }
+                            } elseif ( ! empty( $sub_manual ) ) {
                                 $sub_price = '£' . $sub_manual;
                             }
-                            
-                            if($sub_price) : ?>
-                                <div style="font-size:0.8rem; margin-bottom:5px; letter-spacing:1px; color:var(--wedding-gold-light); font-weight:700;">
-                                    <span style="text-decoration:line-through; opacity:0.5; margin-right:8px;"><?php echo esc_html($sub_price); ?></span>
+
+                            // Paid — struck price + INCLUDED badge
+                            if ( $sub_price ) : ?>
+                                <div style="font-size:0.8rem; margin-bottom:8px; letter-spacing:1px; color:var(--wedding-gold-light); font-weight:700;">
+                                    <span style="text-decoration:line-through; opacity:0.5; margin-right:8px;"><?php echo esc_html( $sub_price ); ?></span>
                                     <span>INCLUDED</span>
                                 </div>
-                            <?php endif; ?>
-                            <p><?php echo wp_trim_words($sub_post->post_content, 18); ?></p>
+                            <?php // FREE — distinct badge
+                            elseif ( $is_free ) : ?>
+                                <div style="font-size:0.75rem; margin-bottom:8px; letter-spacing:2px; font-weight:700; color:#fff; background:var(--wedding-crimson); display:inline-block; padding:3px 10px; border-radius:2px;">
+                                    FREE &mdash; INCLUDED
+                                </div>
+                            <?php endif;
+
+                            // --- Description: Bookly info → WP excerpt → trimmed content ---
+                            $sub_desc = '';
+                            if ( $sub_data && ! empty( $sub_data['info'] ) ) {
+                                // Strip HTML tags from Bookly info for the card snippet
+                                $sub_desc = wp_trim_words( wp_strip_all_tags( $sub_data['info'] ), 20 );
+                            } elseif ( ! empty( $sub_post->post_excerpt ) ) {
+                                $sub_desc = wp_trim_words( $sub_post->post_excerpt, 20 );
+                            } else {
+                                $sub_desc = wp_trim_words( $sub_post->post_content, 20 );
+                            }
+                            ?>
+                            <p style="margin-top:6px;"><?php echo esc_html( $sub_desc ); ?></p>
                         </div>
                     </a>
                 <?php 
