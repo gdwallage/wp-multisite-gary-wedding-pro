@@ -78,6 +78,10 @@ get_header(); ?>
 
                 <a href="<?php the_permalink(); ?>" class="service-card-link">
                     <div class="service-card">
+                        <?php if ( $card_savings > 0 ) : ?>
+                            <div class="service-card-ribbon">SAVE £<?php echo number_format($card_savings,0); ?></div>
+                        <?php endif; ?>
+
                         <div class="service-card-image">
                             <?php if ( has_post_thumbnail() ) : ?>
                                 <?php the_post_thumbnail('large', array('alt' => get_the_title() . ' - Gary Wallage Editorial Wedding Photography')); ?>
@@ -92,11 +96,7 @@ get_header(); ?>
                         </div>
 
                         <div class="service-card-content">
-                            <?php if ( $card_savings > 0 ) : ?>
-                                <div class="card-saving-ribbon">SAVE £<?php echo number_format($card_savings,0); ?></div>
-                            <?php endif; ?>
-
-                            <h2 class="service-card-title" style="margin-right: 40px;"><?php the_title(); ?></h2>
+                            <h2 class="service-card-title"><?php the_title(); ?></h2>
                             
                             <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
                                 <span><?php echo esc_html($display_price); ?></span>

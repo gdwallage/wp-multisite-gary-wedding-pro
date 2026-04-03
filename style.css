@@ -5,57 +5,74 @@ Version: 1.150.0
 Description: Precision Gallery Frames & Advanced Editorial Service Redesign.
 */
 
-/* Service Card Content Positioning */
-.page-template-page-services .service-card-content { 
+/* Service Card Main Frame (Absolute Cornering) */
+.page-template-page-services .service-card { 
     position: relative; 
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    padding: 0 10px 10px 10px !important;
-    overflow: hidden; /* Clips the ribbon */
+    background: #ffffff !important; 
+    border: 8px solid var(--wedding-gold-light); 
+    box-sizing: border-box;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 20px 40px rgba(0,0,0,0.1); 
+    display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; transition: 0.4s ease;
+    padding-bottom: 25px;
 }
 
-/* Diagonal Saving Ribbon */
-.card-saving-ribbon {
+/* 3D Diagonal Saving Ribbon (Pinned to Card Frame) */
+.service-card-ribbon {
     position: absolute;
-    top: 15px;
-    right: -35px;
+    top: 25px;
+    right: -45px;
     background: var(--wedding-crimson);
     color: #fff;
-    padding: 5px 40px;
+    padding: 6px 45px;
     transform: rotate(45deg);
     font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 1px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    z-index: 10;
+    letter-spacing: 1.5px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    z-index: 100;
     text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    pointer-events: none;
 }
 
-/* Elegant Included List */
+/* Service Card Content */
+.page-template-page-services .service-card-content { 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 0 15px 15px 15px !important;
+}
+
+/* Premium Inclusive List (Editorial Style) */
 .card-included-items {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 20px 0;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 auto 20px auto !important; /* Centered layout for quality */
+    max-width: 90%;
     font-family: 'Lato', sans-serif;
-    font-size: 0.85rem;
     text-align: left;
 }
 .card-included-items li {
     position: relative;
-    padding-left: 20px;
-    margin-bottom: 6px;
+    padding-left: 25px;
+    margin-bottom: 8px;
     color: var(--wedding-accent);
+    font-size: 0.75rem;
     font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
     line-height: 1.4;
 }
+
+/* Gold Sparkle Icon (The boutique indicator) */
 .card-included-items li::before {
-    content: '◆'; /* Gold Diamond Icon */
+    content: '✵'; /* 8-Point Star Sparkle */
     position: absolute;
     left: 0;
     color: var(--wedding-gold-light);
-    font-size: 0.7rem;
-    top: 1px;
+    font-size: 0.9rem;
+    top: -2px;
 }
 @font-face {
     font-family: 'Blacksword';
