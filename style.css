@@ -15,7 +15,58 @@ Description: Precision Gallery Frames & Advanced Boutique Service Redesign.
 
 body { background-color: var(--wedding-bg); color: var(--wedding-text); font-family: 'Lato', sans-serif; margin: 0; overflow-x: hidden; }
 
-/* --- 1. BOUTIQUE SERVICE GRID (GALLERY FRAMES) --- */
+/* --- 1. HEADER (BRAND OVERLAP FIX) --- */
+.site-header { border-bottom: 1px solid rgba(0,0,0,0.05); width: 100%; z-index: 999; position: relative; background-color: #fff; }
+.header-focal-container { display: flex; align-items: center; justify-content: space-between; max-width: 1800px; margin: 0 auto; padding: 0 40px; }
+
+.focal-side { flex: 1 1 0%; display: flex; align-items: center; }
+.focal-left { justify-content: flex-start; }
+.focal-right { justify-content: flex-end; }
+.focal-center { flex: 0 0 auto; padding: 0 80px; text-align: center; }
+
+.site-title-blacksword { line-height: 1.7 !important; margin-bottom: 5px !important; color: var(--wedding-accent); font-size: 3.2rem; }
+.footer-branding h3 { font-size: 3.2rem; }
+.site-tagline-lato { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 5px; opacity: 0.5; }
+
+.nav-menu-focal { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 15px 35px; }
+.nav-menu-focal li { white-space: nowrap; }
+.nav-menu-focal li a { text-decoration: none !important; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; color: var(--wedding-text); font-weight: 700; }
+
+/* --- 2. GLOBAL TITLES --- */
+.entry-title, .archive-header h1, .about-title {
+    font-family: 'Blacksword', serif !important;
+    font-size: 3.2rem !important;
+    text-align: center !important;
+    line-height: 1.3;
+    display: block !important;
+    width: 100%;
+    margin-bottom: 0px !important;
+}
+
+/* --- 3. HOME HERO SLIDER --- */
+.home .hero-carousel-wrapper { position: relative; overflow: hidden; width: 100%; height: 60vh; min-height: 500px; max-height: 800px; background: #fff; }
+.home .hero-carousel { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+.home .hero-slide { position: absolute; top: 0; bottom: 0; width: 70%; height: 100%; background-size: contain !important; background-repeat: no-repeat; background-position: center center; opacity: 0; z-index: 0; transform: scale(0.8); display: flex; align-items: center; justify-content: center; text-align: center; transition: all 0.8s ease; }
+.home .hero-slide.active { opacity: 1; z-index: 10; transform: scale(1); }
+.home .hero-slide.prev { opacity: 0.4; z-index: 5; transform: scale(0.85) translateX(-75%); }
+.home .hero-slide.next { opacity: 0.4; z-index: 5; transform: scale(0.85) translateX(75%); }
+
+/* Navigation Arrows (Forced visibility) */
+.home .carousel-nav button { 
+    position: absolute; top: 50%; transform: translateY(-50%); 
+    background: #fff; color: #000; border: 1px solid #ddd; 
+    font-size: 2.5rem; width: 70px; height: 70px; border-radius: 50%; 
+    cursor: pointer; z-index: 1000; opacity: 0.8; transition: all 0.3s;
+}
+.home .carousel-nav button:hover { opacity: 1; transform: translateY(-50%) scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+#prevSlide { left: 50px; }
+#nextSlide { right: 50px; }
+
+/* Link Hard-Reset (No blue, No underlines) */
+.page-template-page-services .service-card-link,
+.site-footer a { text-decoration: none !important; color: inherit !important; box-shadow: none !important; }
+
+/* --- 4. BOUTIQUE SERVICE GRID (GALLERY FRAMES) --- */
 .page-template-page-services .site-main.container { max-width: 1100px !important; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; overflow: hidden; }
 .page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; box-sizing: border-box; }
 
