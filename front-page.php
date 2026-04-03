@@ -52,7 +52,11 @@ for ($i = 1; $i <= 5; $i++) {
                 <div class="hero-slide <?php echo $index === 0 ? 'active' : ''; ?>" style="background-image: url('<?php echo esc_url($slide['img']); ?>');">
                     <div class="hero-slide-content">
                         <div class="hero-title-box" style="background: <?php echo $bg_style; ?>; color: <?php echo $txt_color; ?>; padding: 40px 60px;">
-                            <h1 class="hero-title" style="color: <?php echo $txt_color; ?> !important;"><?php echo esc_html($slide['title']); ?></h1>
+                            <?php if ( $index === 0 ) : ?>
+                                <h1 class="hero-title" style="color: <?php echo $txt_color; ?> !important;"><?php echo esc_html($slide['title']); ?></h1>
+                            <?php else : ?>
+                                <h2 class="hero-title" style="color: <?php echo $txt_color; ?> !important;"><?php echo esc_html($slide['title']); ?></h2>
+                            <?php endif; ?>
                             <?php if ($slide['subtitle']): ?>
                                 <p class="hero-subtitle" style="color: <?php echo $txt_color; ?> !important; opacity: 0.8;"><?php echo esc_html($slide['subtitle']); ?></p>
                             <?php endif; ?>

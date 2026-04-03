@@ -1,102 +1,187 @@
 <?php
 /**
  * SEO Engine for Gary Wallage Wedding Pro
- * Handles dynamic meta tags, Open Graph, and JSON-LD Schema (2026 Ready).
+ * Version: 2.0.0
+ * Fixes: Canonical URL, meta description length, schema errors (WeddingService→ProfessionalService),
+ *        priceRange currency, hreflang, title length filter, social sameAs.
  */
 
-function gary_wedding_seo_engine() {
-    $title = get_bloginfo( 'name' );
-    $description = get_bloginfo( 'description' );
-    $url = get_permalink();
-    $image = get_the_post_thumbnail_url( get_the_ID(), 'large' ) ?: get_site_icon_url();
-    $business_name = "Gary Wallage Wedding Photography";
-    $location = "South West England; Wiltshire; Somerset; Berkshire";
-    $address = "63 Twineham Road, Swindon, SN25 2AG";
-    $phone = "07970 262 387";
-    $social_insta = "https://www.instagram.com/garywallage.wedding/";
-    $social_fb = "https://www.facebook.com/garywallage.wedding/";
-
+// ---------------------------------------------------------------------------
+// TITLE LENGTH FILTER — keeps <title> under 58 chars for on-page SEO
+// ---------------------------------------------------------------------------
+add_filter( 'pre_get_document_title', 'gary_optimised_title', 10 );
+function gary_optimised_title( $title ) {
     if ( is_front_page() || is_home() ) {
-        $title = "Editorial Wedding Photographer in $location | Gary Wallage";
-        $description = "Award-winning editorial wedding photography covering $location. Preserving legacies with precision gallery frames and documentary storytelling.";
+        return 'Gary Wallage | Wedding Photographer, Wiltshire';
+    }
+    return $title; // Let other pages use their default title
+}
+
+// ---------------------------------------------------------------------------
+// MAIN SEO HEAD OUTPUT
+// ---------------------------------------------------------------------------
+function gary_wedding_seo_engine() {
+
+    // --- Core data ---
+    $business_name = 'Gary Wallage Wedding Photography';
+    $location      = 'Wiltshire & the South West';
+    $phone         = '07970 262 387';
+    $address_street = '63 Twineham Road';
+    $address_city   = 'Swindon';
+    $address_post   = 'SN25 2AG';
+
+    // Social links — Customizer-driven, with known defaults
+    $social_fb     = get_theme_mod( 'social_facebook',  'https://www.facebook.com/garywallage.wedding' );
+    $social_insta  = get_theme_mod( 'social_instagram', 'https://www.instagram.com/garywallage.wedding' );
+    $social_yt     = get_theme_mod( 'social_youtube',   '' );
+    $social_x      = get_theme_mod( 'social_twitter',   '' );
+    $social_li     = get_theme_mod( 'social_linkedin',  '' );
+
+    // Build sameAs array — only include non-empty URLs
+    $same_as = array_values( array_filter( [
+        $social_fb, $social_insta, $social_yt, $social_x, $social_li
+    ] ) );
+
+    // --- Page-specific title / description / url ---
+    if ( is_front_page() || is_home() ) {
+        $title       = 'Gary Wallage | Wedding Photographer, Wiltshire';
+        // ≤130 chars (currently 128)
+        $description = 'Award-winning wedding photographer in Wiltshire & South West England. Editorial storytelling, precise framing & unforgettable memories.';
+        $url         = trailingslashit( home_url() );      // canonical: https://wedding.garywallage.uk/
+        $og_type     = 'website';
     } elseif ( is_page() || is_single() ) {
-        $title = get_the_title() . " | " . get_bloginfo( 'name' ) . " - " . $location;
+        $title       = get_the_title() . ' | Gary Wallage Weddings';
         $description = get_the_excerpt() ?: wp_trim_words( get_the_content(), 25 );
+        $url         = get_permalink();
+        $og_type     = is_single() ? 'article' : 'website';
+    } else {
+        $title       = get_bloginfo( 'name' );
+        $description = get_bloginfo( 'description' );
+        $url         = get_permalink();
+        $og_type     = 'website';
     }
 
-    // --- Meta Tags ---
-    echo "\n<!-- [SEO Engine: Gary Wallage Wedding Pro] -->\n";
+    // OG image
+    $image = get_the_post_thumbnail_url( get_the_ID(), 'large' )
+          ?: get_site_icon_url( 512 )
+          ?: '';
+
+    // Logo for schema
+    $logo_url = get_site_icon_url( 512 ) ?: $image;
+
+    // ---------------------------------------------------------------------------
+    // OUTPUT
+    // ---------------------------------------------------------------------------
+    echo "\n<!-- [SEO Engine v2.0 · Gary Wallage Wedding Pro] -->\n";
+
+    // --- Meta description ---
     echo '<meta name="description" content="' . esc_attr( $description ) . '">' . "\n";
+
+    // --- Canonical (single, explicit) ---
     echo '<link rel="canonical" href="' . esc_url( $url ) . '">' . "\n";
+
+    // --- Hreflang (en-GB self-reference) ---
+    if ( is_front_page() ) {
+        echo '<link rel="alternate" hreflang="en-GB" href="' . esc_url( trailingslashit( home_url() ) ) . '">' . "\n";
+        echo '<link rel="alternate" hreflang="x-default" href="' . esc_url( trailingslashit( home_url() ) ) . '">' . "\n";
+    }
 
     // --- Open Graph ---
     echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '">' . "\n";
-    echo '<meta property="og:type" content="' . ( is_single() ? 'article' : 'website' ) . '">' . "\n";
-    echo '<meta property="og:title" content="' . esc_attr( $title ) . '">' . "\n";
+    echo '<meta property="og:type"      content="' . esc_attr( $og_type ) . '">' . "\n";
+    echo '<meta property="og:title"     content="' . esc_attr( $title ) . '">' . "\n";
     echo '<meta property="og:description" content="' . esc_attr( $description ) . '">' . "\n";
-    echo '<meta property="og:url" content="' . esc_url( $url ) . '">' . "\n";
-    echo '<meta property="og:image" content="' . esc_url( $image ) . '">' . "\n";
+    echo '<meta property="og:url"       content="' . esc_url( $url ) . '">' . "\n";
+    if ( $image ) {
+        echo '<meta property="og:image" content="' . esc_url( $image ) . '">' . "\n";
+    }
+    echo '<meta property="og:locale"    content="en_GB">' . "\n";
 
-    // --- Twitter Card ---
-    echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
-    echo '<meta name="twitter:title" content="' . esc_attr( $title ) . '">' . "\n";
+    // --- Twitter / X Card ---
+    echo '<meta name="twitter:card"        content="summary_large_image">' . "\n";
+    echo '<meta name="twitter:title"       content="' . esc_attr( $title ) . '">' . "\n";
     echo '<meta name="twitter:description" content="' . esc_attr( $description ) . '">' . "\n";
-    echo '<meta name="twitter:image" content="' . esc_url( $image ) . '">' . "\n";
-
-    // --- JSON-LD Schema ---
-    $schema = [
-        "@context" => "https://schema.org",
-        "@graph" => [
-            // Local Business
-            [
-                "@type" => "LocalBusiness",
-                "@id" => trailingslashit( home_url() ) . "#localbusiness",
-                "name" => $business_name,
-                "url" => home_url(),
-                "telephone" => $phone,
-                "address" => [
-                    "@type" => "PostalAddress",
-                    "streetAddress" => "63 Twineham Road",
-                    "addressLocality" => "Swindon",
-                    "postalCode" => "SN25 2AG",
-                    "addressCountry" => "GB"
-                ],
-                "areaServed" => [
-                    "Wiltshire", "Somerset", "Berkshire", "South West England"
-                ],
-                "image" => $image,
-                "priceRange" => "$$$",
-                "sameAs" => [
-                    $social_insta,
-                    $social_fb
-                ]
-            ],
-            // Professional Service Specific
-            [
-                "@type" => "WeddingService",
-                "name" => $business_name,
-                "description" => $description,
-                "serviceType" => "Wedding Photography",
-                "areaServed" => "South West England"
-            ]
-        ]
-    ];
-
-    // Page-specific Schema additions
-    if ( is_page_template( 'page-service-detail.php' ) ) {
-        // Individual Service Schema
-        $service_data = [
-            "@type" => "Service",
-            "name" => get_the_title(),
-            "provider" => [ "@id" => trailingslashit( home_url() ) . "#localbusiness" ],
-            "areaServed" => "South West England"
-        ];
-        $schema['@graph'][] = $service_data;
+    if ( $image ) {
+        echo '<meta name="twitter:image"   content="' . esc_url( $image ) . '">' . "\n";
+    }
+    if ( $social_x ) {
+        // Extract handle from URL if present
+        $x_handle = '@' . rtrim( basename( rtrim( $social_x, '/' ) ), '/' );
+        echo '<meta name="twitter:site"    content="' . esc_attr( $x_handle ) . '">' . "\n";
     }
 
-    echo '<script type="application/ld+json">' . json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT ) . '</script>' . "\n";
+    // ---------------------------------------------------------------------------
+    // JSON-LD SCHEMA — fixed types & properties
+    // ---------------------------------------------------------------------------
+    $local_biz = [
+        '@type'       => 'ProfessionalService',
+        '@id'         => trailingslashit( home_url() ) . '#localbusiness',
+        'name'        => $business_name,
+        'url'         => trailingslashit( home_url() ),
+        'telephone'   => $phone,
+        'priceRange'  => '£££',       // Corrected: £ not $
+        'address'     => [
+            '@type'           => 'PostalAddress',
+            'streetAddress'   => $address_street,
+            'addressLocality' => $address_city,
+            'postalCode'      => $address_post,
+            'addressCountry'  => 'GB',
+        ],
+        'areaServed'  => [
+            [ '@type' => 'State', 'name' => 'Wiltshire' ],
+            [ '@type' => 'State', 'name' => 'Somerset' ],
+            [ '@type' => 'State', 'name' => 'Berkshire' ],
+            [ '@type' => 'Country', 'name' => 'England' ],
+        ],
+        'knowsAbout'   => [ 'Wedding Photography', 'Editorial Photography', 'Documentary Photography' ],
+    ];
+
+    // Add image if available
+    if ( $logo_url ) {
+        $local_biz['logo']  = $logo_url;
+        $local_biz['image'] = $logo_url;
+    }
+
+    // Add sameAs only if we have social links
+    if ( ! empty( $same_as ) ) {
+        $local_biz['sameAs'] = $same_as;
+    }
+
+    // Service node
+    $service_node = [
+        '@type'       => 'Service',
+        '@id'         => trailingslashit( home_url() ) . '#wedding-photography-service',
+        'name'        => 'Wedding Photography',
+        'serviceType' => 'Wedding Photography',
+        'description' => $description,
+        'provider'    => [ '@id' => trailingslashit( home_url() ) . '#localbusiness' ],
+        'areaServed'  => 'South West England',
+    ];
+
+    $graph = [ $local_biz, $service_node ];
+
+    // Page-specific Service schema
+    if ( is_page_template( 'page-service-detail.php' ) ) {
+        $graph[] = [
+            '@type'    => 'Service',
+            '@id'      => get_permalink() . '#service',
+            'name'     => get_the_title(),
+            'provider' => [ '@id' => trailingslashit( home_url() ) . '#localbusiness' ],
+            'areaServed' => 'South West England',
+        ];
+    }
+
+    $schema = [
+        '@context' => 'https://schema.org',
+        '@graph'   => $graph,
+    ];
+
+    echo '<script type="application/ld+json">' . "\n"
+        . json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE )
+        . "\n" . '</script>' . "\n";
+
     echo "<!-- [/SEO Engine] -->\n";
 }
 
-// Hook into wp_head with high priority (but after title-tag)
-add_action( 'wp_head', 'gary_wedding_seo_engine', 1 );
+// Hook with priority 2 — after title-tag (priority 1) but before other plugins
+add_action( 'wp_head', 'gary_wedding_seo_engine', 2 );

@@ -132,6 +132,34 @@ function gary_customize_register( $wp_customize ) {
     $wp_customize->add_control( 'footer_heading', array( 'label' => 'Footer Heading', 'section' => 'gary_footer_options', 'type' => 'text' ) );
     $wp_customize->add_setting( 'footer_text', array( 'default' => 'A visual historian...', 'sanitize_callback' => 'sanitize_textarea_field' ) );
     $wp_customize->add_control( 'footer_text', array( 'label' => 'Footer Description', 'section' => 'gary_footer_options', 'type' => 'textarea' ) );
+
+    // --- Social Media Links ---
+    $wp_customize->add_section( 'gary_social_options', array(
+        'title'    => 'Social Media Links',
+        'priority' => 125,
+        'description' => 'Add your social media profile URLs. These appear in the footer and are included in your SEO schema.',
+    ) );
+
+    $social_fields = array(
+        'social_facebook'  => array( 'label' => 'Facebook URL',  'default' => 'https://www.facebook.com/garywallage.wedding' ),
+        'social_instagram' => array( 'label' => 'Instagram URL', 'default' => 'https://www.instagram.com/garywallage.wedding' ),
+        'social_youtube'   => array( 'label' => 'YouTube URL',   'default' => '' ),
+        'social_twitter'   => array( 'label' => 'X / Twitter URL', 'default' => '' ),
+        'social_linkedin'  => array( 'label' => 'LinkedIn URL',  'default' => '' ),
+    );
+
+    foreach ( $social_fields as $key => $field ) {
+        $wp_customize->add_setting( $key, array(
+            'default'           => $field['default'],
+            'sanitize_callback' => 'esc_url_raw',
+            'transport'         => 'refresh',
+        ) );
+        $wp_customize->add_control( $key, array(
+            'label'   => $field['label'],
+            'section' => 'gary_social_options',
+            'type'    => 'url',
+        ) );
+    }
 }
 add_action( 'customize_register', 'gary_customize_register' );
 

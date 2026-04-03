@@ -312,38 +312,65 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 
 /* Legacy Custom Pattern CSS Blocks removed. Refer to /inc/editorial-patterns.php for Native WP Styling */
 
-/* --- 11. MOBILE RESPONSIVENESS OVERRIDES --- */
+/* --- 11. MOBILE RESPONSIVENESS OVERRIDES (SEO Audit Fixes v2) --- */
 @media (max-width: 768px) {
-    /* Header & Titles */
+
+    /* 1. Explicit readable base font size */
+    body { font-size: 16px !important; }
+
+    /* 2. Header & Titles */
     .site-title-blacksword { font-size: 2.2rem !important; line-height: 1.4 !important; white-space: normal; }
     .footer-branding h3 { font-size: 2.2rem !important; }
     .entry-title, .archive-header h1, .about-title { font-size: 2.4rem !important; }
-    
-    /* Global Typography */
+
+    /* 3. Global Typography */
     .entry-content h1 { font-size: 2.0rem; margin-top: 15px; }
     .entry-content h2 { font-size: 1.8rem; }
-    
-    /* Services Grid */
+    .entry-content p  { font-size: 1rem !important; }
+    .site-tagline-lato { font-size: 0.65rem; letter-spacing: 3px; }
+
+    /* 4. Services Grid */
     .page-template-page-services .services-grid { grid-template-columns: 1fr !important; gap: 20px; }
-    
-    /* Editorial Block Padding & Margins */
+
+    /* 5. Editorial Block Padding & Margins */
     .gw-z-pattern, .gw-masonry-trio, .gw-quote-capture { margin: 40px auto !important; }
     .gw-z-pattern .gw-z-text { padding: 30px 20px !important; }
     .gw-quote-capture { padding: 60px 20px !important; }
     .gw-quote-capture .wp-block-quote p { font-size: 1.4rem !important; }
-    
-    /* Container Adjustments */
-    .header-focal-container { padding: 20px 10px; }
+
+    /* 6. Container Adjustments */
+    .header-focal-container { padding: 20px 15px; }
     .site-footer { padding: 40px 20px !important; margin-top: 60px; }
-    
-    /* About Mobile Image Fixes */
+
+    /* 7. Footer small text */
+    .footer-meta p { font-size: 0.7rem; letter-spacing: 2px; }
+    .footer-legal-list li a, .footer-contact a { font-size: 0.8rem; }
+
+    /* 8. About Mobile Image Fixes */
     .page-template-page-about .about-image { width: 90% !important; margin: 0 auto; padding: 0 !important; }
     .page-template-page-about .portrait-frame { transform: rotate(-1.5deg) !important; padding: 10px 10px 50px 10px !important; }
-    
-    /* Home Slider Native 100% Fix */
+
+    /* 9. Home Slider — full-width on mobile + reduced min-height */
+    .home .hero-carousel-wrapper { height: 50vh; min-height: 320px; }
     .home .hero-slide { width: 100% !important; }
     .home .hero-slide.prev { transform: translateX(-120%) !important; opacity: 0 !important; }
     .home .hero-slide.next { transform: translateX(120%) !important; opacity: 0 !important; }
+
+    /* 10. Hero title box — reduce padding on small screens */
+    .hero-title-box { padding: 20px 24px !important; }
+    .hero-title { font-size: 1.6rem !important; }
+
+    /* 11. Carousel buttons — 44x44px minimum tap target */
+    .home .carousel-nav button { width: 44px !important; height: 44px !important; font-size: 1.4rem !important; }
+    #prevSlide { left: 10px !important; }
+    #nextSlide { right: 10px !important; }
+
+    /* 12. Footer social links — 44x44px tap targets */
+    .footer-social-link { width: 44px !important; height: 44px !important; font-size: 0.9rem !important; }
+
+    /* 13. Investment plaque on mobile */
+    .investment-plaque { padding: 24px 16px; }
+    .investment-plaque .price-val { font-size: 1.8rem; }
 }
 
 /* --- 12. ADVANCED EDITORIAL SERVICE DETAIL (MOCKUP STYLE) --- */
