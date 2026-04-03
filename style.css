@@ -1,7 +1,7 @@
 /*
 File: style.css
 Theme Name: Gary Wallage Wedding Pro
-Version: 1.154.0
+Version: 1.156.0
 Description: Precision Gallery Frames & Advanced Boutique Service Redesign.
 */
 
@@ -76,22 +76,23 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 }
 
 /* 3D Diagonal Saving Ribbon (Pinned to Card Frame) */
+.page-template-page-services .service-card .service-card-ribbon,
 .service-card-ribbon {
     position: absolute;
     top: 22px;
     right: -42px;
-    background: var(--wedding-crimson);
-    color: #fff !important;
+    background: var(--wedding-crimson) !important;
+    color: var(--wedding-gold-light) !important; /* Gold Text */
     padding: 6px 45px;
     transform: rotate(45deg);
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 1.5px;
     box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
     z-index: 100;
     text-transform: uppercase;
-    border-top: 1px solid rgba(255,255,255,0.2);
-    border-bottom: 1px solid rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(0,0,0,0.25);
     pointer-events: none;
     line-height: 1;
 }
