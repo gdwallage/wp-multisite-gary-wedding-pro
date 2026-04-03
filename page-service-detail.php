@@ -175,8 +175,9 @@ $final_savings     = $total_included_value;
                         <div class="price-val"><?php echo esc_html($display_price); ?></div>
                         
                         <?php if ( $final_savings > 0 ) : ?>
-                            <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 10px; font-weight: normal; font-family: 'Lato', sans-serif;">
-                                (Total Value if booked separately: £<?php echo number_format($final_total_value, 0); ?> &mdash; Save £<?php echo number_format($final_savings, 0); ?>)
+                            <div style="font-size: 0.75rem; opacity: 0.85; margin-top: 12px; font-weight: 700; font-family: 'Lato', sans-serif; text-transform: uppercase; letter-spacing: 1px; color: var(--wedding-gold-light);">
+                                Total combined value: £<?php echo number_format($final_total_value, 0); ?><br/>
+                                <span style="color: var(--wedding-crimson); display: block; margin-top: 2px;">YOUR SAVING: £<?php echo number_format($final_savings, 0); ?></span>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -244,15 +245,15 @@ $final_savings     = $total_included_value;
                     $is_free   = false;
                     if ( $b_data ) {
                         if ( (float) $b_data['price'] > 0 ) {
-                            $sub_price = '£' . number_format( $b_data['price'], 0 );
+                            $sub_price = 'From £' . number_format( $b_data['price'], 0 );
                         } else {
                             $is_free = true;
                         }
                     } elseif ( ! empty( $manual_p ) ) {
-                        $sub_price = '£' . $manual_p;
+                        $sub_price = 'From £' . $manual_p;
                     }
 
-                    $svg_placeholder = 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="%23f0f0f0"/></svg>';
+                    $svg_placeholder = 'data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><path d="M50 30 L70 70 L30 70 Z" fill="%23C5A059" opacity="0.3"/></svg>';
                 ?>
                     <a href="<?php echo esc_url( $card_url ); ?>" class="component-card">
                         <div class="coin-icon-wrap">
