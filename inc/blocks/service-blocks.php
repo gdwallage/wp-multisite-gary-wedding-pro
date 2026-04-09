@@ -146,10 +146,7 @@ function gary_render_service_grid_block( $attributes, $content ) {
         // Output the 2-wide detailed components grid
         return '<div class="detailed-components-section"><div class="components-grid">' . $content . '</div></div>';
     } else {
-        if ( is_admin() ) {
-            return '<div class="detailed-components-section" style="margin-top:20px;"><div class="component-grid">' . $content . '</div></div>';
-        }
-        // On the frontend, vertical cards require the services-grid wrapper
+        // Use services-grid for the vertical cards (3-cols default)
         return '<div class="services-grid">' . $content . '</div>';
     }
 }
