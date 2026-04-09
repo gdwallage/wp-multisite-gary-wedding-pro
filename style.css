@@ -62,10 +62,10 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 
 /* --- 4. BOUTIQUE SERVICE GRID (GALLERY FRAMES) --- */
 .page-template-page-services .site-main.container { max-width: 1100px !important; margin: 20px auto; padding: 0 20px; box-sizing: border-box; text-align: center; overflow: hidden; }
-.page-template-page-services .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; box-sizing: border-box; }
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 20px; justify-content: center !important; align-items: stretch; box-sizing: border-box; }
 
 /* Service Card Main Frame (Absolute Cornering) */
-.page-template-page-services .service-card { 
+.service-card { 
     position: relative; 
     background: #ffffff !important; 
     border: 8px solid var(--wedding-gold-light); 
@@ -76,7 +76,6 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 }
 
 /* 3D Diagonal Saving Ribbon (Pinned to Card Frame) */
-.page-template-page-services a.service-card-link .service-card-ribbon,
 a.service-card-link .service-card-ribbon {
     position: absolute;
     top: 22px;
@@ -97,23 +96,23 @@ a.service-card-link .service-card-ribbon {
     line-height: 1;
 }
 
-.page-template-page-services .service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
-.page-template-page-services .service-card-image img { width: 100%; height: 100%; object-fit: contain !important; display: block; margin: 0 auto; }
+.service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
+.service-card-image img { width: 100%; height: 100%; object-fit: contain !important; display: block; margin: 0 auto; }
 
-.page-template-page-services .service-card-content { 
+.service-card-content { 
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     padding: 0 15px 15px 15px !important;
 }
 
-.page-template-page-services .service-card-title { margin-bottom: 10px; font-size: 1.4rem; color: var(--wedding-text); }
+.service-card-title { margin-bottom: 10px; font-size: 1.4rem; color: var(--wedding-text); }
 
 /* Price/Duration Alignment */
-.page-template-page-services .service-card-price { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 15px 45px; background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); border-radius: 2px; margin-bottom: 20px; }
-.page-template-page-services .service-card-price.is-free { background: var(--wedding-crimson) !important; border: 2px solid var(--wedding-gold-light); }
-.page-template-page-services .service-card-price.is-free span,
-.page-template-page-services .service-card-price.is-free .duration-label { color: var(--wedding-gold-light) !important; opacity: 1 !important; font-weight: 700; }
+.service-card-price { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 15px 45px; background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); border-radius: 2px; margin-bottom: 20px; }
+.service-card-price.is-free { background: var(--wedding-crimson) !important; border: 2px solid var(--wedding-gold-light); }
+.service-card-price.is-free span,
+.service-card-price.is-free .duration-label { color: var(--wedding-gold-light) !important; opacity: 1 !important; font-weight: 700; }
 
 /* Premium Inclusive List (Editorial Style) */
 .card-included-items {
@@ -145,7 +144,7 @@ a.service-card-link .service-card-ribbon {
 }
 
 /* Service Card Inclusions (Dynamic Bookly Info) */
-.page-template-page-services .service-card-inclusions { padding: 0 10px; font-size: 0.85rem; text-align: left; opacity: 0.8; }
+.service-card-inclusions { padding: 0 10px; font-size: 0.85rem; text-align: left; opacity: 0.8; }
 
 /* --- 2. THE BRAND DNA --- */
 @font-face {
