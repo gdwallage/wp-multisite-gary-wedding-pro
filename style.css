@@ -1,9 +1,32 @@
-/*
-File: style.css
-Theme Name: Gary Wallage Wedding Pro
-Version: 1.156.0
-Description: Precision Gallery Frames & Advanced Boutique Service Redesign.
-*/
+/**
+ * BRAND DNA & DESIGN SYSTEM
+ * Centralized control for easy theme duplication and skinning.
+ */
+ :root {
+    /* 1. LAYOUT & CONTAINERS */
+    --editorial-width: 1200px;
+    --narrow-width: 850px;
+    --site-max-width: 1800px;
+    --grid-gap: 30px;
+    
+    /* 2. COLORS */
+    --brand-bg: #F9F9F7;
+    --brand-text: #1a1a1a;
+    --brand-accent: #B08D55; 
+    --brand-gold-light: #C5A059; 
+    --brand-crimson: #630000;
+    --brand-white: #ffffff;
+    
+    /* 3. TYPOGRAPHY */
+    --font-primary: 'Lato', sans-serif;
+    --font-script: 'Blacksword', cursive;
+    
+    /* 4. VISUAL EFFECTS */
+    --gold-frame-border: 8px;
+    --gold-gradient: linear-gradient(135deg, var(--brand-accent) 0%, var(--brand-gold-light) 50%, var(--brand-accent) 100%);
+    --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
+    --shadow-deep: 0 20px 50px rgba(0,0,0,0.15);
+}
 
 /* Link Hard-Reset (No blue, No underlines - Global Safety) */
 a.service-card-link,
@@ -16,61 +39,62 @@ a.service-card-link *,
     box-shadow: none !important; 
 }
 
-:root {
-    --wedding-bg: #F9F9F7;
-    --wedding-text: #1a1a1a;
-    --wedding-accent: #B08D55; 
-    --wedding-gold-light: #C5A059; 
-    --wedding-crimson: #630000;
+body { 
+    background-color: var(--brand-bg); 
+    color: var(--brand-text); 
+    font-family: var(--font-primary); 
+    margin: 0; 
+    overflow-x: hidden; 
 }
 
-body { background-color: var(--wedding-bg); color: var(--wedding-text); font-family: 'Lato', sans-serif; margin: 0; overflow-x: hidden; }
+/* --- 1. THE EDITORIAL CONTAINER --- */
+.container, 
+.site-main, 
+.gw-global-grid-wrapper, 
+.detailed-components-section {
+    max-width: var(--editorial-width);
+    margin: 40px auto 80px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
 
-/* --- 1. HEADER (BRAND OVERLAP FIX) --- */
-.site-header { border-bottom: 1px solid rgba(0,0,0,0.05); width: 100%; z-index: 999; position: relative; background-color: #fff; }
-.header-focal-container { display: flex; align-items: center; justify-content: space-between; max-width: 1800px; margin: 0 auto; padding: 0 40px; }
+/* --- 2. HEADER (BRAND OVERLAP FIX) --- */
+.site-header { border-bottom: 1px solid rgba(0,0,0,0.05); width: 100%; z-index: 999; position: relative; background-color: var(--brand-white); }
+.header-focal-container { display: flex; align-items: center; justify-content: space-between; max-width: var(--site-max-width); margin: 0 auto; padding: 0 40px; }
 
 .focal-side { flex: 1 1 0%; display: flex; align-items: center; }
 .focal-left { justify-content: flex-start; }
 .focal-right { justify-content: flex-end; }
 .focal-center { flex: 0 0 auto; padding: 0 80px; text-align: center; }
 
-.site-title-blacksword { line-height: 1.7 !important; margin-bottom: 5px !important; color: var(--wedding-accent); font-size: 3.2rem; }
-.footer-branding h3 { font-size: 3.2rem; }
-.site-tagline-lato { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 5px; opacity: 0.5; }
+.site-title-blacksword { line-height: 1.7 !important; margin-bottom: 5px !important; color: var(--brand-accent); font-size: 3.2rem; font-family: var(--font-script); }
+.footer-branding h3 { font-size: 3.2rem; font-family: var(--font-script); }
+.site-tagline-lato { font-family: var(--font-primary); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 5px; opacity: 0.5; }
 
 .nav-menu-focal { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 15px 35px; }
 .nav-menu-focal li { white-space: nowrap; }
-.nav-menu-focal li a { text-decoration: none !important; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; color: var(--wedding-text); font-weight: 700; }
+.nav-menu-focal li a { text-decoration: none !important; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; color: var(--brand-text); font-weight: 700; }
 
-/* --- 2. GLOBAL TITLES --- */
+/* --- 3. GLOBAL TITLES --- */
 .entry-title, .archive-header h1, .about-title {
-    font-family: 'Blacksword', serif !important;
+    font-family: var(--font-script) !important;
     font-size: 3.2rem !important;
     text-align: center !important;
     line-height: 1.3;
     display: block !important;
     width: 100%;
     margin-bottom: 0px !important;
+    color: var(--brand-accent);
 }
-
-/* --- 3. HOME HERO SLIDER --- */
-.home .hero-carousel-wrapper { position: relative; overflow: hidden; width: 100%; height: 60vh; min-height: 500px; max-height: 800px; background: #fff; }
-.home .hero-carousel { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-.home .hero-slide { position: absolute; top: 0; bottom: 0; width: 70%; height: 100%; background-size: contain !important; background-repeat: no-repeat; background-position: center center; opacity: 0; z-index: 0; transform: scale(0.8); display: flex; align-items: center; justify-content: center; text-align: center; transition: all 0.8s ease; }
-.home .hero-slide.active { opacity: 1; z-index: 10; transform: scale(1); }
-.home .hero-slide.prev { opacity: 0.4; z-index: 5; transform: scale(0.85) translateX(-75%); }
-.home .hero-slide.next { opacity: 0.4; z-index: 5; transform: scale(0.85) translateX(75%); }
 
 /* --- 4. GLOBAL SERVICE GRID & GALLERY FRAMES --- */
 .services-grid { 
     display: grid; 
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 30px; 
-    margin: 60px auto; 
+    gap: var(--grid-gap); 
+    margin: 40px auto; 
     justify-content: center; 
     align-items: stretch; 
-    box-sizing: border-box; 
     width: 100%;
 }
 
@@ -85,10 +109,10 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 /* Service Card Main Frame (Absolute Cornering) */
 .service-card { 
     position: relative; 
-    background: #ffffff !important; 
-    border: 8px solid var(--wedding-gold-light); 
+    background: var(--brand-white) !important; 
+    border: var(--gold-frame-border) solid var(--brand-gold-light); 
     box-sizing: border-box;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 20px 40px rgba(0,0,0,0.1); 
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05), var(--shadow-soft); 
     display: flex; 
     flex-direction: column; 
     width: 100%; 
@@ -103,8 +127,8 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     position: absolute;
     top: 22px;
     right: -42px;
-    background: var(--wedding-crimson) !important;
-    color: var(--wedding-gold-light) !important;
+    background: var(--brand-crimson) !important;
+    color: var(--brand-gold-light) !important;
     padding: 6px 45px;
     transform: rotate(45deg);
     font-size: 0.72rem;
@@ -124,7 +148,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     display: block;
     width: 100%;
     margin: 0 auto;
-    max-width: 450px; /* Default: cap at editorial width */
+    max-width: 450px; /* Singular editorial scaling */
 }
 
 /* Force side-by-side when inside a grid (bypass 450px limit) */
@@ -134,7 +158,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     max-width: none !important;
 }
 
-.service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
+.service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: var(--brand-white) !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
 .service-card-image img { width: 100%; height: 100%; object-fit: contain !important; display: block; margin: 0 auto; }
 
 .service-card-content { 
@@ -146,10 +170,10 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 }
 
 .service-card-title { 
-    font-family: 'Blacksword', cursive !important;
+    font-family: var(--font-script) !important;
     font-size: 2.2rem !important;
     margin: 10px 0 15px !important; 
-    color: var(--wedding-text); 
+    color: var(--brand-text); 
     font-weight: 400 !important;
     text-align: center;
     line-height: 1.1;
@@ -160,10 +184,18 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 }
 
 /* Price/Duration Alignment */
-.service-card-price { display: flex !important; flex-direction: column !important; align-items: center !important; padding: 15px 45px; background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); border-radius: 2px; margin-bottom: 20px; }
-.service-card-price.is-free { background: var(--wedding-crimson) !important; border: 2px solid var(--wedding-gold-light); }
+.service-card-price { 
+    display: flex !important; 
+    flex-direction: column !important; 
+    align-items: center !important; 
+    padding: 15px 45px; 
+    background: var(--gold-gradient); 
+    border-radius: 2px; 
+    margin-bottom: 20px; 
+}
+.service-card-price.is-free { background: var(--brand-crimson) !important; border: 2px solid var(--brand-gold-light); }
 .service-card-price.is-free span,
-.service-card-price.is-free .duration-label { color: var(--wedding-gold-light) !important; opacity: 1 !important; font-weight: 700; }
+.service-card-price.is-free .duration-label { color: var(--brand-gold-light) !important; opacity: 1 !important; font-weight: 700; }
 
 /* Unified Global Bullet Styles (For Highlights & Inclusions) */
 .gw-bullet-list {
@@ -171,7 +203,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     padding: 0 !important;
     margin: 20px 0 !important;
     text-align: left !important;
-    font-family: 'Lato', sans-serif !important;
+    font-family: var(--font-primary) !important;
 }
 .gw-bullet-list li {
     position: relative;
@@ -179,7 +211,7 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     margin-bottom: 12px !important;
     font-size: 0.82rem !important;
     line-height: 1.5 !important;
-    color: var(--wedding-text) !important;
+    color: var(--brand-text) !important;
     letter-spacing: 0.5px;
 }
 .gw-bullet-list li::before {
@@ -192,503 +224,101 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 
 /* Specific Icons for each list type */
 .gw-bullet-list.is-inclusions li { 
-    color: var(--wedding-accent) !important; 
+    color: var(--brand-accent) !important; 
     font-weight: 700;
     text-transform: uppercase;
 }
 .gw-bullet-list.is-inclusions li::before {
     content: '✵'; /* Premium Sparkle */
-    color: var(--wedding-gold-light);
+    color: var(--brand-gold-light);
 }
 
-.gw-bullet-list.is-highlights li {
-    opacity: 0.9;
-}
+.gw-bullet-list.is-highlights li { opacity: 0.9; }
 .gw-bullet-list.is-highlights li::before {
     content: '✓'; /* Gold Tick */
-    color: var(--wedding-gold-light);
+    color: var(--brand-gold-light);
     font-weight: bold;
 }
 
-/* Service Card Inclusions (Dynamic Bookly Info) */
-.service-card-inclusions { padding: 0 10px; font-size: 0.85rem; text-align: left; opacity: 0.8; }
-
-/* --- 2. THE BRAND DNA --- */
-@font-face {
-    font-family: 'Blacksword';
-    src: url('fonts/Blacksword.woff2') format('woff2'), url('fonts/Blacksword.ttf') format('truetype');
-    font-weight: normal; font-style: normal;
-    font-display: swap;
-}
-
-/* --- 5. ABOUT PAGE (3D GALLERY FRAME & TOP ALIGN) --- */
+/* --- 5. ABOUT PAGE --- */
 .page-template-page-about .about-grid { display: flex !important; gap: 80px; align-items: flex-start !important; margin-top: 80px; text-align: left; }
 .page-template-page-about .about-image { flex: 0 0 30% !important; max-width: 30% !important; padding-left: 60px; } 
-.page-template-page-about .about-content { flex: 1; padding-top: 25px; } /* Aligns text with frame top */
-
-/* Overrides Removed: Utilizing Global Center Styling */
+.page-template-page-about .about-content { flex: 1; padding-top: 25px; }
 
 .page-template-page-about .portrait-frame-wrapper { position: relative; padding: 15px; }
-
-/* Match Service Box Frame Style */
 .page-template-page-about .portrait-frame { 
-    position: relative; background: #ffffff !important; 
-    border: 8px solid var(--wedding-gold-light) !important; /* GOLD FRAME */
-    padding: 15px 15px 70px 15px !important; /* Bottom space for plaque */
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.05), 0 20px 40px rgba(0,0,0,0.15) !important;
+    position: relative; background: var(--brand-white) !important; 
+    border: var(--gold-frame-border) solid var(--brand-gold-light) !important; 
+    padding: 15px 15px 70px 15px !important; 
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05), var(--shadow-deep) !important;
     transform: rotate(-3deg); transition: transform 0.3s;
 }
-.page-template-page-about .portrait-frame:hover { transform: rotate(-1deg) scale(1.02); border-color: var(--wedding-accent) !important; }
-
+.page-template-page-about .portrait-frame:hover { transform: rotate(-1deg) scale(1.02); border-color: var(--brand-accent) !important; }
 .page-template-page-about .portrait-frame img { display: block; width: 100%; height: auto; border: 1px solid #eee; }
 
-/* Plaque Restored within Gold Frame */
 .page-template-page-about .frame-plaque { 
     position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 70%; text-align: center; padding: 8px 15px; 
-    background: linear-gradient(135deg, var(--wedding-accent) 0%, var(--wedding-gold-light) 50%, var(--wedding-accent) 100%); 
+    background: var(--gold-gradient); 
     border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
 }
-.page-template-page-about .frame-plaque span { font-family: 'Lato', sans-serif; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; color: #422a00; font-weight: 700; display: block; }
+.page-template-page-about .frame-plaque span { font-family: var(--font-primary); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; color: #422a00; font-weight: 700; display: block; }
 
 /* --- 6. FAQ PAGE --- */
-.page-template-page-faq.site-main.container { max-width: 800px; margin: 40px auto 80px auto; padding: 0 40px; }
-.faq-trigger { cursor: pointer; background: #ffffff; padding: 20px 60px 20px 20px; margin: 0 0 10px 0; border: 1px solid var(--wedding-gold-light); font-size: 1.1rem; font-weight: 700; position: relative; transition: all 0.3s; border-radius: 2px; }
-.faq-trigger:hover { background: var(--wedding-bg); border-color: var(--wedding-accent); }
-.faq-trigger::after { content: '+'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: var(--wedding-accent); font-weight: normal; }
+.page-template-page-faq.site-main.container { max-width: var(--narrow-width); margin: 40px auto 80px auto; padding: 0 40px; }
+.faq-trigger { cursor: pointer; background: var(--brand-white); padding: 20px 60px 20px 20px; margin: 0 0 10px 0; border: 1px solid var(--brand-gold-light); font-size: 1.1rem; font-weight: 700; position: relative; transition: all 0.3s; border-radius: 2px; }
+.faq-trigger::after { content: '+'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: var(--brand-accent); }
 .faq-trigger.active::after { content: '-'; }
-.faq-answer { max-height: 0; overflow: hidden; padding: 0 20px; border-left: 2px solid var(--wedding-gold-light); margin-left: 10px; opacity: 0; transition: max-height 0.4s ease-out, padding 0.4s ease-out, opacity 0.3s ease-out, margin-bottom 0.4s ease-out; margin-bottom: 0px; }
+.faq-answer { max-height: 0; overflow: hidden; padding: 0 20px; border-left: 2px solid var(--brand-gold-light); margin-left: 10px; opacity: 0; transition: max-height 0.4s ease-out, padding 0.4s ease-out, opacity 0.3s ease-out; margin-bottom: 0px; }
 .faq-answer.open { max-height: 2000px; padding: 20px; opacity: 1; margin-bottom: 30px; }
 
 /* --- 7. NAVIGATION OVERLAY MENU --- */
-.nav-toggle-container { display: flex; align-items: center; justify-content: flex-end; }
-.menu-toggle { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 10px; z-index: 10000; }
-.menu-toggle:focus { outline: 2px solid var(--wedding-gold-light); outline-offset: 4px; border-radius: 2px; }
-.hamburger-box { width: 40px; height: 24px; display: inline-block; position: relative; }
-.hamburger-inner { display: block; top: 50%; margin-top: -1.5px; }
-.hamburger-inner, .hamburger-inner::before, .hamburger-inner::after { width: 40px; height: 3px; background-color: var(--wedding-text); border-radius: 3px; position: absolute; transition: transform 0.15s ease; }
-.hamburger-inner::before, .hamburger-inner::after { content: ""; display: block; }
-.hamburger-inner::before { top: -10px; }
-.hamburger-inner::after { bottom: -10px; }
-
-.menu-overlay { position: fixed; inset: 0; background-color: rgba(249, 249, 247, 0.98); z-index: 9999; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.menu-overlay { position: fixed; inset: 0; background-color: rgba(249, 249, 247, 0.98); z-index: 9999; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; display: flex; align-items: center; justify-content: center; }
 .menu-overlay.is-active { opacity: 1; visibility: visible; }
-.menu-overlay-inner { position: relative; width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; }
-.menu-close { position: absolute; top: 40px; right: 40px; background: transparent; border: none; font-size: 3rem; color: var(--wedding-text); cursor: pointer; transition: color 0.3s; line-height: 1; padding: 10px; }
-.menu-close:hover { color: var(--wedding-gold-light); }
-.menu-close:focus { outline: 2px solid var(--wedding-gold-light); border-radius: 2px; }
-
-.overlay-nav { text-align: center; }
-.nav-menu-overlay { list-style: none; padding: 0; margin: 0; }
-.nav-menu-overlay li { margin-bottom: 25px; transform: translateY(20px); opacity: 0; transition: transform 0.4s ease, opacity 0.4s ease; }
-.menu-overlay.is-active .nav-menu-overlay li { transform: translateY(0); opacity: 1; }
-.menu-overlay.is-active .nav-menu-overlay li:nth-child(1) { transition-delay: 0.1s; }
-.menu-overlay.is-active .nav-menu-overlay li:nth-child(2) { transition-delay: 0.15s; }
-.menu-overlay.is-active .nav-menu-overlay li:nth-child(3) { transition-delay: 0.2s; }
-.menu-overlay.is-active .nav-menu-overlay li:nth-child(4) { transition-delay: 0.25s; }
-.menu-overlay.is-active .nav-menu-overlay li:nth-child(5) { transition-delay: 0.3s; }
-.menu-overlay.is-active .nav-menu-overlay li:nth-child(6) { transition-delay: 0.35s; }
-.menu-overlay.is-active .nav-menu-overlay li:nth-child(7) { transition-delay: 0.4s; }
-
-.nav-menu-overlay li a { text-decoration: none; font-size: 2rem; color: var(--wedding-text); font-family: 'Lato', sans-serif; letter-spacing: 4px; text-transform: uppercase; position: relative; display: inline-block; padding-bottom: 5px; font-weight: 700; transition: color 0.3s; }
-.nav-menu-overlay li a:hover { color: var(--wedding-gold-light); }
-.nav-menu-overlay li a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 50%; background-color: var(--wedding-gold-light); transition: all 0.3s ease; transform: translateX(-50%); }
-.nav-menu-overlay li a:hover::after, .nav-menu-overlay li.current-menu-item a::after { width: 100%; }
-
-@media (max-width: 1100px) { .menu-close { top: 20px; right: 20px; font-size: 2.5rem; } .nav-menu-overlay li a { font-size: 1.5rem; } }
+.nav-menu-overlay li a { text-decoration: none; font-size: 2rem; color: var(--brand-text); font-family: var(--font-primary); letter-spacing: 4px; text-transform: uppercase; font-weight: 700; }
+.nav-menu-overlay li a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 50%; background-color: var(--brand-gold-light); transition: all 0.3s ease; transform: translateX(-50%); }
+.nav-menu-overlay li a:hover::after { width: 100%; }
 
 /* --- 8. GLOBAL EDITOR TYPESETTING --- */
-.entry-content > p, 
-.entry-content > h2, 
-.entry-content > h3, 
-.entry-content > h4, 
-.entry-content > ul, 
-.entry-content > ol,
-.entry-content > blockquote,
-.entry-content > .wp-block-separator { 
-    max-width: 1000px; 
+.entry-content > p, .entry-content > h2, .entry-content > h3, .entry-content > h4, .entry-content > ul, .entry-content > ol, .entry-content > blockquote { 
+    max-width: var(--narrow-width); 
     margin-left: auto; 
     margin-right: auto; 
 }
+.entry-content p { font-size: 1.15rem; line-height: 1.8; color: #333; margin-bottom: 25px; text-align: center !important; }
+.entry-content h1, .entry-content h2 { font-family: var(--font-script); color: var(--brand-accent); text-align: center; }
+.entry-content h3, .entry-content h4 { font-family: var(--font-primary); color: var(--brand-text); text-align: center; }
 
-/* Paragraphs & Spacing */
-.entry-content p { 
-    font-size: 1.15rem; 
-    line-height: 1.8; 
-    color: #333; 
-    margin-bottom: 25px; 
-    text-align: center !important; 
-}
-
-/* Custom Content Headings */
-/* H1 & H2 (Main Flow): Blacksword Script */
-.entry-content h1, 
-.entry-content h2 { 
-    font-family: 'Blacksword', serif; 
-    color: var(--wedding-accent); 
-    font-weight: normal !important; 
-    -webkit-font-smoothing: antialiased; 
-    text-transform: none; 
-    letter-spacing: normal; 
-    text-align: center; 
-    margin-top: 15px; 
-    margin-bottom: 5px; 
-    line-height: 1.2;
-}
-
-/* H3 to H6 (Subheaders): Elegant, Soft Lato */
-.entry-content h3, 
-.entry-content h4, 
-.entry-content h5, 
-.entry-content h6 { 
-    font-family: 'Lato', sans-serif; 
-    text-transform: none; 
-    letter-spacing: normal; 
-    color: var(--wedding-text); 
-    font-weight: 400; 
-    text-align: center; 
-    margin-top: 35px; 
-    margin-bottom: 15px; 
-}
-
-/* Force strip ALL bolding generated by WordPress editor strong tags on Script Fonts */
-.entry-content h1 strong, .entry-content h1 b,
-.entry-content h2 strong, .entry-content h2 b {
-    font-weight: normal !important;
-}
-
-/* Relative Scaling */
-.entry-content h1 { font-size: 2.5rem; margin-top: 25px; }
-.entry-content h2 { font-size: 2.2rem; }
-.entry-content h3 { font-size: 1.4rem; color: var(--wedding-gold-light); }
-.entry-content h4 { font-size: 1.2rem; }
-.entry-content h5 { font-size: 1.0rem; }
-.entry-content h6 { font-size: 0.9rem; }
-
-/* Premium Bullets inside Editor */
-.entry-content ul { list-style: none; padding-left: 0; margin-bottom: 30px; display: inline-block; text-align: left; }
-.entry-content ul li { position: relative; padding-left: 20px; margin-bottom: 10px; color: #333; font-size: 1.1rem; line-height: 1.6; }
-.entry-content ul li::before { content: '—'; position: absolute; left: 0; color: var(--wedding-gold-light); font-weight: bold; }
-
-/* Blockquotes */
-.entry-content blockquote, .wp-block-quote { 
-    font-family: 'Lato', sans-serif; 
-    font-style: italic; 
-    font-size: 1.4rem; 
-    line-height: 1.8; 
-    color: var(--wedding-accent); 
-    text-align: center; 
-    border-top: 1px solid var(--wedding-gold-light); 
-    border-bottom: 1px solid var(--wedding-gold-light); 
-    padding: 30px 40px; 
-    margin: 50px auto; 
-    background: transparent;
-    border-left: none; /* override default WP styles */
-}
-.entry-content blockquote p, .wp-block-quote p { font-size: inherit; color: inherit; margin: 0; }
-
-/* Separators */
-.entry-content hr, .wp-block-separator { 
-    border: none; 
-    border-top: 1px solid var(--wedding-gold-light); 
-    width: 150px; 
-    margin: 60px auto; 
-    opacity: 0.6; 
-}
-
-/* --- 9. FOOTER (HARD RESET FOR BULLETS & LINKS) --- */
-.site-footer { padding: 80px 40px !important; background: #1a1a1a !important; color: #fff !important; margin-top: 120px; font-family: 'Lato', sans-serif !important; }
+/* --- 9. FOOTER --- */
+.site-footer { padding: 80px 40px !important; background: #1a1a1a !important; color: #fff !important; margin-top: 120px; font-family: var(--font-primary) !important; }
 .footer-grid { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; max-width: 1600px; margin: 0 auto; gap: 40px; }
 
-/* KILL BULLETS */
-.footer-legal-list, .footer-legal-list li { list-style: none !important; padding: 0 !important; margin: 0 !important; list-style-type: none !important; }
-.footer-legal-list li { margin-bottom: 12px !important; }
-
-/* KILL BLUE LINKS */
-.footer-legal-list li a, .footer-contact a { 
-    color: #fff !important; text-decoration: none !important; font-size: 0.8rem; text-transform: uppercase; 
-    letter-spacing: 2.5px; opacity: 0.4; transition: 0.3s; font-family: 'Lato', sans-serif !important;
-}
-.footer-legal-list li a:hover, .footer-contact a:hover { opacity: 1; color: var(--wedding-gold-light) !important; }
-
-.contact-row { display: block !important; width: 100%; margin-bottom: 10px; text-align: right; font-size: 0.9rem; opacity: 0.95; }
-
-@media (max-width: 1100px) {
-    .header-focal-container { flex-direction: column; padding: 30px 20px; text-align: center; }
-    .focal-side, .focal-center { width: 100%; justify-content: center; margin-bottom: 25px; min-width: 0; padding: 0; }
-    .nav-menu-focal { justify-content: center; }
-    .footer-grid { flex-direction: column; align-items: center; text-align: center; }
-    .contact-row { text-align: center; }
-    .page-template-page-about .about-grid { flex-direction: column; gap: 40px; text-align: center; }
-    .page-template-page-about .about-image { flex: none; width: 100%; max-width: 100%; padding: 0 10px; }
-}
-
-/* Legacy Custom Pattern CSS Blocks removed. Refer to /inc/editorial-patterns.php for Native WP Styling */
-
-/* --- 11. MOBILE RESPONSIVENESS OVERRIDES (SEO Audit Fixes v2) --- */
-@media (max-width: 768px) {
-
-    /* 1. Explicit readable base font size */
-    body { font-size: 16px !important; }
-
-    /* 2. Header & Titles */
-    .site-title-blacksword { font-size: 2.2rem !important; line-height: 1.4 !important; white-space: normal; }
-    .footer-branding h3 { font-size: 2.2rem !important; }
-    .entry-title, .archive-header h1, .about-title { font-size: 2.4rem !important; }
-
-    /* 3. Global Typography */
-    .entry-content h1 { font-size: 2.0rem; margin-top: 15px; }
-    .entry-content h2 { font-size: 1.8rem; }
-    .entry-content p  { font-size: 1rem !important; }
-    .site-tagline-lato { font-size: 0.65rem; letter-spacing: 3px; }
-
-    /* 4. Services Grid */
-    .services-grid, .components-grid { grid-template-columns: 1fr !important; gap: 20px; }
-    .component-card { flex: 0 0 100% !important; }
-
-    /* 5. Editorial Block Padding & Margins */
-    .gw-z-pattern, .gw-masonry-trio, .gw-quote-capture { margin: 40px auto !important; }
-    .gw-z-pattern .gw-z-text { padding: 30px 20px !important; }
-    .gw-quote-capture { padding: 60px 20px !important; }
-    .gw-quote-capture .wp-block-quote p { font-size: 1.4rem !important; }
-
-    /* 6. Container Adjustments */
-    .header-focal-container { padding: 20px 15px; }
-    .site-footer { padding: 40px 20px !important; margin-top: 60px; }
-
-    /* 7. Footer small text */
-    .footer-meta p { font-size: 0.7rem; letter-spacing: 2px; }
-    .footer-legal-list li a, .footer-contact a { font-size: 0.8rem; }
-
-    /* 8. About Mobile Image Fixes */
-    .page-template-page-about .about-image { width: 90% !important; margin: 0 auto; padding: 0 !important; }
-    .page-template-page-about .portrait-frame { transform: rotate(-1.5deg) !important; padding: 10px 10px 50px 10px !important; }
-
-    /* 9. Home Slider — full-width on mobile + reduced min-height */
-    .home .hero-carousel-wrapper { height: 50vh; min-height: 320px; }
-    .home .hero-slide { width: 100% !important; }
-    .home .hero-slide.prev { transform: translateX(-120%) !important; opacity: 0 !important; }
-    .home .hero-slide.next { transform: translateX(120%) !important; opacity: 0 !important; }
-
-    /* 10. Hero title box — reduce padding on small screens */
-    .hero-title-box { padding: 20px 24px !important; }
-    .hero-title { font-size: 1.6rem !important; }
-
-    /* 11. Carousel buttons — 44x44px minimum tap target */
-    .home .carousel-nav button { width: 44px !important; height: 44px !important; font-size: 1.4rem !important; }
-    #prevSlide { left: 10px !important; }
-    #nextSlide { right: 10px !important; }
-
-    /* 12. Footer social links — 44x44px tap targets */
-    .footer-social-link { width: 44px !important; height: 44px !important; font-size: 0.9rem !important; }
-
-    /* 13. Investment plaque on mobile */
-    .investment-plaque { padding: 24px 16px; }
-    .investment-plaque .price-val { font-size: 1.8rem; }
-}
-
-/* --- 12. ADVANCED EDITORIAL SERVICE DETAIL (MOCKUP STYLE) --- */
-
-.page-template-service-detail { position: relative; overflow: hidden; padding-bottom: 100px; }
-
-/* Background Illustration Layer */
-.service-bg-layer {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-size: 800px; background-repeat: no-repeat;
-    background-position: 10% 80%; opacity: 0.04; z-index: -1; pointer-events: none;
-}
-
-/* Investment Plaque (Right) */
-.investment-plaque {
-    background: #fff; border: 4px solid var(--wedding-gold-light);
-    padding: 40px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.05);
-    position: sticky; top: 40px;
-}
-.investment-plaque h2 { font-family: 'Lato', sans-serif !important; font-size: 1.8rem; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 10px; color: var(--wedding-gold-light); }
-.investment-plaque .subtitle { font-family: 'Lato', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--wedding-gold-light); margin-bottom: 25px; display: block; }
-.investment-plaque .price-wrap { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
-.investment-plaque .price-val { font-size: 2.2rem; font-weight: 700; color: var(--wedding-text); }
-.investment-plaque .duration-val { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
-.investment-plaque .investment-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
-.investment-plaque .btn-black { background: #1a1a1a; color: #fff; padding: 15px; text-decoration: none; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; transition: 0.3s; }
-.investment-plaque .btn-black:hover { background: var(--wedding-gold-light); color: #000; }
-
-/* Experience Highlights (Left) */
-.experience-intro-wrap h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: #000; }
-.highlights-list { list-style: none; padding: 0; margin: 30px 0; }
-.highlights-list li { position: relative; padding-left: 50px; margin-bottom: 20px; font-size: 1.1rem; min-height: 32px; display: flex; align-items: center; }
-.highlights-list li::before { 
-    content: ''; position: absolute; left: 0; top: 0; width: 32px; height: 32px; 
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23C5A059"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>') no-repeat center;
-    background-size: contain;
-}
-
-/* Detailed Components Grid */
-.detailed-components-section { margin-top: 100px; text-align: center; }
-.detailed-components-section h2 { font-family: 'Lato', sans-serif !important; font-size: 2.5rem; font-weight: 700; margin-bottom: 60px; color: var(--wedding-text); }
-
-.component-grid, .components-grid { 
-    display: flex; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    gap: 30px; 
-    max-width: 1100px; 
-    margin: 0 auto; 
-    text-align: left; 
-}
-.component-grid > div, .components-grid > div { display: contents; }
-
-.component-card { 
-    flex: 0 0 calc(50% - 15px); 
-    background: #fff; 
-    border: 3px solid var(--wedding-gold-light); 
-    padding: 30px; 
-    display: flex; 
-    align-items: center; 
-    gap: 25px; 
-    transition: 0.3s; 
-    text-decoration: none; 
-    color: inherit; 
-    box-sizing: border-box; 
-}
-.component-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-
-/* The Gold Coin Icon */
-.coin-icon-wrap { flex: 0 0 120px; width: 120px; height: 120px; position: relative; }
-.coin-icon-wrap::after { content: ''; position: absolute; inset: -5px; border: 2px solid var(--wedding-gold-light); border-radius: 50%; }
-.coin-icon-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid var(--wedding-accent); }
-
-.component-info h4 { font-size: 1.4rem; font-weight: 700; margin: 0 0 10px; line-height: 1.2; }
-.component-info p { font-size: 0.95rem; line-height: 1.5; opacity: 0.8; margin: 0; }
-
-@media (max-width: 900px) {
-    .component-grid { grid-template-columns: 1fr; }
-    .component-card { flex-direction: column; text-align: center; }
-    .coin-icon-wrap { margin: 0 auto; }
-}
-
-
 /* --- 10. EDITORIAL STRUCTURAL BLOCKS --- */
-
-/* Z-Pattern Custom Block */
-/* Z-Pattern Custom Block */
-.gw-z-pattern {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.gw-z-pattern, .gw-trio-gallery, .gw-editorial-split {
+    max-width: var(--editorial-width);
     margin: 80px auto;
-    max-width: 1200px;
-}
-.gw-z-pattern.is-right {
-    flex-direction: row-reverse;
-}
-.gw-z-image {
-    flex: 0 0 55%;
-    position: relative;
-    z-index: 1;
-}
-.gw-z-image img {
     width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    display: block;
-    border: 12px solid #ffffff;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
 }
-.gw-z-content {
-    flex: 0 0 50%;
-    background: #ffffff;
-    padding: 60px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.15);
-    z-index: 10;
-    margin-left: -5%;
-}
-.gw-z-pattern.is-right .gw-z-content {
-    margin-left: 0;
-    margin-right: -5%;
-}
-.gw-z-content h2 { 
-    font-family: 'Blacksword', cursive !important; 
-    font-size: 3rem; 
-    margin-bottom: 20px; 
-    color: var(--wedding-text); 
-}
-.gw-z-content p { 
-    font-family: 'Lato', sans-serif; 
-    font-size: 1.1rem; 
-    line-height: 1.8; 
-    color: var(--wedding-text); 
-    opacity: 0.9; 
-}
+
+.gw-z-pattern { display: flex; align-items: center; justify-content: space-between; }
+.gw-z-pattern.is-right { flex-direction: row-reverse; }
+.gw-z-image { flex: 0 0 55%; z-index: 1; }
+.gw-z-image img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border: 12px solid var(--brand-white); box-shadow: var(--shadow-deep); }
+.gw-z-content { flex: 0 0 50%; background: var(--brand-white); padding: 60px; box-shadow: var(--shadow-deep); z-index: 10; margin-left: -5%; }
+.gw-z-pattern.is-right .gw-z-content { margin-left: 0; margin-right: -5%; }
+.gw-z-content h2 { font-family: var(--font-script) !important; font-size: 3rem; margin-bottom: 20px; }
+
+.gw-trio-gallery { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+.gw-trio-main img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border: 8px solid var(--brand-white); box-shadow: var(--shadow-soft); }
+.gw-trio-side { display: flex; flex-direction: column; gap: 25px; }
+.gw-trio-side img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border: 6px solid var(--brand-white); box-shadow: var(--shadow-soft); }
+
+.gw-editorial-split { display: flex; align-items: stretch; background-color: #fefefe; }
+.gw-editorial-split.is-right { flex-direction: row-reverse; }
+.gw-split-media { flex-basis: 50%; padding: 15px; }
+.gw-split-media img { width: 100%; height: 100%; min-height: 400px; object-fit: cover; }
 
 @media (max-width: 900px) {
-    .gw-z-pattern { flex-direction: column !important; margin: 40px auto; }
-    .gw-z-image, .gw-z-content { flex: 0 0 100% !important; max-width: 100% !important; margin: 0 !important; width: 100% !important; }
-    .gw-z-content { padding: 40px 30px; box-shadow: none; border-top: 5px solid var(--wedding-gold-light); }
-    .gw-z-image img { border: 6px solid #fff; aspect-ratio: 1 / 1; }
-}
-
-/* Trio Gallery Custom Block */
-/* Trio Gallery Styles */
-.gw-trio-gallery {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 25px;
-    margin: 80px auto;
-    max-width: 1200px;
-}
-.gw-trio-main img {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    border: 8px solid #ffffff;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-}
-.gw-trio-side {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-.gw-trio-side img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border: 6px solid #ffffff;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-@media (max-width: 768px) {
+    .gw-z-pattern, .gw-editorial-split { flex-direction: column !important; }
+    .gw-z-image, .gw-z-content, .gw-split-media, .gw-split-content { flex: 100% !important; margin: 0 !important; width: 100% !important; }
     .gw-trio-gallery { grid-template-columns: 1fr; }
-    .gw-trio-main img { aspect-ratio: 1 / 1; }
 }
-
-/* Editorial Split Custom Block */
-.gw-editorial-split {
-    display: flex;
-    align-items: stretch;
-    background-color: #fefefe;
-    margin: 60px auto;
-    max-width: 1100px;
-}
-.gw-editorial-split.is-right {
-    flex-direction: row-reverse;
-}
-.gw-split-media {
-    flex-basis: 50%;
-    padding: 15px;
-    background: #eeeeee;
-}
-.gw-split-media img {
-    width: 100%;
-    height: 100%;
-    min-height: 400px;
-    object-fit: cover;
-    display: block;
-}
-
-@media (max-width: 768px) {
-    .gw-trio-gallery { flex-direction: column; }
-    .gw-trio-main img { height: 400px; }
-    .gw-editorial-split { flex-direction: column !important; }
-    .gw-split-media, .gw-split-content { flex-basis: 100% !important; }
-}
-

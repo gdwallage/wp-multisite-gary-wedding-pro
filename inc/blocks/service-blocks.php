@@ -103,7 +103,7 @@ function gary_wedding_editor_grid_fix() {
             display: contents !important;
         }
 
-        .editor-styles-wrapper .service-card { border: 8px solid #C5A059 !important; background: #fff !important; height: 100% !important; }
+        .editor-styles-wrapper .service-card { border: var(--gold-frame-border) solid var(--brand-gold-light) !important; background: var(--brand-white) !important; height: 100% !important; }
     </style>';
 }
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
