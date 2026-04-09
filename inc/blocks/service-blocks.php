@@ -30,6 +30,21 @@ function gary_register_service_blocks() {
 }
 add_action('init', 'gary_register_service_blocks');
 
+// Register custom block category for the editor
+function gary_register_block_categories( $categories, $post ) {
+    return array_merge(
+        array(
+            array(
+                'slug'  => 'gary-editorial-native',
+                'title' => __( 'Gary Wallage Wedding', 'garywedding' ),
+                'icon'  => 'star-filled',
+            ),
+        ),
+        $categories
+    );
+}
+add_filter( 'block_categories_all', 'gary_register_block_categories', 10, 2 );
+
 function gary_register_custom_block_styles() {
     register_block_style( 'core/list', array(
         'name'         => 'gw-highlights',
