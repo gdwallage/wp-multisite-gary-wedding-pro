@@ -11,72 +11,6 @@ function gary_register_native_editorial_patterns() {
     // Common SVG Placeholder for editor aesthetics
     $svg = esc_url('data:image/svg+xml;utf8,%3Csvg opacity="0.05" width="100%25" height="100%25" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23C5A059"/%3E%3C/svg%3E');
 
-    // 1. Z-Pattern Left
-    register_block_pattern( 'gw/z-pattern-left', array(
-        'title'         => __( 'Z-Pattern (Image Left)', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:columns {"verticalAlignment":"center"} -->
-<div class="wp-block-columns are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"55%"} -->
-<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:55%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none","className":"is-style-default"} -->
-<figure class="wp-block-image size-large is-style-default"><img src="' . $svg . '" alt="Select and click Replace Toolbar" style="border:10px solid #ffffff;box-shadow:0 15px 40px rgba(0,0,0,0.08);background:#f0f0f0;min-height:500px;"/></figure>
-<!-- /wp:image --></div>
-<!-- /wp:column -->
-<!-- wp:column {"verticalAlignment":"center","width":"55%","style":{"spacing":{"padding":{"top":"8%","right":"8%","bottom":"8%","left":"8%"},"margin":{"left":"-10%"}},"color":{"background":"#ffffff"}}} -->
-<div class="wp-block-column is-vertically-aligned-center has-background" style="background-color:#ffffff;padding-top:8%;padding-right:8%;padding-bottom:8%;padding-left:8%;margin-left:-10%;flex-basis:55%;z-index:10;box-shadow:0 10px 40px rgba(0,0,0,0.05);"><!-- wp:heading {"textAlign":"center","level":3,"style":{"color":{"text":"#c5a059"}}} -->
-<h3 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059">A Moment in Time</h3>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Click here to write your story. Because this is a native block, you can select the outer box and change its padding, background color, or margins using the right sidebar!</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns -->',
-    ) );
-
-    // 2. Z-Pattern Right
-    register_block_pattern( 'gw/z-pattern-right', array(
-        'title'         => __( 'Z-Pattern (Image Right)', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:columns {"verticalAlignment":"center"} -->
-<div class="wp-block-columns are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"55%","style":{"spacing":{"padding":{"top":"8%","right":"8%","bottom":"8%","left":"8%"},"margin":{"right":"-10%"}},"color":{"background":"#ffffff"}}} -->
-<div class="wp-block-column is-vertically-aligned-center has-background" style="background-color:#ffffff;padding-top:8%;padding-right:8%;padding-bottom:8%;padding-left:8%;margin-right:-10%;flex-basis:55%;z-index:10;box-shadow:0 10px 40px rgba(0,0,0,0.05);"><!-- wp:heading {"textAlign":"center","level":3,"style":{"color":{"text":"#c5a059"}}} -->
-<h3 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059">Unscripted Joy</h3>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Use this alternating pattern to break up wide text segments. Edit colors, typography, and overlaps visually.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column -->
-<!-- wp:column {"verticalAlignment":"center","width":"55%"} -->
-<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:55%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-<figure class="wp-block-image size-large"><img src="' . $svg . '" alt="Select and Replace" style="border:10px solid #ffffff;box-shadow:0 15px 40px rgba(0,0,0,0.08);background:#f0f0f0;min-height:500px;"/></figure>
-<!-- /wp:image --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns -->',
-    ) );
-
-    // 3. Gallery Wall Trio
-    register_block_pattern( 'gw/trio-gallery', array(
-        'title'         => __( 'The Gallery Wall Trio', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:columns {"style":{"spacing":{"blockGap":{"top":"30px","left":"30px"}}}} -->
-<div class="wp-block-columns"><!-- wp:column {"width":"66.66%"} -->
-<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-<figure class="wp-block-image size-large"><img src="' . $svg . '" alt="Replace this main piece" style="border:8px solid #ffffff;box-shadow:0 10px 20px rgba(0,0,0,0.05);background:#f0f0f0;height:630px;object-fit:cover;"/></figure>
-<!-- /wp:image --></div>
-<!-- /wp:column -->
-<!-- wp:column {"width":"33.33%","style":{"spacing":{"blockGap":"30px"}}} -->
-<div class="wp-block-column" style="flex-basis:33.33%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-<figure class="wp-block-image size-large"><img src="' . $svg . '" alt="Top right image" style="border:8px solid #ffffff;box-shadow:0 10px 20px rgba(0,0,0,0.05);background:#f0f0f0;height:300px;object-fit:cover;"/></figure>
-<!-- /wp:image -->
-<!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-<figure class="wp-block-image size-large"><img src="' . $svg . '" alt="Bottom right image" style="border:8px solid #ffffff;box-shadow:0 10px 20px rgba(0,0,0,0.05);background:#f0f0f0;height:300px;object-fit:cover;"/></figure>
-<!-- /wp:image --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns -->',
-    ) );
-
     // 4. Cinematic Hero Bleed
     register_block_pattern( 'gw/cinematic-bleed', array(
         'title'         => __( 'Cinematic Hero Bleed', 'garywedding' ),
@@ -89,20 +23,6 @@ function gary_register_native_editorial_patterns() {
 <!-- /wp:cover -->',
     ) );
 
-    // 5. Editorial Split
-    register_block_pattern( 'gw/editorial-split', array(
-        'title'         => __( 'Editorial Split (50/50)', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:media-text {"mediaPosition":"right","mediaType":"image","imageFill":false,"style":{"color":{"background":"#fefefe"}}} -->
-<div class="wp-block-media-text has-media-on-the-right is-stacked-on-mobile has-background" style="background-color:#fefefe"><figure class="wp-block-media-text__media"><img src="' . $svg . '" alt="" style="background:#eeeeee;padding:15px;min-height:400px;"/></figure><div class="wp-block-media-text__content"><!-- wp:heading {"level":3,"style":{"color":{"text":"#c5a059"}}} -->
-<h3 class="wp-block-heading has-text-color" style="color:#c5a059">Magazine Layout</h3>
-<!-- /wp:heading -->
-<!-- wp:paragraph -->
-<p>Clean, crisp, and split flawlessly down the middle. Best used for "About" introductions or explaining a specific package offering.</p>
-<!-- /wp:paragraph --></div></div>
-<!-- /wp:media-text -->',
-    ) );
 
     // 6. Storyteller Grid (4 Pcs)
     register_block_pattern( 'gw/storyteller-grid', array(

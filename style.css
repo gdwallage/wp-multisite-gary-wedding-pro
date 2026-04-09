@@ -476,3 +476,102 @@ a.service-card-link .service-card-ribbon {
     .coin-icon-wrap { margin: 0 auto; }
 }
 
+
+/* --- 10. EDITORIAL STRUCTURAL BLOCKS --- */
+
+/* Z-Pattern Custom Block */
+.gw-z-pattern {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 60px auto;
+    max-width: 1100px;
+}
+.gw-z-pattern.is-right {
+    flex-direction: row-reverse;
+}
+.gw-z-pattern .gw-z-image {
+    flex-basis: 55%;
+    z-index: 1;
+}
+.gw-z-pattern .gw-z-image img {
+    width: 100%;
+    min-height: 500px;
+    object-fit: cover;
+    border: 10px solid #ffffff;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+.gw-z-pattern .gw-z-content {
+    flex-basis: 55%;
+    background-color: #ffffff;
+    padding: 8%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    z-index: 10;
+    margin-left: -10%;
+}
+.gw-z-pattern.is-right .gw-z-content {
+    margin-left: 0;
+    margin-right: -10%;
+}
+
+/* Trio Gallery Custom Block */
+.gw-trio-gallery {
+    display: flex;
+    gap: 30px;
+    margin: 60px auto;
+    max-width: 1100px;
+}
+.gw-trio-main {
+    flex-basis: 66.66%;
+}
+.gw-trio-side {
+    flex-basis: 33.33%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.gw-trio-gallery img {
+    border: 8px solid #ffffff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    background: #f0f0f0;
+    object-fit: cover;
+    width: 100%;
+    display: block;
+}
+.gw-trio-main img {
+    height: 630px;
+}
+.gw-trio-side img {
+    height: 300px;
+}
+
+/* Editorial Split Custom Block */
+.gw-editorial-split {
+    display: flex;
+    align-items: stretch;
+    background-color: #fefefe;
+    margin: 60px auto;
+    max-width: 1100px;
+}
+.gw-editorial-split.is-right {
+    flex-direction: row-reverse;
+}
+.gw-split-media {
+    flex-basis: 50%;
+    padding: 15px;
+    background: #eeeeee;
+}
+.gw-split-media img {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    object-fit: cover;
+    display: block;
+}
+.gw-split-content {
+    flex-basis: 50%;
+    padding: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
