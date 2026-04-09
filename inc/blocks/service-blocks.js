@@ -77,11 +77,7 @@
             );
         },
         save: function(props) {
-            return el('div', { className: 'detailed-components-section', style: { marginTop: '20px' } },
-                el('div', { className: 'component-grid' },
-                    el(InnerBlocks.Content, null)
-                )
-            );
+            return el(InnerBlocks.Content, null);
         }
     });
 

@@ -257,6 +257,10 @@ add_action( 'wp_footer', 'gary_wedding_footer_scripts' );
  * EDITOR BOOKLY LINKER UI
  */
 function gary_add_bookly_meta_box() {
+    global $post;
+    if ( $post && get_post_meta( $post->ID, '_wp_page_template', true ) === 'page-services.php' ) {
+        return;
+    }
     add_meta_box(
         'gary_bookly_integration_box',
         __( 'Bookly Service Link', 'garywedding' ),
@@ -319,9 +323,13 @@ add_action( 'save_post', 'gary_save_bookly_meta_box_data' );
  * ADVANCED EDITORIAL LAYOUT DATA
  */
 function gary_add_editorial_meta_box() {
+    global $post;
+    if ( $post && get_post_meta( $post->ID, '_wp_page_template', true ) === 'page-services.php' ) {
+        return;
+    }
     add_meta_box(
         'gary_editorial_layout_box',
-        __( 'Editorial Layout Data (Mockup Style)', 'garywedding' ),
+        __( 'Editorial Layout Data', 'garywedding' ),
         'gary_editorial_meta_box_html',
         'page',
         'side',
@@ -379,36 +387,54 @@ function gary_editorial_meta_box_html( $post ) {
             echo '<option disabled>' . __( 'Bookly not found — install & activate Bookly plugin', 'garywedding' ) . '</option>';
         }
 
-        echo '</select></div>';
     }
+}
 
-    echo '<hr />';
+function gary_add_styling_meta_box() {
+    add_meta_box(
+        'gary_styling_meta_box',
+        __( 'Page Styling', 'garywedding' ),
+        'gary_styling_meta_box_html',
+        'page',
+        'side',
+        'default'
+    );
+}
+add_action( 'add_meta_boxes', 'gary_add_styling_meta_box' );
+
+function gary_styling_meta_box_html( $post ) {
+    wp_nonce_field( 'gary_styling_meta_box_nonce', 'gary_styling_meta_box_nonce' );
+    $bg_img = get_post_meta( $post->ID, '_gary_service_bg_img', true );
     echo '<p><strong>' . __( 'Background Illustration URL:', 'garywedding' ) . '</strong><br /><input type="text" name="gary_service_bg_img" value="' . esc_attr($bg_img) . '" style="width:100%;" placeholder="Link to a faint .png illustration" /></p>';
 }
 
 function gary_save_editorial_meta_box_data( $post_id ) {
-    if ( ! isset( $_POST['gary_editorial_meta_box_nonce'] ) ) return;
-    if ( ! wp_verify_nonce( $_POST['gary_editorial_meta_box_nonce'], 'gary_editorial_meta_box_nonce' ) ) return;
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
     if ( ! current_user_can( 'edit_page', $post_id ) ) return;
     
-    // Save fields
-    $fields = array(
-        'gary_service_subtitle'   => '_gary_service_subtitle',
-        'gary_service_highlights' => '_gary_service_highlights',
-        'gary_service_bg_img'      => '_gary_service_bg_img'
-    );
-    foreach ($fields as $key => $meta) {
-        if ( isset( $_POST[$key] ) ) {
-            $sanitized = ($key === 'gary_service_highlights') ? sanitize_textarea_field( $_POST[$key] ) : sanitize_text_field( $_POST[$key] );
-            update_post_meta( $post_id, $meta, $sanitized );
+    // Save Editorial Data if nonce present
+    if ( isset( $_POST['gary_editorial_meta_box_nonce'] ) && wp_verify_nonce( $_POST['gary_editorial_meta_box_nonce'], 'gary_editorial_meta_box_nonce' ) ) {
+        $fields = array(
+            'gary_service_subtitle'   => '_gary_service_subtitle',
+            'gary_service_highlights' => '_gary_service_highlights'
+        );
+        foreach ($fields as $key => $meta) {
+            if ( isset( $_POST[$key] ) ) {
+                $sanitized = ($key === 'gary_service_highlights') ? sanitize_textarea_field( $_POST[$key] ) : sanitize_text_field( $_POST[$key] );
+                update_post_meta( $post_id, $meta, $sanitized );
+            }
+        }
+        for ( $i = 1; $i <= 8; $i++ ) {
+            if ( isset( $_POST['gary_sub_service_' . $i] ) ) {
+                update_post_meta( $post_id, '_gary_sub_service_' . $i, sanitize_text_field( $_POST['gary_sub_service_' . $i] ) );
+            }
         }
     }
     
-    // Save sub-services (slots 1-8)
-    for ( $i = 1; $i <= 8; $i++ ) {
-        if ( isset( $_POST['gary_sub_service_' . $i] ) ) {
-            update_post_meta( $post_id, '_gary_sub_service_' . $i, sanitize_text_field( $_POST['gary_sub_service_' . $i] ) );
+    // Save Styling Data if nonce present
+    if ( isset( $_POST['gary_styling_meta_box_nonce'] ) && wp_verify_nonce( $_POST['gary_styling_meta_box_nonce'], 'gary_styling_meta_box_nonce' ) ) {
+        if ( isset( $_POST['gary_service_bg_img'] ) ) {
+            update_post_meta( $post_id, '_gary_service_bg_img', sanitize_text_field( $_POST['gary_service_bg_img'] ) );
         }
     }
 }
