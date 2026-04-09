@@ -9,7 +9,7 @@
     const MediaUpload = wp.blockEditor.MediaUpload;
     const Button = wp.components.Button;
 
-    console.info('GW Editorial: Initializing Native Blocks...');
+    console.info('GW Editorial: Initializing Native Blocks v1.3.0...');
 
     // 1. Singular Service Box
     registerBlockType('gw/single-service', {
@@ -50,7 +50,7 @@
                 }
             });
 
-            return el('div', { style: { minHeight: '100px' } }, inspector, preview);
+            return el('div', { className: 'gw-block-wrapper' }, inspector, preview);
         },
         save: function() { return null; }
     });
@@ -81,11 +81,11 @@
             const is2Col = props.attributes.grid_layout === '2-cols';
             const innerClass = is2Col ? 'components-grid' : 'services-grid';
 
-            return el('div', { className: (is2Col ? 'detailed-components-section' : '') },
+            return el('div', { className: 'gw-grid-container ' + (is2Col ? 'detailed-components-section' : '') },
                 inspector,
-                el('div', { className: innerClass, style: { padding: '10px' } },
+                el('div', { className: innerClass },
                     el(InnerBlocks, {
-                        allowedBlocks: ['gw/single-service'],
+                        allowedBlocks: ['gw/single-service', 'core/heading', 'core/paragraph'],
                         template: [
                             ['gw/single-service', {}],
                             ['gw/single-service', {}],
@@ -107,16 +107,27 @@
         attributes: {
             image_url: { type: 'string', default: '' },
             image_id: { type: 'number', default: 0 },
-            image_pos: { type: 'string', default: 'left' }
+            image_pos: { type: 'string', default: 'left' },
+            image_size: { type: 'string', default: 'large' }
         },
         edit: function(props) {
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Layout Properties', initialOpen: true },
+                el(PanelBody, { title: 'Media Settings', initialOpen: true },
                     el(SelectControl, {
                         label: 'Image Position', value: atts.image_pos,
                         options: [{ label: 'Left', value: 'left' }, { label: 'Right', value: 'right' }],
                         onChange: function(v) { props.setAttributes({ image_pos: v}); }
+                    }),
+                    el(SelectControl, {
+                        label: 'Image Resolution', value: atts.image_size,
+                        options: [
+                            { label: 'Thumbnail', value: 'thumbnail' },
+                            { label: 'Medium', value: 'medium' },
+                            { label: 'Large', value: 'large' },
+                            { label: 'Full Size', value: 'full' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ image_size: v}); }
                     })
                 )
             );
@@ -155,12 +166,27 @@
         icon: 'images-alt2',
         category: 'gary-editorial-native',
         attributes: {
-            img1_url: { type: 'string', default: '' }, img1_id: { type: 'number', default: 0 },
-            img2_url: { type: 'string', default: '' }, img2_id: { type: 'number', default: 0 },
-            img3_url: { type: 'string', default: '' }, img3_id: { type: 'number', default: 0 },
+            img1_url: { type: 'string', default: '' }, img1_id: { type: 'number', default: 0 }, img1_size: { type: 'string', default: 'large' },
+            img2_url: { type: 'string', default: '' }, img2_id: { type: 'number', default: 0 }, img2_size: { type: 'string', default: 'medium' },
+            img3_url: { type: 'string', default: '' }, img3_id: { type: 'number', default: 0 }, img3_size: { type: 'string', default: 'medium' },
         },
         edit: function(props) {
             const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Media Settings', initialOpen: true },
+                    [1,2,3].map(i => el(SelectControl, {
+                        label: `Image ${i} Resolution`, value: atts[`img${i}_size`],
+                        options: [
+                            { label: 'Thumbnail', value: 'thumbnail' },
+                            { label: 'Medium', value: 'medium' },
+                            { label: 'Large', value: 'large' },
+                            { label: 'Full Size', value: 'full' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ [`img${i}_size`]: v }); }
+                    }))
+                )
+            );
+
             const createUploader = (targetPrefix, height) => el(MediaUpload, {
                 onSelect: function(media) { props.setAttributes({ [`${targetPrefix}_url`]: media.url, [`${targetPrefix}_id`]: media.id }); },
                 allowedTypes: ['image'], value: atts[`${targetPrefix}_id`],
@@ -172,6 +198,7 @@
             });
 
             return el('div', { className: 'gw-trio-gallery' },
+                inspector,
                 el('div', { className: 'gw-trio-main' }, createUploader('img1', '620px')),
                 el('div', { className: 'gw-trio-side' }, 
                     createUploader('img2', '295px'), 
@@ -190,16 +217,27 @@
         attributes: {
             image_url: { type: 'string', default: '' },
             image_id: { type: 'number', default: 0 },
-            image_pos: { type: 'string', default: 'right' }
+            image_pos: { type: 'string', default: 'right' },
+            image_size: { type: 'string', default: 'large' }
         },
         edit: function(props) {
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Layout Settings' },
+                el(PanelBody, { title: 'Media Settings', initialOpen: true },
                     el(SelectControl, {
                         label: 'Media Position', value: atts.image_pos,
                         options: [{ label: 'Left', value: 'left' }, { label: 'Right', value: 'right' }],
                         onChange: function(v) { props.setAttributes({ image_pos: v}); }
+                    }),
+                    el(SelectControl, {
+                        label: 'Image Resolution', value: atts.image_size,
+                        options: [
+                            { label: 'Thumbnail', value: 'thumbnail' },
+                            { label: 'Medium', value: 'medium' },
+                            { label: 'Large', value: 'large' },
+                            { label: 'Full Size', value: 'full' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ image_size: v}); }
                     })
                 )
             );

@@ -8,6 +8,8 @@ Description: Precision Gallery Frames & Advanced Boutique Service Redesign.
 /* Link Hard-Reset (No blue, No underlines - Global Safety) */
 a.service-card-link,
 a.service-card-link *,
+.component-card,
+.component-card *,
 .site-footer a { 
     text-decoration: none !important; 
     color: inherit !important; 
@@ -83,12 +85,12 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 }
 
 /* 3D Diagonal Saving Ribbon (Pinned to Card Frame) */
-a.service-card-link .service-card-ribbon {
+.service-card .service-card-ribbon {
     position: absolute;
     top: 22px;
     right: -42px;
     background: var(--wedding-crimson) !important;
-    color: var(--wedding-gold-light) !important; /* Gold Text */
+    color: var(--wedding-gold-light) !important;
     padding: 6px 45px;
     transform: rotate(45deg);
     font-size: 0.72rem;
@@ -101,6 +103,24 @@ a.service-card-link .service-card-ribbon {
     border-bottom: 1px solid rgba(0,0,0,0.25);
     pointer-events: none;
     line-height: 1;
+}
+
+/* Scaling Fix: Singular Cards outside grids */
+.service-card-link {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+}
+.gw-block-wrapper .service-card-link,
+.home .service-card-link,
+.site-main > .service-card-link {
+    max-width: 450px;
+}
+
+/* Inside grid, don't cap width */
+.services-grid .service-card-link,
+.components-grid .service-card-link {
+    max-width: none;
 }
 
 .service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
@@ -388,7 +408,8 @@ a.service-card-link .service-card-ribbon {
     .site-tagline-lato { font-size: 0.65rem; letter-spacing: 3px; }
 
     /* 4. Services Grid */
-    .page-template-page-services .services-grid { grid-template-columns: 1fr !important; gap: 20px; }
+    .services-grid, .components-grid { grid-template-columns: 1fr !important; gap: 20px; }
+    .component-card { flex: 0 0 100% !important; }
 
     /* 5. Editorial Block Padding & Margins */
     .gw-z-pattern, .gw-masonry-trio, .gw-quote-capture { margin: 40px auto !important; }
@@ -518,13 +539,19 @@ a.service-card-link .service-card-ribbon {
     flex-basis: 55%;
     background-color: #ffffff;
     padding: 8%;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
     z-index: 10;
-    margin-left: -10%;
+    margin-left: -5%;
 }
 .gw-z-pattern.is-right .gw-z-content {
     margin-left: 0;
-    margin-right: -10%;
+    margin-right: -5%;
+}
+
+@media (max-width: 768px) {
+    .gw-z-pattern { flex-direction: column !important; }
+    .gw-z-pattern .gw-z-image, .gw-z-pattern .gw-z-content { flex-basis: 100%; margin: 0 !important; }
+    .gw-z-pattern .gw-z-image img { min-height: 300px; border: none; }
 }
 
 /* Trio Gallery Custom Block */
@@ -581,5 +608,11 @@ a.service-card-link .service-card-ribbon {
     object-fit: cover;
     display: block;
 }
+
+@media (max-width: 768px) {
+    .gw-trio-gallery { flex-direction: column; }
+    .gw-trio-main img { height: 400px; }
+    .gw-editorial-split { flex-direction: column !important; }
+    .gw-split-media, .gw-split-content { flex-basis: 100% !important; }
 }
 
