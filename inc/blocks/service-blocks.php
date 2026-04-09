@@ -108,8 +108,16 @@ function gary_enqueue_block_editor_assets() {
         'gw-service-blocks',
         get_template_directory_uri() . '/inc/blocks/service-blocks.js',
         array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'),
-        '1.1.0',
+        '1.2.0',
         true
+    );
+
+    // CRITICAL: Load the design system into the editor
+    wp_enqueue_style(
+        'gw-service-blocks-editor',
+        get_stylesheet_uri(),
+        array(),
+        '1.2.0'
     );
 
     // Get Bookly options
@@ -122,7 +130,7 @@ function gary_enqueue_block_editor_assets() {
         foreach ( $services as $s ) {
             $options[] = array(
                 'label' => $s->title,
-                'value' => (string) $s->id // Ensure it's a string, matching the attribute type
+                'value' => (string) $s->id
             );
         }
     }
@@ -132,9 +140,18 @@ function gary_enqueue_block_editor_assets() {
 add_action( 'enqueue_block_editor_assets', 'gary_enqueue_block_editor_assets' );
 
 function gary_wedding_editor_grid_fix() {
-    echo '<style>
+    // Injects specific fixes into the editor head to bridge the gap between frontend CSS and Editor DOM
+    echo '<style id="gary-editor-grid-fix">
+        /* Unbox ServerSideRender output */
         .wp-block-gw-single-service { display: contents !important; }
-        .editor-styles-wrapper .services-grid, .editor-styles-wrapper .components-grid { flex-wrap: wrap; }
+        .wp-block-gw-single-service > div { width: 100% !important; display: contents !important; }
+        
+        /* Ensure the grid wrapper uses flex as defined in style.css */
+        .editor-styles-wrapper .services-grid { display: flex !important; flex-wrap: wrap !important; gap: 30px !important; }
+        .editor-styles-wrapper .components-grid { display: flex !important; flex-wrap: wrap !important; gap: 30px !important; }
+        
+        /* Force parity for the service card frames in the editor */
+        .editor-styles-wrapper .service-card { border: 8px solid #C5A059 !important; background: #fff !important; }
     </style>';
 }
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );

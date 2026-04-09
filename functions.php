@@ -20,6 +20,10 @@ if ( ! function_exists( 'gary_wedding_setup' ) ) :
         ) );
         register_nav_menus( array( 'primary' => __( 'Primary Menu', 'garywedding' ) ) );
         add_post_type_support( 'page', 'excerpt' );
+        
+        // Block Editor Design Support
+        add_theme_support( 'editor-styles' );
+        add_editor_style( 'style.css' );
     }
 endif;
 add_action( 'after_setup_theme', 'gary_wedding_setup' );
