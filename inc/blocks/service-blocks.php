@@ -65,8 +65,8 @@ add_filter( 'block_categories_all', 'gary_register_block_categories', 10, 2 );
 
 // Editor Enqueuing
 function gary_enqueue_block_editor_assets() {
-    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.4.0', true );
-    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.4.0' );
+    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.5.0', true );
+    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.5.0' );
 
     global $wpdb;
     $options = array( array( 'label' => '-- Select Service --', 'value' => '' ) );
@@ -81,26 +81,26 @@ add_action( 'enqueue_block_editor_assets', 'gary_enqueue_block_editor_assets' );
 
 function gary_wedding_editor_grid_fix() {
     echo '<style id="gary-editor-grid-fix">
-        /* Unbox ServerSideRender wrappers in Editor */
         .wp-block-gw-single-service { display: contents !important; }
         .wp-block-gw-single-service > div { display: contents !important; }
         
-        /* Grid Parity in Editor */
         .editor-styles-wrapper .services-grid, 
         .editor-styles-wrapper .components-grid,
         .editor-styles-wrapper .component-grid { 
             display: grid !important; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; 
             gap: 30px !important; 
             width: 100% !important;
+            align-items: stretch !important;
         }
 
-        /* Bypass InnerBlocks wrappers */
         .editor-styles-wrapper .services-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
             display: contents !important;
         }
 
-        .editor-styles-wrapper .service-card { border: 8px solid #C5A059 !important; background: #fff !important; }
+        .editor-styles-wrapper .service-card { border: 8px solid #C5A059 !important; background: #fff !important; height: 100% !important; display: flex !important; flex-direction: column !important; }
+        .editor-styles-wrapper .service-card-content { flex-grow: 1 !important; display: flex !important; flex-direction: column !important; }
+        .editor-styles-wrapper .service-card-title { text-align: center !important; font-family: "Blacksword", cursive !important; }
     </style>';
 }
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
@@ -128,15 +128,38 @@ function gary_render_single_service_block( $attributes ) {
     $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $b_id ) );
 
     $card_title = $b_data['title'];
+    $is_free = (float)$b_data['price'] <= 0;
+    $display_price = $is_free ? 'FREE' : 'From £' . number_format($b_data['price'], 0);
+    $display_duration = '';
+    
     $card_url = $page_id ? get_permalink($page_id) : '/booking/';
-    $card_thumb = $page_id ? get_the_post_thumbnail_url($page_id, 'large') : '';
-    $card_desc = !empty($b_data['info']) ? $b_data['info'] : '';
-    $price = (float)$b_data['price'] > 0 ? 'From £' . number_format($b_data['price'], 0) : 'FREE';
+    $card_thumb = '';
+    $highlights = '';
+    $summary = array('savings' => 0, 'titles' => array());
+
+    if ($page_id) {
+        $card_thumb = get_the_post_thumbnail_url($page_id, 'large');
+        $highlights = get_post_meta($page_id, '_gary_service_highlights', true);
+        $summary = gary_get_sub_service_summary($page_id);
+        
+        $manual_price = get_post_meta($page_id, '_gary_service_price', true);
+        $manual_dur = get_post_meta($page_id, '_gary_service_duration', true);
+        if ($manual_price) {
+            if ($manual_price === '0' || strtolower($manual_price) === 'free') {
+                $display_price = 'FREE'; $is_free = true;
+            } else {
+                $display_price = 'From £' . $manual_price; $is_free = false;
+            }
+        }
+        if ($manual_dur) $display_duration = 'Typically ' . $manual_dur;
+    }
 
     if (!$card_thumb) {
         $logo_id = get_theme_mod('custom_logo');
         $card_thumb = $logo_id ? wp_get_attachment_image_url($logo_id, 'full') : '';
     }
+
+    $card_desc = !empty($b_data['info']) ? $b_data['info'] : '';
 
     ob_start();
     if ($layout === 'horizontal') : ?>
@@ -150,12 +173,44 @@ function gary_render_single_service_block( $attributes ) {
     <?php else : ?>
         <a href="<?php echo esc_url($card_url); ?>" class="service-card-link">
             <div class="service-card">
-                <?php if($price !== 'FREE'): ?><div class="service-card-ribbon">SAVE BIG</div><?php endif; ?>
+                <?php if($summary['savings'] > 0): ?><div class="service-card-ribbon">SAVE £<?php echo number_format($summary['savings'], 0); ?></div><?php endif; ?>
                 <div class="service-card-image"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
                 <div class="service-card-content">
                     <h3 class="service-card-title"><?php echo esc_html($card_title); ?></h3>
-                    <div class="service-card-price"><?php echo esc_html($price); ?></div>
-                    <div class="service-card-description"><?php echo wp_kses_post(wp_trim_words($card_desc, 25)); ?></div>
+                    <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
+                        <span><?php echo esc_html($display_price); ?></span>
+                        <?php if($display_duration): ?><small class="duration-label"><?php echo esc_html($display_duration); ?></small><?php endif; ?>
+                    </div>
+                    
+                    <?php if ( ! empty( $summary['titles'] ) ) : ?>
+                        <ul class="card-included-items">
+                            <?php foreach ( $summary['titles'] as $inc_title ) : ?>
+                                <li><?php echo esc_html( $inc_title ); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+
+                    <div class="service-card-description" style="text-align: center; margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
+                        <?php echo wp_kses_post(wp_trim_words($card_desc, 25)); ?>
+                    </div>
+
+                    <?php if (!empty($highlights)) : ?>
+                        <div class="service-card-highlights">
+                            <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Lato', sans-serif; font-size: 0.85rem; line-height: 1.7; color: var(--wedding-text); opacity: 0.9;">
+                                <?php 
+                                $lines = explode("\n", $highlights);
+                                foreach($lines as $line) {
+                                    if (trim($line)) {
+                                        echo '<li style="margin-bottom: 5px; padding-left: 20px; position: relative; text-align: left;">';
+                                        echo '<span style="position: absolute; left: 0; color: var(--wedding-gold-light);">✓</span>';
+                                        echo esc_html(trim($line));
+                                        echo '</li>';
+                                    }
+                                }
+                                ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </a>
