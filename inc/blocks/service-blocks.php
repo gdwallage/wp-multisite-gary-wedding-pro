@@ -27,6 +27,11 @@ function gary_register_service_blocks() {
             )
         )
     ));
+
+    // Register structural layout blocks to expose them to the Block Inserter universally
+    register_block_type('gw/z-pattern', array());
+    register_block_type('gw/trio-gallery', array());
+    register_block_type('gw/editorial-split', array());
 }
 add_action('init', 'gary_register_service_blocks');
 
