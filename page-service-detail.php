@@ -58,9 +58,9 @@ $included_titles_str = $summary['included_str'];
                     <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
                 </div>
 
-                <?php if ( ! empty( $included_titles ) ) : ?>
-                    <p style="font-family:'Lato', sans-serif; font-size:1rem; line-height:1.6; color:var(--wedding-accent); font-weight:700; margin-bottom: 30px; border-left: 2px solid var(--wedding-gold-light); padding-left: 15px;">
-                        This collection includes: <?php echo esc_html( implode(', ', $included_titles) ); ?>
+                <?php if ( ! empty( $summary['titles'] ) ) : ?>
+                    <p style="font-family:'Lato', sans-serif; font-size:1rem; line-height:1.6; color:var(--brand-accent); font-weight:700; margin-bottom: 30px; border-left: 2px solid var(--brand-gold-light); padding-left: 15px;">
+                        This collection includes: <?php echo esc_html( implode(', ', $summary['titles']) ); ?>
                     </p>
                 <?php endif; ?>
 
@@ -85,7 +85,7 @@ $included_titles_str = $summary['included_str'];
                     
                     <div class="price-wrap">
                         <?php if ( $final_savings > 0 ) : ?>
-                            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--wedding-crimson); margin-bottom: 10px;">
+                            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-crimson); margin-bottom: 10px;">
                                 Bundle Saving: £<?php echo number_format($final_savings, 0); ?>
                             </div>
                         <?php endif; ?>
@@ -114,7 +114,7 @@ $included_titles_str = $summary['included_str'];
 
                     <div class="investment-buttons">
                         <a href="#request" class="btn-black">Request Details</a>
-                        <a href="/booking/" class="btn-black" style="background:var(--wedding-accent);">Book Consultation</a>
+                        <a href="/booking/" class="btn-black" style="background:var(--brand-accent);">Book Consultation</a>
                     </div>
                 </div>
             </aside>
@@ -126,7 +126,7 @@ $included_titles_str = $summary['included_str'];
         ?>
 
         <div style="margin-top: 80px; text-align: center;">
-            <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--wedding-gold-light); text-decoration:none; font-weight:700;">Back to top level packages &rarr;</a>
+            <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--brand-gold-light); text-decoration:none; font-weight:700;">Back to top level packages &rarr;</a>
         </div>
 
     </div>

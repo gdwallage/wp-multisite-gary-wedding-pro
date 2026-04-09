@@ -121,13 +121,13 @@ get_header(); ?>
 
                             <?php if ( !empty($highlights) ) : ?>
                                 <div class="service-card-highlights" style="margin-top: 20px; padding: 0 10px;">
-                                    <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Lato', sans-serif; font-size: 0.85rem; line-height: 1.7; color: var(--wedding-text); opacity: 0.9;">
+                                    <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Lato', sans-serif; font-size: 0.85rem; line-height: 1.7; color: var(--brand-text); opacity: 0.9;">
                                         <?php 
                                         $lines = explode("\n", $highlights);
                                         foreach($lines as $line) {
                                             if (trim($line)) {
                                                 echo '<li style="margin-bottom: 5px; padding-left: 20px; position: relative;">';
-                                                echo '<span style="position: absolute; left: 0; color: var(--wedding-gold-light);">✓</span>';
+                                                echo '<span style="position: absolute; left: 0; color: var(--brand-gold-light);">✓</span>';
                                                 echo esc_html(trim($line));
                                                 echo '</li>';
                                             }
