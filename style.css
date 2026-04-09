@@ -102,16 +102,18 @@ body {
 }
 .home .hero-carousel { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
 .home .hero-slide { 
-    position: absolute; top: 0; bottom: 0; width: 75%; height: 100%; 
+    position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto;
+    width: 75%; height: 100%; 
     background-size: cover !important; background-repeat: no-repeat; 
     background-position: center center; opacity: 0; z-index: 0; 
     transform: scale(0.9); display: flex; align-items: center; 
     justify-content: center; text-align: center; 
     transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); 
+    pointer-events: none;
 }
-.home .hero-slide.active { opacity: 1; z-index: 10; transform: scale(1); }
-.home .hero-slide.prev { opacity: 0.2; z-index: 5; transform: scale(0.8) translateX(-85%); }
-.home .hero-slide.next { opacity: 0.2; z-index: 5; transform: scale(0.8) translateX(85%); }
+.home .hero-slide.active { opacity: 1; z-index: 10; transform: scale(1); pointer-events: auto; }
+.home .hero-slide.prev { opacity: 0.3; z-index: 5; transform: scale(0.8) translateX(-100%); }
+.home .hero-slide.next { opacity: 0.3; z-index: 5; transform: scale(0.8) translateX(100%); }
 
 .hero-slide-content { max-width: 600px; padding: 20px; }
 .hero-title-box { 
