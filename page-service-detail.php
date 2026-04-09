@@ -36,7 +36,6 @@ $final_total_value  = $summary['total_value'];
 $final_savings      = $summary['savings'];
 $included_titles_str = $summary['included_str'];
 ?>
-?>
 
 <main id="primary" class="site-main page-template-service-detail">
 
