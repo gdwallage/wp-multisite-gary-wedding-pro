@@ -1,13 +1,13 @@
 /**
- * BOUTIQUE WEDDING PRO - MASTER DESIGN SYSTEM
- * Centralized variables for colors, fonts, and baseline spacing.
+ * GARY WALLAGE WEDDING PRO - BOUTIQUE MASTER SKIN
+ * Version: 2.80.0
+ * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout.
  */
  :root {
     /* 1. LAYOUT & CONTAINERS */
-    --editorial-width: 1200px;
-    --narrow-width: 850px;
-    --site-max-width: 1800px;
-    --grid-gap: 30px;
+    --editorial-width: 80%; /* Primary constraint */
+    --site-max-width: 1500px;
+    --grid-gap: 40px;
     
     /* 2. COLORS (BRAND DNA) */
     --brand-bg: #F9F9F7;
@@ -33,27 +33,34 @@ body { background-color: var(--brand-bg); color: var(--brand-text); font-family:
 a { text-decoration: none; color: inherit; transition: 0.3s ease; }
 img { max-width: 100%; height: auto; }
 
+.container { 
+    width: var(--editorial-width) !important; 
+    max-width: var(--site-max-width); 
+    margin: 0 auto; 
+    clear: both;
+}
+
 /* Enforce Script Weights */
-.site-title-blacksword, .entry-title, .hero-title, .service-card-title, .footer-branding h3 {
+.site-title-blacksword, .entry-title, .hero-title, .service-card-title, .footer-branding h3, .about-sig span {
     font-family: var(--font-script) !important; font-weight: normal !important; text-transform: none !important; letter-spacing: normal !important;
 }
 
 h1, h2, h3 { line-height: 1.2; margin-bottom: 20px; color: var(--brand-text); }
-h1.entry-title { color: var(--brand-accent); font-size: 3.8rem; text-align: center; }
+h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 60px; margin-bottom: 40px; }
 
-/* --- 1. HEADER & MENU --- */
+/* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: 1px solid rgba(0,0,0,0.05); }
 .header-focal-container { 
     display: flex; align-items: center; justify-content: space-between; 
-    max-width: var(--site-max-width); margin: 0 auto; padding: 0 40px; height: 140px;
+    max-width: var(--site-max-width); margin: 0 auto; padding: 0 40px; height: 110px; 
 }
 .focal-side { flex: 1; display: flex; align-items: center; }
 .focal-left { justify-content: flex-start; }
 .focal-right { justify-content: flex-end; }
 .focal-center { flex: 0 0 auto; text-align: center; padding: 0 60px; }
 
-.site-title-blacksword { color: var(--brand-accent); font-size: 3rem; margin: 0; }
-.focal-center .custom-logo-link img { max-width: 200px; height: auto; transition: 0.3s; }
+.site-title-blacksword { color: var(--brand-accent); font-size: 2.8rem; margin: 0; }
+.focal-center .custom-logo-link img { max-width: 180px; height: auto; transition: 0.3s; }
 
 .menu-toggle { 
     font-family: var(--font-primary); font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; 
@@ -62,9 +69,9 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.8rem; text-align: cent
     display: flex; align-items: center; gap: 12px;
 }
 
-.hamburger-box { width: 24px; height: 14px; display: inline-block; position: relative; }
+.hamburger-box { width: 24px; height: 14px; position: relative; }
 .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
-    width: 24px; height: 2px; background-color: var(--brand-accent); position: absolute; transition: all 0.3s;
+    width: 24px; height: 2px; background-color: var(--brand-accent); position: absolute; transition: 0.3s;
 }
 .hamburger-inner { top: 50%; margin-top: -1px; }
 .hamburger-inner::before { content: ""; top: -6px; left: 0; }
@@ -74,22 +81,37 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.8rem; text-align: cent
 .menu-toggle[aria-expanded="true"] .hamburger-inner::before { transform: rotate(45deg); top: 0; }
 .menu-toggle[aria-expanded="true"] .hamburger-inner::after { transform: rotate(-45deg); top: 0; }
 
-/* Menu Overlay */
 .menu-overlay { position: fixed; inset: 0; background: rgba(249, 249, 247, 0.98); z-index: 9999; opacity: 0; visibility: hidden; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
 .menu-overlay[aria-hidden="false"] { opacity: 1; visibility: visible; }
 .nav-menu-overlay { list-style: none; padding: 0; text-align: center; }
 .nav-menu-overlay li { margin-bottom: 30px; }
-.nav-menu-overlay li a { font-size: 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 5px; color: var(--brand-text); position: relative; }
-.nav-menu-overlay li a:hover { color: var(--brand-accent); }
+.nav-menu-overlay li a { font-size: 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 5px; color: var(--brand-text); }
 
-/* --- 2. SERVICES GRID & HIGH-FIDELITY CARDS --- */
-.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); margin: 60px auto; width: 100%; max-width: var(--editorial-width); }
+/* --- 2. HERO CAROUSEL RECOVERY --- */
+.hero-carousel-wrapper { position: relative; width: 100%; height: 75vh; outline: none; background: #000; overflow: hidden; }
+.hero-carousel { height: 100%; position: relative; }
+.hero-slide { 
+    position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease-in-out; 
+    background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;
+}
+.hero-slide.active { opacity: 1; z-index: 5; }
+.hero-content { 
+    text-align: center; color: white; max-width: 800px; padding: 40px; 
+    background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); border: 2px solid var(--brand-gold-light);
+}
+.hero-title { font-size: 4rem; margin: 0; }
+.hero-subtitle { font-family: var(--font-primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 5px; margin-top: 15px; }
+
+/* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
+.services-grid { 
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); 
+    row-gap: 60px; margin: 60px auto; width: 100%; 
+}
 .service-card { 
     position: relative; background: var(--brand-white); border: var(--gold-frame-border) solid var(--brand-gold-light); 
     box-shadow: var(--shadow-soft); display: flex; flex-direction: column; transition: 0.4s; padding-bottom: 25px; height: 100%; overflow: visible;
 }
 
-/* SALE RIBBON RESTORED */
 .service-card-ribbon { 
     position: absolute; top: 15px; left: -10px; background: var(--brand-crimson); color: var(--brand-gold-light); 
     padding: 8px 25px; font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
@@ -103,66 +125,76 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.8rem; text-align: cent
 .service-card-content { padding: 0 30px; text-align: center; }
 .service-card-title { font-size: 2rem; color: var(--brand-accent); margin: 0 0 15px 0 !important; }
 
-/* PRICE BLOCK & FREE RED/GOLD */
-.service-card-price { background: #fdfdfd; padding: 15px; border: 1px solid #eee; margin-bottom: 25px; border-radius: 4px; }
-.service-card-price span { font-weight: 700; font-size: 1.1rem; color: var(--brand-text); }
-.service-card-price.is-free { background: var(--brand-crimson); border-color: var(--brand-crimson); }
+/* PRICE BLOCK (GOLD RESTORED) */
+.service-card-price { 
+    background: var(--brand-gold-light); padding: 18px; border: none; margin-bottom: 25px; 
+    border-radius: 2px; color: var(--brand-white);
+}
+.service-card-price span { font-weight: 700; font-size: 1.2rem; color: var(--brand-white); }
+.service-card-price.is-free { background: var(--brand-crimson); }
 .service-card-price.is-free span { color: var(--brand-gold-light) !important; }
 
-.duration-label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.5; margin-top: 5px; }
+.duration-label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-top: 5px; }
 
-/* Bullet Lists Restored */
-.gw-bullet-list { list-style: none; padding: 0; margin: 20px 0; text-align: left; }
-.gw-bullet-list li { position: relative; padding-left: 30px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5; color: var(--brand-text); }
-.gw-bullet-list li::before { position: absolute; left: 0; top: 0; font-weight: 700; color: var(--brand-gold-light); }
-.is-inclusions li::before { content: '✵'; }
-.is-highlights li::before { content: '✓'; }
-
-/* Block Style Support */
-.is-style-gw-highlights li::before { content: '✓'; color: var(--brand-gold-light); }
-.is-style-gw-included li::before { content: '✷'; color: var(--brand-gold-light); }
-.is-style-gw-perfect-for li::before { content: '✧'; color: var(--brand-gold-light); }
-
-/* --- 3. EDITORIAL BLOCKS (Z-PATTERN DEPTH) --- */
-.gw-z-pattern { 
-    display: flex; align-items: center; margin: 120px auto; max-width: var(--editorial-width); position: relative; 
+/* Bullet Lists */
+.gw-bullet-list, .card-included-items { list-style: none; padding: 0; margin: 20px 0; text-align: left; }
+.gw-bullet-list li, .card-included-items li { position: relative; padding-left: 30px; margin-bottom: 12px; font-size: 0.88rem; line-height: 1.5; color: var(--brand-text); }
+.gw-bullet-list li::before, .card-included-items li::before { 
+    content: '✵'; position: absolute; left: 0; top: 0; font-weight: 700; color: var(--brand-gold-light); 
 }
+
+/* --- 4. ABOUT PAGE PORTRAIT FRAME (RECOVERY) --- */
+.about-grid { display: grid; grid-template-columns: 350px 1fr; gap: 80px; align-items: flex-start; margin-top: 60px; }
+.portrait-frame-wrapper { position: relative; padding: 20px; }
+.portrait-frame { 
+    position: relative; border: var(--gold-frame-border) solid var(--brand-gold-light); 
+    background: var(--brand-white); padding: 15px; box-shadow: var(--shadow-deep);
+    transform: rotate(-3deg); transition: 0.5s ease;
+}
+.portrait-frame:hover { transform: rotate(0deg); }
+.portrait-frame img { width: 100%; height: auto; display: block; filter: sepia(0.1); }
+.frame-plaque { 
+    position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); 
+    background: var(--brand-gold-light); color: var(--brand-white); padding: 8px 30px;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); white-space: nowrap;
+}
+
+/* --- 5. EDITORIAL BLOCKS (Z-PATTERN FULL FRAME) --- */
+.gw-z-pattern { display: flex; align-items: center; margin: 120px auto; position: relative; }
 .gw-z-image { flex: 0 0 60%; z-index: 1; }
 .gw-z-image img { border: 15px solid var(--brand-white); box-shadow: var(--shadow-deep); width: 100%; }
 .gw-z-content { 
     flex: 0 0 50%; background: var(--brand-white); padding: 80px; box-shadow: var(--shadow-deep); 
-    margin-left: -10%; z-index: 10; position: relative; border-top: 5px solid var(--brand-gold-light);
+    margin-left: -10%; z-index: 10; position: relative; 
+    border: 2px solid var(--brand-gold-light); /* FULL FRAME */
 }
 .gw-z-pattern.is-right { flex-direction: row-reverse; }
 .gw-z-pattern.is-right .gw-z-content { margin-left: 0; margin-right: -10%; }
 
-/* --- 4. SERVICE DETAIL SIDEBAR --- */
-.investment-plaque { 
-    background: var(--brand-white); padding: 50px; border: var(--gold-frame-border) solid var(--brand-gold-light); 
-    box-shadow: var(--shadow-deep); text-align: center; position: sticky; top: 40px;
-}
-.investment-plaque h2 { font-family: var(--font-primary); text-transform: uppercase; letter-spacing: 5px; font-size: 0.85rem; opacity: 0.5; margin-bottom: 10px; }
-.investment-plaque .subtitle { display: block; font-family: var(--font-script); font-size: 2.2rem; color: var(--brand-accent); margin-bottom: 30px; }
-.price-val { font-size: 2.8rem; font-weight: 700; color: var(--brand-text); margin: 20px 0; }
-.investment-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 40px; }
-.btn-black { background: #1a1a1a; color: var(--brand-white); padding: 18px; text-transform: uppercase; letter-spacing: 3px; font-weight: 700; font-size: 0.8rem; transition: 0.3s; }
-.btn-black:hover { background: var(--brand-accent); }
-
-/* Highlights List (Page template) */
-.highlights-list { list-style: none; padding: 0; margin: 30px 0; }
-.highlights-list li { position: relative; padding-left: 30px; margin-bottom: 15px; font-family: var(--font-primary); font-size: 1rem; color: var(--brand-text); line-height: 1.6; }
-.highlights-list li::before { content: '✵'; position: absolute; left: 0; color: var(--brand-gold-light); font-size: 1.2rem; }
-
-/* --- 5. FOOTER & MISC --- */
+/* --- 6. FOOTER & BOUTIQUE DETAILS --- */
 .site-footer { background: #111; color: var(--brand-white); padding: 100px 40px; margin-top: 140px; }
 .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; max-width: var(--site-max-width); margin: 0 auto; gap: 80px; }
 .footer-branding h3 { font-size: 3.5rem; color: var(--brand-gold-light); margin: 0; }
 
+.footer-nav-list { list-style: none; padding: 0; }
+.footer-nav-list li { margin-bottom: 15px; padding-left: 25px; position: relative; }
+.footer-nav-list li::before { content: '✧'; position: absolute; left: 0; color: var(--brand-gold-light); }
+
+.whatsapp-btn { 
+    display: inline-flex; align-items: center; gap: 12px; background: transparent; 
+    border: 1px solid var(--brand-gold-light); color: var(--brand-gold-light); padding: 12px 25px;
+    border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+    font-size: 0.8rem; margin-top: 20px; transition: 0.3s;
+}
+.whatsapp-btn:hover { background: var(--brand-gold-light); color: var(--brand-white); }
+
 @media (max-width: 1024px) {
+    .container { width: 90% !important; }
     .header-focal-container { height: auto; flex-direction: column; padding: 30px 20px; }
     .focal-center { order: -1; padding-bottom: 20px; }
-    .focal-center .custom-logo-link img { max-width: 150px; }
-    .services-grid, .footer-grid, .gw-z-pattern { grid-template-columns: 1fr; flex-direction: column; }
+    .footer-grid, .gw-z-pattern, .about-grid { grid-template-columns: 1fr; flex-direction: column; }
     .gw-z-image, .gw-z-content { flex: 1 1 auto; width: 100%; margin: 0; }
-    .gw-z-content { padding: 40px; border-left: 5px solid var(--brand-gold-light); border-top: none; }
+    .gw-z-content { padding: 40px; }
+    .portrait-frame { transform: rotate(0); }
 }

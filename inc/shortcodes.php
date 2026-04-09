@@ -104,12 +104,12 @@ function gary_featured_services_shortcode( $atts ) {
                     <div class="component-info">
                         <h4><?php echo esc_html( $card_title ); ?></h4>
                         <?php if ( $sub_price ) : ?>
-                            <div style="font-size:0.8rem; margin-bottom:8px; letter-spacing:1px; color:var(--wedding-gold-light); font-weight:700;">
+                            <div style="font-size:0.8rem; margin-bottom:8px; letter-spacing:1px; color:var(--brand-gold-light); font-weight:700;">
                                 <span style="text-decoration:line-through; opacity:0.5; margin-right:8px;"><?php echo esc_html( $sub_price ); ?></span>
                                 <span>INCLUDED</span>
                             </div>
                         <?php elseif ( $is_free ) : ?>
-                            <div style="font-size:0.75rem; margin-bottom:8px; letter-spacing:2px; font-weight:700; color:#fff; background:var(--wedding-crimson); display:inline-block; padding:3px 10px; border-radius:2px;">
+                            <div style="font-size:0.75rem; margin-bottom:8px; letter-spacing:2px; font-weight:700; color:#fff; background:var(--brand-crimson); display:inline-block; padding:3px 10px; border-radius:2px;">
                                 FREE &mdash; INCLUDED
                             </div>
                         <?php endif; ?>

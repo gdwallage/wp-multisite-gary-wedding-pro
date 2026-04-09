@@ -51,7 +51,7 @@ get_header(); ?>
                         $display_price = 'FREE';
                         $is_free = true;
                     } else {
-                        $display_price = 'From £' . number_format($bookly_data['price'], 0);
+                        $display_price = 'From £' . number_format($bookly_data['price'], 2);
                     }
                     $display_duration = 'Typically ' . $bookly_data['duration'];
                     $bookly_info = isset($bookly_data['info']) ? $bookly_data['info'] : '';
@@ -62,7 +62,8 @@ get_header(); ?>
                             $is_free = true;
                         } else {
                             $clean_p = trim($manual_price);
-                            $display_price = 'From ' . (strpos($clean_p, '£') === false && is_numeric($clean_p) ? '£' : '') . $clean_p;
+                            $display_price = 'From ' . (strpos($clean_p, '£') === false && is_numeric($clean_p) ? '£' : '');
+                            $display_price .= is_numeric($clean_p) ? number_format((float)$clean_p, 2) : $clean_p;
                         }
                     } else {
                         $display_price = 'On Request';
@@ -70,7 +71,7 @@ get_header(); ?>
                     if ( $manual_dur ) { $display_duration = 'Typically ' . $manual_dur; }
                 }
 
-                $teaser = wp_trim_words( get_the_content(), 30 );
+                $teaser = wp_trim_words( get_the_content(), 45 );
                 $summary = gary_get_sub_service_summary( get_the_ID() );
                 $card_savings = $summary['savings'];
                 $card_included = $summary['included_str'];
@@ -78,8 +79,8 @@ get_header(); ?>
 
                 <a href="<?php the_permalink(); ?>" class="service-card-link">
                     <div class="service-card">
-                        <?php if ( $card_savings > 0 ) : ?>
-                            <div class="service-card-ribbon">SAVE £<?php echo number_format($card_savings,0); ?></div>
+                        <?php if ( $card_savings > 0 && ! $is_free ) : ?>
+                            <div class="service-card-ribbon">SAVE £<?php echo number_format($card_savings, 2); ?></div>
                         <?php endif; ?>
 
                         <div class="service-card-image">
@@ -100,7 +101,7 @@ get_header(); ?>
                             
                             <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
                                 <span><?php echo esc_html($display_price); ?></span>
-                                <?php if($display_duration): ?>
+                                <?php if( ! $is_free && $display_duration ): ?>
                                     <small class="duration-label"><?php echo esc_html($display_duration); ?></small>
                                 <?php endif; ?>
                             </div>

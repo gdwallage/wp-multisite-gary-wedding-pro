@@ -132,8 +132,12 @@ function gary_render_single_service_block( $attributes ) {
 
     $card_title = $b_data['title'];
     $is_free = (float)$b_data['price'] <= 0;
-    $display_price = $is_free ? 'FREE' : 'From £' . number_format($b_data['price'], 0);
-    $display_duration = '';
+    $display_price = $is_free ? 'FREE' : 'From £' . number_format($b_data['price'], 2);
+    $display_duration = !empty($b_data['duration']) ? 'Typically ' . $b_data['duration'] : '';
+    
+    if ($is_free) {
+        $display_duration = '';
+    }
     
     $card_url = $page_id ? get_permalink($page_id) : '/booking/';
     $card_thumb = '';
@@ -165,7 +169,9 @@ function gary_render_single_service_block( $attributes ) {
     <?php else : ?>
         <a href="<?php echo esc_url($card_url); ?>" class="service-card-link">
             <div class="service-card">
-                <?php if($summary['savings'] > 0): ?><div class="service-card-ribbon">SAVE £<?php echo number_format($summary['savings'], 0); ?></div><?php endif; ?>
+                <?php if($summary['savings'] > 0 && !$is_free): ?>
+                    <div class="service-card-ribbon">SAVE £<?php echo number_format($summary['savings'], 2); ?></div>
+                <?php endif; ?>
                 <div class="service-card-image"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
                 <div class="service-card-content">
                     <h3 class="service-card-title"><?php echo esc_html($card_title); ?></h3>
@@ -182,7 +188,7 @@ function gary_render_single_service_block( $attributes ) {
                     <?php endif; ?>
 
                     <div class="service-card-description" style="text-align: center; margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
-                        <?php echo wp_kses_post(wp_trim_words($card_desc, 25)); ?>
+                        <?php echo wp_kses_post(wp_trim_words($card_desc, 45)); ?>
                     </div>
 
                     <?php if (!empty($highlights)) : ?>

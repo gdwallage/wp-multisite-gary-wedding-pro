@@ -21,12 +21,15 @@ $manual_dur   = get_post_meta( $post_id, '_gary_service_duration', true );
 
 $display_price = 'On Request';
 $display_duration = '';
+$is_free = false;
 if ( $bookly_data ) {
-    $display_price = ( (float)$bookly_data['price'] <= 0 ) ? 'FREE' : 'From £' . number_format($bookly_data['price'], 0);
-    $display_duration = $bookly_data['duration'];
+    $is_free = ( (float)$bookly_data['price'] <= 0 );
+    $display_price = $is_free ? 'FREE' : 'From £' . number_format($bookly_data['price'], 2);
+    $display_duration = $is_free ? '' : $bookly_data['duration'];
 } elseif ( !empty($manual_price) ) {
-    $display_price = 'From £' . $manual_price;
-    $display_duration = $manual_dur;
+    $is_free = ( strtolower($manual_price) === 'free' || $manual_price === '0' );
+    $display_price = $is_free ? 'FREE' : 'From £' . number_format((float)$manual_price, 2);
+    $display_duration = $is_free ? '' : $manual_dur;
 }
 
 // --- LOGIC: SUB-SERVICE SUMMARY ---
@@ -84,17 +87,17 @@ $included_titles_str = $summary['included_str'];
                     <?php if($subtitle): ?><span class="subtitle"><?php echo esc_html($subtitle); ?></span><?php endif; ?>
                     
                     <div class="price-wrap">
-                        <?php if ( $final_savings > 0 ) : ?>
+                        <?php if ( $final_savings > 0 && !$is_free ) : ?>
                             <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-crimson); margin-bottom: 10px;">
-                                Bundle Saving: £<?php echo number_format($final_savings, 0); ?>
+                                Bundle Saving: £<?php echo number_format($final_savings, 2); ?>
                             </div>
                         <?php endif; ?>
 
                         <div class="price-val"><?php echo esc_html($display_price); ?></div>
                         
-                        <?php if ( $final_savings > 0 ) : ?>
+                        <?php if ( $final_savings > 0 && !$is_free ) : ?>
                             <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 10px; font-weight: normal; font-family: 'Lato', sans-serif; text-transform: uppercase; letter-spacing: 1px;">
-                                Combined Individual Value: £<?php echo number_format($final_total_value, 0); ?>
+                                Combined Individual Value: £<?php echo number_format($final_total_value, 2); ?>
                             </div>
                         <?php endif; ?>
                     </div>
