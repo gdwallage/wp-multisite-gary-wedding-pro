@@ -200,6 +200,7 @@ add_action( 'wp_head', function() {
 require_once get_template_directory() . '/inc/editorial-patterns.php';
 require_once get_template_directory() . '/inc/seo-engine.php';
 require_once get_template_directory() . '/inc/shortcodes.php';
+require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 
 function gary_send_performance_headers() {
     if ( is_admin() ) return;

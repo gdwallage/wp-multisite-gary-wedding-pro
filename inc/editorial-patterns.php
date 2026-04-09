@@ -243,7 +243,7 @@ function gary_register_native_editorial_patterns() {
 
     // 13. Featured Services Wrapper
     register_block_pattern( 'gw/featured-services', array(
-        'title'         => __( 'Featured Services Grid (Shortcode Wrapper)', 'garywedding' ),
+        'title'         => __( 'Featured Services Grid', 'garywedding' ),
         'categories'    => array( 'gary-editorial-native' ),
         'viewportWidth' => 1000,
         'content'       => '<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"80px","bottom":"80px"}}},"layout":{"type":"constrained"}} -->
@@ -251,11 +251,13 @@ function gary_register_native_editorial_patterns() {
 <h2 class="wp-block-heading has-text-align-center" style="font-size:2rem;letter-spacing:3px;text-transform:uppercase">Featured Collections</h2>
 <!-- /wp:heading -->
 <!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Edit the page IDs below to display your chosen Bookly services.</p>
+<p class="has-text-align-center">Select your services from the block settings.</p>
 <!-- /wp:paragraph -->
-<!-- wp:shortcode -->
-[gary_featured_services page_ids="10, 12, 14"]
-<!-- /wp:shortcode --></div>
+<!-- wp:gw/service-grid -->
+<div class="wp-block-gw-service-grid detailed-components-section"><!-- wp:gw/single-service /-->
+<!-- wp:gw/single-service /-->
+<!-- wp:gw/single-service /--></div>
+<!-- /wp:gw/service-grid --></div>
 <!-- /wp:group -->',
     ) );
 
