@@ -133,7 +133,9 @@ function gary_render_single_service_block( $attributes ) {
     $card_title = $b_data['title'];
     $is_free = (float)$b_data['price'] <= 0;
     $display_price = $is_free ? 'FREE' : 'From £' . number_format($b_data['price'], 2);
-    $display_duration = !empty($b_data['duration']) ? 'Typically ' . $b_data['duration'] : '';
+    $dur_sec = !empty($b_data['duration']) ? (int)$b_data['duration'] : 0;
+    $dur_h = round($dur_sec / 3600, 1);
+    $display_duration = ($dur_h > 0) ? 'Typically ' . $dur_h . ' Hours' : '';
     
     if ($is_free) {
         $display_duration = '';

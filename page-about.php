@@ -41,7 +41,7 @@ get_header(); ?>
 
                 <!-- Personal Sign-off -->
                 <div class="about-sig" style="margin-top:60px;">
-                    <span style="font-family:'Blacksword'; font-size:2.8rem; color:var(--wedding-accent);">Gary Wallage</span>
+                    <span style="font-family:'Blacksword'; font-size:2.8rem; color:var(--brand-accent);">Gary Wallage</span>
                 </div>
             </div>
         </div>

@@ -33,10 +33,10 @@ body { background-color: var(--brand-bg); color: var(--brand-text); font-family:
 a { text-decoration: none; color: inherit; transition: 0.3s ease; }
 img { max-width: 100%; height: auto; }
 
-.container { 
+.container, .site-main.container { 
     width: var(--editorial-width) !important; 
-    max-width: var(--site-max-width); 
-    margin: 0 auto; 
+    max-width: var(--site-max-width) !important; 
+    margin: 0 auto !important; 
     clear: both;
 }
 
@@ -143,21 +143,35 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     content: '✵'; position: absolute; left: 0; top: 0; font-weight: 700; color: var(--brand-gold-light); 
 }
 
-/* --- 4. ABOUT PAGE PORTRAIT FRAME (RECOVERY) --- */
-.about-grid { display: grid; grid-template-columns: 350px 1fr; gap: 80px; align-items: flex-start; margin-top: 60px; }
-.portrait-frame-wrapper { position: relative; padding: 20px; }
-.portrait-frame { 
-    position: relative; border: var(--gold-frame-border) solid var(--brand-gold-light); 
-    background: var(--brand-white); padding: 15px; box-shadow: var(--shadow-deep);
-    transform: rotate(-3deg); transition: 0.5s ease;
+/* --- 4. ABOUT PAGE PORTRAIT FRAME (SPECIFICITY BOOST) --- */
+.page-template-page-about .portrait-frame { 
+    position: relative !important; 
+    border: var(--gold-frame-border) solid var(--brand-gold-light) !important; 
+    background: var(--brand-white) !important; 
+    padding: 15px !important; 
+    box-shadow: var(--shadow-deep) !important;
+    transform: rotate(-3deg) !important; 
+    transition: 0.5s ease;
+    display: block !important;
 }
-.portrait-frame:hover { transform: rotate(0deg); }
-.portrait-frame img { width: 100%; height: auto; display: block; filter: sepia(0.1); }
-.frame-plaque { 
-    position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); 
-    background: var(--brand-gold-light); color: var(--brand-white); padding: 8px 30px;
-    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2); white-space: nowrap;
+.page-template-page-about .portrait-frame:hover { transform: rotate(0deg) !important; }
+.page-template-page-about .portrait-frame img { width: 100% !important; height: auto !important; display: block !important; filter: sepia(0.1); }
+
+.page-template-page-about .frame-plaque { 
+    position: absolute !important; 
+    bottom: -20px !important; 
+    left: 50% !important; 
+    transform: translateX(-50%) !important; 
+    background: var(--brand-gold-light) !important; 
+    color: var(--brand-white) !important; 
+    padding: 8px 30px !important;
+    font-size: 0.75rem !important; 
+    font-weight: 700 !important; 
+    text-transform: uppercase !important; 
+    letter-spacing: 3px !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important; 
+    white-space: nowrap !important;
+    z-index: 50 !important;
 }
 
 /* --- 5. EDITORIAL BLOCKS (Z-PATTERN FULL FRAME) --- */

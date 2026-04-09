@@ -53,7 +53,9 @@ get_header(); ?>
                     } else {
                         $display_price = 'From £' . number_format($bookly_data['price'], 2);
                     }
-                    $display_duration = 'Typically ' . $bookly_data['duration'];
+                    $dur_sec = (int)$bookly_data['duration'];
+                    $dur_h = round($dur_sec / 3600, 1);
+                    $display_duration = 'Typically ' . $dur_h . ' Hours';
                     $bookly_info = isset($bookly_data['info']) ? $bookly_data['info'] : '';
                 } else {
                     if ( !empty($manual_price) || $manual_price === '0' ) {

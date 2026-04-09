@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 2.500.0
- * Fixes: TOTAL RESTORATION. Fully restoring 3-tier data logic and bundle savings calculations.
+ * Version: 2.80.0
+ * Fixes: CACHE BUSTER + TOTAL RESTORATION. Fully restoring 3-tier data logic and bundle savings calculations.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -92,11 +92,11 @@ require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=2.500.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=2.80.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '2.500.0' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '2.80.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
