@@ -76,8 +76,8 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 }
 
 /* 3D Diagonal Saving Ribbon (Pinned to Card Frame) */
-.page-template-page-services .service-card .service-card-ribbon,
-.service-card-ribbon {
+.page-template-page-services a.service-card-link .service-card-ribbon,
+a.service-card-link .service-card-ribbon {
     position: absolute;
     top: 22px;
     right: -42px;

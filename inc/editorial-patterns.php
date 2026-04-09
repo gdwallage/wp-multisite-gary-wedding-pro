@@ -184,5 +184,103 @@ function gary_register_native_editorial_patterns() {
 <!-- /wp:group -->',
     ) );
 
+    // 11. Trust Bar
+    register_block_pattern( 'gw/trust-bar', array(
+        'title'         => __( 'Trust Bar (5 Signals)', 'garywedding' ),
+        'categories'    => array( 'gary-editorial-native' ),
+        'viewportWidth' => 1000,
+        'content'       => '<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"20px","bottom":"20px"}},"color":{"background":"#1a1a1a"}},"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"center"}} -->
+<div class="wp-block-group alignwide has-background" style="background-color:#1a1a1a;padding-top:20px;padding-bottom:20px"><!-- wp:paragraph {"style":{"color":{"text":"#c5a059"},"typography":{"fontSize":"0.85rem","textTransform":"uppercase","letterSpacing":"1px"}}} -->
+<p class="has-text-color" style="color:#c5a059;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase"><strong>✓</strong> 10+ Years Experience</p>
+<!-- /wp:paragraph -->
+<!-- wp:paragraph {"style":{"color":{"text":"#c5a059"},"typography":{"fontSize":"0.85rem","textTransform":"uppercase","letterSpacing":"1px"}}} -->
+<p class="has-text-color" style="color:#c5a059;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase"><strong>✓</strong> Documentary Style</p>
+<!-- /wp:paragraph -->
+<!-- wp:paragraph {"style":{"color":{"text":"#c5a059"},"typography":{"fontSize":"0.85rem","textTransform":"uppercase","letterSpacing":"1px"}}} -->
+<p class="has-text-color" style="color:#c5a059;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase"><strong>✓</strong> Swindon &amp; Wiltshire</p>
+<!-- /wp:paragraph -->
+<!-- wp:paragraph {"style":{"color":{"text":"#c5a059"},"typography":{"fontSize":"0.85rem","textTransform":"uppercase","letterSpacing":"1px"}}} -->
+<p class="has-text-color" style="color:#c5a059;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase"><strong>✓</strong> Limited Bookings</p>
+<!-- /wp:paragraph -->
+<!-- wp:paragraph {"style":{"color":{"text":"#c5a059"},"typography":{"fontSize":"0.85rem","textTransform":"uppercase","letterSpacing":"1px"}}} -->
+<p class="has-text-color" style="color:#c5a059;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase"><strong>✓</strong> Free Consultation</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:group -->',
+    ) );
+
+    // 12. USPs (3 Columns)
+    register_block_pattern( 'gw/usps-3col', array(
+        'title'         => __( 'USPs (3 Columns)', 'garywedding' ),
+        'categories'    => array( 'gary-editorial-native' ),
+        'viewportWidth' => 1000,
+        'content'       => '<!-- wp:columns {"align":"wide","style":{"spacing":{"blockGap":{"top":"40px","left":"40px"},"padding":{"top":"60px","bottom":"60px"}}}} -->
+<div class="wp-block-columns alignwide" style="padding-top:60px;padding-bottom:60px"><!-- wp:column -->
+<div class="wp-block-column"><!-- wp:heading {"textAlign":"center","level":4,"style":{"color":{"text":"#c5a059"},"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
+<h4 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059;letter-spacing:2px;text-transform:uppercase">Documentary Storytelling</h4>
+<!-- /wp:heading -->
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">I blend into the background and document your day exactly as it unfolds — unposed, unrepeated, and completely authentic.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:heading {"textAlign":"center","level":4,"style":{"color":{"text":"#c5a059"},"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
+<h4 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059;letter-spacing:2px;text-transform:uppercase">Technical Precision</h4>
+<!-- /wp:heading -->
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Ten years of experience means no weather, no venue, and no timeline pressure will ever compromise your final images.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:heading {"textAlign":"center","level":4,"style":{"color":{"text":"#c5a059"},"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
+<h4 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059;letter-spacing:2px;text-transform:uppercase">A Calming Presence</h4>
+<!-- /wp:heading -->
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Many couples describe me as the most relaxed person in the room. That calm is entirely intentional and it shows.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->',
+    ) );
+
+    // 13. Featured Services Wrapper
+    register_block_pattern( 'gw/featured-services', array(
+        'title'         => __( 'Featured Services Grid (Shortcode Wrapper)', 'garywedding' ),
+        'categories'    => array( 'gary-editorial-native' ),
+        'viewportWidth' => 1000,
+        'content'       => '<!-- wp:group {"align":"wide","style":{"spacing":{"padding":{"top":"80px","bottom":"80px"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group alignwide" style="padding-top:80px;padding-bottom:80px"><!-- wp:heading {"textAlign":"center","style":{"typography":{"textTransform":"uppercase","letterSpacing":"3px","fontSize":"2rem"}}} -->
+<h2 class="wp-block-heading has-text-align-center" style="font-size:2rem;letter-spacing:3px;text-transform:uppercase">Featured Collections</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Edit the page IDs below to display your chosen Bookly services.</p>
+<!-- /wp:paragraph -->
+<!-- wp:shortcode -->
+[gary_featured_services page_ids="10, 12, 14"]
+<!-- /wp:shortcode --></div>
+<!-- /wp:group -->',
+    ) );
+
+    // 14. Full-Width CTA
+    register_block_pattern( 'gw/cta-fullwidth', array(
+        'title'         => __( 'Full-Width Action Plate', 'garywedding' ),
+        'categories'    => array( 'gary-editorial-native' ),
+        'viewportWidth' => 1000,
+        'content'       => '<!-- wp:cover {"url":"' . $svg . '","dimRatio":90,"overlayColor":"base","isUserOverlayColor":true,"align":"full","style":{"spacing":{"padding":{"top":"120px","right":"20px","bottom":"120px","left":"20px"}}}} -->
+<div class="wp-block-cover alignfull has-base-background-color has-background-dim-90 has-background-dim" style="padding-top:120px;padding-right:20px;padding-bottom:120px;padding-left:20px"><img class="wp-block-cover__image-background" alt="" src="' . $svg . '" data-object-fit="cover"/><div class="wp-block-cover__inner-container"><!-- wp:heading {"textAlign":"center","style":{"color":{"text":"#ffffff"},"typography":{"textTransform":"uppercase","letterSpacing":"3px"}}} -->
+<h2 class="wp-block-heading has-text-align-center has-text-color" style="color:#ffffff;letter-spacing:3px;text-transform:uppercase">Ready to Tell Your Story?</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph {"align":"center","style":{"color":{"text":"#cccccc"}}} -->
+<p class="has-text-align-center has-text-color" style="color:#cccccc">I take on a limited number of bookings each year to ensure full creative focus.</p>
+<!-- /wp:paragraph -->
+<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
+<div class="wp-block-buttons"><!-- wp:button {"style":{"border":{"radius":"0px","width":"2px"},"color":{"background":"#c5a059","text":"#1a1a1a"}}} -->
+<div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background wp-element-button" style="border-width:2px;border-radius:0px;color:#1a1a1a;background-color:#c5a059">View Pricing</a></div>
+<!-- /wp:button -->
+<!-- wp:button {"style":{"border":{"radius":"0px","color":"#ffffff","width":"2px"},"color":{"text":"#ffffff"}},"className":"is-style-outline"} -->
+<div class="wp-block-button is-style-outline"><a class="wp-block-button__link has-text-color wp-element-button" style="border-color:#ffffff;border-width:2px;border-radius:0px;color:#ffffff">Book Consultation</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons --></div></div>
+<!-- /wp:cover -->',
+    ) );
+
 }
 add_action( 'init', 'gary_register_native_editorial_patterns' );

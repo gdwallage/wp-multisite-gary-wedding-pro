@@ -1,0 +1,127 @@
+<?php
+/**
+ * Custom Shortcodes for Gary Wallage Wedding Pro
+ */
+
+function gary_featured_services_shortcode( $atts ) {
+    $atts = shortcode_atts( array(
+        'page_ids' => '', // e.g. "12, 15, 23"
+    ), $atts, 'gary_featured_services' );
+
+    // If no specific page IDs provided, try and get them from the current page's sub-service slots
+    $grid_items = array();
+
+    if ( ! empty( $atts['page_ids'] ) ) {
+        $ids = array_map( 'trim', explode( ',', $atts['page_ids'] ) );
+        foreach ( $ids as $id ) {
+            $id = (int) $id;
+            if ( $id <= 0 ) continue;
+            
+            $b_id = get_post_meta( $id, '_gary_bookly_id', true );
+            $grid_items[] = array( 
+                'type' => 'page', 
+                'page_id' => $id, 
+                'bookly_id' => $b_id 
+            );
+        }
+    } else {
+        // Fallback to the current page's advanced editorial sub-service logic
+        $summary = gary_get_sub_service_summary( get_the_ID() );
+        $grid_items = $summary['grid_items'];
+    }
+
+    if ( empty( $grid_items ) ) {
+        return '';
+    }
+
+    ob_start();
+    ?>
+    <div class="detailed-components-section" style="margin-top: 20px;">
+        <div class="component-grid">
+            <?php foreach ( $grid_items as $item ) :
+
+                // ── SHARED: resolve price, badge, description ──────────────────
+                if ( $item['type'] === 'page' ) {
+                    $sub_page    = get_post( $item['page_id'] );
+                    if ( ! $sub_page ) continue;
+                    $card_title  = $sub_page->post_title;
+                    $card_url    = get_permalink( $item['page_id'] );
+                    $card_thumb  = get_the_post_thumbnail_url( $item['page_id'], 'large' );
+                    // Get Bookly data: prefer item bookly_id, fall back to page meta
+                    $b_id        = !empty($item['bookly_id']) ? $item['bookly_id'] : get_post_meta( $item['page_id'], '_gary_bookly_id', true );
+                    $b_data      = $b_id ? gary_get_bookly_service_data( $b_id ) : false;
+                    $manual_p    = get_post_meta( $item['page_id'], '_gary_service_price', true );
+                    // Description fallback chain
+                    if ( $b_data && ! empty( $b_data['info'] ) ) {
+                        $card_desc = wp_trim_words( wp_strip_all_tags( $b_data['info'] ), 20 );
+                    } elseif ( ! empty( $sub_page->post_excerpt ) ) {
+                        $card_desc = wp_trim_words( $sub_page->post_excerpt, 20 );
+                    } else {
+                        // Use content, but strip shortcodes to prevent infinite loops and messy output
+                        $card_desc = wp_trim_words( strip_shortcodes( $sub_page->post_content ), 20 );
+                    }
+                } else {
+                    // Bookly-only card — no linked WP page
+                    $b_data      = $item['data'];
+                    $card_title  = $b_data['title'];
+                    $card_url    = '/booking/';
+                    $card_thumb  = ! empty( $b_data['image'] ) ? $b_data['image'] : '';
+                    $manual_p    = '';
+                    $card_desc   = ! empty( $b_data['info'] ) ? wp_trim_words( wp_strip_all_tags( $b_data['info'] ), 20 ) : '';
+                }
+
+                // Price badge logic
+                $sub_price = '';
+                $is_free   = false;
+                if ( $b_data ) {
+                    if ( (float) $b_data['price'] > 0 ) {
+                        $sub_price = 'From £' . number_format( $b_data['price'], 0 );
+                    } else {
+                        $is_free = true;
+                    }
+                } elseif ( ! empty( $manual_p ) ) {
+                    if ( strtolower(trim($manual_p)) === 'free' || trim($manual_p) === '0' ) {
+                        $is_free = true;
+                    } else {
+                        $sub_price = 'From £' . $manual_p;
+                    }
+                }
+
+                // Fallback Image Logic: Site Logo -> SVG
+                $logo_id = get_theme_mod( 'custom_logo' );
+                $logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'full' ) : '';
+                
+                $svg_raw = '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#f0f0f0"/><path d="M50 30 L70 70 L30 70 Z" fill="#C5A059" opacity="0.3"/></svg>';
+                $svg_fallback = 'data:image/svg+xml;base64,' . base64_encode($svg_raw);
+
+                $final_thumb = $card_thumb ? $card_thumb : ( $logo_url ? $logo_url : $svg_fallback );
+            ?>
+                <a href="<?php echo esc_url( $card_url ); ?>" class="component-card">
+                    <div class="coin-icon-wrap">
+                        <img src="<?php echo esc_url( $final_thumb ); ?>"
+                             alt="<?php echo esc_attr( $card_title ); ?>" />
+                    </div>
+                    <div class="component-info">
+                        <h4><?php echo esc_html( $card_title ); ?></h4>
+                        <?php if ( $sub_price ) : ?>
+                            <div style="font-size:0.8rem; margin-bottom:8px; letter-spacing:1px; color:var(--wedding-gold-light); font-weight:700;">
+                                <span style="text-decoration:line-through; opacity:0.5; margin-right:8px;"><?php echo esc_html( $sub_price ); ?></span>
+                                <span>INCLUDED</span>
+                            </div>
+                        <?php elseif ( $is_free ) : ?>
+                            <div style="font-size:0.75rem; margin-bottom:8px; letter-spacing:2px; font-weight:700; color:#fff; background:var(--wedding-crimson); display:inline-block; padding:3px 10px; border-radius:2px;">
+                                FREE &mdash; INCLUDED
+                            </div>
+                        <?php endif; ?>
+                        <?php if ( !empty($card_desc) ) : ?>
+                            <p style="margin-top:6px;"><?php echo esc_html( $card_desc ); ?></p>
+                        <?php endif; ?>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode( 'gary_featured_services', 'gary_featured_services_shortcode' );

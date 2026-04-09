@@ -199,15 +199,16 @@ add_action( 'wp_head', function() {
  */
 require_once get_template_directory() . '/inc/editorial-patterns.php';
 require_once get_template_directory() . '/inc/seo-engine.php';
+require_once get_template_directory() . '/inc/shortcodes.php';
 
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=1.154.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1.156.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.154.0' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '1.156.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
@@ -279,8 +280,15 @@ function gary_bookly_meta_box_html( $post ) {
     echo '<option value="">' . __( '-- No Service Linked --', 'garywedding' ) . '</option>';
     
     if ( $services_exist ) {
+        // Get all already assigned Bookly IDs across the site
+        $used_ids = $wpdb->get_col( "SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value != ''" );
+        
         $services = $wpdb->get_results( "SELECT id, title, price FROM $table_name ORDER BY title ASC" );
         foreach ( $services as $service ) {
+            // Only show if it's the current value, or if it's NOT used anywhere else
+            if ( in_array( $service->id, $used_ids ) && $service->id != $value ) {
+                continue;
+            }
             $selected = selected( $value, $service->id, false );
             echo '<option value="' . esc_attr($service->id) . '" ' . $selected . '>' . esc_html($service->title) . ' (&pound;' . esc_html( number_format($service->price, 0) ) . ')</option>';
         }
