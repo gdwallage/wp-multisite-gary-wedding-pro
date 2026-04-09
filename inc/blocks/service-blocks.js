@@ -9,35 +9,26 @@
     const MediaUpload = wp.blockEditor.MediaUpload;
     const Button = wp.components.Button;
 
-    // Block 1: The Singular Service Box
+    console.info('GW Editorial: Initializing Native Blocks...');
+
+    // 1. Singular Service Box
     registerBlockType('gw/single-service', {
         title: 'Singular Service Box',
         icon: 'star-filled',
         category: 'gary-editorial-native',
         attributes: {
-            bookly_id: {
-                type: 'string',
-                default: ''
-            },
-            card_layout: {
-                type: 'string',
-                default: 'vertical'
-            }
+            bookly_id: { type: 'string', default: '' },
+            card_layout: { type: 'string', default: 'vertical' }
         },
         edit: function(props) {
-            // Dropdown options created by PHP
             const serviceOptions = window.garyBooklyServiceOptions || [];
-
-            // The Inspector panel
             const inspector = el(InspectorControls, null,
                 el(PanelBody, { title: 'Service Details', initialOpen: true },
                     el(SelectControl, {
                         label: 'Select Bookly Service',
                         value: props.attributes.bookly_id,
                         options: serviceOptions,
-                        onChange: function(newVal) {
-                            props.setAttributes({ bookly_id: newVal });
-                        }
+                        onChange: function(newVal) { props.setAttributes({ bookly_id: newVal }); }
                     }),
                     el(SelectControl, {
                         label: 'Card Presentation',
@@ -46,14 +37,11 @@
                             { label: 'Vertical Featured Card', value: 'vertical' },
                             { label: 'Horizontal Sub-Service', value: 'horizontal' }
                         ],
-                        onChange: function(newVal) {
-                            props.setAttributes({ card_layout: newVal });
-                        }
+                        onChange: function(newVal) { props.setAttributes({ card_layout: newVal }); }
                     })
                 )
             );
 
-            // ServerSideRender to show identical frontend view inside the editor
             const preview = el(ServerSideRender, {
                 block: 'gw/single-service',
                 attributes: props.attributes,
@@ -64,13 +52,10 @@
 
             return el('div', { style: { minHeight: '100px' } }, inspector, preview);
         },
-        save: function() {
-            // Dynamic block, rendering happens in PHP
-            return null;
-        }
+        save: function() { return null; }
     });
 
-    // Block 2: The Grid Container
+    // 2. Featured Services Grid
     registerBlockType('gw/service-grid', {
         title: 'Featured Services Grid',
         icon: 'grid-view',
@@ -94,11 +79,9 @@
             );
 
             const is2Col = props.attributes.grid_layout === '2-cols';
-            const outerClass = is2Col ? 'detailed-components-section' : '';
             const innerClass = is2Col ? 'components-grid' : 'services-grid';
 
-            // Restrict what can go inside and give default templates
-            return el('div', { className: outerClass },
+            return el('div', { className: (is2Col ? 'detailed-components-section' : '') },
                 inspector,
                 el('div', { className: innerClass, style: { padding: '10px' } },
                     el(InnerBlocks, {
@@ -108,18 +91,15 @@
                             ['gw/single-service', {}],
                             ['gw/single-service', {}]
                         ],
-                        // Allow to duplicate, up to 5, delete to 1. Not locked.
                         templateLock: false
                     })
                 )
             );
         },
-        save: function(props) {
-            return el(InnerBlocks.Content, null);
-        }
+        save: function() { return el(InnerBlocks.Content, null); }
     });
 
-    // Block 3: Z-Pattern Layout
+    // 3. Z-Pattern Layout
     registerBlockType('gw/z-pattern', {
         title: 'Z-Pattern Layout',
         icon: 'leftright',
@@ -146,15 +126,17 @@
                 allowedTypes: ['image'], value: atts.image_id,
                 render: function(obj) {
                     return el(Button, {
-                        onClick: obj.open, style: { width: '100%', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' }
-                    }, atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%', maxHeight: '400px', objectFit: 'cover' } }) : 'Upload Image');
+                        onClick: obj.open,
+                        className: 'button button-large',
+                        style: { width: '100%', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' }
+                    }, atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'cover' } }) : 'Upload Image');
                 }
             });
 
-            return el('div', { className: 'gw-z-pattern is-' + atts.image_pos, style: { display: 'flex', flexDirection: atts.image_pos === 'right' ? 'row-reverse' : 'row', gap: '20px', alignItems: 'center', marginBottom: '40px' } },
+            return el('div', { className: 'gw-z-pattern is-' + atts.image_pos },
                 inspector,
-                el('div', { className: 'gw-z-image', style: { flex: '1' } }, mediaUploader),
-                el('div', { className: 'gw-z-content', style: { flex: '1', padding: '20px', background: '#fff', border: '1px solid #eee' } },
+                el('div', { className: 'gw-z-image' }, mediaUploader),
+                el('div', { className: 'gw-z-content' },
                     el(InnerBlocks, {
                         template: [
                             ['core/heading', { level: 3, content: 'A Moment in Time' }],
@@ -164,16 +146,10 @@
                 )
             );
         },
-        save: function(props) {
-            const atts = props.attributes;
-            return el('div', { className: 'gw-z-pattern is-' + atts.image_pos },
-                el('div', { className: 'gw-z-image' }, atts.image_url ? el('img', { src: atts.image_url, alt: '' }) : null),
-                el('div', { className: 'gw-z-content' }, el(InnerBlocks.Content, null))
-            );
-        }
+        save: function() { return el(InnerBlocks.Content, null); }
     });
 
-    // Block 4: Trio Gallery
+    // 4. Trio Gallery
     registerBlockType('gw/trio-gallery', {
         title: 'The Gallery Wall Trio',
         icon: 'images-alt2',
@@ -190,32 +166,23 @@
                 allowedTypes: ['image'], value: atts[`${targetPrefix}_id`],
                 render: function(obj) {
                     return el(Button, {
-                        onClick: obj.open, style: { width: '100%', height: height, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' }
+                        onClick: obj.open, style: { width: '100%', height: height, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc', overflow:'hidden' }
                     }, atts[`${targetPrefix}_url`] ? el('img', { src: atts[`${targetPrefix}_url`], style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Upload');
                 }
             });
 
-            return el('div', { className: 'gw-trio-gallery', style: { display: 'flex', gap: '30px', marginBottom: '40px' } },
-                el('div', { className: 'gw-trio-main', style: { flex: '2' } }, createUploader('img1', '600px')),
-                el('div', { className: 'gw-trio-side', style: { flex: '1', display: 'flex', flexDirection: 'column', gap: '30px' } }, 
-                    createUploader('img2', '285px'), 
-                    createUploader('img3', '285px')
+            return el('div', { className: 'gw-trio-gallery' },
+                el('div', { className: 'gw-trio-main' }, createUploader('img1', '620px')),
+                el('div', { className: 'gw-trio-side' }, 
+                    createUploader('img2', '295px'), 
+                    createUploader('img3', '295px')
                 )
             );
         },
-        save: function(props) {
-            const atts = props.attributes;
-            return el('div', { className: 'gw-trio-gallery' },
-                el('div', { className: 'gw-trio-main' }, atts.img1_url ? el('img', { src: atts.img1_url }) : null),
-                el('div', { className: 'gw-trio-side' }, 
-                    atts.img2_url ? el('img', { src: atts.img2_url }) : null,
-                    atts.img3_url ? el('img', { src: atts.img3_url }) : null
-                )
-            );
-        }
+        save: function() { return null; }
     });
 
-    // Block 5: Editorial Split
+    // 5. Editorial Split
     registerBlockType('gw/editorial-split', {
         title: 'Editorial Split (50/50)',
         icon: 'columns',
@@ -247,10 +214,10 @@
                 }
             });
 
-            return el('div', { className: 'gw-editorial-split is-' + atts.image_pos, style: { display: 'flex', flexDirection: atts.image_pos === 'right' ? 'row-reverse' : 'row', gap: '0', alignItems: 'stretch' } },
+            return el('div', { className: 'gw-editorial-split is-' + atts.image_pos },
                 inspector,
-                el('div', { className: 'gw-split-media', style: { flex: '1' } }, mediaUploader),
-                el('div', { className: 'gw-split-content', style: { flex: '1', padding: '40px', background: '#f9f9f9' } },
+                el('div', { className: 'gw-split-media' }, mediaUploader),
+                el('div', { className: 'gw-split-content' },
                     el(InnerBlocks, {
                         template: [
                             ['core/heading', { level: 3, content: 'Magazine Layout' }],
@@ -260,13 +227,9 @@
                 )
             );
         },
-        save: function(props) {
-            const atts = props.attributes;
-            return el('div', { className: 'gw-editorial-split is-' + atts.image_pos },
-                el('div', { className: 'gw-split-media' }, atts.image_url ? el('img', { src: atts.image_url }) : null),
-                el('div', { className: 'gw-split-content' }, el(InnerBlocks.Content, null))
-            );
-        }
+        save: function() { return el(InnerBlocks.Content, null); }
     });
+
+    console.info('GW Editorial: Blocks Successfully Registered.');
 
 })(window.wp);

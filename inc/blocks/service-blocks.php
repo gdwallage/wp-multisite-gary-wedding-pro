@@ -2,36 +2,57 @@
 
 function gary_register_service_blocks() {
     
-    // Register the container block
+    // 1. Featured Services Grid
     register_block_type('gw/service-grid', array(
         'render_callback' => 'gary_render_service_grid_block',
+        'category' => 'gary-editorial-native',
         'attributes' => array(
-            'grid_layout' => array(
-                'type' => 'string',
-                'default' => '3-cols'
-            )
+            'grid_layout' => array( 'type' => 'string', 'default' => '3-cols' )
         )
     ));
 
-    // Register the single dynamic block
+    // 2. Singular Service Box
     register_block_type('gw/single-service', array(
         'render_callback' => 'gary_render_single_service_block',
+        'category' => 'gary-editorial-native',
         'attributes' => array(
-            'bookly_id' => array(
-                'type' => 'string',
-                'default' => ''
-            ),
-            'card_layout' => array(
-                'type' => 'string',
-                'default' => 'vertical'
-            )
+            'bookly_id'   => array( 'type' => 'string', 'default' => '' ),
+            'card_layout' => array( 'type' => 'string', 'default' => 'vertical' )
         )
     ));
 
-    // Register structural layout blocks to expose them to the Block Inserter universally
-    register_block_type('gw/z-pattern', array());
-    register_block_type('gw/trio-gallery', array());
-    register_block_type('gw/editorial-split', array());
+    // 3. Z-Pattern Layout
+    register_block_type('gw/z-pattern', array(
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'image_url' => array( 'type' => 'string', 'default' => '' ),
+            'image_id'  => array( 'type' => 'number', 'default' => 0 ),
+            'image_pos' => array( 'type' => 'string', 'default' => 'left' )
+        )
+    ));
+
+    // 4. Trio Gallery
+    register_block_type('gw/trio-gallery', array(
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'img1_url' => array( 'type' => 'string', 'default' => '' ),
+            'img1_id'  => array( 'type' => 'number', 'default' => 0 ),
+            'img2_url' => array( 'type' => 'string', 'default' => '' ),
+            'img2_id'  => array( 'type' => 'number', 'default' => 0 ),
+            'img3_url' => array( 'type' => 'string', 'default' => '' ),
+            'img3_id'  => array( 'type' => 'number', 'default' => 0 ),
+        )
+    ));
+
+    // 5. Editorial Split
+    register_block_type('gw/editorial-split', array(
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'image_url' => array( 'type' => 'string', 'default' => '' ),
+            'image_id'  => array( 'type' => 'number', 'default' => 0 ),
+            'image_pos' => array( 'type' => 'string', 'default' => 'right' )
+        )
+    ));
 }
 add_action('init', 'gary_register_service_blocks');
 
@@ -87,7 +108,7 @@ function gary_enqueue_block_editor_assets() {
         'gw-service-blocks',
         get_template_directory_uri() . '/inc/blocks/service-blocks.js',
         array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'),
-        '1.0',
+        '1.1.0',
         true
     );
 
