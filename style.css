@@ -65,13 +65,16 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 /* --- 4. GLOBAL SERVICE GRID & GALLERY FRAMES --- */
 .services-grid { 
     display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
     gap: 40px; 
     margin: 60px auto; 
     justify-content: center; 
     align-items: stretch; 
     box-sizing: border-box; 
+    width: 100%;
 }
+/* Bypass Gutenberg block wrappers */
+.services-grid > div { display: contents; }
 
 /* Service Card Main Frame (Absolute Cornering) */
 .service-card { 
@@ -110,17 +113,14 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
     display: block;
     width: 100%;
     margin: 0 auto;
-}
-.gw-block-wrapper .service-card-link,
-.home .service-card-link,
-.site-main > .service-card-link {
-    max-width: 450px;
+    max-width: 450px; /* Default: cap at editorial width */
 }
 
-/* Inside grid, don't cap width */
+/* Force side-by-side when inside a grid (bypass 450px limit) */
 .services-grid .service-card-link,
-.components-grid .service-card-link {
-    max-width: none;
+.components-grid .service-card-link,
+.component-grid .service-card-link {
+    max-width: none !important;
 }
 
 .service-card-image { width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #ffffff !important; display: flex; align-items: center; justify-content: center; border-bottom: none !important; padding: 15px; box-sizing: border-box; }
@@ -492,8 +492,30 @@ body { background-color: var(--wedding-bg); color: var(--wedding-text); font-fam
 .detailed-components-section { margin-top: 100px; text-align: center; }
 .detailed-components-section h2 { font-family: 'Lato', sans-serif !important; font-size: 2.5rem; font-weight: 700; margin-bottom: 60px; color: var(--wedding-text); }
 
-.component-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 1000px; margin: 0 auto; text-align: left; }
-.component-card { flex: 0 0 calc(50% - 15px); background: #fff; border: 3px solid var(--wedding-gold-light); padding: 30px; display: flex; align-items: center; gap: 25px; transition: 0.3s; text-decoration: none; color: inherit; box-sizing: border-box; }
+.component-grid, .components-grid { 
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 30px; 
+    max-width: 1100px; 
+    margin: 0 auto; 
+    text-align: left; 
+}
+.component-grid > div, .components-grid > div { display: contents; }
+
+.component-card { 
+    flex: 0 0 calc(50% - 15px); 
+    background: #fff; 
+    border: 3px solid var(--wedding-gold-light); 
+    padding: 30px; 
+    display: flex; 
+    align-items: center; 
+    gap: 25px; 
+    transition: 0.3s; 
+    text-decoration: none; 
+    color: inherit; 
+    box-sizing: border-box; 
+}
 .component-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
 /* The Gold Coin Icon */

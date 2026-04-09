@@ -65,8 +65,8 @@ add_filter( 'block_categories_all', 'gary_register_block_categories', 10, 2 );
 
 // Editor Enqueuing
 function gary_enqueue_block_editor_assets() {
-    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.3.0', true );
-    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.3.0' );
+    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.4.0', true );
+    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.4.0' );
 
     global $wpdb;
     $options = array( array( 'label' => '-- Select Service --', 'value' => '' ) );
@@ -81,9 +81,25 @@ add_action( 'enqueue_block_editor_assets', 'gary_enqueue_block_editor_assets' );
 
 function gary_wedding_editor_grid_fix() {
     echo '<style id="gary-editor-grid-fix">
+        /* Unbox ServerSideRender wrappers in Editor */
         .wp-block-gw-single-service { display: contents !important; }
-        .wp-block-gw-single-service > div { width: 100% !important; display: contents !important; }
-        .editor-styles-wrapper .services-grid, .editor-styles-wrapper .components-grid { display: flex !important; flex-wrap: wrap !important; gap: 30px !important; }
+        .wp-block-gw-single-service > div { display: contents !important; }
+        
+        /* Grid Parity in Editor */
+        .editor-styles-wrapper .services-grid, 
+        .editor-styles-wrapper .components-grid,
+        .editor-styles-wrapper .component-grid { 
+            display: grid !important; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important; 
+            gap: 30px !important; 
+            width: 100% !important;
+        }
+
+        /* Bypass InnerBlocks wrappers */
+        .editor-styles-wrapper .services-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
+            display: contents !important;
+        }
+
         .editor-styles-wrapper .service-card { border: 8px solid #C5A059 !important; background: #fff !important; }
     </style>';
 }
@@ -117,7 +133,6 @@ function gary_render_single_service_block( $attributes ) {
     $card_desc = !empty($b_data['info']) ? $b_data['info'] : '';
     $price = (float)$b_data['price'] > 0 ? 'From £' . number_format($b_data['price'], 0) : 'FREE';
 
-    // Image fallback to logo
     if (!$card_thumb) {
         $logo_id = get_theme_mod('custom_logo');
         $card_thumb = $logo_id ? wp_get_attachment_image_url($logo_id, 'full') : '';
@@ -153,7 +168,6 @@ function gary_render_z_pattern_block( $attributes, $content ) {
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'left';
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
     $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
-
     ob_start(); ?>
     <div class="gw-z-pattern is-<?php echo esc_attr($pos); ?>">
         <div class="gw-z-image"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
@@ -185,7 +199,6 @@ function gary_render_split_block( $attributes, $content ) {
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'right';
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
     $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : '';
-
     ob_start(); ?>
     <div class="gw-editorial-split is-<?php echo esc_attr($pos); ?>">
         <div class="gw-split-media"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
