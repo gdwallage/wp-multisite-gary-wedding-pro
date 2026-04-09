@@ -17,6 +17,10 @@
             bookly_id: {
                 type: 'string',
                 default: ''
+            },
+            card_layout: {
+                type: 'string',
+                default: 'vertical'
             }
         },
         edit: function(props) {
@@ -25,13 +29,24 @@
 
             // The Inspector panel
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Service Selection', initialOpen: true },
+                el(PanelBody, { title: 'Service Details', initialOpen: true },
                     el(SelectControl, {
                         label: 'Select Bookly Service',
                         value: props.attributes.bookly_id,
                         options: serviceOptions,
                         onChange: function(newVal) {
                             props.setAttributes({ bookly_id: newVal });
+                        }
+                    }),
+                    el(SelectControl, {
+                        label: 'Card Presentation',
+                        value: props.attributes.card_layout,
+                        options: [
+                            { label: 'Vertical Featured Card', value: 'vertical' },
+                            { label: 'Horizontal Sub-Service', value: 'horizontal' }
+                        ],
+                        onChange: function(newVal) {
+                            props.setAttributes({ card_layout: newVal });
                         }
                     })
                 )
@@ -59,10 +74,32 @@
         title: 'Featured Services Grid',
         icon: 'grid-view',
         category: 'gary-editorial-native',
+        attributes: {
+            grid_layout: { type: 'string', default: '3-cols' }
+        },
         edit: function(props) {
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Grid Settings', initialOpen: true },
+                    el(SelectControl, {
+                        label: 'Grid Layout',
+                        value: props.attributes.grid_layout,
+                        options: [
+                            { label: '3-Column (Vertical Cards)', value: '3-cols' },
+                            { label: '2-Column (Horizontal Cards)', value: '2-cols' }
+                        ],
+                        onChange: function(newVal) { props.setAttributes({ grid_layout: newVal }); }
+                    })
+                )
+            );
+
+            const is2Col = props.attributes.grid_layout === '2-cols';
+            const outerClass = is2Col ? 'detailed-components-section' : '';
+            const innerClass = is2Col ? 'components-grid' : 'services-grid';
+
             // Restrict what can go inside and give default templates
-            return el('div', { className: 'detailed-components-section' },
-                el('div', { className: 'component-grid', style: { border: '1px dashed #ccc', padding: '10px' } },
+            return el('div', { className: outerClass },
+                inspector,
+                el('div', { className: innerClass, style: { padding: '10px' } },
                     el(InnerBlocks, {
                         allowedBlocks: ['gw/single-service'],
                         template: [

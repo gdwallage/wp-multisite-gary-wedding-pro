@@ -4,7 +4,13 @@ function gary_register_service_blocks() {
     
     // Register the container block
     register_block_type('gw/service-grid', array(
-        'render_callback' => 'gary_render_service_grid_block'
+        'render_callback' => 'gary_render_service_grid_block',
+        'attributes' => array(
+            'grid_layout' => array(
+                'type' => 'string',
+                'default' => '3-cols'
+            )
+        )
     ));
 
     // Register the single dynamic block
@@ -14,11 +20,47 @@ function gary_register_service_blocks() {
             'bookly_id' => array(
                 'type' => 'string',
                 'default' => ''
+            ),
+            'card_layout' => array(
+                'type' => 'string',
+                'default' => 'vertical'
             )
         )
     ));
 }
 add_action('init', 'gary_register_service_blocks');
+
+function gary_register_custom_block_styles() {
+    register_block_style( 'core/list', array(
+        'name'         => 'gw-highlights',
+        'label'        => __( 'Highlights (Gold Ticks)', 'garywedding' ),
+        'inline_style' => '
+            ul.is-style-gw-highlights { list-style: none; padding-left: 0; font-family: "Lato", sans-serif; font-size: 0.85rem; line-height: 1.7; color: var(--wedding-text); }
+            ul.is-style-gw-highlights li { position: relative; padding-left: 20px; margin-bottom: 5px; }
+            ul.is-style-gw-highlights li::before { content: "✓"; position: absolute; left: 0; color: var(--wedding-gold-light); }
+        '
+    ));
+    register_block_style( 'core/list', array(
+        'name'         => 'gw-included',
+        'label'        => __( 'What\'s Included (Plus)', 'garywedding' ),
+        'inline_style' => '
+            ul.is-style-gw-included { list-style: none; padding-left: 0; font-family: "Lato", sans-serif; font-size: 0.85rem; line-height: 1.7; color: var(--wedding-text); border-top: 1px solid #eee; padding-top: 10px; }
+            ul.is-style-gw-included li { position: relative; padding-left: 24px; margin-bottom: 10px; font-weight: 700; color: var(--wedding-gold-light); text-transform: uppercase; letter-spacing: 1px; }
+            ul.is-style-gw-included li::before { content: "+"; position: absolute; left: 0; background: var(--wedding-gold-light); color: #fff; width: 14px; height: 14px; border-radius: 50%; font-size: 10px; line-height: 14px; text-align: center; }
+            ul.is-style-gw-included li strong { color: #1a1a1a; margin-left: 5px; }
+        '
+    ));
+    register_block_style( 'core/list', array(
+        'name'         => 'gw-perfect-for',
+        'label'        => __( 'Perfect For (Diamonds)', 'garywedding' ),
+        'inline_style' => '
+            ul.is-style-gw-perfect-for { list-style: none; padding-left: 0; font-family: "Lato", sans-serif; font-size: 0.95rem; font-style: italic; color: #555; }
+            ul.is-style-gw-perfect-for li { position: relative; padding-left: 18px; margin-bottom: 8px; }
+            ul.is-style-gw-perfect-for li::before { content: "⬦"; position: absolute; left: 0; color: var(--wedding-gold-light); font-size: 1.1rem; line-height: 1; top: 2px; }
+        '
+    ));
+}
+add_action( 'init', 'gary_register_custom_block_styles' );
 
 function gary_enqueue_block_editor_assets() {
     wp_enqueue_script(
@@ -48,16 +90,32 @@ function gary_enqueue_block_editor_assets() {
 }
 add_action( 'enqueue_block_editor_assets', 'gary_enqueue_block_editor_assets' );
 
+function gary_wedding_editor_grid_fix() {
+    echo '<style>
+        .wp-block-gw-single-service { display: contents !important; }
+        .editor-styles-wrapper .services-grid, .editor-styles-wrapper .components-grid { flex-wrap: wrap; }
+    </style>';
+}
+add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
+
 function gary_render_service_grid_block( $attributes, $content ) {
-    if ( is_admin() ) {
-        return '<div class="detailed-components-section" style="margin-top:20px;"><div class="component-grid">' . $content . '</div></div>';
+    $grid_layout = !empty($attributes['grid_layout']) ? $attributes['grid_layout'] : '3-cols';
+    
+    if ( $grid_layout === '2-cols' ) {
+        // Output the 2-wide detailed components grid
+        return '<div class="detailed-components-section"><div class="components-grid">' . $content . '</div></div>';
+    } else {
+        if ( is_admin() ) {
+            return '<div class="detailed-components-section" style="margin-top:20px;"><div class="component-grid">' . $content . '</div></div>';
+        }
+        // On the frontend, vertical cards require the services-grid wrapper
+        return '<div class="services-grid">' . $content . '</div>';
     }
-    // On the frontend, if we use vertical cards, we want the services-grid class layout!
-    return '<div class="services-grid">' . $content . '</div>';
 }
 
 function gary_render_single_service_block( $attributes ) {
     $b_id = !empty($attributes['bookly_id']) ? $attributes['bookly_id'] : '';
+    $card_layout = !empty($attributes['card_layout']) ? $attributes['card_layout'] : 'vertical';
     
     if ( empty($b_id) ) {
         // Fallback for editor if rendering empty
@@ -143,6 +201,47 @@ function gary_render_single_service_block( $attributes ) {
     $logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'full' ) : '';
     $final_thumb = $card_thumb ? $card_thumb : $logo_url;
 
+    if ( $card_layout === 'horizontal' ) {
+        // HORIZONTAL COMPONENT CARD (Used in page-service-detail grids)
+        ob_start();
+        ?>
+        <a href="<?php echo esc_url( $card_url ); ?>" class="component-card style-bookly-service">
+            <div class="coin-icon-wrap">
+                <?php if ( $final_thumb ) : ?>
+                    <img src="<?php echo esc_url( $final_thumb ); ?>" alt="" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
+                <?php else : ?>
+                    <div class="faux-initial"><?php echo esc_html( substr( $card_title, 0, 1 ) ); ?></div>
+                <?php endif; ?>
+            </div>
+            <div class="component-info">
+                <h3><?php echo esc_html( $card_title ); ?></h3>
+                <?php
+                $subtitle = '';
+                if ( !empty($summary['savings']) && $summary['savings'] > 0 && ! empty( $summary['titles'] ) ) {
+                    $subtitle = 'Includes ' . count( $summary['titles'] ) . ' sub-services';
+                } elseif ( $display_duration ) {
+                    $subtitle = $display_duration;
+                }
+                if ( $subtitle ) {
+                    echo '<div class="meta-row" style="font-size:0.8rem; color:#888; font-style:italic;">' . esc_html( $subtitle ) . '</div>';
+                }
+
+                if ( !empty($summary['savings']) && $summary['savings'] > 0 ) {
+                    echo '<div class="component-includes" style="font-size:0.75rem; border-top:1px dashed #eee; margin-top:5px; padding-top:5px;">';
+                    echo '<strong style="color:var(--wedding-crimson);">Save £' . number_format( $summary['savings'], 0 ) . '</strong> &nbsp;—&nbsp; ';
+                    echo esc_html( implode( ', ', $summary['titles'] ) );
+                    echo '</div>';
+                } elseif ( ! empty( $card_desc ) ) {
+                    echo '<div class="component-includes" style="font-size:0.8rem; color:#666; margin-top:5px;">' . wp_kses_post( wp_trim_words( $card_desc, 15 ) ) . '</div>';
+                }
+                ?>
+            </div>
+        </a>
+        <?php
+        return ob_get_clean();
+    }
+
+    // DEFAULT VERTICAL CARD (Used in page-services featured blocks)
     ob_start();
     ?>
     <a href="<?php echo esc_url( $card_url ); ?>" class="service-card-link">
