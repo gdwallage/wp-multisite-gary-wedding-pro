@@ -65,8 +65,8 @@ add_filter( 'block_categories_all', 'gary_register_block_categories', 10, 2 );
 
 // Editor Enqueuing
 function gary_enqueue_block_editor_assets() {
-    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.5.0', true );
-    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.5.0' );
+    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.6.0', true );
+    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.6.0' );
 
     global $wpdb;
     $options = array( array( 'label' => '-- Select Service --', 'value' => '' ) );
@@ -81,26 +81,29 @@ add_action( 'enqueue_block_editor_assets', 'gary_enqueue_block_editor_assets' );
 
 function gary_wedding_editor_grid_fix() {
     echo '<style id="gary-editor-grid-fix">
+        /* Unbox wrappers */
         .wp-block-gw-single-service { display: contents !important; }
         .wp-block-gw-single-service > div { display: contents !important; }
         
-        .editor-styles-wrapper .services-grid, 
-        .editor-styles-wrapper .components-grid,
-        .editor-styles-wrapper .component-grid { 
-            display: grid !important; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; 
-            gap: 30px !important; 
-            width: 100% !important;
-            align-items: stretch !important;
+        /* Force 3 Columns on Desktop in Editor */
+        @media (min-width: 1024px) {
+            .editor-styles-wrapper .services-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 20px !important;
+                width: 100% !important;
+            }
         }
+
+        /* Disable Clickability in Editor */
+        .editor-styles-wrapper a.service-card-link { pointer-events: none !important; cursor: default !important; }
+        .editor-styles-wrapper .service-card-link * { pointer-events: none !important; }
 
         .editor-styles-wrapper .services-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
             display: contents !important;
         }
 
-        .editor-styles-wrapper .service-card { border: 8px solid #C5A059 !important; background: #fff !important; height: 100% !important; display: flex !important; flex-direction: column !important; }
-        .editor-styles-wrapper .service-card-content { flex-grow: 1 !important; display: flex !important; flex-direction: column !important; }
-        .editor-styles-wrapper .service-card-title { text-align: center !important; font-family: "Blacksword", cursive !important; }
+        .editor-styles-wrapper .service-card { border: 8px solid #C5A059 !important; background: #fff !important; height: 100% !important; }
     </style>';
 }
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
@@ -141,17 +144,6 @@ function gary_render_single_service_block( $attributes ) {
         $card_thumb = get_the_post_thumbnail_url($page_id, 'large');
         $highlights = get_post_meta($page_id, '_gary_service_highlights', true);
         $summary = gary_get_sub_service_summary($page_id);
-        
-        $manual_price = get_post_meta($page_id, '_gary_service_price', true);
-        $manual_dur = get_post_meta($page_id, '_gary_service_duration', true);
-        if ($manual_price) {
-            if ($manual_price === '0' || strtolower($manual_price) === 'free') {
-                $display_price = 'FREE'; $is_free = true;
-            } else {
-                $display_price = 'From £' . $manual_price; $is_free = false;
-            }
-        }
-        if ($manual_dur) $display_duration = 'Typically ' . $manual_dur;
     }
 
     if (!$card_thumb) {
@@ -179,11 +171,10 @@ function gary_render_single_service_block( $attributes ) {
                     <h3 class="service-card-title"><?php echo esc_html($card_title); ?></h3>
                     <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
                         <span><?php echo esc_html($display_price); ?></span>
-                        <?php if($display_duration): ?><small class="duration-label"><?php echo esc_html($display_duration); ?></small><?php endif; ?>
                     </div>
                     
                     <?php if ( ! empty( $summary['titles'] ) ) : ?>
-                        <ul class="card-included-items">
+                        <ul class="gw-bullet-list is-inclusions">
                             <?php foreach ( $summary['titles'] as $inc_title ) : ?>
                                 <li><?php echo esc_html( $inc_title ); ?></li>
                             <?php endforeach; ?>
@@ -195,21 +186,16 @@ function gary_render_single_service_block( $attributes ) {
                     </div>
 
                     <?php if (!empty($highlights)) : ?>
-                        <div class="service-card-highlights">
-                            <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Lato', sans-serif; font-size: 0.85rem; line-height: 1.7; color: var(--wedding-text); opacity: 0.9;">
-                                <?php 
-                                $lines = explode("\n", $highlights);
-                                foreach($lines as $line) {
-                                    if (trim($line)) {
-                                        echo '<li style="margin-bottom: 5px; padding-left: 20px; position: relative; text-align: left;">';
-                                        echo '<span style="position: absolute; left: 0; color: var(--wedding-gold-light);">✓</span>';
-                                        echo esc_html(trim($line));
-                                        echo '</li>';
-                                    }
+                        <ul class="gw-bullet-list is-highlights">
+                            <?php 
+                            $lines = explode("\n", $highlights);
+                            foreach($lines as $line) {
+                                if (trim($line)) {
+                                    echo '<li>' . esc_html(trim($line)) . '</li>';
                                 }
-                                ?>
-                            </ul>
-                        </div>
+                            }
+                            ?>
+                        </ul>
                     <?php endif; ?>
                 </div>
             </div>
