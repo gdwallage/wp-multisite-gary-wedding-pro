@@ -1,472 +1,271 @@
-# Gary Wallage Wedding Pro — Theme Documentation
+# Gary Wallage Wedding Pro — Theme Design Guide & Technical Reference
 
-> **WordPress Theme** · Multisite Compatible · Bookly Integration · Custom SEO Engine  
-> Version 1.150+ · Author: Gary Wallage · Site: `wedding.garywallage.uk`
-
----
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Design System — Colours & Typography](#design-system)
-3. [File Structure](#file-structure)
-4. [Page Templates — How to Use Each One](#page-templates)
-5. [The Hero Carousel — Front Page](#hero-carousel)
-6. [The Services System — Bookly Integration](#services-system)
-7. [Editorial Block Patterns](#editorial-block-patterns)
-8. [WordPress Customizer Settings](#wordpress-customizer)
-9. [SEO Engine](#seo-engine)
-10. [The Footer & Social Links](#footer--social-links)
-11. [Admin Meta Boxes — Quick Reference](#admin-meta-boxes)
-12. [Fonts](#fonts)
-13. [Known Requirements & Dependencies](#requirements)
+> **Version 2.90.1** | WordPress Multisite | Boutique Editorial Aesthetic
 
 ---
 
-## Overview
+## Vision & Intent
 
-**Gary Wallage Wedding Pro** is a bespoke, precision-built WordPress theme for a wedding photography business. It is designed around an *editorial magazine* aesthetic — high contrast, typographically rich, and visually cinematic — while being fully data-driven through the **Bookly** appointment plugin.
+This theme is a **premium boutique editorial** for a professional wedding photographer. It is not a generic theme — every design decision is intentional, reflecting the brand values of:
 
-The theme is opinionated by design: it has no page builder dependency (Elementor, Divi, etc.) and instead uses native WordPress block patterns, PHP page templates, and a custom SEO engine. All of its visual language derives from the Brand DNA colour tokens defined in `style.css`.
+- **Documentary authenticity** — natural, unposed, honest imagery
+- **Editorial precision** — magazine-quality layouts, not template layouts
+- **Boutique luxury** — gold, crimson, script typography, white space
+- **Data-driven trust** — transparent pricing, bundle savings clearly shown
+
+The site must feel like a luxury editorial magazine on first glance. Generic, wide, flat layouts are a **failure state**.
 
 ---
 
 ## Design System
 
-### Colour Palette
+### Brand Colour Palette
 
-All colours are defined as CSS custom properties in `:root` in `style.css`.
-
-| Token | Hex | Usage |
+| Token | Value | Usage |
 |---|---|---|
-| `--wedding-bg` | `#F9F9F7` | Global page background (warm off-white) |
-| `--wedding-text` | `#1a1a1a` | Primary body text (near-black) |
-| `--wedding-accent` | `#B08D55` | Primary gold — headings, borders, buttons |
-| `--wedding-gold-light` | `#C5A059` | Lighter gold — hover states, price labels, separators |
-| `--wedding-crimson` | `#630000` | Deep crimson — FREE badge, "is-free" service price chips |
+| `--brand-bg` | `#F9F9F7` | Page background (warm white) |
+| `--brand-text` | `#1a1a1a` | Body text |
+| `--brand-accent` | `#B08D55` | Headings, site title, hover |
+| `--brand-gold-light` | `#C5A059` | Bullets, borders, prices, ribbons |
+| `--brand-crimson` | `#630000` | FREE label, SAVE ribbon, alerts |
+| `--brand-white` | `#ffffff` | Card backgrounds, frame fills |
 
-The site footer uses a **hard dark background** (`#1a1a1a`) with white text and gold accents, creating a cinematic contrast to the warm off-white body.
+> **Rule**: Never use `--wedding-*` variable names. All variables must use the `--brand-*` prefix.
 
 ### Typography
 
-Two typefaces are used across the entire site:
-
-| Typeface | Source | Usage |
+| Role | Font | Notes |
 |---|---|---|
-| **Blacksword** | Local (`/fonts/Blacksword.woff2`) | Script display font — site title, page headings (H1/H2), service names, footer branding |
-| **Lato** | Google Fonts (loaded in `header.php`) | All body text, navigation, labels, meta, buttons |
+| Body / UI | `Lato` (Google Fonts) | Sans-serif, 400 & 700 weights |
+| Headings / Branding / Hero | `Blacksword` | Custom cursive script, loaded from `/fonts/` |
 
-**Heading Scale (desktop):**
+- The site title (`.site-title-blacksword`) is **1.6rem** — small enough not to overflow the tagline
+- H1 entry titles are gold (`var(--brand-accent)`), uppercase, 3.5rem
+- All prices use `£nnn.00` format (2 decimal places, never omit `.00`)
 
-| Element | Size | Font |
-|---|---|---|
-| Site title | `3.2rem` | Blacksword |
-| H1 / H2 in content | `2.5rem` / `2.2rem` | Blacksword |
-| H3 / H4 | `1.4rem` / `1.2rem` | Lato (400 weight) |
-| Body copy | `1.15rem` | Lato |
-| Navigation | `0.85rem` uppercase, 2px spacing | Lato Bold |
-| Footer labels | `0.7rem` uppercase, 3px spacing | Lato |
+### Layout Rules
 
-All mobile font sizes are capped to readable minimums in the `@media (max-width: 768px)` block — body is explicitly set to `16px` for Google mobile friendliness checks.
-
-### Border & Frame System
-
-The theme uses a consistent **8px solid gold border** as its primary decorative frame motif — visible on service cards, the portrait frame on the About page, and the investment plaque on service detail pages. This is the visual "gallery frame" concept that runs throughout the design.
+- **Editorial width**: `80%` / max `1500px` centred — enforced via `.container` and `.site-main.container`
+- **Never** let content blocks stretch full-width unless it is the hero carousel or footer background
+- **Row gap** on service grids: `60px` minimum
+- Service cards: 3 columns on desktop, 1 on mobile
 
 ---
 
-## File Structure
+## Architecture: File Map
 
 ```
 wp-multisite-gary-wedding-pro/
-│
-├── style.css                    # All CSS — design tokens, layout, responsive
-├── functions.php                # Theme setup, enqueues, Customizer, meta boxes, Bookly helpers
-│
-├── header.php                   # Global header — navigation, site title, favicon
-├── footer.php                   # Global footer — branding columns, social links, copyright
-├── index.php                    # Fallback template (blog / generic)
-│
-├── front-page.php               # Home page — hero carousel + intro content
-├── page-about.php               # Template: "About Me" — portrait frame + bio
-├── page-faq.php                 # Template: "FAQ" — accordion-style questions
-├── page-experience.php          # Template: "Experience" — general content page
-├── page-services.php            # Template: "Services" — Bookly-driven card grid
-├── page-service-detail.php      # Template: "Service Detail" — editorial investment layout
-│
-├── category.php                 # Category archive template
-├── tag.php                      # Tag archive template
-├── single-visual_legacies.php   # Single post template for "Visual Legacies" CPT
-│
+├── style.css                  — Master Design System (single source of truth)
+├── functions.php              — Theme setup, customizer, data helpers, enqueue
+├── header.php                 — Site header + hamburger nav overlay
+├── footer.php                 — 3-column editorial footer
+├── front-page.php             — Homepage: auto-slider from menu pages
+├── page-about.php             — About Me: tilted portrait frame + bio
+├── page-faq.php               — FAQ: JS accordion (h3 triggers)
+├── page-services.php          — Service directory grid
+├── page-service-detail.php    — Individual service detail + investment plaque
+├── page-experience.php        — Experience/portfolio page
 ├── inc/
-│   ├── seo-engine.php           # Custom SEO — meta tags, Open Graph, structured data, hreflang
-│   └── editorial-patterns.php   # 10 registered native WordPress block patterns
-│
-└── fonts/
-    └── Blacksword.woff2 / .ttf  # Local script font (no external dependency)
+│   ├── editorial-patterns.php — Gutenberg block patterns (Z-pattern, USPs, etc.)
+│   ├── shortcodes.php         — [gary_featured_services] shortcode
+│   ├── seo-engine.php         — SEO meta tags
+│   └── blocks/
+│       └── service-blocks.php — Custom Gutenberg block renderers
 ```
 
 ---
 
-## Page Templates
+## Component Specifications
 
-Each template is assigned in the WordPress page editor via **Page Attributes → Template**. Here is what each one does and how to configure it.
+### 1. Hero Slider (Front Page Only)
 
----
+**Behaviour:**
+- Lives exclusively in `front-page.php`
+- Auto-builds one slide per **top-level menu item**
+- Each slide uses: **Featured image** (background) + **Page title** (H1/H2) + **First H2** from page content (subtitle) + **Page URL** (clickable)
+- Pages with no featured image are **skipped**
+- Autoplay: 7 seconds, with dot navigation and prev/next arrows
+- Height: `42vh` / min `260px` — intentionally narrow so images don't crop
 
-### `Front Page` — `front-page.php`
+**CSS Classes:** `.hero-carousel-wrapper`, `.hero-carousel`, `.hero-slide`, `.hero-slide-link`, `.hero-title-box`, `.hero-title`, `.hero-subtitle`, `.hero-cta-hint`, `.carousel-nav`, `.carousel-dots`, `.carousel-dot`
 
-WordPress automatically uses this for your static front page (set in **Settings → Reading → Your homepage displays → A static page**).
-
-**What it does:**
-- Renders a **hero carousel** with up to 6 slides (1 from the featured image + 5 from Customizer)
-- Below the carousel, outputs the **page's WordPress content** (editor body) as the intro section
-- The intro content is where you add your About blurb, area coverage, style description, etc.
-
-**How to configure:**
-- Set this page as the static front page in Settings → Reading
-- Upload a **featured image** — this becomes Slide 0 (the primary H1 slide)
-- Add content in the WordPress editor below the title — this appears as the intro section
-- Configure Slides 1–5 in **Appearance → Customise → Hero Carousel Slides**
-- Write approximately 800 words of body content for best SEO performance
+**Rule:** Never make this full-screen. The narrower format draws the eye down to content below.
 
 ---
 
-### `About Me` — `page-about.php`
+### 2. Service Cards
 
-**What it does:**
-- Two-column layout: **portrait on left** (30% width), **bio text on right**
-- Portrait is displayed in a gold-bordered frame (`8px solid --wedding-gold-light`) with a slight `rotate(-3deg)` tilt
-- Frame includes a gold "Your Photographer" plaque at the bottom
-- Bio content comes from the WordPress editor — uses all standard heading/paragraph typesetting
-- Finishes with a Blacksword script sign-off: *Gary Wallage*
+**Structure:** `.service-card-link > .service-card`
+- **Gold price box**: `.service-card-price` — gold background, white text, `£nnn.00` format
+- **FREE services**: `.service-card-price.is-free` — crimson background, gold text, NO duration shown
+- **SAVE ribbon**: `.service-card-ribbon` — diagonal crimson ribbon, appears when bundle savings > 0, NOT shown on FREE services
+- **Bullet list**: `.gw-bullet-list` — gold `✵` diamond bullets, left-aligned
 
-**How to configure:**
-1. Create a new page, set Template → **About Me**
-2. Upload a **featured image** (portrait photo) — this appears in the left frame
-3. Write your bio in the editor — use H3 for section breaks, paragraphs for copy
-4. The frame tilt and gold border are automatic
+**Pricing Rules:**
+- All prices: `£` + `number_format($price, 2)` — always 2 decimal places
+- Duration: converted from Bookly seconds → `X Hours` (e.g., 36000s = `10.0 Hours`)
+- FREE services: hide duration label, hide savings, hide "combined value" row
 
 ---
 
-### `FAQ` — `page-faq.php`
+### 3. Investment Plaque (Service Detail)
 
-**What it does:**
-- Accordion-style FAQ — each question collapses/expands on click
-- Gold `+` / `—` toggle icons, animated open/close
-- Content comes entirely from the WordPress editor
-
-**How to format content in the editor:**
-- Use `<h3>` blocks for **questions** — these become the clickable triggers
-- Use `<p>` blocks **immediately after** each H3 for the **answer** — these collapse/expand
-
-The FAQ JS script auto-converts any H3 followed by a P block into a trigger/answer pair.
+Right-hand sidebar on `page-service-detail.php`. Shows:
+1. Bundle saving (if `savings > 0` AND not FREE)
+2. Main price `£nnn.00`
+3. Combined individual value (if bundle, not FREE)
+4. Duration (if not FREE)
+5. Bookly service info text
+6. CTA buttons
 
 ---
 
-### `Services` — `page-services.php`
+### 4. Z-Pattern Editorial Blocks
 
-**What it does:**
-- Reads all services from the **Bookly database** (`wp_bookly_services` table)
-- Renders a responsive grid of service cards — each card shows: title, image, price, duration, info text
-- Each card links to its corresponding **Service Detail** page (matched by Bookly service ID)
-
-**The card–page link:**
-Each WP page using the `Service Detail` template stores a **Bookly service ID** in its meta (`_gary_bookly_id`). The services page finds the matching WP page to link to by querying `_gary_bookly_id`.
-
-**How to configure a new service:**
-1. Create the service in **Bookly → Services** — set title, price, duration, info text, category image
-2. Create a new WordPress page
-3. Set its template to **Service Detail**
-4. In the right sidebar meta box "**Bookly Service Link**", select the matching Bookly service
-5. Write the editorial content for the page in the WordPress editor
-6. The card grid on the Services page will automatically include it
-
-**Price display rules:**
-- Price > 0 → shows `From £XXX`
-- Price = 0 → shows `FREE` (crimson badge)
-- No Bookly data → shows `On Request`
+**CSS:** `.gw-z-pattern` — alternates image left/right with overlapping text box
+- Width constrained: `80%` / max `1500px` — **never edge-to-edge**
+- Image: 55% width, white border frame, deep shadow
+- Content box: 50% width, overlaps image by 8%, 4-sided gold border `2px solid var(--brand-gold-light)`
+- Alternating direction: `.is-right` reverses flex order
 
 ---
 
-### `Service Detail` — `page-service-detail.php`
+### 5. About Me Portrait Frame
 
-This is the most complex template. It creates a full **editorial investment layout** for a single photography service.
+Only active on pages using the `page-about.php` template (body class: `page-template-page-about`).
 
-**Layout structure:**
-```
-[Page Title / H1]
-[Subtitle caption]
-
-[Left column: Editor body content + Experience Highlights list]
-[Right column: Investment Plaque — price, duration, Bookly info, CTA buttons]
-
-[Sub-Service Components Grid — 2×N card grid]
-
-[Back to Services link]
-```
-
-**Meta box fields (Editorial Layout Data sidebar):**
-
-| Field | What it does |
-|---|---|
-| **Investment Subtitle** | Small caption under the "Estimated" heading in the plaque (e.g. "Bespoke Guidance") |
-| **Personalized Experience Highlights** | One bullet point per line — rendered with animated gold SVG tick icons |
-| **Link Bookly Sub-Services (Slots 1–8)** | Select up to 8 Bookly services to show in the component grid below the main content |
-| **Background Illustration URL** | Optional very faint PNG/SVG that sits as a fixed background layer (opacity 0.04) |
-
-**The Sub-Service Component Grid:**
-
-Each slot holds a **Bookly service ID**. The template resolves this to the WP page that has `_gary_bookly_id` matching it, then renders:
-- The page's featured image (circular "coin" frame)
-- The page title
-- Price badge: struck-through price + "INCLUDED" (paid), or "FREE — INCLUDED" (free services)
-- Description: Bookly service `info` field → WP excerpt → trimmed content (in priority order)
-- Click links to the sub-service's own detail page
-
-**Sub-service auto-population via Bookly tags:**
-If the parent Bookly service has **tags** set in Bookly, the template *additionally* auto-includes any WP pages whose titles match those tag names. These are added *after* your manual slot selections, not instead of them.
-
-**Investment Plaque CTA buttons:**
-- "Request Details" → `#request` anchor (you can add a contact form below with this ID)
-- "Book Consultation" → `/booking/` (your Bookly booking page)
+- **Tilt**: `rotate(-3deg)` — relaxed, natural feel
+- **Frame**: `8px solid var(--brand-gold-light)` with inner padding and white fill
+- **Hover**: straightens to `rotate(0deg)`
+- **Plaque**: `.frame-plaque` — gold bar reading "Your Photographer", positioned below the frame
+- Implemented with `!important` overrides to ensure no Gutenberg styles override the tilt
 
 ---
 
-### `Experience` — `page-experience.php`
+### 6. FAQ Accordion
 
-A general full-width content page with no special behaviour. Use this for any editorial long-form pages (e.g. a "What to expect" narrative page). Content comes entirely from the editor.
+- Template: `page-faq.php`
+- **Content format**: Page content written as H3 headings (questions) followed by paragraphs (answers)
+- JS wraps each paragraph after an H3 in `.faq-answer` div
+- CSS: answers hidden (`max-height: 0`), expand on `.open` class
+- Trigger shows `+` / `−` indicator via `::after` pseudo-element
+- **No plugin required** — pure CSS + vanilla JS
 
 ---
 
-## Hero Carousel
+### 7. Footer
 
-The front page carousel supports **6 slides total**:
+3-column grid, dark (`#1a1a1a`) background:
 
-| Slide | Source | Title tag |
+| Left | Centre | Right |
 |---|---|---|
-| Slide 0 (first) | Page **Featured Image** | `<h1>` (SEO primary heading) |
-| Slides 1–5 | **Customiser → Hero Carousel Slides** | `<h2>` |
+| Legal links (Terms, Privacy, Cookies) | Branding heading + strapline | Contact address, email, phone, WhatsApp |
 
-**Customiser fields per slide (1–5):**
-- Image URL (paste from Media Library)
-- Title text
-- Subtitle text
-- Title box background colour (hex picker)
-- Title box opacity (0.0–1.0)
-
-**Timing:** Auto-advances every 7 seconds. Prev/Next arrow buttons show when there are 2+ slides.
-
-**Mobile behaviour:** On screens ≤768px, all slides become full-width, "ghost" prev/next slides are hidden, and carousel arrow buttons shrink to 44×44px tap targets.
+- Column dividers: `1px solid rgba(255,255,255,0.1)`
+- Gold diamond bullets `✧` on all list items
+- WhatsApp: green pill button `#25D366` (not a generic link)
+- Social icons: gold-bordered circles, below the grid
+- Footer width: same editorial `80%` constraint as main content
+- Legal/nav links page IDs set via Customizer (`legal_page_privacy`, `legal_page_terms`, `legal_page_cookies`)
 
 ---
 
-## Services System — Bookly Integration
+## Customizer Settings
 
-The theme has two helper functions in `functions.php`:
+All settings accessible at **Appearance → Customize**:
 
-### `gary_get_bookly_service_data( $bookly_id )`
-
-Queries the `wp_bookly_services` table and returns an array:
-
-```php
-array(
-    'title'    => 'Wedding Day Photography',
-    'price'    => 1200.00,
-    'duration' => '480 min',
-    'info'     => '<p>Full day coverage...</p>',
-    'tags'     => 'ceremony,portraits,reception',
-    'image'    => 'https://example.com/image.jpg',
-)
-```
-
-Returns `false` if Bookly is not installed or the service ID doesn't exist.
-
-### `gary_find_page_by_bookly_title( $title )`
-
-Finds a WP page whose title exactly matches `$title`. Used for Bookly tag auto-resolution.
-
-### Bookly Service Link Meta Box
-
-Every page can have a Bookly service ID attached via the **"Bookly Service Link"** sidebar meta box (appears on all pages). This is how the services grid and sub-service resolver know which Bookly service a WP page represents.
-
----
-
-## Editorial Block Patterns
-
-The theme registers **10 native WordPress block patterns** under the "Gary Wallage Editorial" category. Access them in the WordPress editor via the **Block Inserter (+ button) → Patterns → Gary Wallage Editorial**.
-
-| Pattern | Name | Use |
-|---|---|---|
-| `gw/z-pattern-left` | Z-Pattern (Image Left) | Image left, overlapping text box right |
-| `gw/z-pattern-right` | Z-Pattern (Image Right) | Text box left, image right |
-| `gw/trio-gallery` | The Gallery Wall Trio | Hero landscape image left + 2 portrait images stacked right |
-| `gw/cinematic-bleed` | Cinematic Hero Bleed | Full-width cover block with centred heading |
-| `gw/editorial-split` | Editorial Split (50/50) | Media-text block — image one side, copy the other |
-| `gw/storyteller-grid` | The Storyteller Grid | 2×2 gallery grid with tight 5px gaps |
-| `gw/cta-plaque` | Call-to-Action Plaque | Gold-bordered CTA box with heading, copy, and button |
-| `gw/testimonial-bg` | Testimonial Transparency | Cover block with 80% dim, blockquote overlay |
-| `gw/polaroid` | Fine-Art Polaroid | White-bordered polaroid frame for a single image |
-| `gw/chapter-break` | The Chapter Break | Gold separator + small uppercase heading as a section divider |
-
-**How to use:** In the WordPress post/page editor, click **+** → **Patterns** tab → scroll to "Gary Wallage Editorial" → click any pattern to insert it. Then click images to replace them from your Media Library.
-
----
-
-## WordPress Customizer
-
-Access via **Appearance → Customise**. The theme registers the following sections:
-
-### Hero Carousel Slides (Section: `gary_hero_slides`)
-
-For each of **Slides 1–5**:
-- `hero_slide_N_img` — Image URL
-- `hero_slide_N_title` — Slide title
-- `hero_slide_N_subtitle` — Slide subtitle
-- `hero_slide_N_box_color` — Title box background colour
-- `hero_slide_N_box_opacity` — Title box opacity
-
-Slide 0 also has: `hero_slide_0_box_color`, `hero_slide_0_box_opacity`, `hero_slide_0_text_color`.
-
-### Colours (Section: `gary_colours`)
-
-- `primary_accent_color` — Overrides `--wedding-accent` globally
-
-### Footer Content (Section: `gary_footer_options`)
-
-- `footer_heading` — Branding script heading in the footer
-- `footer_text` — Description paragraph under the heading
-- `footer_copyright` — Copyright line text
-
-### Social Media Links (Section: `gary_social_options`)
-
-| Setting | Platform |
+| Setting Key | Description |
 |---|---|
+| `custom_logo` | Site logo (displayed in header centre) |
+| `logo_size_px` | Logo width in px (default: 125) |
+| `footer_heading` | Footer centre heading (e.g. "Preserving Legacies") |
+| `footer_text` | Footer centre strapline text |
+| `footer_contact` | Footer address (multi-line, use line breaks) |
+| `footer_email` | Footer email address |
+| `footer_phone` | Footer phone number (used for tel: and wa.me: links) |
+| `footer_copyright` | Copyright string |
+| `legal_page_privacy` | Page ID for Privacy Policy |
+| `legal_page_terms` | Page ID for Terms & Conditions |
+| `legal_page_cookies` | Page ID for Cookie Policy |
 | `social_facebook` | Facebook profile URL |
 | `social_instagram` | Instagram profile URL |
-| `social_youtube` | YouTube channel URL |
-| `social_twitter` | X / Twitter profile URL |
-| `social_linkedin` | LinkedIn profile URL |
-
-These URLs appear as **gold circle icon buttons** in the footer and are also embedded in the structured data `sameAs` array for SEO.
+| `social_youtube` | YouTube channel URL (optional) |
+| `social_twitter` | X/Twitter URL (optional) |
+| `social_linkedin` | LinkedIn URL (optional) |
 
 ---
 
-## SEO Engine
+## Data Architecture: Services & Bookly
 
-The theme includes a custom SEO engine (`inc/seo-engine.php`) that replaces the need for a generic SEO plugin. It outputs into `wp_head` at priority 2.
+Services are WordPress pages using custom post meta. Meta keys:
 
-**What it outputs:**
-
-| Tag | Details |
+| Meta Key | Description |
 |---|---|
-| `<title>` | Custom title via `pre_get_document_title` filter — front page: "Gary Wallage \| Wedding Photographer Swindon & Wiltshire" (55 chars) |
-| `<meta name="description">` | Front page: 126-char description. Inner pages: auto-generated from excerpt or content |
-| `<link rel="canonical">` | Single canonical — WP core `rel_canonical` hook is suppressed to prevent duplicates |
-| `<link rel="alternate" hreflang>` | `en-GB` and `x-default` self-referencing tags |
-| `<meta property="og:*">` | Open Graph — title, description, URL, image, type, site name |
-| `<meta name="twitter:*">` | Twitter/X card — `summary_large_image` type |
-| `<script type="application/ld+json">` | Structured data: `LocalBusiness → ProfessionalService` with `Service` child node, `sameAs` social links, `logo`, `image`, `priceRange: £££` |
+| `_gary_bookly_id` | Bookly service ID (integer) |
+| `_gary_service_price` | Manual price override (if no Bookly) |
+| `_gary_service_duration` | Manual duration string (if no Bookly) |
+| `_gary_service_subtitle` | Short subtitle for investment plaque |
+| `_gary_service_highlights` | Newline-separated bullet points |
+| `_gary_service_bg_img` | Background image URL |
+| `_gary_sub_service_1` … `_gary_sub_service_8` | Bookly IDs of included sub-services (for bundles) |
 
-**Favicon:**
-- If a **Site Icon** is set in WordPress (Appearance → Customise → Site Identity → Site Icon), that icon is used automatically
-- If no site icon is set, a **gold SVG camera aperture** fallback is output as an inline data URI
-
-**Suppressed WP head noise:**
-- `rsd_link` (Really Simple Discovery)
-- `wlwmanifest_link` (Windows Live Writer)
-- `rel_canonical` (duplicate prevention)
+**Bundle Logic** (`gary_get_sub_service_summary` in `functions.php`):
+- Loops sub-services 1–8, fetches Bookly price for each
+- Sums individual prices → `total_value`
+- `savings = total_value − parent_price` (0 if no saving)
+- Savings are shown on the card ribbon and investment plaque **only if > 0 and not FREE**
 
 ---
 
-## Footer & Social Links
+## CSS Variable Rules
 
-The footer renders in three columns on desktop (stacking to one column on tablet/mobile):
+> All custom properties **must** use `--brand-` prefix. The old `--wedding-` prefix is deprecated and must never be reintroduced.
 
-| Column | Content |
+```css
+/* ✅ Correct */
+color: var(--brand-accent);
+border-color: var(--brand-gold-light);
+
+/* ❌ Never */
+color: var(--wedding-accent);
+```
+
+---
+
+## Version & Cache Busting
+
+The theme version string appears in three places. **Always update all three together**:
+
+1. `style.css` — comment header (`* Version: X.X.X`)
+2. `functions.php` — `gary_send_performance_headers()` preload header
+3. `functions.php` — `gary_wedding_scripts()` enqueue call
+
+Current version: **2.90.1**
+
+---
+
+## Content Guidelines for Menu Pages
+
+For the front-page slider to work correctly, each top-level menu page must have:
+
+1. **A Featured Image set** in the WordPress editor (right sidebar → Featured Image)
+2. **A clear H2 heading** early in the content — this becomes the slide subtitle
+3. The page must be linked directly in the **Primary Menu** (not as a child/sub-menu item)
+
+Pages without a featured image are silently skipped in the slider.
+
+---
+
+## Anti-Patterns (Never Do These)
+
+| Anti-Pattern | Correct Approach |
 |---|---|
-| Left | Blacksword brand heading + description text (from Customiser) |
-| Centre | Legal navigation menu (register "Footer Legal" menu in Appearance → Menus) |
-| Right | Phone number, email address, location (from Customiser fields) |
-
-Below the columns, a "**Follow the Story**" social links bar renders gold circle icon buttons for any configured social platforms. Only platforms with a URL set are shown.
-
-The copyright line reads: `© [year] [footer_copyright setting]`.
-
----
-
-## Admin Meta Boxes
-
-### "Bookly Service Link" (all pages)
-
-| Field | Meta key | Notes |
-|---|---|---|
-| Bookly Service | `_gary_bookly_id` | Select from Bookly services dropdown; stores Bookly service ID |
-| Manual Price | `_gary_service_price` | Fallback if Bookly not available |
-| Manual Duration | `_gary_service_duration` | Fallback duration string |
-
-### "Editorial Layout Data" (all pages — used mainly on Service Detail pages)
-
-| Field | Meta key | Notes |
-|---|---|---|
-| Investment Subtitle | `_gary_service_subtitle` | Caption in the investment plaque |
-| Highlights | `_gary_service_highlights` | One item per line; auto-receives gold tick icons |
-| Sub-Service Slots 1–8 | `_gary_sub_service_1` … `_gary_sub_service_8` | Each stores a Bookly service ID; resolves to the linked WP page |
-| Background Illustration | `_gary_service_bg_img` | URL of a faint fixed-position background image |
-
----
-
-## Fonts
-
-| File | Format | Usage |
-|---|---|---|
-| `fonts/Blacksword.woff2` | WOFF2 | Primary (preferred, smaller) |
-| `fonts/Blacksword.ttf` | TrueType | Fallback |
-
-The font uses `font-display: swap` to prevent invisible text during load. It is loaded via `@font-face` in `style.css` — **no external request** is made for this font.
-
-Lato is loaded from Google Fonts via a `<link>` in `header.php` (weights 300, 400, 700).
-
----
-
-## Requirements
-
-| Requirement | Notes |
-|---|---|
-| WordPress | 6.0+ recommended |
-| PHP | 7.4+ (8.0+ preferred) |
-| **Bookly** plugin | Required for service grid and service detail data. Free tier works; `wp_bookly_services` table must exist. |
-| Google Fonts (Lato) | Loaded from CDN — internet connection required during page load |
-| WP Multisite | Compatible — theme is tested on a multisite subsite |
-
-### Optional but Recommended
-
-| Plugin | Purpose |
-|---|---|
-| WP Super Cache / LiteSpeed Cache | Improves INP performance (Interaction to Next Paint) |
-| Wordfence | Security hardening |
-| WP Mail SMTP | Reliable form/booking email delivery |
-
----
-
-## Quick Start Checklist
-
-When setting up this theme on a fresh site:
-
-- [ ] Activate theme in **Appearance → Themes**
-- [ ] Install and activate **Bookly** plugin
-- [ ] Create a **static page** for the front page and set it in **Settings → Reading**
-- [ ] Set template to **Front Page** on that page
-- [ ] Upload a portrait + featured image for the About page
-- [ ] Create pages and assign templates: About Me, FAQ, Services, Experience
-- [ ] Create Bookly services in **Bookly → Services** (set title, price, duration, info, image)
-- [ ] Create WP pages for each service using template **Service Detail**; link each to its Bookly service via the sidebar meta box
-- [ ] Configure **Appearance → Customise → Hero Carousel Slides** with your images
-- [ ] Configure **Appearance → Customise → Social Media Links** with your profile URLs
-- [ ] Upload a **Site Icon** (512×512 PNG) in **Appearance → Customise → Site Identity**
-- [ ] Register the **"Footer Legal"** nav menu in **Appearance → Menus** and link it
-- [ ] Submit your sitemap to Google Search Console
-
----
-
-*Theme built and maintained by Gary Wallage · `wedding.garywallage.uk`*
+| Full-width content blocks | Use `80%` container constraint |
+| `width: 100%` on Z-patterns | Use `.gw-z-pattern` with `var(--editorial-width)` |
+| Price shown as `£595` | Always `£595.00` (`number_format($price, 2)`) |
+| Duration shown in seconds (`36000`) | Convert: `round($seconds / 3600, 1) . ' Hours'` |
+| FREE service showing savings/duration | Enforce `$is_free` check to hide those fields |
+| `--wedding-` variables | Migrate to `--brand-` |
+| Making the hero slider taller | Keep at `42vh` — narrower prevents photo cropping |
+| Inline styles for repeated patterns | Define in `style.css` with proper class selectors |

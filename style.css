@@ -1,7 +1,7 @@
 /**
  * GARY WALLAGE WEDDING PRO - BOUTIQUE MASTER SKIN
- * Version: 2.80.0
- * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout.
+ * Version: 2.90.0
+ * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  */
  :root {
     /* 1. LAYOUT & CONTAINERS */
@@ -59,7 +59,8 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .focal-right { justify-content: flex-end; }
 .focal-center { flex: 0 0 auto; text-align: center; padding: 0 60px; }
 
-.site-title-blacksword { color: var(--brand-accent); font-size: 2.8rem; margin: 0; }
+.site-title-blacksword { color: var(--brand-accent); font-size: 1.6rem; margin: 0; line-height: 1.1; }
+.site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
 .focal-center .custom-logo-link img { max-width: 180px; height: auto; transition: 0.3s; }
 
 .menu-toggle { 
@@ -88,11 +89,11 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .nav-menu-overlay li a { font-size: 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 5px; color: var(--brand-text); }
 
 /* --- 2. HERO CAROUSEL RECOVERY --- */
-.hero-carousel-wrapper { position: relative; width: 100%; height: 75vh; outline: none; background: #000; overflow: hidden; }
+.hero-carousel-wrapper { position: relative; width: 100%; height: 42vh; min-height: 260px; outline: none; background: #000; overflow: hidden; }
 .hero-carousel { height: 100%; position: relative; }
 .hero-slide { 
     position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease-in-out; 
-    background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center;
+    background-size: cover; background-position: center top; display: flex; align-items: center; justify-content: center;
 }
 .hero-slide.active { opacity: 1; z-index: 5; }
 .hero-content { 
@@ -175,33 +176,122 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 }
 
 /* --- 5. EDITORIAL BLOCKS (Z-PATTERN FULL FRAME) --- */
-.gw-z-pattern { display: flex; align-items: center; margin: 120px auto; position: relative; }
-.gw-z-image { flex: 0 0 60%; z-index: 1; }
-.gw-z-image img { border: 15px solid var(--brand-white); box-shadow: var(--shadow-deep); width: 100%; }
+.gw-z-pattern { 
+    display: flex; align-items: center; margin: 100px auto; position: relative; 
+    width: var(--editorial-width); max-width: var(--site-max-width);
+}
+.gw-z-image { flex: 0 0 55%; z-index: 1; }
+.gw-z-image img { border: 15px solid var(--brand-white); box-shadow: var(--shadow-deep); width: 100%; height: auto; object-fit: cover; }
 .gw-z-content { 
-    flex: 0 0 50%; background: var(--brand-white); padding: 80px; box-shadow: var(--shadow-deep); 
-    margin-left: -10%; z-index: 10; position: relative; 
-    border: 2px solid var(--brand-gold-light); /* FULL FRAME */
+    flex: 0 0 50%; background: var(--brand-white); padding: 60px; box-shadow: var(--shadow-deep); 
+    margin-left: -8%; z-index: 10; position: relative; 
+    border: 2px solid var(--brand-gold-light);
 }
 .gw-z-pattern.is-right { flex-direction: row-reverse; }
-.gw-z-pattern.is-right .gw-z-content { margin-left: 0; margin-right: -10%; }
+.gw-z-pattern.is-right .gw-z-content { margin-left: 0; margin-right: -8%; }
 
-/* --- 6. FOOTER & BOUTIQUE DETAILS --- */
-.site-footer { background: #111; color: var(--brand-white); padding: 100px 40px; margin-top: 140px; }
-.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; max-width: var(--site-max-width); margin: 0 auto; gap: 80px; }
-.footer-branding h3 { font-size: 3.5rem; color: var(--brand-gold-light); margin: 0; }
-
-.footer-nav-list { list-style: none; padding: 0; }
-.footer-nav-list li { margin-bottom: 15px; padding-left: 25px; position: relative; }
-.footer-nav-list li::before { content: '✧'; position: absolute; left: 0; color: var(--brand-gold-light); }
-
-.whatsapp-btn { 
-    display: inline-flex; align-items: center; gap: 12px; background: transparent; 
-    border: 1px solid var(--brand-gold-light); color: var(--brand-gold-light); padding: 12px 25px;
-    border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
-    font-size: 0.8rem; margin-top: 20px; transition: 0.3s;
+/* --- 6. FOOTER (BOUTIQUE EDITORIAL) --- */
+.site-footer { 
+    background: #1a1a1a; color: var(--brand-white); padding: 80px 0 40px; 
+    margin-top: 120px; font-size: 0.9rem; 
 }
-.whatsapp-btn:hover { background: var(--brand-gold-light); color: var(--brand-white); }
+.footer-grid { 
+    display: grid; grid-template-columns: 1fr 1.5fr 1fr; 
+    width: var(--editorial-width); max-width: var(--site-max-width); 
+    margin: 0 auto; gap: 60px; align-items: start;
+}
+.footer-col-left, .footer-col-right { padding-top: 10px; }
+.footer-col-center { text-align: center; border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); padding: 0 40px; }
+
+/* Footer Branding */
+.footer-branding h3 { font-size: 2.2rem; color: var(--brand-gold-light); margin: 0 0 20px 0; font-family: var(--font-script); font-weight: normal; }
+.footer-branding p { font-size: 0.8rem; line-height: 1.7; opacity: 0.6; letter-spacing: 0.5px; }
+
+/* Footer Legal & Nav Lists */
+.footer-legal-list, .footer-nav-list { list-style: none; padding: 0; margin: 0; }
+.footer-legal-list li, .footer-nav-list li { 
+    margin-bottom: 12px; padding-left: 20px; position: relative; font-size: 0.8rem; 
+}
+.footer-legal-list li::before, .footer-nav-list li::before { 
+    content: '✧'; position: absolute; left: 0; color: var(--brand-gold-light); font-size: 0.7rem; top: 2px;
+}
+.footer-legal-list a, .footer-nav-list a { color: rgba(255,255,255,0.7); text-decoration: none; }
+.footer-legal-list a:hover, .footer-nav-list a:hover { color: var(--brand-gold-light); }
+
+/* Footer Contact */
+.footer-contact { display: flex; flex-direction: column; gap: 10px; font-size: 0.82rem; }
+.contact-row { display: block; color: rgba(255,255,255,0.7); line-height: 1.6; }
+.contact-row a { color: rgba(255,255,255,0.7); text-decoration: none; }
+.contact-row a:hover { color: var(--brand-gold-light); }
+
+/* WhatsApp Button */
+.whatsapp-link { 
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #25D366; color: #fff; padding: 8px 18px;
+    border-radius: 50px; font-weight: 700; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 1px; text-decoration: none;
+    margin-top: 8px; transition: opacity 0.3s;
+}
+.whatsapp-link:hover { opacity: 0.85; color: #fff; }
+
+/* Footer Social */
+.footer-social-link { 
+    display: inline-flex; align-items: center; justify-content: center; 
+    width: 42px; height: 42px; border: 1px solid rgba(201,168,76,0.4); 
+    border-radius: 50%; color: var(--brand-gold-light); text-decoration: none; 
+    font-size: 0.82rem; font-weight: 700; transition: background 0.3s, border-color 0.3s;
+}
+.footer-social-link:hover { background: rgba(201,168,76,0.15); border-color: var(--brand-gold-light); }
+
+/* Footer Meta */
+.footer-meta { 
+    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; margin-top: 60px; 
+    text-align: center; font-size: 0.68rem; letter-spacing: 3px; 
+    text-transform: uppercase; opacity: 0.4; 
+    width: var(--editorial-width); max-width: var(--site-max-width); margin-left: auto; margin-right: auto;
+}
+
+/* --- 7. FAQ ACCORDION --- */
+.faq-trigger { 
+    cursor: pointer; padding: 18px 20px; margin: 0; 
+    border-bottom: 1px solid rgba(0,0,0,0.08); 
+    position: relative; padding-right: 50px;
+    font-family: var(--font-primary); font-size: 1.05rem; font-weight: 700;
+    color: var(--brand-text); letter-spacing: 0.5px;
+    transition: color 0.3s; background: var(--brand-white);
+    user-select: none;
+}
+.faq-trigger:hover { color: var(--brand-accent); }
+.faq-trigger::after { 
+    content: '+'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+    font-size: 1.5rem; font-weight: 300; color: var(--brand-gold-light); transition: transform 0.3s;
+}
+.faq-trigger.active::after { content: '−'; }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.faq-answer.open { max-height: 600px; }
+.faq-answer > * { padding: 20px 20px 30px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+
+/* --- 8. PAGE HERO BANNER (ALL PAGES) --- */
+.page-hero-banner { 
+    width: 100%; height: 38vh; min-height: 220px; 
+    background-size: cover; background-position: center top; 
+    position: relative; overflow: hidden;
+}
+.page-hero-banner::after { 
+    content: ''; position: absolute; inset: 0; 
+    background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 100%);
+}
+.page-hero-banner-inner { 
+    position: absolute; inset: 0; z-index: 2; 
+    display: flex; align-items: center; justify-content: center;
+}
+.page-hero-banner-title { 
+    font-family: var(--font-script); font-size: 3.5rem; color: var(--brand-white); 
+    text-align: center; text-shadow: 0 2px 20px rgba(0,0,0,0.5); font-weight: normal;
+    border: 1px solid rgba(197,160,89,0.6); padding: 20px 60px;
+    background: rgba(0,0,0,0.25); backdrop-filter: blur(4px);
+}
+
 
 @media (max-width: 1024px) {
     .container { width: 90% !important; }
