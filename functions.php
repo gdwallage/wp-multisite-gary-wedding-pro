@@ -117,11 +117,11 @@ require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=2.90.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=3.2.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '2.90.1' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '3.2.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
@@ -188,14 +188,44 @@ function gary_bookly_mb_html( $post ) {
 function gary_editorial_mb_html( $post ) {
     $sub = get_post_meta( $post->ID, '_gary_service_subtitle', true );
     $high = get_post_meta( $post->ID, '_gary_service_highlights', true );
-    echo '<p>Subtitle:<br /><input type="text" name="gary_service_subtitle" value="'.esc_attr($sub).'" style="width:100%;" /></p>';
-    echo '<p>Highlights:<br /><textarea name="gary_service_highlights" style="width:100%; height:80px;">'.esc_textarea($high).'</textarea></p>';
+    
+    echo '<div style="margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:15px;">';
+    echo '<p><strong>Subtitle:</strong><br /><input type="text" name="gary_service_subtitle" value="'.esc_attr($sub).'" style="width:100%;" /></p>';
+    echo '<p><strong>Highlights (One per line):</strong><br /><textarea name="gary_service_highlights" style="width:100%; height:80px;">'.esc_textarea($high).'</textarea></p>';
+    echo '</div>';
+
+    // Sub-service Slots
+    global $wpdb;
+    $table = $wpdb->prefix . 'bookly_services';
+    $services = array();
+    if ( $wpdb->get_var("SHOW TABLES LIKE '$table'") == $table ) {
+        $services = $wpdb->get_results( "SELECT id, title FROM $table ORDER BY title ASC" );
+    }
+
+    echo '<p><strong>Sub-Service Bundle Slots:</strong></p>';
+    for ( $i = 1; $i <= 8; $i++ ) {
+        $val = get_post_meta( $post->ID, "_gary_sub_service_$i", true );
+        echo '<div style="margin-bottom:8px;">';
+        echo '<label style="font-size:11px; color:#666;">Slot '.$i.':</label><br />';
+        echo '<select name="gary_sub_service_'.$i.'" style="width:100%;">';
+        echo '<option value="">-- No Sub-service --</option>';
+        foreach ( $services as $s ) {
+            echo '<option value="'.$s->id.'" '.selected($val, $s->id, false).'>'.$s->title.'</option>';
+        }
+        echo '</select></div>';
+    }
 }
 
 function gary_save_meta_boxes( $post_id ) {
     if ( isset($_POST['gary_bookly_id']) ) update_post_meta( $post_id, '_gary_bookly_id', $_POST['gary_bookly_id'] );
     if ( isset($_POST['gary_service_subtitle']) ) update_post_meta( $post_id, '_gary_service_subtitle', $_POST['gary_service_subtitle'] );
     if ( isset($_POST['gary_service_highlights']) ) update_post_meta( $post_id, '_gary_service_highlights', $_POST['gary_service_highlights'] );
+    
+    for ( $i = 1; $i <= 8; $i++ ) {
+        if ( isset($_POST["gary_sub_service_$i"]) ) {
+            update_post_meta( $post_id, "_gary_sub_service_$i", $_POST["gary_sub_service_$i"] );
+        }
+    }
 }
 add_action( 'save_post', 'gary_save_meta_boxes' );
 
@@ -241,3 +271,8 @@ function gary_get_sub_service_summary( $post_id ) {
         'included_str' => implode(', ', $titles)
     );
 }
+
+/**
+ * SECURITY: Limit login error messages
+ */
+add_filter( 'login_errors', function() { return 'Login failed.'; });

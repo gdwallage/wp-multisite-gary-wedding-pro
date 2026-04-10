@@ -41,6 +41,7 @@ function gary_register_service_blocks() {
             'img1_id' => array( 'type' => 'number', 'default' => 0 ), 'img1_size' => array( 'type' => 'string', 'default' => 'large' ),
             'img2_id' => array( 'type' => 'number', 'default' => 0 ), 'img2_size' => array( 'type' => 'string', 'default' => 'medium' ),
             'img3_id' => array( 'type' => 'number', 'default' => 0 ), 'img3_size' => array( 'type' => 'string', 'default' => 'medium' ),
+            'trio_title' => array( 'type' => 'string', 'default' => '' ),
         )
     ));
 
@@ -233,11 +234,18 @@ function gary_render_trio_gallery_block( $attributes ) {
         $imgs[$i] = $id ? wp_get_attachment_image_url($id, $size) : '';
     }
     ob_start(); ?>
-    <div class="gw-trio-gallery">
-        <div class="gw-trio-main"><?php if($imgs[1]): ?><img src="<?php echo esc_url($imgs[1]); ?>" /><?php endif; ?></div>
-        <div class="gw-trio-side">
-            <div class="gw-trio-top"><?php if($imgs[2]): ?><img src="<?php echo esc_url($imgs[2]); ?>" /><?php endif; ?></div>
-            <div class="gw-trio-bottom"><?php if($imgs[3]): ?><img src="<?php echo esc_url($imgs[3]); ?>" /><?php endif; ?></div>
+    <div class="gw-trio-gallery-wrapper">
+        <?php if ( !empty($attributes['trio_title']) ) : ?>
+            <h2 class="trio-gallery-heading" style="text-align:center; font-family:var(--font-script); font-size:3rem; color:var(--brand-accent); margin-bottom:40px; font-weight:normal;">
+                <?php echo esc_html( $attributes['trio_title'] ); ?>
+            </h2>
+        <?php endif; ?>
+        <div class="gw-trio-gallery">
+            <div class="gw-trio-main"><?php if($imgs[1]): ?><img src="<?php echo esc_url($imgs[1]); ?>" /><?php endif; ?></div>
+            <div class="gw-trio-side">
+                <div class="gw-trio-top"><?php if($imgs[2]): ?><img src="<?php echo esc_url($imgs[2]); ?>" /><?php endif; ?></div>
+                <div class="gw-trio-bottom"><?php if($imgs[3]): ?><img src="<?php echo esc_url($imgs[3]); ?>" /><?php endif; ?></div>
+            </div>
         </div>
     </div>
     <?php return ob_get_clean();

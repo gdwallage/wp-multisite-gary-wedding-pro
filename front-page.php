@@ -3,7 +3,7 @@
  * File: front-page.php
  * Template Name: Front Page
  * Theme: Gary Wallage Wedding Pro
- * Version: 3.00.0
+ * Version: 3.1.0
  * Description: Peek carousel — active slide centred & fully visible, adjacent pages
  *              peek in from left/right. Data source: Customiser page-picker (falls
  *              back to Primary Menu pages if nothing is selected).
@@ -38,6 +38,7 @@ function gw_slide_from_page_id( $page_id ) {
         'title'    => get_the_title( $page_id ),
         'subtitle' => $subtitle,
         'url'      => get_permalink( $page_id ),
+        'page_id'  => $page_id,
     );
 }
 
@@ -122,7 +123,7 @@ $slide_count = count( $slides );
                 <?php if ( ! empty( $slide['subtitle'] ) ) : ?>
                     <p class="hero-peek-subtitle"><?php echo esc_html( wp_trim_words( $slide['subtitle'], 12 ) ); ?></p>
                 <?php endif; ?>
-                <?php if ( ! empty( $slide['url'] ) ) : ?>
+                <?php if ( ! empty( $slide['url'] ) && $slide['page_id'] != get_option('page_on_front') ) : ?>
                     <span class="hero-peek-cta">Explore <span aria-hidden="true">→</span></span>
                 <?php endif; ?>
             </div>

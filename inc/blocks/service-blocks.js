@@ -8,6 +8,8 @@
     const ServerSideRender = wp.serverSideRender;
     const MediaUpload = wp.blockEditor.MediaUpload;
     const Button = wp.components.Button;
+    const RichText = wp.blockEditor.RichText;
+    const TextControl = wp.components.TextControl;
 
     console.info('GW Editorial: Initializing Native Blocks v1.3.0...');
 
@@ -169,6 +171,7 @@
             img1_url: { type: 'string', default: '' }, img1_id: { type: 'number', default: 0 }, img1_size: { type: 'string', default: 'large' },
             img2_url: { type: 'string', default: '' }, img2_id: { type: 'number', default: 0 }, img2_size: { type: 'string', default: 'medium' },
             img3_url: { type: 'string', default: '' }, img3_id: { type: 'number', default: 0 }, img3_size: { type: 'string', default: 'medium' },
+            trio_title: { type: 'string', default: '' },
         },
         edit: function(props) {
             const atts = props.attributes;
@@ -197,12 +200,22 @@
                 }
             });
 
-            return el('div', { className: 'gw-trio-gallery' },
+            return el('div', { className: 'gw-trio-gallery-wrapper' },
                 inspector,
-                el('div', { className: 'gw-trio-main' }, createUploader('img1', '620px')),
-                el('div', { className: 'gw-trio-side' }, 
-                    createUploader('img2', '295px'), 
-                    createUploader('img3', '295px')
+                el(RichText, {
+                    tagName: 'h2',
+                    className: 'trio-gallery-heading',
+                    placeholder: 'Enter Gallery Heading...',
+                    value: atts.trio_title,
+                    onChange: function(v) { props.setAttributes({ trio_title: v }); },
+                    style: { textAlign: 'center', fontFamily: 'Blacksword, cursive', fontSize: '2.5rem', fontWeight: 'normal', color: '#B08D55', marginBottom: '20px' }
+                }),
+                el('div', { className: 'gw-trio-gallery' },
+                    el('div', { className: 'gw-trio-main' }, createUploader('img1', '620px')),
+                    el('div', { className: 'gw-trio-side' }, 
+                        createUploader('img2', '295px'), 
+                        createUploader('img3', '295px')
+                    )
                 )
             );
         },

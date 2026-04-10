@@ -60,7 +60,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .focal-center { flex: 0 0 auto; text-align: center; padding: 0 60px; }
 
 .site-title-blacksword { color: var(--brand-accent); font-size: 1.6rem; margin: 0; line-height: 1.1; }
-.site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
+.site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-top: 12px; }
 .focal-center .custom-logo-link img { max-width: 180px; height: auto; transition: 0.3s; }
 
 .menu-toggle { 
@@ -202,10 +202,13 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 
 /* Footer Legal & Nav Lists */
 .footer-legal-list, .footer-nav-list { list-style: none; padding: 0; margin: 0; }
-.footer-legal-list li, .footer-nav-list li { 
+.footer-nav-list li { 
     margin-bottom: 12px; padding-left: 20px; position: relative; font-size: 0.8rem; 
 }
-.footer-legal-list li::before, .footer-nav-list li::before { 
+.footer-legal-list li {
+    margin-bottom: 12px; font-size: 0.8rem; 
+}
+.footer-nav-list li::before { 
     content: '✧'; position: absolute; left: 0; color: var(--brand-gold-light); font-size: 0.7rem; top: 2px;
 }
 .footer-legal-list a, .footer-nav-list a { color: rgba(255,255,255,0.7); text-decoration: none; }
@@ -285,6 +288,62 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     background: rgba(0,0,0,0.25); backdrop-filter: blur(4px);
 }
 
+
+/* --- 9. ABOUT ME LAYOUT (50/50 SPLIT) --- */
+.about-grid { 
+    display: flex; gap: 80px; align-items: flex-start; margin-bottom: 100px;
+}
+.about-image { flex: 0 0 45%; }
+.about-content { flex: 1; }
+.about-sig { border-top: 1px solid rgba(0,0,0,0.05); padding-top: 30px; }
+
+/* --- 10. INVESTMENT SIDEBAR (SERVICE DETAIL) --- */
+.investment-sidebar { 
+    position: sticky; top: 40px;
+}
+.investment-plaque { 
+    background: var(--brand-white); border: 2px solid var(--brand-gold-light); 
+    padding: 50px 40px; text-align: center; box-shadow: var(--shadow-deep);
+}
+.investment-plaque h2 { 
+    font-family: var(--font-primary); font-size: 0.7rem; text-transform: uppercase; 
+    letter-spacing: 4px; color: var(--brand-gold-light); margin-bottom: 15px;
+}
+.investment-plaque .subtitle { 
+    display: block; font-size: 1.1rem; margin-bottom: 30px; opacity: 0.7; font-style: italic;
+}
+.investment-plaque .price-val { 
+    font-family: var(--font-primary); font-size: 2.4rem; font-weight: 700; color: var(--brand-text); 
+    margin: 20px 0;
+}
+.investment-plaque .duration-val { 
+    font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-bottom: 40px;
+}
+
+.investment-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+.btn-black { 
+    background: #1a1a1a; color: var(--brand-white); padding: 18px; font-weight: 700; 
+    text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; transition: 0.3s;
+}
+.btn-black:hover { background: var(--brand-accent); transform: translateY(-2px); }
+
+/* --- 11. COMPONENT CARDS (SUB-SERVICES) --- */
+.detailed-components-section { margin-top: 80px; padding-top: 60px; border-top: 1px solid rgba(0,0,0,0.05); }
+.component-grid { 
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; 
+}
+.component-card { 
+    display: flex; align-items: center; background: var(--brand-white); 
+    border: 1px solid rgba(0,0,0,0.05); padding: 25px; transition: 0.3s;
+}
+.component-card:hover { border-color: var(--brand-gold-light); box-shadow: var(--shadow-soft); }
+.coin-icon-wrap { 
+    flex: 0 0 90px; width: 90px; height: 90px; border-radius: 50%; 
+    overflow: hidden; border: 3px solid var(--brand-gold-light); margin-right: 25px;
+}
+.coin-icon-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.component-info h4 { margin: 0 0 5px 0; font-size: 1.25rem; color: var(--brand-text); }
+.component-info p { margin: 0; font-size: 0.85rem; opacity: 0.7; line-height: 1.5; }
 
 @media (max-width: 1024px) {
     .container { width: 90% !important; }
