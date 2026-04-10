@@ -88,20 +88,13 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .nav-menu-overlay li { margin-bottom: 30px; }
 .nav-menu-overlay li a { font-size: 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 5px; color: var(--brand-text); }
 
-/* --- 2. HERO CAROUSEL RECOVERY --- */
-.hero-carousel-wrapper { position: relative; width: 100%; height: 42vh; min-height: 260px; outline: none; background: #000; overflow: hidden; }
-.hero-carousel { height: 100%; position: relative; }
-.hero-slide { 
-    position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease-in-out; 
-    background-size: cover; background-position: center top; display: flex; align-items: center; justify-content: center;
-}
-.hero-slide.active { opacity: 1; z-index: 5; }
-.hero-content { 
-    text-align: center; color: white; max-width: 800px; padding: 40px; 
-    background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); border: 2px solid var(--brand-gold-light);
-}
-.hero-title { font-size: 4rem; margin: 0; }
-.hero-subtitle { font-family: var(--font-primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 5px; margin-top: 15px; }
+/* --- 2. HERO PEEK CAROUSEL (base reset — full styles in front-page.php) --- */
+/* The peek carousel uses absolute positioning with JS-driven class switching.  */
+/* All detailed styles are co-located in front-page.php for maintainability.    */
+.hero-peek-carousel { position: relative; width: 100%; overflow: hidden; }
+.hero-peek-slide    { position: absolute; overflow: hidden; }
+.hero-peek-img      { display: block; width: 100%; height: 100%; object-fit: contain; }
+
 
 /* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
 .services-grid { 

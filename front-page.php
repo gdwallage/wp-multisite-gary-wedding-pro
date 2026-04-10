@@ -3,115 +3,153 @@
  * File: front-page.php
  * Template Name: Front Page
  * Theme: Gary Wallage Wedding Pro
- * Version: 2.90.0
- * Description: Hero slider auto-built from primary menu pages.
- *              Each slide = a menu page's featured image, title, first H2, and link.
+ * Version: 3.00.0
+ * Description: Peek carousel — active slide centred & fully visible, adjacent pages
+ *              peek in from left/right. Data source: Customiser page-picker (falls
+ *              back to Primary Menu pages if nothing is selected).
  */
 
 get_header();
 
 // ---------------------------------------------------------------
-// BUILD SLIDES FROM PRIMARY MENU PAGES
+// HELPER: build one slide array from a page ID
+// ---------------------------------------------------------------
+function gw_slide_from_page_id( $page_id ) {
+    $page_id = (int) $page_id;
+    if ( $page_id < 1 ) return null;
+    $post_obj = get_post( $page_id );
+    if ( ! $post_obj || $post_obj->post_status !== 'publish' ) return null;
+
+    $thumb    = get_the_post_thumbnail_url( $page_id, 'large' );
+    $subtitle = '';
+    if ( $post_obj ) {
+        $content = apply_filters( 'the_content', $post_obj->post_content );
+        if ( preg_match( '/<h2[^>]*>(.*?)<\/h2>/si', $content, $matches ) ) {
+            $subtitle = wp_strip_all_tags( $matches[1] );
+        }
+        // Fallback to excerpt
+        if ( ! $subtitle ) {
+            $subtitle = get_the_excerpt( $page_id );
+        }
+    }
+
+    return array(
+        'img'      => $thumb,           // may be false — placeholder shown instead
+        'title'    => get_the_title( $page_id ),
+        'subtitle' => $subtitle,
+        'url'      => get_permalink( $page_id ),
+    );
+}
+
+// ---------------------------------------------------------------
+// BUILD SLIDE LIST — Customiser page picker first, then menu fallback
 // ---------------------------------------------------------------
 $slides = array();
 
-$menu_locations = get_nav_menu_locations();
-if ( ! empty( $menu_locations['primary'] ) ) {
-    $menu_items = wp_get_nav_menu_items( $menu_locations['primary'] );
+$customiser_count = (int) get_theme_mod( 'hero_slider_count', 3 );
+// Clamp to valid values
+if ( ! in_array( $customiser_count, array( 3, 5, 7, 9 ) ) ) $customiser_count = 3;
 
-    if ( $menu_items ) {
-        foreach ( $menu_items as $item ) {
-            // Only top-level items that link to a real page/post
-            if ( $item->menu_item_parent != 0 ) continue;
+for ( $i = 1; $i <= $customiser_count; $i++ ) {
+    $page_id = (int) get_theme_mod( "hero_slide_page_{$i}", 0 );
+    if ( $page_id > 0 ) {
+        $slide = gw_slide_from_page_id( $page_id );
+        if ( $slide ) $slides[] = $slide;
+    }
+}
 
-            $page_id  = (int) $item->object_id;
-            $page_url = $item->url ?: get_permalink( $page_id );
-            $title    = $item->title ?: get_the_title( $page_id );
-
-            // Featured image
-            $thumb = get_the_post_thumbnail_url( $page_id, 'full' );
-            if ( ! $thumb ) continue; // Skip pages without featured image
-
-            // Extract first H2 from page content
-            $subtitle = '';
-            $post_obj = get_post( $page_id );
-            if ( $post_obj ) {
-                $content = apply_filters( 'the_content', $post_obj->post_content );
-                if ( preg_match( '/<h2[^>]*>(.*?)<\/h2>/si', $content, $matches ) ) {
-                    $subtitle = wp_strip_all_tags( $matches[1] );
-                }
+// Fallback: Primary Menu top-level pages (any, with or without featured image)
+if ( empty( $slides ) ) {
+    $menu_locations = get_nav_menu_locations();
+    if ( ! empty( $menu_locations['primary'] ) ) {
+        $menu_items = wp_get_nav_menu_items( $menu_locations['primary'] );
+        if ( $menu_items ) {
+            foreach ( $menu_items as $item ) {
+                if ( $item->menu_item_parent != 0 ) continue;
+                $slide = gw_slide_from_page_id( (int) $item->object_id );
+                if ( $slide ) $slides[] = $slide;
             }
-
-            $slides[] = array(
-                'img'      => $thumb,
-                'title'    => $title,
-                'subtitle' => $subtitle,
-                'url'      => $page_url,
-            );
         }
     }
 }
 
-// Fallback: if no menu slides, use the front page featured image itself
-if ( empty( $slides ) && has_post_thumbnail() ) {
+// Last-resort fallback: front page featured image or placeholder
+if ( empty( $slides ) ) {
     $slides[] = array(
-        'img'      => get_the_post_thumbnail_url( get_the_ID(), 'full' ),
-        'title'    => get_the_title(),
-        'subtitle' => get_the_excerpt(),
+        'img'      => get_the_post_thumbnail_url( get_the_ID(), 'large' ) ?: false,
+        'title'    => get_bloginfo( 'name' ),
+        'subtitle' => get_bloginfo( 'description' ),
         'url'      => '',
     );
 }
+
+$slide_count = count( $slides );
 ?>
 
 <main id="primary" class="site-main home">
 
-    <?php if ( ! empty( $slides ) ) : ?>
-    <div class="hero-carousel-wrapper">
-        <div class="hero-carousel">
-            <?php foreach ( $slides as $index => $slide ) : ?>
-                <?php
-                $slide_tag   = ! empty( $slide['url'] ) ? 'a' : 'div';
-                $slide_attrs = ! empty( $slide['url'] )
-                    ? 'href="' . esc_url( $slide['url'] ) . '" aria-label="' . esc_attr( $slide['title'] ) . '"'
-                    : '';
-                ?>
-                <<?php echo $slide_tag; ?> class="hero-slide hero-slide-link <?php echo $index === 0 ? 'active' : ''; ?>"
-                    style="background-image: url('<?php echo esc_url( $slide['img'] ); ?>');"
-                    <?php echo $slide_attrs; ?>>
+<?php if ( ! empty( $slides ) ) : ?>
 
-                    <div class="hero-slide-content">
-                        <div class="hero-title-box">
-                            <?php if ( $index === 0 ) : ?>
-                                <h1 class="hero-title"><?php echo esc_html( $slide['title'] ); ?></h1>
-                            <?php else : ?>
-                                <h2 class="hero-title"><?php echo esc_html( $slide['title'] ); ?></h2>
-                            <?php endif; ?>
-                            <?php if ( ! empty( $slide['subtitle'] ) ) : ?>
-                                <p class="hero-subtitle"><?php echo esc_html( $slide['subtitle'] ); ?></p>
-                            <?php endif; ?>
-                            <?php if ( ! empty( $slide['url'] ) ) : ?>
-                                <span class="hero-cta-hint">Explore &rarr;</span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
+<div class="hero-peek-carousel" id="heroPeekCarousel" data-count="<?php echo $slide_count; ?>">
 
-                </<?php echo $slide_tag; ?>>
+    <!-- Track -->
+    <div class="hero-peek-track" id="heroPeekTrack">
+        <?php foreach ( $slides as $index => $slide ) :
+            $pos_class = 'hidden';
+            if ( $index === 0 )                     $pos_class = 'active';
+            elseif ( $index === 1 )                 $pos_class = 'next';
+            elseif ( $index === $slide_count - 1 )  $pos_class = 'prev';
+        ?>
+        <div class="hero-peek-slide <?php echo $pos_class; ?>"
+             data-index="<?php echo $index; ?>"
+             data-url="<?php echo esc_url( $slide['url'] ); ?>">
+
+            <?php if ( $slide['img'] ) : ?>
+                <img class="hero-peek-img" src="<?php echo esc_url( $slide['img'] ); ?>"
+                     alt="<?php echo esc_attr( $slide['title'] ); ?>" loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>" />
+            <?php else : ?>
+                <div class="hero-peek-placeholder">
+                    <span class="hero-peek-placeholder-icon">◆</span>
+                </div>
+            <?php endif; ?>
+
+            <div class="hero-peek-caption">
+                <?php if ( $index === 0 ) : ?>
+                    <h1 class="hero-peek-title"><?php echo esc_html( $slide['title'] ); ?></h1>
+                <?php else : ?>
+                    <h2 class="hero-peek-title"><?php echo esc_html( $slide['title'] ); ?></h2>
+                <?php endif; ?>
+                <?php if ( ! empty( $slide['subtitle'] ) ) : ?>
+                    <p class="hero-peek-subtitle"><?php echo esc_html( wp_trim_words( $slide['subtitle'], 12 ) ); ?></p>
+                <?php endif; ?>
+                <?php if ( ! empty( $slide['url'] ) ) : ?>
+                    <span class="hero-peek-cta">Explore <span aria-hidden="true">→</span></span>
+                <?php endif; ?>
+            </div>
+
+        </div>
+        <?php endforeach; ?>
+    </div><!-- /.hero-peek-track -->
+
+    <!-- Navigation -->
+    <?php if ( $slide_count > 1 ) : ?>
+    <div class="hero-peek-nav" role="navigation" aria-label="Slide navigation">
+        <button class="hero-peek-arrow hero-peek-prev" id="heroPeekPrev" aria-label="Previous slide">&#8592;</button>
+        <div class="hero-peek-dots" role="list">
+            <?php foreach ( $slides as $i => $s ) : ?>
+                <button class="hero-peek-dot <?php echo $i === 0 ? 'active' : ''; ?>"
+                        data-index="<?php echo $i; ?>"
+                        role="listitem"
+                        aria-label="Go to slide <?php echo $i + 1; ?>"><?php echo $i + 1; ?></button>
             <?php endforeach; ?>
         </div>
-
-        <?php if ( count( $slides ) > 1 ) : ?>
-        <div class="carousel-nav">
-            <button id="prevSlide" aria-label="Previous Slide">&larr;</button>
-            <div class="carousel-dots">
-                <?php foreach ( $slides as $i => $s ) : ?>
-                    <button class="carousel-dot <?php echo $i === 0 ? 'active' : ''; ?>" data-index="<?php echo $i; ?>" aria-label="Go to slide <?php echo $i + 1; ?>"></button>
-                <?php endforeach; ?>
-            </div>
-            <button id="nextSlide" aria-label="Next Slide">&rarr;</button>
-        </div>
-        <?php endif; ?>
+        <button class="hero-peek-arrow hero-peek-next" id="heroPeekNext" aria-label="Next slide">&#8594;</button>
     </div>
     <?php endif; ?>
+
+</div><!-- /.hero-peek-carousel -->
+
+<?php endif; ?>
 
     <!-- Front Page Body Content -->
     <section class="home-intro container" style="margin-top:80px;">
@@ -129,85 +167,361 @@ if ( empty( $slides ) && has_post_thumbnail() ) {
 </main>
 
 <style>
-/* Slide links behave as block elements */
-a.hero-slide-link { display: block; text-decoration: none; cursor: pointer; }
-a.hero-slide-link:hover .hero-title-box { border-color: var(--brand-gold-light); }
-a.hero-slide-link:hover .hero-cta-hint { opacity: 1; transform: translateX(4px); }
+/* ================================================================
+   PEEK CAROUSEL — Layout & Styles
+   ================================================================ */
 
-/* CTA hint */
-.hero-cta-hint {
-    display: inline-block; margin-top: 18px;
-    font-family: var(--font-primary); font-size: 0.75rem;
-    text-transform: uppercase; letter-spacing: 4px;
-    color: var(--brand-gold-light); opacity: 0.7;
-    transition: opacity 0.3s, transform 0.3s;
+.hero-peek-carousel {
+    position: relative;
+    width: 100%;
+    background: #0e0e0e;
+    padding: 50px 0 70px;
+    overflow: hidden;
+    user-select: none;
 }
 
-/* Dot navigation */
-.carousel-nav {
-    position: absolute; bottom: 20px; left: 0; right: 0;
-    display: flex; align-items: center; justify-content: center; gap: 20px;
+/* Track — the horizontal container all slides sit inside */
+.hero-peek-track {
+    position: relative;
+    width: 100%;
+    height: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Every slide is absolute so they layer on top of each other */
+.hero-peek-slide {
+    position: absolute;
+    top: 0; bottom: 0;
+    overflow: hidden;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: width 0.55s cubic-bezier(0.4,0,0.2,1),
+                left 0.55s cubic-bezier(0.4,0,0.2,1),
+                right 0.55s cubic-bezier(0.4,0,0.2,1),
+                opacity 0.55s ease,
+                transform 0.55s cubic-bezier(0.4,0,0.2,1),
+                box-shadow 0.55s ease;
+}
+
+/* ---- Position States ---- */
+
+/* Active — centred, full size */
+.hero-peek-slide.active {
+    width: 58%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 1;
+    z-index: 10;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.75);
+    cursor: default; /* captions/link handle click */
+}
+
+/* Previous — peeks in from left */
+.hero-peek-slide.prev {
+    width: 19%;
+    left: 1%;
+    transform: translateX(0) scale(0.96);
+    opacity: 0.55;
+    z-index: 5;
+    cursor: pointer;
+}
+
+/* Next — peeks in from right */
+.hero-peek-slide.next {
+    width: 19%;
+    right: 1%;
+    left: auto;
+    transform: translateX(0) scale(0.96);
+    opacity: 0.55;
+    z-index: 5;
+    cursor: pointer;
+}
+
+/* Far prev/next (two back) — mostly hidden off edge */
+.hero-peek-slide.far-prev {
+    width: 10%;
+    left: -3%;
+    opacity: 0.15;
+    z-index: 2;
+    pointer-events: none;
+}
+.hero-peek-slide.far-next {
+    width: 10%;
+    right: -3%;
+    left: auto;
+    opacity: 0.15;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Fully hidden (all others) */
+.hero-peek-slide.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    width: 10%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+}
+
+/* Hover effects on side peeks */
+.hero-peek-slide.prev:hover,
+.hero-peek-slide.next:hover {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+/* ---- Image — fully contained, never cropped ---- */
+.hero-peek-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    background: #111;
+}
+
+/* ---- Placeholder (no featured image) ---- */
+.hero-peek-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2410 50%, #1a1a1a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hero-peek-placeholder-icon {
+    font-size: 4rem;
+    color: var(--brand-gold-light);
+    opacity: 0.4;
+}
+
+/* ---- Caption overlay (active slide only) ---- */
+.hero-peek-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
+    padding: 50px 40px 30px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.2s;
+    pointer-events: none;
+}
+.hero-peek-slide.active .hero-peek-caption {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.hero-peek-title {
+    font-family: var(--font-script) !important;
+    font-size: 2.8rem !important;
+    font-weight: normal !important;
+    color: #fff !important;
+    margin: 0 0 8px !important;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.6);
+    line-height: 1.1 !important;
+}
+.hero-peek-subtitle {
+    font-family: var(--font-primary);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.75);
+    margin: 0 0 14px;
+}
+.hero-peek-cta {
+    display: inline-block;
+    font-family: var(--font-primary);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--brand-gold-light);
+    border: 1px solid rgba(197,160,89,0.5);
+    padding: 8px 20px;
+    transition: background 0.3s, border-color 0.3s;
+}
+.hero-peek-slide.active .hero-peek-caption:hover .hero-peek-cta {
+    background: rgba(197,160,89,0.15);
+    border-color: var(--brand-gold-light);
+}
+
+/* ---- Navigation bar ---- */
+.hero-peek-nav {
+    position: absolute;
+    bottom: 18px;
+    left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
     z-index: 20;
 }
-.carousel-nav button#prevSlide,
-.carousel-nav button#nextSlide {
-    background: rgba(0,0,0,0.4); border: 1px solid rgba(197,160,89,0.6);
-    color: var(--brand-gold-light); padding: 8px 18px; cursor: pointer;
-    font-size: 1.1rem; transition: background 0.3s;
-}
-.carousel-nav button:hover { background: rgba(197,160,89,0.3); }
-.carousel-dots { display: flex; gap: 8px; align-items: center; }
-.carousel-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(255,255,255,0.4); border: none; cursor: pointer;
-    transition: background 0.3s, transform 0.3s; padding: 0;
-}
-.carousel-dot.active { background: var(--brand-gold-light); transform: scale(1.4); }
 
-/* Title box styling */
-.hero-slide-content {
-    position: absolute; inset: 0; display: flex;
-    align-items: center; justify-content: center; z-index: 10;
+.hero-peek-arrow {
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(197,160,89,0.5);
+    color: var(--brand-gold-light);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
 }
-.hero-title-box {
-    background: rgba(26,26,26,0.65); backdrop-filter: blur(6px);
-    border: 1px solid rgba(197,160,89,0.4);
-    color: #fff; padding: 40px 60px; text-align: center;
-    transition: border-color 0.3s;
+.hero-peek-arrow:hover {
+    background: rgba(197,160,89,0.25);
+    border-color: var(--brand-gold-light);
+}
+
+.hero-peek-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.hero-peek-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    border: none;
+    cursor: pointer;
+    font-size: 0;           /* hide the number text visually */
+    padding: 0;
+    transition: background 0.3s, transform 0.3s;
+}
+.hero-peek-dot.active {
+    background: var(--brand-gold-light);
+    transform: scale(1.5);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .hero-peek-track { height: 300px; }
+
+    .hero-peek-slide.active { width: 82%; }
+    .hero-peek-slide.prev   { width: 12%; left: 0%; }
+    .hero-peek-slide.next   { width: 12%; right: 0%; }
+    .hero-peek-slide.far-prev,
+    .hero-peek-slide.far-next { display: none; }
+
+    .hero-peek-title   { font-size: 2rem !important; }
+    .hero-peek-caption { padding: 35px 20px 20px; }
+}
+@media (max-width: 480px) {
+    .hero-peek-track { height: 240px; }
+    .hero-peek-slide.prev { display: none; }
+    .hero-peek-slide.next { display: none; }
+    .hero-peek-slide.active { width: 96%; }
 }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const slides  = document.querySelectorAll('.hero-slide');
-    const dots    = document.querySelectorAll('.carousel-dot');
-    const prevBtn = document.getElementById('prevSlide');
-    const nextBtn = document.getElementById('nextSlide');
-    let current   = 0;
-    let timer;
+document.addEventListener('DOMContentLoaded', function () {
 
-    function update(idx) {
-        slides.forEach((s, i) => s.classList.toggle('active', i === idx));
-        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-        current = idx;
+    const carousel  = document.getElementById('heroPeekCarousel');
+    if ( ! carousel ) return;
+
+    const slides    = Array.from( carousel.querySelectorAll('.hero-peek-slide') );
+    const dots      = Array.from( carousel.querySelectorAll('.hero-peek-dot') );
+    const prevBtn   = document.getElementById('heroPeekPrev');
+    const nextBtn   = document.getElementById('heroPeekNext');
+    const total     = slides.length;
+    let current     = 0;
+    let timer       = null;
+
+    // Position classes in order rel to active
+    const CLASSES = ['active', 'next', 'far-next', 'hidden', 'far-prev', 'prev'];
+
+    function getClass( relativeIndex ) {
+        // relativeIndex: 0 = active, 1 = next, -1 = prev, 2 = far-next, -2 = far-prev
+        if ( relativeIndex === 0 )       return 'active';
+        if ( relativeIndex === 1 )       return 'next';
+        if ( relativeIndex === -1 )      return 'prev';
+        if ( relativeIndex === 2 )       return 'far-next';
+        if ( relativeIndex === -2 )      return 'far-prev';
+        return 'hidden';
     }
 
-    function next() { update((current + 1) % slides.length); }
-    function prev() { update((current - 1 + slides.length) % slides.length); }
+    function update( idx ) {
+        current = ( idx + total ) % total;
 
-    function autoplay() {
-        clearInterval(timer);
-        timer = setInterval(next, 7000);
+        slides.forEach( function( slide, i ) {
+            // Calculate shortest circular relative position
+            let rel = i - current;
+            if ( rel > total / 2 )  rel -= total;
+            if ( rel < -total / 2 ) rel += total;
+
+            slide.className = 'hero-peek-slide ' + getClass( rel );
+        });
+
+        dots.forEach( function( dot, i ) {
+            dot.classList.toggle( 'active', i === current );
+        });
     }
 
-    if (slides.length > 1) {
-        if (nextBtn) nextBtn.addEventListener('click', () => { next(); autoplay(); });
-        if (prevBtn) prevBtn.addEventListener('click', () => { prev(); autoplay(); });
-        dots.forEach((dot, i) => dot.addEventListener('click', () => { update(i); autoplay(); }));
-        autoplay();
-    } else if (slides.length === 1) {
-        slides[0].classList.add('active');
+    function next() { update( current + 1 ); }
+    function prev() { update( current - 1 ); }
+
+    function startAutoplay() {
+        clearInterval( timer );
+        timer = setInterval( next, 7000 );
     }
+    function stopAutoplay() {
+        clearInterval( timer );
+    }
+
+    // Arrow buttons
+    if ( prevBtn ) prevBtn.addEventListener( 'click', function() { prev(); startAutoplay(); } );
+    if ( nextBtn ) nextBtn.addEventListener( 'click', function() { next(); startAutoplay(); } );
+
+    // Dot buttons
+    dots.forEach( function( dot, i ) {
+        dot.addEventListener( 'click', function() { update( i ); startAutoplay(); } );
+    });
+
+    // Clicking a side-peek slide advances to it
+    slides.forEach( function( slide, i ) {
+        slide.addEventListener( 'click', function( e ) {
+            if ( slide.classList.contains('prev') || slide.classList.contains('next') ||
+                 slide.classList.contains('far-prev') || slide.classList.contains('far-next') ) {
+                e.preventDefault();
+                update( i );
+                startAutoplay();
+            } else if ( slide.classList.contains('active') ) {
+                // Navigate to the page
+                const url = slide.dataset.url;
+                if ( url ) window.location.href = url;
+            }
+        });
+    });
+
+    // Keyboard navigation
+    document.addEventListener( 'keydown', function( e ) {
+        if ( e.key === 'ArrowLeft' )  { prev(); startAutoplay(); }
+        if ( e.key === 'ArrowRight' ) { next(); startAutoplay(); }
+    });
+
+    // Pause on hover
+    carousel.addEventListener( 'mouseenter', stopAutoplay );
+    carousel.addEventListener( 'mouseleave', startAutoplay );
+
+    // Touch swipe
+    let touchStartX = 0;
+    carousel.addEventListener( 'touchstart', function( e ) { touchStartX = e.touches[0].clientX; }, { passive: true });
+    carousel.addEventListener( 'touchend', function( e ) {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if ( Math.abs( diff ) > 50 ) {
+            if ( diff > 0 ) next(); else prev();
+            startAutoplay();
+        }
+    });
+
+    // Init
+    update( 0 );
+    if ( total > 1 ) startAutoplay();
 });
 </script>
 

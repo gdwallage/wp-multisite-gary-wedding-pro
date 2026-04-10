@@ -47,13 +47,38 @@ function gary_customize_register( $wp_customize ) {
     $wp_customize->add_setting( 'logo_size_px', array('default' => '125', 'transport' => 'refresh') );
     $wp_customize->add_control( 'logo_size_px', array('label' => 'Logo Size (px)', 'section' => 'gary_header_options', 'type' => 'number') );
     
-    // Hero Slider
-    $wp_customize->add_section( 'gary_hero_section', array('title' => 'Hero Slider Content', 'priority' => 30) );
-    for ( $i = 0; $i < 5; $i++ ) {
-        $wp_customize->add_setting( "hero_slide_{$i}_img", array('sanitize_callback' => 'esc_url_raw') );
-        $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, "hero_slide_{$i}_img", array('label' => "Slide ".($i+1)." Image", 'section' => 'gary_hero_section')));
-        $wp_customize->add_setting( "hero_slide_{$i}_title", array('default' => '') );
-        $wp_customize->add_control( "hero_slide_{$i}_title", array('label' => "Slide ".($i+1)." Title", 'section' => 'gary_hero_section'));
+    // Hero Slider — Page Picker
+    $wp_customize->add_section( 'gw_hero_slider', array(
+        'title'       => 'Hero Slider — Page Selection',
+        'priority'    => 28,
+        'description' => 'Choose which pages appear in the front-page hero carousel. Select 3, 5, 7, or 9 slides.',
+    ) );
+
+    // Slide count
+    $wp_customize->add_setting( 'hero_slider_count', array( 'default' => '3', 'transport' => 'refresh', 'sanitize_callback' => 'absint' ) );
+    $wp_customize->add_control( 'hero_slider_count', array(
+        'label'   => 'Number of slides',
+        'section' => 'gw_hero_slider',
+        'type'    => 'select',
+        'choices' => array( '3' => '3 slides', '5' => '5 slides', '7' => '7 slides', '9' => '9 slides' ),
+    ) );
+
+    // Build a flat list of all published pages for the dropdowns
+    $all_pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC' ) );
+    $page_choices = array( '' => '— Select a page —' );
+    foreach ( $all_pages as $p ) {
+        $page_choices[ $p->ID ] = $p->post_title;
+    }
+
+    // One dropdown per possible slot (up to 9)
+    for ( $i = 1; $i <= 9; $i++ ) {
+        $wp_customize->add_setting( "hero_slide_page_{$i}", array( 'default' => '', 'transport' => 'refresh', 'sanitize_callback' => 'absint' ) );
+        $wp_customize->add_control( "hero_slide_page_{$i}", array(
+            'label'   => "Slide {$i} — Page",
+            'section' => 'gw_hero_slider',
+            'type'    => 'select',
+            'choices' => $page_choices,
+        ) );
     }
 
     // Social
