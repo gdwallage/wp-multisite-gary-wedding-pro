@@ -97,7 +97,33 @@ add_action( 'customize_register', 'gary_customize_register' );
 add_action( 'wp_head', function() {
     $logo_size = get_theme_mod( 'logo_size_px', '125' );
     ?>
-    <style type="text/css">
+    <style type="text/css" id="gw-emergency-branding">
+        @font-face {
+            font-family: 'Blacksword';
+            src: url('<?php echo get_template_directory_uri(); ?>/fonts/Blacksword.woff2') format('woff2');
+            font-weight: normal; font-style: normal; font-display: swap;
+        }
+        
+        /* 1. FORCE BRAND FONT & GOLD */
+        .site-title-blacksword, 
+        .entry-title, 
+        h1, h2,
+        .hero-title, 
+        .service-card-title, 
+        .footer-branding h3, 
+        .about-sig span {
+            font-family: 'Blacksword', cursive !important;
+            color: #C5A059 !important;
+            font-weight: normal !important;
+            text-transform: none !important;
+            letter-spacing: normal !important;
+        }
+
+        /* 2. FORCE LAYOUT BOXES (Overrides) */
+        .gw-z-pattern, .about-grid { display: flex !important; width: 80% !important; margin: 60px auto !important; max-width: 1500px !important; }
+        .gw-z-image img { border: 15px solid #fff !important; box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important; }
+        .gw-z-content { border: 2px solid #C5A059 !important; padding: 60px !important; background: #fff !important; }
+
         .focal-center .custom-logo-link img { width: <?php echo $logo_size; ?>px !important; }
     </style>
     <?php
