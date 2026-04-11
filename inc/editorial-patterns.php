@@ -45,25 +45,6 @@ function gary_register_native_editorial_patterns() {
 <!-- /wp:gallery -->',
     ) );
 
-    // 7. Call-to-Action Plaque
-    register_block_pattern( 'gw/cta-plaque', array(
-        'title'         => __( 'Call-to-Action Plaque', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:group {"style":{"border":{"width":"2px","color":"#c5a059"},"spacing":{"padding":{"top":"60px","right":"40px","bottom":"60px","left":"40px"}}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group" style="border-color:#c5a059;border-width:2px;padding-top:60px;padding-right:40px;padding-bottom:60px;padding-left:40px"><!-- wp:heading {"textAlign":"center","style":{"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h2 class="wp-block-heading has-text-align-center" style="letter-spacing:2px;text-transform:uppercase">Ready to Secure Your Date?</h2>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">I take on a limited number of weddings each year.</p>
-<!-- /wp:paragraph -->
-<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
-<div class="wp-block-buttons"><!-- wp:button {"style":{"border":{"radius":"2px"},"color":{"background":"#b08d55"}}} -->
-<div class="wp-block-button"><a class="wp-block-button__link has-background wp-element-button" style="border-radius:2px;background-color:#b08d55">Inquire Now</a></div>
-<!-- /wp:button --></div>
-<!-- /wp:buttons --></div>
-<!-- /wp:group -->',
-    ) );
 
     // 8. Testimonial Transparency
     register_block_pattern( 'gw/testimonial-bg', array(
@@ -89,85 +70,9 @@ function gary_register_native_editorial_patterns() {
 <!-- /wp:group -->',
     ) );
 
-    // 10. Chapter Break
-    register_block_pattern( 'gw/chapter-break', array(
-        'title'         => __( 'The Chapter Break', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:group {"style":{"spacing":{"padding":{"top":"80px","bottom":"80px"}}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group" style="padding-top:80px;padding-bottom:80px"><!-- wp:separator {"backgroundColor":"gold-light","className":"is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-gold-light-color has-alpha-channel-opacity has-gold-light-background-color has-background is-style-wide"/>
-<!-- /wp:separator -->
-<!-- wp:heading {"textAlign":"center","style":{"typography":{"textTransform":"uppercase","letterSpacing":"8px","fontSize":"0.9rem"}}} -->
-<h2 class="wp-block-heading has-text-align-center" style="font-size:0.9rem;letter-spacing:8px;text-transform:uppercase">Photographing Life</h2>
-<!-- /wp:heading --></div>
-<!-- /wp:group -->',
-    ) );
 
-    // 11. Trust Bar
-    register_block_pattern( 'gw/trust-bar', array(
-        'title'         => __( 'Trust Bar (5 Signals)', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","bottom":"20px"}},"color":{"background":"#1a1a1a"}}} -->
-<div class="wp-block-group has-background" style="background-color:#1a1a1a;padding-top:20px;padding-bottom:20px"><!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":"0.9rem","letterSpacing":"2px","textTransform":"uppercase"},"color":{"text":"#c5a059"}}} -->
-<p class="has-text-align-center has-text-color" style="color:#c5a059;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase"><strong>✓</strong> 10+ Years Experience &nbsp; | &nbsp; <strong>✓</strong> Documentary Style &nbsp; | &nbsp; <strong>✓</strong> Swindon &amp; Wiltshire &nbsp; | &nbsp; <strong>✓</strong> Limited Bookings &nbsp; | &nbsp; <strong>✓</strong> Free Consultation</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:group -->',
-    ) );
 
-    // 12. USPs (3 Columns)
-    register_block_pattern( 'gw/usps-3col', array(
-        'title'         => __( 'USPs (3 Columns)', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:columns {"style":{"spacing":{"blockGap":{"top":"40px","left":"40px"},"padding":{"top":"60px","bottom":"60px"}}}} -->
-<div class="wp-block-columns" style="padding-top:60px;padding-bottom:60px"><!-- wp:column -->
-<div class="wp-block-column"><!-- wp:heading {"textAlign":"center","level":4,"style":{"color":{"text":"#c5a059"},"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h4 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059;letter-spacing:2px;text-transform:uppercase">Documentary Storytelling</h4>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">I blend into the background and document your day exactly as it unfolds — unposed, unrepeated, and completely authentic.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column -->
-<!-- wp:column -->
-<div class="wp-block-column"><!-- wp:heading {"textAlign":"center","level":4,"style":{"color":{"text":"#c5a059"},"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h4 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059;letter-spacing:2px;text-transform:uppercase">Technical Precision</h4>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Ten years of experience means no weather, no venue, and no timeline pressure will ever compromise your final images.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column -->
-<!-- wp:column -->
-<div class="wp-block-column"><!-- wp:heading {"textAlign":"center","level":4,"style":{"color":{"text":"#c5a059"},"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h4 class="wp-block-heading has-text-align-center has-text-color" style="color:#c5a059;letter-spacing:2px;text-transform:uppercase">A Calming Presence</h4>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Many couples describe me as the most relaxed person in the room. That calm is entirely intentional and it shows.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns -->',
-    ) );
 
-    // 13. Featured Services Wrapper
-    register_block_pattern( 'gw/featured-services', array(
-        'title'         => __( 'Featured Services Grid', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:group {} -->
-<div class="wp-block-group"><!-- wp:heading {"textAlign":"center","style":{"typography":{"textTransform":"uppercase","letterSpacing":"3px","fontSize":"2rem"}}} -->
-<h2 class="wp-block-heading has-text-align-center" style="font-size:2rem;letter-spacing:3px;text-transform:uppercase">Featured Collections</h2>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Select your services from the block settings.</p>
-<!-- /wp:paragraph -->
-<!-- wp:gw/service-grid -->
-<!-- wp:gw/single-service /-->
-<!-- wp:gw/single-service /-->
-<!-- wp:gw/single-service /-->
-<!-- /wp:gw/service-grid --></div>
-<!-- /wp:group -->',
-    ) );
 
     // 14. Full-Width CTA
     register_block_pattern( 'gw/cta-fullwidth', array(
@@ -192,66 +97,6 @@ function gary_register_native_editorial_patterns() {
 <!-- /wp:cover -->',
     ) );
 
-    // 15. The 4-Step Process
-    register_block_pattern( 'gw/process-4steps', array(
-        'title'         => __( 'The 4-Step Process', 'garywedding' ),
-        'categories'    => array( 'gary-editorial-native' ),
-        'viewportWidth' => 1000,
-        'content'       => '<!-- wp:group {} -->
-<div class="wp-block-group"><!-- wp:heading {"textAlign":"center","style":{"typography":{"textTransform":"uppercase","letterSpacing":"3px","fontSize":"2rem"}}} -->
-<h2 class="wp-block-heading has-text-align-center" style="font-size:2rem;letter-spacing:3px;text-transform:uppercase">How It Works</h2>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">A simple, transparent approach to your photography experience.</p>
-<!-- /wp:paragraph -->
-<!-- wp:columns -->
-<div class="wp-block-columns"><!-- wp:column -->
-<div class="wp-block-column"><!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":"2.5rem","fontWeight":"300"},"color":{"text":"#c5a059"}}} -->
-<p class="has-text-align-center has-text-color" style="color:#c5a059;font-size:2.5rem;font-weight:300">01</p>
-<!-- /wp:paragraph -->
-<!-- wp:heading {"textAlign":"center","level":4,"style":{"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h4 class="wp-block-heading has-text-align-center" style="letter-spacing:2px;text-transform:uppercase">Consultation</h4>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">We discuss your vision, style preferences, and timeline to ensure we are the perfect fit.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column -->
-<!-- wp:column -->
-<div class="wp-block-column"><!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":"2.5rem","fontWeight":"300"},"color":{"text":"#c5a059"}}} -->
-<p class="has-text-align-center has-text-color" style="color:#c5a059;font-size:2.5rem;font-weight:300">02</p>
-<!-- /wp:paragraph -->
-<!-- wp:heading {"textAlign":"center","level":4,"style":{"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h4 class="wp-block-heading has-text-align-center" style="letter-spacing:2px;text-transform:uppercase">Booking</h4>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Secure your date with a signed agreement and deposit. The bespoke planning begins.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column -->
-<!-- wp:column -->
-<div class="wp-block-column"><!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":"2.5rem","fontWeight":"300"},"color":{"text":"#c5a059"}}} -->
-<p class="has-text-align-center has-text-color" style="color:#c5a059;font-size:2.5rem;font-weight:300">03</p>
-<!-- /wp:paragraph -->
-<!-- wp:heading {"textAlign":"center","level":4,"style":{"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h4 class="wp-block-heading has-text-align-center" style="letter-spacing:2px;text-transform:uppercase">The Day</h4>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">I work unobtrusively to capture the authentic, unscripted moments of your story.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column -->
-<!-- wp:column -->
-<div class="wp-block-column"><!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":"2.5rem","fontWeight":"300"},"color":{"text":"#c5a059"}}} -->
-<p class="has-text-align-center has-text-color" style="color:#c5a059;font-size:2.5rem;font-weight:300">04</p>
-<!-- /wp:paragraph -->
-<!-- wp:heading {"textAlign":"center","level":4,"style":{"typography":{"textTransform":"uppercase","letterSpacing":"2px"}}} -->
-<h4 class="wp-block-heading has-text-align-center" style="letter-spacing:2px;text-transform:uppercase">Delivery</h4>
-<!-- /wp:heading -->
-<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Receive your fully-edited, high-resolution collection via a beautiful online gallery.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns --></div>
-<!-- /wp:group -->',
-    ) );
     // 16. Highlights List
     register_block_pattern( 'gw/list-highlights', array(
         'title'         => __( 'Personalized Experience Highlights', 'garywedding' ),

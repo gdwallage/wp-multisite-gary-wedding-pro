@@ -40,34 +40,33 @@ function gary_featured_services_shortcode( $atts ) {
         <div class="component-grid">
             <?php foreach ( $grid_items as $item ) :
 
-                // ── SHARED: resolve price, badge, description ──────────────────
-                if ( $item['type'] === 'page' ) {
-                    $sub_page    = get_post( $item['page_id'] );
-                    if ( ! $sub_page ) continue;
-                    $card_title  = $sub_page->post_title;
-                    $card_url    = get_permalink( $item['page_id'] );
-                    $card_thumb  = get_the_post_thumbnail_url( $item['page_id'], 'large' );
-                    // Get Bookly data: prefer item bookly_id, fall back to page meta
-                    $b_id        = !empty($item['bookly_id']) ? $item['bookly_id'] : get_post_meta( $item['page_id'], '_gary_bookly_id', true );
-                    $b_data      = $b_id ? gary_get_bookly_service_data( $b_id ) : false;
-                    $manual_p    = get_post_meta( $item['page_id'], '_gary_service_price', true );
-                    // Description fallback chain
-                    if ( $b_data && ! empty( $b_data['info'] ) ) {
-                        $card_desc = wp_trim_words( wp_strip_all_tags( $b_data['info'] ), 20 );
-                    } elseif ( ! empty( $sub_page->post_excerpt ) ) {
-                        $card_desc = wp_trim_words( $sub_page->post_excerpt, 20 );
-                    } else {
-                        // Use content, but strip shortcodes to prevent infinite loops and messy output
-                        $card_desc = wp_trim_words( strip_shortcodes( $sub_page->post_content ), 20 );
+                $card_title = !empty($item['title']) ? $item['title'] : '';
+                $card_url   = !empty($item['page_url']) ? $item['page_url'] : '#';
+                $card_thumb = !empty($item['thumb']) ? $item['thumb'] : '';
+                $card_desc  = '';
+                $b_data     = false;
+                $manual_p   = '';
+
+                // If we have a page_id, try to get more rich data
+                if ( !empty($item['page_id']) && $item['page_id'] > 0 ) {
+                    $sub_page = get_post($item['page_id']);
+                    if ($sub_page) {
+                        $card_title = $sub_page->post_title;
+                        $card_url   = get_permalink($sub_page->ID);
+                        if (!$card_thumb) $card_thumb = get_the_post_thumbnail_url($sub_page->ID, 'medium');
+                        $manual_p   = get_post_meta($sub_page->ID, '_gary_service_price', true);
+                        $card_desc  = !empty($sub_page->post_excerpt) ? $sub_page->post_excerpt : wp_trim_words(strip_shortcodes($sub_page->post_content), 20);
                     }
-                } else {
-                    // Bookly-only card — no linked WP page
-                    $b_data      = $item['data'];
-                    $card_title  = $b_data['title'];
-                    $card_url    = '/booking/';
-                    $card_thumb  = ! empty( $b_data['image'] ) ? $b_data['image'] : '';
-                    $manual_p    = '';
-                    $card_desc   = ! empty( $b_data['info'] ) ? wp_trim_words( wp_strip_all_tags( $b_data['info'] ), 20 ) : '';
+                }
+
+                // Get Bookly data for price/info override
+                $b_id = !empty($item['bookly_id']) ? $item['bookly_id'] : ( !empty($item['page_id']) ? get_post_meta($item['page_id'], '_gary_bookly_id', true) : false );
+                if ($b_id) {
+                    $b_data = gary_get_bookly_service_data($b_id);
+                    if ($b_data) {
+                        if (empty($card_title)) $card_title = $b_data['title'];
+                        if (!empty($b_data['info'])) $card_desc = wp_trim_words(wp_strip_all_tags($b_data['info']), 20);
+                    }
                 }
 
                 // Price badge logic

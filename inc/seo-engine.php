@@ -52,20 +52,23 @@ function gary_wedding_seo_engine() {
     ] ) );
 
     // --- Page-specific title / description / url ---
+    $post_id     = get_the_ID();
+    $manual_title = get_post_meta( $post_id, '_gary_seo_title', true );
+    $manual_desc  = get_post_meta( $post_id, '_gary_seo_desc', true );
+
     if ( is_front_page() || is_home() ) {
-        $title       = 'Gary Wallage | Wedding Photographer Swindon & Wiltshire';
-        // ≤130 chars (currently 128)
-        $description = 'Wedding photographer in Swindon, Wiltshire & the South West. Editorial storytelling, precise framing & unforgettable memories.';
-        $url         = trailingslashit( home_url() );      // canonical: https://wedding.garywallage.uk/
+        $title       = !empty($manual_title) ? $manual_title : 'Gary Wallage | Wedding Photographer Swindon & Wiltshire';
+        $description = !empty($manual_desc) ? $manual_desc : 'Wedding photographer in Swindon, Wiltshire & the South West. Editorial storytelling, precise framing & unforgettable memories.';
+        $url         = trailingslashit( home_url() );
         $og_type     = 'website';
     } elseif ( is_page() || is_single() ) {
-        $title       = get_the_title() . ' | Gary Wallage Weddings';
-        $description = get_the_excerpt() ?: wp_trim_words( get_the_content(), 25 );
+        $title       = !empty($manual_title) ? $manual_title : get_the_title() . ' | Gary Wallage Weddings';
+        $description = !empty($manual_desc) ? $manual_desc : (get_the_excerpt() ?: wp_trim_words( get_the_content(), 25 ));
         $url         = get_permalink();
         $og_type     = is_single() ? 'article' : 'website';
     } else {
-        $title       = get_bloginfo( 'name' );
-        $description = get_bloginfo( 'description' );
+        $title       = !empty($manual_title) ? $manual_title : get_bloginfo( 'name' );
+        $description = !empty($manual_desc) ? $manual_desc : get_bloginfo( 'description' );
         $url         = get_permalink();
         $og_type     = 'website';
     }

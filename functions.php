@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 2.80.0
+ * Version: 1.80.0
  * Fixes: CACHE BUSTER + TOTAL RESTORATION. Fully restoring 3-tier data logic and bundle savings calculations.
  */
 
@@ -117,11 +117,11 @@ require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3.2.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=3.5.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '3.2.0' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '3.5.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
@@ -164,11 +164,22 @@ function gary_find_page_by_bookly_title( $title ) {
 }
 
 /**
+ * HELPER: Format seconds into human readable duration
+ */
+function gary_format_duration( $seconds ) {
+    if ( empty($seconds) || !is_numeric($seconds) ) return '';
+    $hours = round( (int)$seconds / 3600, 1 );
+    if ($hours <= 0) return '';
+    return $hours . ' Hours';
+}
+
+/**
  * META BOXES
  */
 function gary_add_meta_boxes() {
     add_meta_box( 'gary_bookly_id_box', 'Bookly Link', 'gary_bookly_mb_html', 'page', 'side' );
     add_meta_box( 'gary_editorial_mb', 'Editorial Options', 'gary_editorial_mb_html', 'page', 'side' );
+    add_meta_box( 'gary_seo_mb', 'SEO Settings', 'gary_seo_mb_html', 'page', 'side' );
 }
 add_action( 'add_meta_boxes', 'gary_add_meta_boxes' );
 
@@ -216,10 +227,33 @@ function gary_editorial_mb_html( $post ) {
     }
 }
 
+/**
+ * SEO Settings Meta Box HTML
+ */
+function gary_seo_mb_html( $post ) {
+    $seo_title = get_post_meta( $post->ID, '_gary_seo_title', true );
+    $seo_desc  = get_post_meta( $post->ID, '_gary_seo_desc', true );
+    $seo_keys  = get_post_meta( $post->ID, '_gary_seo_keywords', true );
+    
+    echo '<p><strong>SEO Title Override:</strong> (Max 60 chars)<br />';
+    echo '<input type="text" name="gary_seo_title" value="'.esc_attr($seo_title).'" style="width:100%;" placeholder="Default: '.esc_attr(get_the_title($post->ID)).' | Gary Wallage Weddings" /></p>';
+    
+    echo '<p><strong>Meta Description Override:</strong> (Max 160 chars)<br />';
+    echo '<textarea name="gary_seo_desc" style="width:100%; height:80px;" placeholder="Leave empty to use page excerpt...">'.esc_textarea($seo_desc).'</textarea></p>';
+    
+    echo '<p><strong>On-Page SEO Keywords:</strong> (Displayed on Service Detail pages)<br />';
+    echo '<input type="text" name="gary_seo_keywords" value="'.esc_attr($seo_keys).'" style="width:100%;" placeholder="e.g. Swindon wedding photographer, lifestyle portrait..." /></p>';
+    
+    echo '<p style="font-size:11px; opacity:0.6;">Note: These fields directly update the head tags and the "SEO Keywords" display on the frontend.</p>';
+}
+
 function gary_save_meta_boxes( $post_id ) {
     if ( isset($_POST['gary_bookly_id']) ) update_post_meta( $post_id, '_gary_bookly_id', $_POST['gary_bookly_id'] );
     if ( isset($_POST['gary_service_subtitle']) ) update_post_meta( $post_id, '_gary_service_subtitle', $_POST['gary_service_subtitle'] );
     if ( isset($_POST['gary_service_highlights']) ) update_post_meta( $post_id, '_gary_service_highlights', $_POST['gary_service_highlights'] );
+    if ( isset($_POST['gary_seo_title']) ) update_post_meta( $post_id, '_gary_seo_title', $_POST['gary_seo_title'] );
+    if ( isset($_POST['gary_seo_desc']) ) update_post_meta( $post_id, '_gary_seo_desc', $_POST['gary_seo_desc'] );
+    if ( isset($_POST['gary_seo_keywords']) ) update_post_meta( $post_id, '_gary_seo_keywords', $_POST['gary_seo_keywords'] );
     
     for ( $i = 1; $i <= 8; $i++ ) {
         if ( isset($_POST["gary_sub_service_$i"]) ) {
@@ -252,10 +286,14 @@ function gary_get_sub_service_summary( $post_id ) {
                 
                 $page_id = gary_find_page_by_bookly_title($sub_data['title']);
                 $grid_items[] = array(
+                    'type'     => 'page',
+                    'page_id'  => $page_id,
                     'title'    => $sub_data['title'],
                     'price'    => $unit_price,
+                    'display_duration' => 'Typically ' . gary_format_duration($sub_data['duration']),
                     'page_url' => $page_id ? get_permalink($page_id) : '#',
-                    'thumb'    => $page_id ? get_the_post_thumbnail_url($page_id, 'medium') : ''
+                    'thumb'    => $page_id ? get_the_post_thumbnail_url($page_id, 'medium') : '',
+                    'bookly_id' => $sub_id
                 );
             }
         }
@@ -268,6 +306,7 @@ function gary_get_sub_service_summary( $post_id ) {
         'titles'       => $titles,
         'total_value'  => $total_val,
         'savings'      => $savings,
+        'parent_price' => $parent_price,
         'included_str' => implode(', ', $titles)
     );
 }

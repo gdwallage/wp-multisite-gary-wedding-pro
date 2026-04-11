@@ -55,6 +55,59 @@ function gary_register_service_blocks() {
             'image_size' => array( 'type' => 'string', 'default' => 'large' )
         )
     ));
+
+    // 6. Chapter Break
+    register_block_type('gw/chapter-break', array(
+        'render_callback' => 'gary_render_chapter_break_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'title' => array( 'type' => 'string', 'default' => 'Photographing Life' )
+        )
+    ));
+
+    // 7. CTA Plaque (The Black & Gold Action Plate)
+    register_block_type('gw/cta-plaque', array(
+        'render_callback' => 'gary_render_cta_plaque_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'title'    => array( 'type' => 'string', 'default' => 'Ready to Secure Your Date?' ),
+            'content'  => array( 'type' => 'string', 'default' => 'I take on a limited number of weddings each year.' ),
+            'btn_text' => array( 'type' => 'string', 'default' => 'Inquire Now' ),
+            'btn_url'  => array( 'type' => 'string', 'default' => '/contact/' )
+        )
+    ));
+
+    // 8. Trust Bar (Confidence Signals)
+    register_block_type('gw/trust-bar', array(
+        'render_callback' => 'gary_render_trust_bar_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'signals' => array( 'type' => 'string', 'default' => '✓ 10+ Years Experience | ✓ Documentary Style | ✓ Limited Bookings' )
+        )
+    ));
+
+    // 9. USPs (3-Column Editorial Value)
+    register_block_type('gw/usps-3col', array(
+        'render_callback' => 'gary_render_usps_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            't1' => array('type'=>'string', 'default'=>'Documentary Storytelling'), 'd1' => array('type'=>'string', 'default'=>'I blend into the background...'),
+            't2' => array('type'=>'string', 'default'=>'Technical Precision'),      'd2' => array('type'=>'string', 'default'=>'Ten years of experience...'),
+            't3' => array('type'=>'string', 'default'=>'A Calming Presence'),      'd3' => array('type'=>'string', 'default'=>'Relaxed, intentional calm.')
+        )
+    ));
+
+    // 10. Process Steps (The 4-Step Journey)
+    register_block_type('gw/process-steps', array(
+        'render_callback' => 'gary_render_process_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            's1_t' => array('type'=>'string', 'default'=>'Consultation'), 's1_d' => array('type'=>'string', 'default'=>'Discussing your vision and vision.'),
+            's2_t' => array('type'=>'string', 'default'=>'Booking'),      's2_d' => array('type'=>'string', 'default'=>'Secure your date with a deposit.'),
+            's3_t' => array('type'=>'string', 'default'=>'The Day'),      's3_d' => array('type'=>'string', 'default'=>'Authentic, unscripted moments.'),
+            's4_t' => array('type'=>'string', 'default'=>'Delivery'),     's4_d' => array('type'=>'string', 'default'=>'Fully-edited high-res gallery.')
+        )
+    ));
 }
 add_action('init', 'gary_register_service_blocks');
 
@@ -260,6 +313,61 @@ function gary_render_split_block( $attributes, $content ) {
     <div class="gw-editorial-split is-<?php echo esc_attr($pos); ?>">
         <div class="gw-split-media"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
         <div class="gw-split-content"><?php echo $content; ?></div>
+    </div>
+    <?php return ob_get_clean();
+}
+
+function gary_render_chapter_break_block( $atts ) {
+    return '
+    <div class="gw-chapter-break">
+        <hr class="gw-gold-sep" />
+        <h2 class="gw-chapter-title">' . esc_html($atts['title']) . '</h2>
+    </div>';
+}
+
+function gary_render_cta_plaque_block( $atts ) {
+    return '
+    <div class="gw-cta-plaque">
+        <h3>' . esc_html($atts['title']) . '</h3>
+        <p>' . esc_html($atts['content']) . '</p>
+        <div class="gw-cta-btn-wrap">
+            <a href="' . esc_url($atts['btn_url']) . '" class="btn-black-gold">' . esc_html($atts['btn_text']) . '</a>
+        </div>
+    </div>';
+}
+
+function gary_render_trust_bar_block( $atts ) {
+    return '
+    <div class="gw-trust-bar">
+        <div class="container">
+            <p>' . esc_html($atts['signals']) . '</p>
+        </div>
+    </div>';
+}
+
+function gary_render_usps_block( $atts ) {
+    ob_start(); ?>
+    <div class="gw-usps-row">
+        <?php for($i=1; $i<=3; $i++) : ?>
+            <div class="gw-usp-col">
+                <h4><?php echo esc_html($atts["t$i"]); ?></h4>
+                <p><?php echo esc_html($atts["d$i"]); ?></p>
+            </div>
+        <?php endfor; ?>
+    </div>
+    <?php return ob_get_clean();
+}
+
+function gary_render_process_block( $atts ) {
+    ob_start(); ?>
+    <div class="gw-process-row">
+        <?php for($i=1; $i<=4; $i++) : ?>
+            <div class="gw-process-col">
+                <span class="step-num">0<?php echo $i; ?></span>
+                <h4><?php echo esc_html($atts["s{$i}_t"]); ?></h4>
+                <p><?php echo esc_html($atts["s{$i}_d"]); ?></p>
+            </div>
+        <?php endfor; ?>
     </div>
     <?php return ob_get_clean();
 }

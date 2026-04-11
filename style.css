@@ -1,8 +1,33 @@
-/**
- * GARY WALLAGE WEDDING PRO - BOUTIQUE MASTER SKIN
- * Version: 2.90.0
+/*
+ * Version: 3.5.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  */
+
+@font-face {
+    font-family: 'Blacksword';
+    src: url('fonts/Blacksword.woff2') format('woff2'),
+         url('fonts/Blacksword.woff') format('woff'),
+         url('fonts/Blacksword.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lato';
+    src: url('fonts/lato-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lato';
+    src: url('fonts/lato-bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
  :root {
     /* 1. LAYOUT & CONTAINERS */
     --editorial-width: 80%; /* Primary constraint */
@@ -103,15 +128,15 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 }
 .service-card { 
     position: relative; background: var(--brand-white); border: var(--gold-frame-border) solid var(--brand-gold-light); 
-    box-shadow: var(--shadow-soft); display: flex; flex-direction: column; transition: 0.4s; padding-bottom: 25px; height: 100%; overflow: visible;
+    box-shadow: var(--shadow-soft); display: flex; flex-direction: column; transition: 0.4s; padding-bottom: 25px; height: 100%; overflow: hidden;
 }
 
-.service-card-ribbon { 
-    position: absolute; top: 15px; left: -10px; background: var(--brand-crimson); color: var(--brand-gold-light); 
-    padding: 8px 25px; font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    transform: rotate(-3deg); box-shadow: 5px 5px 15px rgba(0,0,0,0.2); z-index: 20; 
+.service-card-ribbon, .investment-savings-ribbon { 
+    position: absolute; top: 30px; right: -45px; width: 190px; background: var(--brand-crimson); color: #fff; 
+    padding: 10px 0; font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    transform: rotate(45deg); box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 50; text-align: center;
+    border-top: 2px solid var(--brand-gold-light); border-bottom: 2px solid var(--brand-gold-light);
 }
-.service-card-ribbon::after { content: ''; position: absolute; bottom: -5px; left: 0; border-left: 10px solid transparent; border-top: 5px solid #3d0000; }
 
 .service-card-image { aspect-ratio: 1/1; overflow: hidden; padding: 25px; }
 .service-card-image img { width: 100%; height: 100%; object-fit: contain; }
@@ -304,6 +329,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .investment-plaque { 
     background: var(--brand-white); border: 2px solid var(--brand-gold-light); 
     padding: 50px 40px; text-align: center; box-shadow: var(--shadow-deep);
+    position: relative; overflow: hidden;
 }
 .investment-plaque h2 { 
     font-family: var(--font-primary); font-size: 0.7rem; text-transform: uppercase; 
@@ -353,4 +379,43 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     .gw-z-image, .gw-z-content { flex: 1 1 auto; width: 100%; margin: 0; }
     .gw-z-content { padding: 40px; }
     .portrait-frame { transform: rotate(0); }
+}
+
+/* ----------------------------------------------------------------------------------- */
+/* 9. CUSTOM EDITORIAL BLOCKS (BLACK & GOLD) */
+/* ----------------------------------------------------------------------------------- */
+
+.gw-chapter-break { text-align: center; padding: 100px 0; max-width: 800px; margin: 0 auto; }
+.gw-gold-sep { border: 0; border-top: 2px solid var(--brand-gold-light); width: 60px; margin: 0 auto 30px; }
+.gw-chapter-title { font-family: var(--font-primary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 8px; color: var(--brand-black); }
+
+.gw-cta-plaque { 
+    background: var(--brand-black); border: 2px solid var(--brand-gold-light); color: var(--brand-white);
+    padding: 80px 40px; text-align: center; margin: 60px auto; max-width: 1000px;
+}
+.gw-cta-plaque h3 { font-family: var(--font-primary); font-size: 2rem; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-gold-light); margin-bottom: 20px; }
+.gw-cta-plaque p { font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px; }
+.btn-black-gold { 
+    padding: 15px 40px; background: var(--brand-gold-light); color: var(--brand-black) !important; 
+    text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-decoration: none;
+    transition: 0.3s; display: inline-block;
+}
+.btn-black-gold:hover { background: var(--brand-white); transform: translateY(-2px); }
+
+.gw-trust-bar { background: var(--brand-black); padding: 25px 0; border-top: 1px solid rgba(197, 160, 89, 0.3); border-bottom: 1px solid rgba(197, 160, 89, 0.3); }
+.gw-trust-bar p { color: var(--brand-gold-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; margin: 0; font-weight: 700; }
+
+.gw-usps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; padding: 80px 0; }
+.gw-usp-col { text-align: center; }
+.gw-usp-col h4 { font-family: var(--font-primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-gold-light); margin-bottom: 20px; }
+.gw-usp-col p { font-size: 0.95rem; line-height: 1.7; opacity: 0.7; }
+
+.gw-process-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; padding: 80px 0; border-top: 1px solid #eee; }
+.gw-process-col { position: relative; }
+.step-num { font-size: 2.5rem; font-weight: 300; color: var(--brand-gold-light); display: block; margin-bottom: 15px; font-family: var(--font-primary); opacity: 0.6; }
+.gw-process-col h4 { text-transform: uppercase; letter-spacing: 2px; font-size: 1rem; margin-bottom: 15px; }
+.gw-process-col p { font-size: 0.9rem; opacity: 0.7; line-height: 1.6; }
+
+@media (max-width: 900px) {
+    .gw-usps-row, .gw-process-row { grid-template-columns: 1fr; gap: 40px; }
 }

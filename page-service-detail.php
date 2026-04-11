@@ -25,7 +25,7 @@ $is_free = false;
 if ( $bookly_data ) {
     $is_free = ( (float)$bookly_data['price'] <= 0 );
     $display_price = $is_free ? 'FREE' : 'From £' . number_format($bookly_data['price'], 2);
-    $display_duration = $is_free ? '' : $bookly_data['duration'];
+    $display_duration = $is_free ? '' : gary_format_duration($bookly_data['duration']);
 } elseif ( !empty($manual_price) ) {
     $is_free = ( strtolower($manual_price) === 'free' || $manual_price === '0' );
     $display_price = $is_free ? 'FREE' : 'From £' . number_format((float)$manual_price, 2);
@@ -37,6 +37,7 @@ $summary = gary_get_sub_service_summary( $post_id );
 $grid_items         = $summary['grid_items'];
 $final_total_value  = $summary['total_value'];
 $final_savings      = $summary['savings'];
+$final_parent_price = isset($summary['parent_price']) ? $summary['parent_price'] : 0;
 $included_titles_str = $summary['included_str'];
 ?>
 
@@ -78,21 +79,26 @@ $included_titles_str = $summary['included_str'];
                         ?>
                     </ul>
                 <?php endif; ?>
+
+                <?php 
+                $seo_keys = get_post_meta( $post_id, '_gary_seo_keywords', true ); 
+                if ( ! empty( $seo_keys ) ) : ?>
+                    <p class="seo-keywords-display" style="font-size: 0.85rem; opacity: 0.8; font-style: italic; margin-top: 40px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 20px;">
+                        <strong>SEO Keywords:</strong> <?php echo esc_html( $seo_keys ); ?>
+                    </p>
+                <?php endif; ?>
             </div>
 
             <!-- Right: Investment Plaque -->
             <aside class="investment-sidebar" style="flex: 0 0 380px;">
                 <div class="investment-plaque">
-                    <h2>Estimated</h2>
+                    <!-- DIAGNOSTIC: Standalone Val: <?php echo $final_total_value; ?> | Parent Price: <?php echo $final_parent_price; ?> -->
+                    <?php if ( $final_savings > 0 && !$is_free ) : ?>
+                        <div class="investment-savings-ribbon">SAVING £<?php echo number_format($final_savings, 0); ?></div>
+                    <?php endif; ?>
                     <?php if($subtitle): ?><span class="subtitle"><?php echo esc_html($subtitle); ?></span><?php endif; ?>
                     
                     <div class="price-wrap">
-                        <?php if ( $final_savings > 0 && !$is_free ) : ?>
-                            <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-crimson); margin-bottom: 10px;">
-                                Bundle Saving: £<?php echo number_format($final_savings, 2); ?>
-                            </div>
-                        <?php endif; ?>
-
                         <div class="price-val"><?php echo esc_html($display_price); ?></div>
                         
                         <?php if ( $final_savings > 0 && !$is_free ) : ?>

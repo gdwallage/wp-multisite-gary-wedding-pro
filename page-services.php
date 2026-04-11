@@ -3,7 +3,7 @@
  * File: page-services.php
  * Template Name: Services
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.78.0
+ * Version: 1.80.0
  * Description: Clean grid with strictly aligned page title and beveled frames.
  */
 
@@ -53,9 +53,7 @@ get_header(); ?>
                     } else {
                         $display_price = 'From £' . number_format($bookly_data['price'], 2);
                     }
-                    $dur_sec = (int)$bookly_data['duration'];
-                    $dur_h = round($dur_sec / 3600, 1);
-                    $display_duration = 'Typically ' . $dur_h . ' Hours';
+                    $display_duration = 'Typically ' . gary_format_duration($bookly_data['duration']);
                     $bookly_info = isset($bookly_data['info']) ? $bookly_data['info'] : '';
                 } else {
                     if ( !empty($manual_price) || $manual_price === '0' ) {
@@ -82,7 +80,7 @@ get_header(); ?>
                 <a href="<?php the_permalink(); ?>" class="service-card-link">
                     <div class="service-card">
                         <?php if ( $card_savings > 0 && ! $is_free ) : ?>
-                            <div class="service-card-ribbon">SAVE £<?php echo number_format($card_savings, 2); ?></div>
+                            <div class="service-card-ribbon">SAVING £<?php echo number_format($card_savings, 0); ?></div>
                         <?php endif; ?>
 
                         <div class="service-card-image">

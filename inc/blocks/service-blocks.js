@@ -281,6 +281,108 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
+    // 6. Chapter Break
+    registerBlockType('gw/chapter-break', {
+        title: 'Editorial Chapter Break', icon: 'separator', category: 'gary-editorial-native',
+        attributes: { title: { type: 'string', default: 'Photographing Life' } },
+        edit: function(props) {
+            return el('div', { className: 'gw-block-edit-wrap' },
+                el(RichText, {
+                    tagName: 'h2',
+                    value: props.attributes.title,
+                    onChange: function(v) { props.setAttributes({ title: v }); },
+                    style: { textAlign: 'center', letterSpacing: '8px', textTransform: 'uppercase', fontSize: '1rem', borderTop: '2px solid #C5A059', paddingTop: '40px', marginTop: '40px' }
+                })
+            );
+        },
+        save: function() { return null; }
+    });
+
+    // 7. CTA Plaque
+    registerBlockType('gw/cta-plaque', {
+        title: 'CTA Action Plaque', icon: 'megaphone', category: 'gary-editorial-native',
+        attributes: {
+            title: { type: 'string', default: 'Ready to Secure Your Date?' },
+            content: { type: 'string', default: 'I take on a limited number of weddings each year.' },
+            btn_text: { type: 'string', default: 'Inquire Now' },
+            btn_url: { type: 'string', default: '/contact/' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'CTA Settings' },
+                    el(TextControl, { label: 'Button Text', value: atts.btn_text, onChange: function(v) { props.setAttributes({ btn_text: v }); } }),
+                    el(TextControl, { label: 'Button URL', value: atts.btn_url, onChange: function(v) { props.setAttributes({ btn_url: v }); } })
+                )
+            );
+            return el('div', null, inspector, el(ServerSideRender, { block: 'gw/cta-plaque', attributes: atts }));
+        },
+        save: function() { return null; }
+    });
+
+    // 8. Trust Bar
+    registerBlockType('gw/trust-bar', {
+        title: 'Confidence Trust Bar', icon: 'shield', category: 'gary-editorial-native',
+        attributes: { signals: { type: 'string', default: '✓ 10+ Years Experience | ✓ Documentary Style | ✓ Limited Bookings' } },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Bar Settings' },
+                    el(TextControl, { label: 'Signals Text', value: atts.signals, onChange: function(v) { props.setAttributes({ signals: v }); } })
+                )
+            );
+            return el('div', null, inspector, el(ServerSideRender, { block: 'gw/trust-bar', attributes: atts }));
+        },
+        save: function() { return null; }
+    });
+
+    // 9. USPs (3-Column)
+    registerBlockType('gw/usps-3col', {
+        title: 'Editorial USPs (3-Col)', icon: 'columns', category: 'gary-editorial-native',
+        attributes: {
+            t1: { type: 'string', default: 'Documentary Storytelling' }, d1: { type: 'string', default: '...' },
+            t2: { type: 'string', default: 'Technical Precision' },      d2: { type: 'string', default: '...' },
+            t3: { type: 'string', default: 'A Calming Presence' },      d3: { type: 'string', default: '...' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'USP Content' },
+                    [1,2,3].map(i => el('div', null,
+                        el(TextControl, { label: `Title ${i}`, value: atts[`t${i}`], onChange: function(v) { props.setAttributes({ [`t${i}`]: v }); } }),
+                        el(TextControl, { label: `Desc ${i}`, value: atts[`d${i}`], onChange: function(v) { props.setAttributes({ [`d${i}`]: v }); } })
+                    ))
+                )
+            );
+            return el('div', null, inspector, el(ServerSideRender, { block: 'gw/usps-3col', attributes: atts }));
+        },
+        save: function() { return null; }
+    });
+
+    // 10. Process Steps
+    registerBlockType('gw/process-steps', {
+        title: 'Step Process Journey', icon: 'editor-ol', category: 'gary-editorial-native',
+        attributes: {
+            s1_t: { type: 'string', default: 'Consultation' }, s1_d: { type: 'string', default: '...' },
+            s2_t: { type: 'string', default: 'Booking' },      s2_d: { type: 'string', default: '...' },
+            s3_t: { type: 'string', default: 'The Day' },      s3_d: { type: 'string', default: '...' },
+            s4_t: { type: 'string', default: 'Delivery' },     s4_d: { type: 'string', default: '...' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Process Content' },
+                    [1,2,3,4].map(i => el('div', null,
+                        el(TextControl, { label: `Step ${i} Title`, value: atts[`s${i}_t`], onChange: function(v) { props.setAttributes({ [`s${i}_t`]: v }); } }),
+                        el(TextControl, { label: `Step ${i} Desc`, value: atts[`s${i}_d`], onChange: function(v) { props.setAttributes({ [`s${i}_d`]: v }); } })
+                    ))
+                )
+            );
+            return el('div', null, inspector, el(ServerSideRender, { block: 'gw/process-steps', attributes: atts }));
+        },
+        save: function() { return null; }
+    });
+
     console.info('GW Editorial: Blocks Successfully Registered.');
 
 })(window.wp);
