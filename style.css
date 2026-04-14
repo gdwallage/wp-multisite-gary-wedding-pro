@@ -54,7 +54,7 @@
 }
 
 /* --- GLOBAL DEFAULTS --- */
-body { background-color: var(--brand-bg); color: var(--brand-text); font-family: var(--font-primary); margin: 0; overflow-x: hidden; }
+body, html { background-color: var(--brand-bg); color: var(--brand-text); font-family: var(--font-primary); margin: 0; overflow-x: hidden; width: 100%; max-width: 100vw; }
 a { text-decoration: none; color: inherit; transition: 0.3s ease; }
 img { max-width: 100%; height: auto; }
 
@@ -203,7 +203,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     row-gap: 60px; margin: 60px auto; width: var(--editorial-width) !important; max-width: 1250px; overflow: visible !important;
 }
 @media (max-width: 1024px) {
-    .services-grid { width: var(--editorial-width) !important; grid-template-columns: 1fr !important; }
+    .services-grid { width: 100% !important; grid-template-columns: 1fr !important; }
 }
 
 .investment-plaque {
@@ -485,10 +485,10 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .component-info p { margin: 0; font-size: 0.85rem; opacity: 0.7; line-height: 1.5; }
 
 @media (max-width: 1024px) {
-    .container, .gw-global-grid-wrapper, .home-intro.container { width: 90% !important; }
+    .container, .gw-global-grid-wrapper, .home-intro.container { width: 100% !important; padding: 0 5%; }
     .header-focal-container { height: auto; flex-direction: column; padding: 30px 20px; }
     .focal-center { order: -1; padding-bottom: 20px; top: 0; }
-    .services-grid, .component-grid, .footer-grid, .gw-z-pattern, .about-grid { grid-template-columns: 1fr !important; flex-direction: column; }
+    .services-grid, .component-grid, .components-grid, .footer-grid, .gw-z-pattern, .about-grid { grid-template-columns: 1fr !important; flex-direction: column; width: 100% !important; }
     .gw-z-image, .gw-z-content { flex: 1 1 auto; width: 100%; margin: 0; }
     .gw-z-content { padding: 40px; }
     .portrait-frame { transform: rotate(0); }

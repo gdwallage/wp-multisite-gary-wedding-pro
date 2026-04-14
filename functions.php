@@ -149,7 +149,6 @@ add_action( 'wp_head', function() {
 /**
  * CORE MODULES
  */
-require_once get_template_directory() . '/inc/seo-engine.php';
 require_once get_template_directory() . '/inc/shortcodes.php';
 require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 
@@ -221,7 +220,6 @@ function gary_format_duration( $seconds ) {
 function gary_add_meta_boxes() {
     add_meta_box( 'gary_bookly_id_box', 'Bookly Link', 'gary_bookly_mb_html', 'page', 'side' );
     add_meta_box( 'gary_editorial_mb', 'Editorial Options', 'gary_editorial_mb_html', 'page', 'side' );
-    add_meta_box( 'gary_seo_mb', 'SEO Settings', 'gary_seo_mb_html', 'page', 'side' );
 }
 add_action( 'add_meta_boxes', 'gary_add_meta_boxes' );
 
@@ -308,33 +306,12 @@ function gary_editorial_mb_html( $post ) {
     }
 }
 
-/**
- * SEO Settings Meta Box HTML
- */
-function gary_seo_mb_html( $post ) {
-    $seo_title = get_post_meta( $post->ID, '_gary_seo_title', true );
-    $seo_desc  = get_post_meta( $post->ID, '_gary_seo_desc', true );
-    $seo_keys  = get_post_meta( $post->ID, '_gary_seo_keywords', true );
-    
-    echo '<p><strong>SEO Title Override:</strong> (Max 60 chars)<br />';
-    echo '<input type="text" name="gary_seo_title" value="'.esc_attr($seo_title).'" style="width:100%;" placeholder="Default: '.esc_attr(get_the_title($post->ID)).' | Gary Wallage Weddings" /></p>';
-    
-    echo '<p><strong>Meta Description Override:</strong> (Max 160 chars)<br />';
-    echo '<textarea name="gary_seo_desc" style="width:100%; height:80px;" placeholder="Leave empty to use page excerpt...">'.esc_textarea($seo_desc).'</textarea></p>';
-    
-    echo '<p><strong>On-Page SEO Keywords:</strong> (Displayed on Service Detail pages)<br />';
-    echo '<input type="text" name="gary_seo_keywords" value="'.esc_attr($seo_keys).'" style="width:100%;" placeholder="e.g. Swindon wedding photographer, lifestyle portrait..." /></p>';
-    
-    echo '<p style="font-size:11px; opacity:0.6;">Note: These fields directly update the head tags and the "SEO Keywords" display on the frontend.</p>';
-}
+
 
 function gary_save_meta_boxes( $post_id ) {
     if ( isset($_POST['gary_bookly_id']) ) update_post_meta( $post_id, '_gary_bookly_id', $_POST['gary_bookly_id'] );
     if ( isset($_POST['gary_service_subtitle']) ) update_post_meta( $post_id, '_gary_service_subtitle', $_POST['gary_service_subtitle'] );
     if ( isset($_POST['gary_service_highlights']) ) update_post_meta( $post_id, '_gary_service_highlights', $_POST['gary_service_highlights'] );
-    if ( isset($_POST['gary_seo_title']) ) update_post_meta( $post_id, '_gary_seo_title', $_POST['gary_seo_title'] );
-    if ( isset($_POST['gary_seo_desc']) ) update_post_meta( $post_id, '_gary_seo_desc', $_POST['gary_seo_desc'] );
-    if ( isset($_POST['gary_seo_keywords']) ) update_post_meta( $post_id, '_gary_seo_keywords', $_POST['gary_seo_keywords'] );
     
     if ( isset($_POST['gary_retail_value_override']) ) update_post_meta( $post_id, '_gary_retail_value_override', $_POST['gary_retail_value_override'] );
     if ( isset($_POST['gary_booking_shortcode']) ) update_post_meta( $post_id, '_gary_booking_shortcode', $_POST['gary_booking_shortcode'] );

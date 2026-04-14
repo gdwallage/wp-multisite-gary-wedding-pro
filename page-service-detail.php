@@ -80,13 +80,7 @@ $included_titles_str = $summary['included_str'];
                     </ul>
                 <?php endif; ?>
 
-                <?php 
-                $seo_keys = get_post_meta( $post_id, '_gary_seo_keywords', true ); 
-                if ( ! empty( $seo_keys ) ) : ?>
-                    <p class="seo-keywords-display" style="font-size: 0.85rem; opacity: 0.8; font-style: italic; margin-top: 40px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 20px;">
-                        <strong>SEO Keywords:</strong> <?php echo esc_html( $seo_keys ); ?>
-                    </p>
-                <?php endif; ?>
+
             </div>
 
             <!-- Right: Investment Plaque (Redesigned for Transparency) -->

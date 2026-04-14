@@ -412,7 +412,7 @@ $slide_count = count( $slides );
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
     .hero-peek-track { height: 35vh; min-height: 260px; }
-    .hero-peek-slide.active { width: 100%; box-shadow: none; border-radius: 0; }
+    .hero-peek-slide.active { width: 100%; left: 0; box-shadow: none; border-radius: 0; }
     .hero-peek-slide.prev, .hero-peek-slide.next, .hero-peek-slide.far-prev, .hero-peek-slide.far-next, .hero-peek-slide.hidden { display: none; }
     .hero-peek-caption { padding: 25px; background: rgba(17,17,14,0.8); backdrop-filter: blur(5px); }
     .hero-peek-title { font-size: 1.8rem; }
