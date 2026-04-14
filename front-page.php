@@ -118,7 +118,7 @@ $slide_count = count( $slides );
                 <?php if ( $index === 0 ) : ?>
                     <h1 class="hero-peek-title"><?php echo esc_html( $slide['title'] ); ?></h1>
                 <?php else : ?>
-                    <h2 class="hero-peek-title"><?php echo esc_html( $slide['title'] ); ?></h2>
+                    <h1 class="hero-peek-title"><?php echo esc_html( $slide['title'] ); ?></h1>
                 <?php endif; ?>
                 <?php if ( ! empty( $slide['subtitle'] ) ) : ?>
                     <p class="hero-peek-subtitle"><?php echo esc_html( wp_trim_words( $slide['subtitle'], 12 ) ); ?></p>
@@ -153,12 +153,12 @@ $slide_count = count( $slides );
 <?php endif; ?>
 
     <!-- Front Page Body Content -->
-    <section class="home-intro container" style="margin-top:80px;">
+    <section class="home-intro" style="margin-top:0;">
         <?php
         wp_reset_postdata();
         if ( have_posts() ) :
             while ( have_posts() ) : the_post(); ?>
-                <div class="entry-content" style="text-align:center;">
+                <div class="entry-content">
                     <?php the_content(); ?>
                 </div>
             <?php endwhile;
@@ -172,24 +172,36 @@ $slide_count = count( $slides );
    PEEK CAROUSEL — Layout & Styles
    ================================================================ */
 
+/* Home intro section — full width by default, inner blocks constrain themselves */
+.home-intro { width: 100%; margin-top: 0; }
+.home-intro .entry-content > *:not(.gw-trust-bar):not(.wp-block-gw-trust-bar) { 
+    max-width: var(--site-max-width); 
+    width: var(--editorial-width); 
+    margin-left: auto; 
+    margin-right: auto; 
+}
+
 .hero-peek-carousel {
     position: relative;
     width: 100%;
-    background: var(--brand-black);
-    padding: 50px 0 70px;
+    background: #11110e;
+    padding: 0;
     overflow: hidden;
     user-select: none;
+    margin-top: 0;
+    z-index: 5;
 }
 
 /* Track — the horizontal container all slides sit inside */
 .hero-peek-track {
     position: relative;
     width: 100%;
-    height: 42vh;
-    min-height: 300px;
+    height: 80vh;
+    min-height: 550px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
+    background: #11110e;
 }
 
 /* Every slide is absolute so they layer on top of each other */
@@ -209,51 +221,48 @@ $slide_count = count( $slides );
 
 /* ---- Position States ---- */
 
-/* Active — centred, full size */
 .hero-peek-slide.active {
-    width: 58%;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 30%;
+    left: 35%;
+    transform: none;
     opacity: 1;
     z-index: 10;
-    box-shadow: 0 25px 70px rgba(0,0,0,0.75);
-    cursor: default; /* captions/link handle click */
+    box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+    cursor: default;
 }
 
-/* Previous — peeks in from left */
+/* Inner Peeks — absolutely flush with 35%-65% center */
 .hero-peek-slide.prev {
-    width: 19%;
-    left: 1%;
-    transform: translateX(0) scale(0.96);
-    opacity: 0.55;
+    width: 25%;
+    left: 10%;
+    right: auto;
+    transform: none;
+    opacity: 0.5;
     z-index: 5;
     cursor: pointer;
 }
 
-/* Next — peeks in from right */
 .hero-peek-slide.next {
-    width: 19%;
-    right: 1%;
-    left: auto;
-    transform: translateX(0) scale(0.96);
-    opacity: 0.55;
+    width: 25%;
+    left: 65%;
+    transform: none;
+    opacity: 0.5;
     z-index: 5;
     cursor: pointer;
 }
 
-/* Far prev/next (two back) — mostly hidden off edge */
+/* Outer Peeks — absolutely flush with inner peeks */
 .hero-peek-slide.far-prev {
-    width: 10%;
-    left: -3%;
-    opacity: 0.15;
+    width: 20%;
+    left: -10%;
+    opacity: 0.2;
     z-index: 2;
     pointer-events: none;
 }
 .hero-peek-slide.far-next {
-    width: 10%;
-    right: -3%;
-    left: auto;
-    opacity: 0.15;
+    width: 20%;
+    left: 90%;
+    opacity: 0.2;
     z-index: 2;
     pointer-events: none;
 }
@@ -271,25 +280,24 @@ $slide_count = count( $slides );
 /* Hover effects on side peeks */
 .hero-peek-slide.prev:hover,
 .hero-peek-slide.next:hover {
-    opacity: 0.8;
-    transform: scale(0.98);
+    opacity: 0.85;
 }
 
 /* ---- Image — fully contained, never cropped ---- */
 .hero-peek-img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     display: block;
-    background: #111;
+    background: transparent !important;
 }
 
 /* ---- Placeholder (no featured image) ---- */
 .hero-peek-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2410 50%, #1a1a1a 100%);
+    background: linear-gradient(135deg, var(--brand-black) 0%, #2d2410 50%, var(--brand-black) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -304,8 +312,8 @@ $slide_count = count( $slides );
 .hero-peek-caption {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
-    padding: 50px 40px 30px;
+    background: linear-gradient(to top, rgba(17,17,14,0.95) 0%, rgba(17,17,14,0.6) 60%, transparent 100%);
+    padding: 50px 40px 65px;
     text-align: center;
     opacity: 0;
     transition: opacity 0.4s ease 0.2s;
@@ -362,6 +370,8 @@ $slide_count = count( $slides );
     z-index: 20;
 }
 
+
+
 .hero-peek-arrow {
     background: rgba(0,0,0,0.45);
     border: 1px solid rgba(197,160,89,0.5);
@@ -404,7 +414,7 @@ $slide_count = count( $slides );
     .hero-peek-track { height: 35vh; min-height: 260px; }
     .hero-peek-slide.active { width: 100%; box-shadow: none; border-radius: 0; }
     .hero-peek-slide.prev, .hero-peek-slide.next, .hero-peek-slide.far-prev, .hero-peek-slide.far-next, .hero-peek-slide.hidden { display: none; }
-    .hero-peek-caption { padding: 25px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+    .hero-peek-caption { padding: 25px; background: rgba(17,17,14,0.8); backdrop-filter: blur(5px); }
     .hero-peek-title { font-size: 1.8rem; }
     .hero-peek-subtitle { display: none; }
 }

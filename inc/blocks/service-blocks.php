@@ -291,14 +291,6 @@ function gary_render_single_service_block( $attributes ) {
             <div class="coin-icon-wrap"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
             <div class="component-info">
                 <h3><?php echo esc_html($card_title); ?></h3>
-                <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
-                    <span><?php echo $display_price; ?></span>
-                </div>
-
-                <?php if ( !empty($display_duration) ) : ?>
-                    <div class="service-duration-text"><?php echo esc_html($display_duration); ?></div>
-                <?php endif; ?>
-
                 <?php if( ($summary['savings'] > 0 || !empty($summary['titles'])) && !$is_free): ?>
                     <div class="service-card-ribbon">
                         <span class="ribbon-save">SAVE £<?php echo number_format($summary['savings'], 2); ?></span>
@@ -318,9 +310,6 @@ function gary_render_single_service_block( $attributes ) {
                 <div class="service-card-image"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
                 <div class="service-card-content">
                     <h3 class="service-card-title"><?php echo esc_html($card_title); ?></h3>
-                    <?php if ( !empty($display_duration) ) : ?>
-                        <div class="service-duration-text"><?php echo esc_html($display_duration); ?></div>
-                    <?php endif; ?>
                     <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
                         <span><?php echo esc_html($display_price); ?></span>
                     </div>

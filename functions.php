@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3.6.4
+ * Version: 3.9.7
  * Fixes: CACHE BUSTER + TOTAL RESTORATION.
  */
 
@@ -105,18 +105,35 @@ add_action( 'wp_head', function() {
         }
         
         /* 1. FORCE BRAND FONT & GOLD */
+        /* 1. H1 - Gold Blacksword */
+        h1, 
         .site-title-blacksword, 
         .entry-title, 
-        h1, h2,
         .hero-title, 
-        .service-card-title, 
         .footer-branding h3, 
         .about-sig span {
             font-family: 'Blacksword', cursive !important;
-            color: #C5A059 !important;
+            color: var(--brand-gold-light) !important;
             font-weight: normal !important;
             text-transform: none !important;
             letter-spacing: normal !important;
+        }
+
+        /* 2. H2 - Gold Lato AllCaps */
+        h2 {
+            font-family: 'Lato', sans-serif !important;
+            color: var(--brand-gold-light) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 3px !important;
+            font-weight: 700 !important;
+        }
+
+        /* 3. H3+ - Boutique Black */
+        h3, h4, h5, h6 {
+            color: var(--brand-black) !important;
+            font-family: 'Lato', sans-serif !important;
+            text-transform: uppercase !important;
+            letter-spacing: 2px !important;
         }
 
         /* 2. FORCE LAYOUT BOXES (Overrides) */
@@ -142,11 +159,11 @@ require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3.6.4>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=3.9.7>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '3.6.4' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '3.9.7' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
@@ -230,6 +247,36 @@ function gary_editorial_mb_html( $post ) {
     echo '<p><strong>Highlights (One per line):</strong><br /><textarea name="gary_service_highlights" style="width:100%; height:80px;">'.esc_textarea($high).'</textarea></p>';
     echo '</div>';
 
+    $retail_override = get_post_meta( $post->ID, '_gary_retail_value_override', true );
+
+    echo '<p><strong>Bundle Marketing Overrides:</strong></p>';
+    echo '<div style="margin-bottom:15px;">';
+    echo '<label style="font-size:11px; color:#666;">Manual Retail Value (£): (e.g. 1950.00)</label><br />';
+    echo '<input type="text" name="gary_retail_value_override" value="'.esc_attr($retail_override).'" style="width:100%;" placeholder="Overrides calculated total if set" />';
+    echo '</div>';
+
+    $booking_sc = get_post_meta( $post->ID, '_gary_booking_shortcode', true );
+    $bookly_forms = gary_get_bookly_forms();
+    
+    echo '<div style="margin-bottom:15px; border-top:1px solid #eee; padding:15px; background:#f9f9f9; border-radius:4px;">';
+    echo '<p style="margin-top:0;"><strong>Custom Booking Code / Shortcode:</strong></p>';
+    
+    if ( ! empty( $bookly_forms ) ) {
+        echo '<div style="font-size:11px; margin-bottom:10px; background:#fff; padding:10px; border:1px solid #ddd;">';
+        echo '<p style="margin-top:0; font-weight:700;">Reference: Your Bookly Appearances</p>';
+        echo '<ul style="margin:0; padding-left:15px;">';
+        foreach ( $bookly_forms as $form ) {
+            echo '<li>ID: <strong>' . $form['id'] . '</strong> &mdash; ' . esc_html( $form['name'] ) . '</li>';
+        }
+        echo '</ul>';
+        echo '<p style="margin-bottom:0; opacity:0.6;">Example: <code>[bookly-form appearance_id="' . $bookly_forms[0]['id'] . '"]</code></p>';
+        echo '</div>';
+    }
+    
+    echo '<textarea name="gary_booking_shortcode" style="width:100%; height:60px; font-family:monospace; font-size:12px;" placeholder="[bookly-form appearance_id=\"X\"]">'.esc_textarea($booking_sc).'</textarea>';
+    echo '<p style="font-size:11px; color:#666; margin-bottom:0;">Leave empty to use the standard /booking/ page link.</p>';
+    echo '</div>';
+
     // Sub-service Slots
     global $wpdb;
     $table = $wpdb->prefix . 'bookly_services';
@@ -238,16 +285,25 @@ function gary_editorial_mb_html( $post ) {
         $services = $wpdb->get_results( "SELECT id, title FROM $table ORDER BY title ASC" );
     }
 
-    echo '<p><strong>Sub-Service Bundle Slots:</strong></p>';
+    echo '<p><strong>Sub-Service Bundle Slots (INCLUDED):</strong></p>';
     for ( $i = 1; $i <= 8; $i++ ) {
         $val = get_post_meta( $post->ID, "_gary_sub_service_$i", true );
         echo '<div style="margin-bottom:8px;">';
-        echo '<label style="font-size:11px; color:#666;">Slot '.$i.':</label><br />';
+        echo '<label style="font-size:11px; color:#666;">Included '.$i.':</label><br />';
         echo '<select name="gary_sub_service_'.$i.'" style="width:100%;">';
         echo '<option value="">-- No Sub-service --</option>';
-        foreach ( $services as $s ) {
-            echo '<option value="'.$s->id.'" '.selected($val, $s->id, false).'>'.$s->title.'</option>';
-        }
+        foreach ( $services as $s ) { echo '<option value="'.$s->id.'" '.selected($val, $s->id, false).'>'.$s->title.'</option>'; }
+        echo '</select></div>';
+    }
+
+    echo '<p style="margin-top:20px;"><strong>Paid Add-On Slots (OPTIONAL):</strong></p>';
+    for ( $i = 1; $i <= 8; $i++ ) {
+        $val = get_post_meta( $post->ID, "_gary_paid_service_$i", true );
+        echo '<div style="margin-bottom:8px;">';
+        echo '<label style="font-size:11px; color:#666;">Add-On '.$i.':</label><br />';
+        echo '<select name="gary_paid_service_'.$i.'" style="width:100%;">';
+        echo '<option value="">-- No Add-on --</option>';
+        foreach ( $services as $s ) { echo '<option value="'.$s->id.'" '.selected($val, $s->id, false).'>'.$s->title.'</option>'; }
         echo '</select></div>';
     }
 }
@@ -280,10 +336,12 @@ function gary_save_meta_boxes( $post_id ) {
     if ( isset($_POST['gary_seo_desc']) ) update_post_meta( $post_id, '_gary_seo_desc', $_POST['gary_seo_desc'] );
     if ( isset($_POST['gary_seo_keywords']) ) update_post_meta( $post_id, '_gary_seo_keywords', $_POST['gary_seo_keywords'] );
     
+    if ( isset($_POST['gary_retail_value_override']) ) update_post_meta( $post_id, '_gary_retail_value_override', $_POST['gary_retail_value_override'] );
+    if ( isset($_POST['gary_booking_shortcode']) ) update_post_meta( $post_id, '_gary_booking_shortcode', $_POST['gary_booking_shortcode'] );
+    
     for ( $i = 1; $i <= 8; $i++ ) {
-        if ( isset($_POST["gary_sub_service_$i"]) ) {
-            update_post_meta( $post_id, "_gary_sub_service_$i", $_POST["gary_sub_service_$i"] );
-        }
+        if ( isset($_POST["gary_sub_service_$i"]) ) update_post_meta( $post_id, "_gary_sub_service_$i", $_POST["gary_sub_service_$i"] );
+        if ( isset($_POST["gary_paid_service_$i"]) ) update_post_meta( $post_id, "_gary_paid_service_$i", $_POST["gary_paid_service_$i"] );
     }
 }
 add_action( 'save_post', 'gary_save_meta_boxes' );
@@ -296,45 +354,72 @@ function gary_get_sub_service_summary( $post_id ) {
     $bookly_data = gary_get_bookly_service_data( $bookly_id );
     $parent_price = $bookly_data ? (float)$bookly_data['price'] : 0;
     
-    $grid_items = array();
-    $titles = array();
-    $total_val = 0;
+    $inclusions = array();
+    $paid_addons = array();
+    $inc_titles = array();
+    $inc_total_val = 0;
     
+    // 1. INCLUDED ITEMS
     for ( $i = 1; $i <= 8; $i++ ) {
         $sub_id = get_post_meta( $post_id, "_gary_sub_service_$i", true );
         if ( !empty($sub_id) ) {
             $sub_data = gary_get_bookly_service_data($sub_id);
             if($sub_data) {
-                $titles[] = $sub_data['title'];
-                $unit_price = (float)$sub_data['price'];
-                $total_val += $unit_price;
-                
+                $inc_titles[] = $sub_data['title'];
+                $unit_p = (float)$sub_data['price'];
+                $inc_total_val += $unit_p;
                 $page_id = gary_find_page_by_bookly_title($sub_data['title']);
-                $grid_items[] = array(
-                    'type'     => 'page',
-                    'page_id'  => $page_id,
-                    'title'    => $sub_data['title'],
-                    'price'    => $unit_price,
-                    'display_duration' => 'Typically ' . gary_format_duration($sub_data['duration']),
-                    'page_url' => $page_id ? get_permalink($page_id) : '#',
-                    'thumb'    => $page_id ? get_the_post_thumbnail_url($page_id, 'medium') : '',
-                    'bookly_id' => $sub_id
+                $inclusions[] = array(
+                    'page_id' => $page_id, 'bookly_id' => $sub_id, 'title' => $sub_data['title'],
+                    'price' => $unit_p, 'info' => $sub_data['info'], 'thumb' => $page_id ? get_the_post_thumbnail_url($page_id, 'medium') : ''
                 );
             }
         }
     }
 
-    $total_val = round($total_val, 2);
-    $savings = ( $total_val > $parent_price ) ? round($total_val - $parent_price, 2) : 0;
+    // 2. PAID ADDONS
+    for ( $i = 1; $i <= 8; $i++ ) {
+        $sub_id = get_post_meta( $post_id, "_gary_paid_service_$i", true );
+        if ( !empty($sub_id) ) {
+            $sub_data = gary_get_bookly_service_data($sub_id);
+            if($sub_data) {
+                $unit_p = (float)$sub_data['price'];
+                $page_id = gary_find_page_by_bookly_title($sub_data['title']);
+                $paid_addons[] = array(
+                    'page_id' => $page_id, 'bookly_id' => $sub_id, 'title' => $sub_data['title'],
+                    'price' => $unit_p, 'info' => $sub_data['info'], 'thumb' => $page_id ? get_the_post_thumbnail_url($page_id, 'medium') : ''
+                );
+            }
+        }
+    }
+
+    $retail_override = get_post_meta( $post_id, '_gary_retail_value_override', true );
+    $savings = !empty($retail_override) ? (float)$retail_override - $parent_price : $inc_total_val;
+    $retail_value = abs($parent_price) + abs($savings);
 
     return array(
-        'grid_items'   => $grid_items,
-        'titles'       => $titles,
-        'total_value'  => $total_val,
+        'grid_items'   => $inclusions, // Backward compatibility
+        'inclusions'   => $inclusions,
+        'paid_addons'  => $paid_addons,
+        'titles'       => $inc_titles,
+        'total_value'  => $retail_value,
+        'bought_separately' => $inc_total_val,
         'savings'      => $savings,
         'parent_price' => $parent_price,
-        'included_str' => implode(', ', $titles)
+        'included_str' => implode(', ', $inc_titles)
     );
+}
+
+/**
+ * Fetch Custom Bookly Forms (Appearances)
+ */
+function gary_get_bookly_forms() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'bookly_forms';
+    if ( $wpdb->get_var("SHOW TABLES LIKE '$table'") != $table ) return array();
+    
+    $results = $wpdb->get_results( "SELECT id, name FROM $table ORDER BY name ASC", ARRAY_A );
+    return $results ? $results : array();
 }
 
 /**

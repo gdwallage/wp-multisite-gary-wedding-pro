@@ -1,6 +1,6 @@
 # Gary Wallage Wedding Pro — Theme Design Guide & Technical Reference
 
-> **Version 3.6.0** | WordPress Multisite | Boutique Editorial Aesthetic
+> **Version 3.8.3** | WordPress Multisite | Boutique Editorial Aesthetic
 
 ---
 
@@ -24,8 +24,8 @@ The site must feel like a luxury editorial magazine on first glance. Generic, wi
 | Token | Value | Usage |
 |---|---|---|
 | `--brand-bg` | `#F9F9F7` | Page background (warm white) |
-| `--brand-black` | `#11110e` | Standard dark background (gold-tinted black) |
-| `--brand-text` | `var(--brand-black)` | Body text |
+| `--brand-black` | `#11110e` | Absolute standard dark background (gold-tinted black) |
+| `--brand-text` | `var(--brand-black)` | Body text (never pure black) |
 | `--brand-accent` | `#B08D55` | Headings, site title, hover |
 | `--brand-gold-light` | `#C5A059` | Bullets, borders, prices, ribbons |
 | `--brand-crimson` | `#630000` | FREE label, SAVE ribbon, alerts |
@@ -33,21 +33,25 @@ The site must feel like a luxury editorial magazine on first glance. Generic, wi
 
 > **Rule**: Never use `--wedding-*` variable names. All variables must use the `--brand-*` prefix.
 
-### Typography
+### Typography & Heading Hierarchy
 
-| Role | Font | Notes |
-|---|---|---|
-| Body / UI | `Lato` (Google Fonts) | Sans-serif, 400 & 700 weights |
-| Headings / Branding / Hero | `Blacksword` | Custom cursive script, loaded from `/fonts/` |
+| Level | Role | Font | Style |
+|---|---|---|---|
+| **H1** | Primary Heading | `Blacksword` | Gold, **Never Bold**, Script |
+| **H2** | Section Header | `Lato` | Gold, All-Caps, 700 weight |
+| **H3 / Cards** | Components | `Blacksword` | Gold, **Never Bold**, Script |
+| **Body** | Content / UI | `Lato` | Black, 400 & 700 weights |
+| **Branding** | Script Accents | `Blacksword` | Gold, Script |
 
-- The site title (`.site-title-blacksword`) is **1.6rem** — small enough not to overflow the tagline
-- H1 entry titles are gold (`var(--brand-accent)`), uppercase, 3.5rem
+- H1 entry titles are gold (`var(--brand-gold-light)`), cursive, small caps/traditional script.
+- All H2s are uppercase with tracking (`letter-spacing: 3px`).
 - All prices use `£nnn.00` format (2 decimal places, never omit `.00`)
 
 ### Layout Rules
 
 - **Editorial width**: `80%` / max `1500px` centred — enforced via `.container`
 - **Service Triplet Width**: `70%` — condensed layout for featured areas
+- **Trust Bar Breakout**: `100%` viewport width — enforced via `-50vw` margin technique
 - **Never** let content blocks stretch full-width unless it is the hero carousel or footer background
 - **Row gap** on service grids: `60px` minimum
 - Service cards: 3 columns on desktop, 1 on mobile
@@ -101,7 +105,7 @@ wp-multisite-gary-wedding-pro/
 **Structure:** `.service-card-link > .service-card`
 - **Gold price box**: `.service-card-price` — gold background, white text, `£nnn.00` format
 - **FREE services**: `.service-card-price.is-free` — crimson background, gold text, NO duration shown
-- **SAVE ribbon**: `.service-card-ribbon` — diagonal crimson ribbon, appears when bundle savings > 0. Shows both **Total Individual Value** and **Net Bundle Saving**. NOT shown on FREE services.
+- **SAVE ribbon**: `.service-card-ribbon` — diagonal crimson ribbon, appears when a service has sub-components (bundles). Tucked behind the corner (clipped by gold frame).
 - **Duration Text**: `Typically X Hours` — positioned below the title in the content area (not in the price box)
 - **Bullet list**: `.gw-bullet-list` — gold `✵` diamond bullets, left-aligned
 
