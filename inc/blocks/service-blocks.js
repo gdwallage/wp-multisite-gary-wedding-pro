@@ -340,6 +340,7 @@
     registerBlockType('gw/usps-3col', {
         title: 'Editorial USPs (3-Col)', icon: 'columns', category: 'gary-editorial-native',
         attributes: {
+            main_title: { type: 'string', default: 'Our Core Values' },
             t1: { type: 'string', default: 'Documentary Storytelling' }, d1: { type: 'string', default: '...' },
             t2: { type: 'string', default: 'Technical Precision' },      d2: { type: 'string', default: '...' },
             t3: { type: 'string', default: 'A Calming Presence' },      d3: { type: 'string', default: '...' }
@@ -348,9 +349,10 @@
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
                 el(PanelBody, { title: 'USP Content' },
-                    [1,2,3].map(i => el('div', null,
-                        el(TextControl, { label: `Title ${i}`, value: atts[`t${i}`], onChange: function(v) { props.setAttributes({ [`t${i}`]: v }); } }),
-                        el(TextControl, { label: `Desc ${i}`, value: atts[`d${i}`], onChange: function(v) { props.setAttributes({ [`d${i}`]: v }); } })
+                    el(TextControl, { label: 'Main Block Title', value: atts.main_title, onChange: function(v) { props.setAttributes({ main_title: v }); } }),
+                    [1,2,3].map(i => el('div', { key: i, style: { borderTop: '1px solid #eee', marginTop: '15px', paddingTop: '15px' } },
+                        el(TextControl, { label: `USP ${i} Title`, value: atts[`t${i}`], onChange: function(v) { props.setAttributes({ [`t${i}`]: v }); } }),
+                        el(TextControl, { label: `USP ${i} Description`, value: atts[`d${i}`], onChange: function(v) { props.setAttributes({ [`d${i}`]: v }); } })
                     ))
                 )
             );
@@ -363,6 +365,7 @@
     registerBlockType('gw/process-steps', {
         title: 'Step Process Journey', icon: 'editor-ol', category: 'gary-editorial-native',
         attributes: {
+            main_title: { type: 'string', default: 'The Journey' },
             s1_t: { type: 'string', default: 'Consultation' }, s1_d: { type: 'string', default: '...' },
             s2_t: { type: 'string', default: 'Booking' },      s2_d: { type: 'string', default: '...' },
             s3_t: { type: 'string', default: 'The Day' },      s3_d: { type: 'string', default: '...' },
@@ -372,15 +375,150 @@
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
                 el(PanelBody, { title: 'Process Content' },
-                    [1,2,3,4].map(i => el('div', null,
+                    el(TextControl, { label: 'Main Block Title', value: atts.main_title, onChange: function(v) { props.setAttributes({ main_title: v }); } }),
+                    [1,2,3,4].map(i => el('div', { key: i, style: { borderTop: '1px solid #eee', marginTop: '15px', paddingTop: '15px' } },
                         el(TextControl, { label: `Step ${i} Title`, value: atts[`s${i}_t`], onChange: function(v) { props.setAttributes({ [`s${i}_t`]: v }); } }),
-                        el(TextControl, { label: `Step ${i} Desc`, value: atts[`s${i}_d`], onChange: function(v) { props.setAttributes({ [`s${i}_d`]: v }); } })
+                        el(TextControl, { label: `Step ${i} Description`, value: atts[`s${i}_d`], onChange: function(v) { props.setAttributes({ [`s${i}_d`]: v }); } })
                     ))
                 )
             );
             return el('div', null, inspector, el(ServerSideRender, { block: 'gw/process-steps', attributes: atts }));
         },
         save: function() { return null; }
+    });
+
+    // 11. Hero Bleed (Native Cover Extension)
+    registerBlockType('gw/hero-bleed', {
+        title: 'Cinematic Hero Bleed', icon: 'cover-image', category: 'gary-editorial-native',
+        attributes: { image_url: { type: 'string', default: '' }, image_id: { type: 'number', default: 0 }, overlay_opacity: { type: 'number', default: 10 } },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Overlay Settings' },
+                    el(wp.components.RangeControl, {
+                        label: 'Overlay Opacity', value: atts.overlay_opacity,
+                        onChange: function(v) { props.setAttributes({ overlay_opacity: v }); }, min: 0, max: 100
+                    })
+                )
+            );
+            const mediaUploader = el(MediaUpload, {
+                onSelect: function(m) { props.setAttributes({ image_url: m.url, image_id: m.id }); },
+                allowedTypes: ['image'], value: atts.image_id,
+                render: function(obj) {
+                    return el(Button, { onClick: obj.open, style: { width: '100%', minHeight: '300px', display: 'flex', background: '#f5f5f5', border: '2px dashed #ccc' } },
+                        atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%' } }) : 'Upload Background Image'
+                    );
+                }
+            });
+            return el('div', { className: 'gw-hero-bleed-edit' },
+                inspector,
+                mediaUploader,
+                el('div', { className: 'gw-hero-content-edit', style: { padding: '50px', border: '1px solid #eee', marginTop: '10px' } },
+                    el(InnerBlocks, { template: [['core/heading', { textAlign: 'center', level: 2, content: 'Hero Title' }]] })
+                )
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
+    // 12. Storyteller Grid (4 Pcs)
+    registerBlockType('gw/storyteller-grid', {
+        title: 'The Storyteller Grid (4 Pcs)', icon: 'grid-view', category: 'gary-editorial-native',
+        attributes: { 
+            img1_id: { type:'number' }, img1_url: { type:'string' },
+            img2_id: { type:'number' }, img2_url: { type:'string' },
+            img3_id: { type:'number' }, img3_url: { type:'string' },
+            img4_id: { type:'number' }, img4_url: { type:'string' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const up = (i, m) => props.setAttributes({ [`img${i}_id`]: m.id, [`img${i}_url`]: m.url });
+            return el('div', { className: 'gw-story-grid-edit', style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' } },
+                [1,2,3,4].map(i => el(MediaUpload, {
+                    onSelect: m => up(i, m), allowedTypes:['image'], value: atts[`img${i}_id`],
+                    render: obj => el(Button, { onClick: obj.open, style: { width: '100%', height: '150px', background: '#f5f5f5', border: '1px dashed #ccc' } },
+                        atts[`img${i}_url`] ? el('img', { src: atts[`img${i}_url`], style: { width: '100%', height: '100%', objectFit: 'cover' } }) : `Image ${i}`)
+                }))
+            );
+        },
+        save: function() { return null; }
+    });
+
+    // 13. Testimonial Quote
+    registerBlockType('gw/testimonial-quote', {
+        title: 'Testimonial Transparency', icon: 'format-quote', category: 'gary-editorial-native',
+        attributes: { image_url: { type:'string' }, image_id: { type:'number' } },
+        edit: function(props) {
+            const atts = props.attributes;
+            const mediaUploader = el(MediaUpload, {
+                onSelect: (m) => props.setAttributes({ image_url: m.url, image_id: m.id }),
+                allowedTypes: ['image'], value: atts.image_id,
+                render: obj => el(Button, { onClick: obj.open, style: { width: '100%', minHeight: '200px', background: '#f5f5f5', border: '2px dashed #ccc' } },
+                    atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%' } }) : 'Upload Testimonial Background')
+            });
+            return el('div', null,
+                mediaUploader,
+                el('div', { style: { padding: '40px', background: '#fff', border: '1px solid #eee', marginTop: '10px' } },
+                    el(InnerBlocks, { template: [['core/quote', { textAlign: 'center', content: 'The purest moments captured flawlessly.' }]] })
+                )
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
+    // 14. Polaroid Frame
+    registerBlockType('gw/polaroid-frame', {
+        title: 'Fine-Art Polaroid', icon: 'format-image', category: 'gary-editorial-native',
+        edit: function() {
+            return el('div', { className: 'gw-polaroid-frame-edit', style: { padding: '20px', background: '#fff', border: '1px solid #ccc', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' } },
+                el(InnerBlocks, { template: [['core/image', { align: 'center' }]] })
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
+    // 15. Full-Width CTA
+    registerBlockType('gw/cta-fullwidth', {
+        title: 'Full-Width Action Plate', icon: 'megaphone', category: 'gary-editorial-native',
+        attributes: { image_url: { type:'string' }, image_id: { type:'number' } },
+        edit: function(props) {
+            const atts = props.attributes;
+            const mediaUploader = el(MediaUpload, {
+                onSelect: (m) => props.setAttributes({ image_url: m.url, image_id: m.id }),
+                allowedTypes: ['image'], value: atts.image_id,
+                render: obj => el(Button, { onClick: obj.open, style: { width: '100%', minHeight: '200px', background: '#f5f5f5', border: '2px dashed #ccc' } },
+                    atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%' } }) : 'Upload CTA Background')
+            });
+            return el('div', null,
+                mediaUploader,
+                el('div', { style: { padding: '40px', background: '#fff', border: '1px solid #eee', marginTop: '10px' } },
+                    el(InnerBlocks, { template: [
+                        ['core/heading', { textAlign: 'center', content: 'Ready to Tell Your Story?', level: 2 }],
+                        ['core/paragraph', { textAlign: 'center', content: 'I take on a limited number of bookings each year.' }],
+                        ['core/buttons', { layout: { type: 'flex', justifyContent: 'center' } }]
+                    ] })
+                )
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
+    // 16-18. List Boxes
+    ['highlights', 'included', 'perfect-for'].forEach(type => {
+        registerBlockType(`gw/list-${type}`, {
+            title: `Box: ${type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}`,
+            icon: 'editor-ul',
+            category: 'gary-editorial-native',
+            edit: function() {
+                return el('div', { style: { padding: '30px', background: '#fdfdfd', border: '1px solid #eee' } },
+                    el(InnerBlocks, { template: [
+                        ['core/heading', { level: 4, content: type.toUpperCase() }],
+                        ['core/list', { className: `is-style-gw-${type}` }]
+                    ] })
+                );
+            },
+            save: function() { return el(InnerBlocks.Content, null); }
+        });
     });
 
     console.info('GW Editorial: Blocks Successfully Registered.');

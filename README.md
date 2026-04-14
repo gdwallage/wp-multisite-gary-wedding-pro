@@ -1,6 +1,6 @@
 # Gary Wallage Wedding Pro — Theme Design Guide & Technical Reference
 
-> **Version 2.90.1** | WordPress Multisite | Boutique Editorial Aesthetic
+> **Version 3.6.0** | WordPress Multisite | Boutique Editorial Aesthetic
 
 ---
 
@@ -24,7 +24,8 @@ The site must feel like a luxury editorial magazine on first glance. Generic, wi
 | Token | Value | Usage |
 |---|---|---|
 | `--brand-bg` | `#F9F9F7` | Page background (warm white) |
-| `--brand-text` | `#1a1a1a` | Body text |
+| `--brand-black` | `#11110e` | Standard dark background (gold-tinted black) |
+| `--brand-text` | `var(--brand-black)` | Body text |
 | `--brand-accent` | `#B08D55` | Headings, site title, hover |
 | `--brand-gold-light` | `#C5A059` | Bullets, borders, prices, ribbons |
 | `--brand-crimson` | `#630000` | FREE label, SAVE ribbon, alerts |
@@ -45,7 +46,8 @@ The site must feel like a luxury editorial magazine on first glance. Generic, wi
 
 ### Layout Rules
 
-- **Editorial width**: `80%` / max `1500px` centred — enforced via `.container` and `.site-main.container`
+- **Editorial width**: `80%` / max `1500px` centred — enforced via `.container`
+- **Service Triplet Width**: `70%` — condensed layout for featured areas
 - **Never** let content blocks stretch full-width unless it is the hero carousel or footer background
 - **Row gap** on service grids: `60px` minimum
 - Service cards: 3 columns on desktop, 1 on mobile
@@ -99,7 +101,8 @@ wp-multisite-gary-wedding-pro/
 **Structure:** `.service-card-link > .service-card`
 - **Gold price box**: `.service-card-price` — gold background, white text, `£nnn.00` format
 - **FREE services**: `.service-card-price.is-free` — crimson background, gold text, NO duration shown
-- **SAVE ribbon**: `.service-card-ribbon` — diagonal crimson ribbon, appears when bundle savings > 0, NOT shown on FREE services
+- **SAVE ribbon**: `.service-card-ribbon` — diagonal crimson ribbon, appears when bundle savings > 0. Shows both **Total Individual Value** and **Net Bundle Saving**. NOT shown on FREE services.
+- **Duration Text**: `Typically X Hours` — positioned below the title in the content area (not in the price box)
 - **Bullet list**: `.gw-bullet-list` — gold `✵` diamond bullets, left-aligned
 
 **Pricing Rules:**
@@ -241,7 +244,7 @@ The theme version string appears in three places. **Always update all three toge
 2. `functions.php` — `gary_send_performance_headers()` preload header
 3. `functions.php` — `gary_wedding_scripts()` enqueue call
 
-Current version: **2.90.1**
+Current version: **3.6.0**
 
 ---
 

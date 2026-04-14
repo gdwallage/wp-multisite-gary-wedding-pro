@@ -91,6 +91,7 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_usps_block',
         'category' => 'gary-editorial-native',
         'attributes' => array(
+            'main_title' => array('type' => 'string', 'default' => 'Our Core Values'),
             't1' => array('type'=>'string', 'default'=>'Documentary Storytelling'), 'd1' => array('type'=>'string', 'default'=>'I blend into the background...'),
             't2' => array('type'=>'string', 'default'=>'Technical Precision'),      'd2' => array('type'=>'string', 'default'=>'Ten years of experience...'),
             't3' => array('type'=>'string', 'default'=>'A Calming Presence'),      'd3' => array('type'=>'string', 'default'=>'Relaxed, intentional calm.')
@@ -102,11 +103,82 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_process_block',
         'category' => 'gary-editorial-native',
         'attributes' => array(
+            'main_title' => array('type' => 'string', 'default' => 'The Journey'),
             's1_t' => array('type'=>'string', 'default'=>'Consultation'), 's1_d' => array('type'=>'string', 'default'=>'Discussing your vision and vision.'),
             's2_t' => array('type'=>'string', 'default'=>'Booking'),      's2_d' => array('type'=>'string', 'default'=>'Secure your date with a deposit.'),
             's3_t' => array('type'=>'string', 'default'=>'The Day'),      's3_d' => array('type'=>'string', 'default'=>'Authentic, unscripted moments.'),
             's4_t' => array('type'=>'string', 'default'=>'Delivery'),     's4_d' => array('type'=>'string', 'default'=>'Fully-edited high-res gallery.')
         )
+    ));
+
+    // 11. Hero Bleed (Was Cinematic Bleed Pattern)
+    register_block_type('gw/hero-bleed', array(
+        'render_callback' => 'gary_render_hero_bleed_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'image_id' => array('type' => 'number', 'default' => 0),
+            'image_url' => array('type' => 'string', 'default' => ''),
+            'overlay_opacity' => array('type' => 'number', 'default' => 10),
+        )
+    ));
+
+    // 12. Storyteller Grid (Was Pattern)
+    register_block_type('gw/storyteller-grid', array(
+        'render_callback' => 'gary_render_storyteller_grid_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'img1_id' => array('type' => 'number', 'default' => 0),
+            'img2_id' => array('type' => 'number', 'default' => 0),
+            'img3_id' => array('type' => 'number', 'default' => 0),
+            'img4_id' => array('type' => 'number', 'default' => 0),
+        )
+    ));
+
+    // 13. Testimonial Quote (Was Pattern)
+    register_block_type('gw/testimonial-quote', array(
+        'render_callback' => 'gary_render_testimonial_quote_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'image_id' => array('type' => 'number', 'default' => 0),
+            'image_url' => array('type' => 'string', 'default' => ''),
+        )
+    ));
+
+    // 14. Polaroid Frame (Was Pattern)
+    register_block_type('gw/polaroid-frame', array(
+        'render_callback' => 'gary_render_polaroid_frame_block',
+        'category' => 'gary-editorial-native',
+    ));
+
+    // 15. Full-Width CTA (Was Pattern)
+    register_block_type('gw/cta-fullwidth', array(
+        'render_callback' => 'gary_render_cta_fullwidth_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'image_id' => array('type' => 'number', 'default' => 0),
+            'image_url' => array('type' => 'string', 'default' => ''),
+        )
+    ));
+
+    // 16. Highlights Box
+    register_block_type('gw/list-highlights', array(
+        'render_callback' => 'gary_render_styled_list_box',
+        'category' => 'gary-editorial-native',
+        'attributes' => array( 'type' => array('type' => 'string', 'default' => 'highlights') )
+    ));
+
+    // 17. Included Box
+    register_block_type('gw/list-included', array(
+        'render_callback' => 'gary_render_styled_list_box',
+        'category' => 'gary-editorial-native',
+        'attributes' => array( 'type' => array('type' => 'string', 'default' => 'included') )
+    ));
+
+    // 18. Perfect For Box
+    register_block_type('gw/list-perfect-for', array(
+        'render_callback' => 'gary_render_styled_list_box',
+        'category' => 'gary-editorial-native',
+        'attributes' => array( 'type' => array('type' => 'string', 'default' => 'perfect-for') )
     ));
 }
 add_action('init', 'gary_register_service_blocks');
@@ -219,18 +291,36 @@ function gary_render_single_service_block( $attributes ) {
             <div class="coin-icon-wrap"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
             <div class="component-info">
                 <h3><?php echo esc_html($card_title); ?></h3>
-                <div class="component-includes"><?php echo wp_kses_post(wp_trim_words($card_desc, 15)); ?></div>
+                <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
+                    <span><?php echo $display_price; ?></span>
+                </div>
+
+                <?php if ( !empty($display_duration) ) : ?>
+                    <div class="service-duration-text"><?php echo esc_html($display_duration); ?></div>
+                <?php endif; ?>
+
+                <?php if( ($summary['savings'] > 0 || !empty($summary['titles'])) && !$is_free): ?>
+                    <div class="service-card-ribbon">
+                        <span class="ribbon-save">SAVE £<?php echo number_format($summary['savings'], 2); ?></span>
+                    </div>
+                <?php endif; ?>
             </div>
         </a>
     <?php else : ?>
         <a href="<?php echo esc_url($card_url); ?>" class="service-card-link">
             <div class="service-card">
-                <?php if($summary['savings'] > 0 && !$is_free): ?>
-                    <div class="service-card-ribbon">SAVE £<?php echo number_format($summary['savings'], 2); ?></div>
+                <?php if( ($summary['savings'] > 0 || !empty($summary['titles'])) && !$is_free): ?>
+                    <div class="service-card-ribbon">
+                        <span class="ribbon-save">SAVE £<?php echo number_format($summary['savings'], 2); ?></span>
+                    </div>
                 <?php endif; ?>
+
                 <div class="service-card-image"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
                 <div class="service-card-content">
                     <h3 class="service-card-title"><?php echo esc_html($card_title); ?></h3>
+                    <?php if ( !empty($display_duration) ) : ?>
+                        <div class="service-duration-text"><?php echo esc_html($display_duration); ?></div>
+                    <?php endif; ?>
                     <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
                         <span><?php echo esc_html($display_price); ?></span>
                     </div>
@@ -287,7 +377,7 @@ function gary_render_trio_gallery_block( $attributes ) {
         $imgs[$i] = $id ? wp_get_attachment_image_url($id, $size) : '';
     }
     ob_start(); ?>
-    <div class="gw-trio-gallery-wrapper">
+    <div class="gw-trio-gallery-wrapper container">
         <?php if ( !empty($attributes['trio_title']) ) : ?>
             <h2 class="trio-gallery-heading" style="text-align:center; font-family:var(--font-script); font-size:3rem; color:var(--brand-accent); margin-bottom:40px; font-weight:normal;">
                 <?php echo esc_html( $attributes['trio_title'] ); ?>
@@ -310,7 +400,7 @@ function gary_render_split_block( $attributes, $content ) {
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
     $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : '';
     ob_start(); ?>
-    <div class="gw-editorial-split is-<?php echo esc_attr($pos); ?>">
+    <div class="gw-editorial-split container is-<?php echo esc_attr($pos); ?>">
         <div class="gw-split-media"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
         <div class="gw-split-content"><?php echo $content; ?></div>
     </div>
@@ -319,7 +409,7 @@ function gary_render_split_block( $attributes, $content ) {
 
 function gary_render_chapter_break_block( $atts ) {
     return '
-    <div class="gw-chapter-break">
+    <div class="gw-chapter-break container">
         <hr class="gw-gold-sep" />
         <h2 class="gw-chapter-title">' . esc_html($atts['title']) . '</h2>
     </div>';
@@ -327,7 +417,7 @@ function gary_render_chapter_break_block( $atts ) {
 
 function gary_render_cta_plaque_block( $atts ) {
     return '
-    <div class="gw-cta-plaque">
+    <div class="gw-cta-plaque container">
         <h3>' . esc_html($atts['title']) . '</h3>
         <p>' . esc_html($atts['content']) . '</p>
         <div class="gw-cta-btn-wrap">
@@ -347,29 +437,107 @@ function gary_render_trust_bar_block( $atts ) {
 
 function gary_render_usps_block( $atts ) {
     ob_start(); ?>
-    <div class="gw-usps-row">
-        <?php for($i=1; $i<=3; $i++) : ?>
-            <div class="gw-usp-col">
-                <h4><?php echo esc_html($atts["t$i"]); ?></h4>
-                <p><?php echo esc_html($atts["d$i"]); ?></p>
-            </div>
-        <?php endfor; ?>
+    <div class="gw-usps-block container">
+        <?php if (!empty($atts['main_title'])) : ?>
+            <h2 class="gw-block-main-title"><?php echo esc_html($atts['main_title']); ?></h2>
+        <?php endif; ?>
+        <div class="gw-usps-row">
+            <?php for($i=1; $i<=3; $i++) : ?>
+                <div class="gw-usp-col">
+                    <h4><?php echo esc_html($atts["t$i"]); ?></h4>
+                    <p><?php echo esc_html($atts["d$i"]); ?></p>
+                </div>
+            <?php endfor; ?>
+        </div>
     </div>
     <?php return ob_get_clean();
 }
 
 function gary_render_process_block( $atts ) {
     ob_start(); ?>
-    <div class="gw-process-row">
-        <?php for($i=1; $i<=4; $i++) : ?>
-            <div class="gw-process-col">
-                <span class="step-num">0<?php echo $i; ?></span>
-                <h4><?php echo esc_html($atts["s{$i}_t"]); ?></h4>
-                <p><?php echo esc_html($atts["s{$i}_d"]); ?></p>
+    <div class="gw-process-block container">
+        <?php if (!empty($atts['main_title'])) : ?>
+            <h2 class="gw-block-main-title"><?php echo esc_html($atts['main_title']); ?></h2>
+        <?php endif; ?>
+        <div class="gw-process-row">
+            <?php for($i=1; $i<=4; $i++) : ?>
+                <div class="gw-process-col">
+                    <span class="step-num">0<?php echo $i; ?></span>
+                    <h4><?php echo esc_html($atts["s{$i}_t"]); ?></h4>
+                    <p><?php echo esc_html($atts["s{$i}_d"]); ?></p>
+                </div>
+            <?php endfor; ?>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+
+// --- NEW RENDER CALLBACKS ---
+
+function gary_render_hero_bleed_block( $atts, $content ) {
+    $img_url = $atts['image_id'] ? wp_get_attachment_image_url($atts['image_id'], 'full') : $atts['image_url'];
+    $opacity = isset($atts['overlay_opacity']) ? (int)$atts['overlay_opacity'] : 10;
+    ob_start(); ?>
+    <div class="gw-hero-bleed alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
+        <div class="gw-hero-bleed-overlay" style="background: rgba(0,0,0,<?php echo $opacity/100; ?>);"></div>
+        <div class="gw-hero-bleed-content container">
+            <?php echo $content; ?>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+
+function gary_render_storyteller_grid_block( $atts ) {
+    ob_start(); ?>
+    <div class="gw-storyteller-grid container">
+        <?php for($i=1; $i<=4; $i++) : 
+            $img_id = !empty($atts["img{$i}_id"]) ? $atts["img{$i}_id"] : 0;
+            $url = $img_id ? wp_get_attachment_image_url($img_id, 'large') : 'data:image/svg+xml;utf8,%3Csvg width="100%25" height="100%25" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23eee"/%3E%3C/svg%3E';
+        ?>
+            <div class="gw-story-item">
+                <img src="<?php echo esc_url($url); ?>" alt="" />
             </div>
         <?php endfor; ?>
     </div>
     <?php return ob_get_clean();
+}
+
+function gary_render_testimonial_quote_block( $atts, $content ) {
+    $img_url = $atts['image_id'] ? wp_get_attachment_image_url($atts['image_id'], 'full') : $atts['image_url'];
+    ob_start(); ?>
+    <div class="gw-testimonial-quote-block alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
+        <div class="gw-testimonial-overlay"></div>
+        <div class="container">
+            <div class="gw-testimonial-inner">
+                <?php echo $content; ?>
+            </div>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+
+function gary_render_polaroid_frame_block( $atts, $content ) {
+    return '<div class="gw-polaroid-frame container">' . $content . '</div>';
+}
+
+function gary_render_cta_fullwidth_block( $atts, $content ) {
+    $img_url = $atts['image_id'] ? wp_get_attachment_image_url($atts['image_id'], 'full') : $atts['image_url'];
+    ob_start(); ?>
+    <div class="gw-cta-fullwidth alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
+        <div class="gw-cta-fullwidth-overlay"></div>
+        <div class="container">
+            <div class="gw-cta-fullwidth-content">
+                <?php echo $content; ?>
+            </div>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+
+function gary_render_styled_list_box( $atts, $content ) {
+    $type = !empty($atts['type']) ? $atts['type'] : 'highlights';
+    $class = "gw-list-box is-style-{$type}";
+    return "<div class='{$class}'><div class='gw-list-box-inner'>{$content}</div></div>";
 }
 
 function gary_register_custom_block_styles() {

@@ -1,5 +1,5 @@
 /*
- * Version: 3.5.0
+ * Version: 3.6.4
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  */
 
@@ -36,7 +36,8 @@
     
     /* 2. COLORS (BRAND DNA) */
     --brand-bg: #F9F9F7;
-    --brand-text: #1a1a1a;
+    --brand-black: #11110e; /* Gold-tinted Boutique Black */
+    --brand-text: var(--brand-black);
     --brand-accent: #B08D55; 
     --brand-gold-light: #C5A059; 
     --brand-crimson: #630000;
@@ -77,12 +78,12 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: 1px solid rgba(0,0,0,0.05); }
 .header-focal-container { 
     display: flex; align-items: center; justify-content: space-between; 
-    max-width: var(--site-max-width); margin: 0 auto; padding: 0 40px; height: 110px; 
+    max-width: var(--site-max-width); margin: 0 auto; padding: 20px 40px; min-height: 120px; 
 }
 .focal-side { flex: 1; display: flex; align-items: center; }
 .focal-left { justify-content: flex-start; }
 .focal-right { justify-content: flex-end; }
-.focal-center { flex: 0 0 auto; text-align: center; padding: 0 60px; }
+.focal-center { flex: 0 0 auto; text-align: center; padding: 0 60px; position: relative; top: 10px; z-index: 1100; }
 
 .site-title-blacksword { color: var(--brand-accent); font-size: 1.6rem; margin: 0; line-height: 1.1; }
 .site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-top: 12px; }
@@ -111,7 +112,14 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .menu-overlay[aria-hidden="false"] { opacity: 1; visibility: visible; }
 .nav-menu-overlay { list-style: none; padding: 0; text-align: center; }
 .nav-menu-overlay li { margin-bottom: 30px; }
-.nav-menu-overlay li a { font-size: 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 5px; color: var(--brand-text); }
+.nav-menu-overlay li a { 
+    font-size: 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 5px; color: var(--brand-text); 
+    transition: 0.4s;
+}
+.nav-menu-overlay li a:hover { 
+    color: var(--brand-gold-light); 
+    text-shadow: 0 0 20px rgba(197, 160, 89, 0.6); 
+}
 
 /* --- 2. HERO PEEK CAROUSEL (base reset — full styles in front-page.php) --- */
 /* The peek carousel uses absolute positioning with JS-driven class switching.  */
@@ -121,22 +129,37 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .hero-peek-img      { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 
+.gw-global-grid-wrapper { overflow: visible !important; }
 /* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
 .services-grid { 
     display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); 
-    row-gap: 60px; margin: 60px auto; width: 100%; 
+    row-gap: 60px; margin: 60px auto; width: 70%; overflow: visible !important;
 }
 .service-card { 
-    position: relative; background: var(--brand-white); border: var(--gold-frame-border) solid var(--brand-gold-light); 
-    box-shadow: var(--shadow-soft); display: flex; flex-direction: column; transition: 0.4s; padding-bottom: 25px; height: 100%; overflow: hidden;
+    position: relative; background: var(--brand-white); 
+    border: var(--gold-frame-border) solid var(--brand-gold-light); 
+    box-shadow: var(--shadow-soft); display: flex; flex-direction: column; 
+    transition: 0.45s cubic-bezier(0.165, 0.84, 0.44, 1); padding-bottom: 25px; height: 100%; 
+    min-height: 520px; overflow: visible !important;
 }
+.service-card:hover { transform: translateY(-12px); box-shadow: var(--shadow-deep); z-index: 100; }
 
 .service-card-ribbon, .investment-savings-ribbon { 
-    position: absolute; top: 30px; right: -45px; width: 190px; background: var(--brand-crimson); color: #fff; 
-    padding: 10px 0; font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    transform: rotate(45deg); box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 50; text-align: center;
-    border-top: 2px solid var(--brand-gold-light); border-bottom: 2px solid var(--brand-gold-light);
+    position: absolute; top: 12px; right: -42px; width: 220px; background: var(--brand-crimson); color: var(--brand-gold-light); 
+    padding: 12px 0; font-size: 0.85rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    transform: rotate(45deg); box-shadow: 0 8px 25px rgba(139,0,0,0.5); z-index: 300; text-align: center;
+    border-top: 1px solid var(--brand-gold-light); border-bottom: 1px solid var(--brand-gold-light);
+    line-height: 1.4; pointer-events: none;
 }
+.service-card-ribbon::before {
+    content: ""; position: absolute; left: 0; bottom: -10px; width: 0; height: 0;
+    border-top: 10px solid #4a0000; border-left: 10px solid transparent; 
+}
+.service-card-ribbon::after {
+    content: ""; position: absolute; right: 0; bottom: -10px; width: 0; height: 0;
+    border-top: 10px solid #4a0000; border-right: 10px solid transparent; 
+}
+.service-card-ribbon span { display: block; filter: brightness(1.2); }
 
 .service-card-image { aspect-ratio: 1/1; overflow: hidden; padding: 25px; }
 .service-card-image img { width: 100%; height: 100%; object-fit: contain; }
@@ -146,14 +169,19 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 
 /* PRICE BLOCK (GOLD RESTORED) */
 .service-card-price { 
-    background: var(--brand-gold-light); padding: 18px; border: none; margin-bottom: 25px; 
-    border-radius: 2px; color: var(--brand-white);
+    background: var(--brand-gold-light); padding: 22px 10px; border: none; margin-bottom: 30px; 
+    color: var(--brand-white); text-align: center; position: relative;
+    border-bottom: 3px solid rgba(0,0,0,0.1);
 }
-.service-card-price span { font-weight: 700; font-size: 1.2rem; color: var(--brand-white); }
+.service-card-price span { font-weight: 700; font-size: 1.4rem; color: var(--brand-white); letter-spacing: 1px; font-family: var(--font-primary); }
 .service-card-price.is-free { background: var(--brand-crimson); }
-.service-card-price.is-free span { color: var(--brand-gold-light) !important; }
+.service-card-price.is-free span { color: var(--brand-gold-light) !important; font-size: 1.25rem; }
 
-.duration-label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-top: 5px; }
+.duration-label, .service-duration-text { 
+    display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; 
+    color: var(--brand-gold-light); margin: 5px 0 15px; font-weight: 700; text-align: center;
+}
+.service-card-price .duration-label { display: none !important; } /* Safeguard against transition */
 
 /* Bullet Lists */
 .gw-bullet-list, .card-included-items { list-style: none; padding: 0; margin: 20px 0; text-align: left; }
@@ -203,7 +231,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .gw-z-content { 
     flex: 0 0 50%; background: var(--brand-white); padding: 60px; box-shadow: var(--shadow-deep); 
     margin-left: -8%; z-index: 10; position: relative; 
-    border: 2px solid var(--brand-gold-light);
+    border: 4px solid var(--brand-gold-light);
 }
 .gw-z-pattern.is-right { flex-direction: row-reverse; }
 .gw-z-pattern.is-right .gw-z-content { margin-left: 0; margin-right: -8%; }
@@ -348,7 +376,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 
 .investment-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
 .btn-black { 
-    background: #1a1a1a; color: var(--brand-white); padding: 18px; font-weight: 700; 
+    background: var(--brand-black); color: var(--brand-white); padding: 18px; font-weight: 700; 
     text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; transition: 0.3s;
 }
 .btn-black:hover { background: var(--brand-accent); transform: translateY(-2px); }
@@ -372,10 +400,10 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .component-info p { margin: 0; font-size: 0.85rem; opacity: 0.7; line-height: 1.5; }
 
 @media (max-width: 1024px) {
-    .container { width: 90% !important; }
+    .container, .gw-global-grid-wrapper, .home-intro.container { width: 90% !important; }
     .header-focal-container { height: auto; flex-direction: column; padding: 30px 20px; }
-    .focal-center { order: -1; padding-bottom: 20px; }
-    .footer-grid, .gw-z-pattern, .about-grid { grid-template-columns: 1fr; flex-direction: column; }
+    .focal-center { order: -1; padding-bottom: 20px; top: 0; }
+    .services-grid, .component-grid, .footer-grid, .gw-z-pattern, .about-grid { grid-template-columns: 1fr !important; flex-direction: column; }
     .gw-z-image, .gw-z-content { flex: 1 1 auto; width: 100%; margin: 0; }
     .gw-z-content { padding: 40px; }
     .portrait-frame { transform: rotate(0); }
@@ -402,8 +430,12 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 }
 .btn-black-gold:hover { background: var(--brand-white); transform: translateY(-2px); }
 
-.gw-trust-bar { background: var(--brand-black); padding: 25px 0; border-top: 1px solid rgba(197, 160, 89, 0.3); border-bottom: 1px solid rgba(197, 160, 89, 0.3); }
-.gw-trust-bar p { color: var(--brand-gold-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; margin: 0; font-weight: 700; }
+.gw-trust-bar { 
+    background: var(--brand-black); padding: 25px 0; 
+    border-top: 1px solid rgba(197, 160, 89, 0.3); border-bottom: 1px solid rgba(197, 160, 89, 0.3); 
+    width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw;
+}
+.gw-trust-bar p { color: var(--brand-gold-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; margin: 0 auto; font-weight: 700; max-width: 80%; }
 
 .gw-usps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; padding: 80px 0; }
 .gw-usp-col { text-align: center; }
@@ -414,8 +446,65 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .gw-process-col { position: relative; }
 .step-num { font-size: 2.5rem; font-weight: 300; color: var(--brand-gold-light); display: block; margin-bottom: 15px; font-family: var(--font-primary); opacity: 0.6; }
 .gw-process-col h4 { text-transform: uppercase; letter-spacing: 2px; font-size: 1rem; margin-bottom: 15px; }
-.gw-process-col p { font-size: 0.9rem; opacity: 0.7; line-height: 1.6; }
+/* Universal Hover Animation Extension */
+.gw-usp-col, .gw-process-col, .gw-z-pattern, .btn-black-gold { 
+    transition: 0.45s cubic-bezier(0.165, 0.84, 0.44, 1); 
+}
+.gw-usp-col:hover, .gw-process-col:hover { 
+    transform: translateY(-10px); 
+}
+.btn-black-gold:hover { transform: translateY(-3px) scale(1.02); }
+
+.gw-process-col p, .gw-usp-col p, .gw-z-content p { font-family: var(--font-primary) !important; }
+
+/* Editorial Titles */
+.gw-block-main-title { 
+    font-family: var(--font-script); font-size: 3.5rem; color: var(--brand-accent); 
+    text-align: center; margin-bottom: 60px; font-weight: normal; 
+}
 
 @media (max-width: 900px) {
     .gw-usps-row, .gw-process-row { grid-template-columns: 1fr; gap: 40px; }
+    .gw-block-main-title { font-size: 2.5rem; }
 }
+
+/* --- 10. NATIVE CONTROL CONVERTED BLOCKS --- */
+
+.gw-hero-bleed { 
+    position: relative; background-size: cover; background-position: center; 
+    padding: 150px 20px; min-height: 400px; display: flex; align-items: center; justify-content: center;
+}
+.gw-hero-bleed-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.gw-hero-bleed-content { position: relative; z-index: 2; text-align: center; }
+.gw-hero-bleed h2 { color: #fff !important; font-size: 3.5rem; font-weight: normal; }
+
+.gw-storyteller-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin: 40px auto; }
+.gw-story-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+
+.gw-testimonial-quote-block { 
+    position: relative; background-size: cover; background-position: center; padding: 100px 0; text-align: center; 
+}
+.gw-testimonial-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.8); z-index: 1; pointer-events: none; }
+.gw-testimonial-inner { position: relative; z-index: 2; color: #fff; font-size: 1.5rem; max-width: 800px; margin: 0 auto; }
+.gw-testimonial-inner blockquote { border: none; padding: 0; margin: 0; color: #fff; }
+
+.gw-polaroid-frame { background: #fff; padding: 5% 5% 15% 5%; box-shadow: var(--shadow-deep); margin: 40px auto; max-width: 500px; }
+
+.gw-cta-fullwidth { position: relative; background-size: cover; background-position: center; padding: 120px 20px; text-align: center; }
+.gw-cta-fullwidth-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 1; pointer-events: none; }
+.gw-cta-fullwidth-content { position: relative; z-index: 2; color: #fff; }
+.gw-cta-fullwidth h2 { color: var(--brand-gold-light) !important; text-transform: uppercase; letter-spacing: 3px; }
+.gw-cta-fullwidth p { color: #ccc; max-width: 700px; margin: 0 auto 40px; }
+
+.gw-list-box { padding: 30px; margin-bottom: 40px; }
+.gw-list-box.is-style-highlights { background: #fdfdfd; }
+.gw-list-box.is-style-included { border: 1px solid #e0e0e0; background: #fff; }
+.gw-list-box.is-style-perfect-for { padding: 20px; }
+.gw-list-box h4 { text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+
+/* RE-ENFORCING LIST STYLES (GOLD ICONS) */
+.is-style-gw-highlights, .is-style-gw-included, .is-style-gw-perfect-for { list-style: none !important; padding: 0 !important; }
+.is-style-gw-highlights li, .is-style-gw-included li, .is-style-gw-perfect-for li { position: relative; padding-left: 35px; margin-bottom: 15px; line-height: 1.6; text-align: left; }
+.is-style-gw-highlights li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-gold-light); font-weight: bold; }
+.is-style-gw-included li::before { content: '+'; position: absolute; left: 0; color: var(--brand-gold-light); font-weight: bold; }
+.is-style-gw-perfect-for li::before { content: '♦'; position: absolute; left: 0; color: var(--brand-gold-light); }
