@@ -205,6 +205,25 @@ function gary_find_page_by_bookly_title( $title ) {
 }
 
 /**
+ * HELPER: Get the Bookly Service ID for a given WordPress Page ID
+ * Prioritizes the official "GW Bookly Addon" link.
+ */
+function gary_get_service_id_for_page( $page_id ) {
+    global $wpdb;
+    if ( empty($page_id) ) return false;
+    
+    // 1. Try official link
+    $official_table = $wpdb->prefix . 'gw_bookly_service_links';
+    if ( $wpdb->get_var("SHOW TABLES LIKE '$official_table'") == $official_table ) {
+        $service_id = $wpdb->get_var( $wpdb->prepare( "SELECT service_id FROM $official_table WHERE wp_page_id = %d", $page_id ) );
+        if ( $service_id ) return $service_id;
+    }
+    
+    // 2. Fallback to legacy meta
+    return get_post_meta( $page_id, '_gary_bookly_id', true );
+}
+
+/**
  * HELPER: Format seconds into human readable duration
  */
 function gary_format_duration( $seconds ) {
@@ -254,7 +273,18 @@ function gary_get_grouped_bookly_services() {
         $item['sub_service_titles'] = array();
         
         // Find matching WP page for thumbnail/link
-        $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $s['id'] ) );
+        // A. Try the official "GW Bookly Addon" link first
+        $official_table = $wpdb->prefix . 'gw_bookly_service_links';
+        $page_id = false;
+        if ( $wpdb->get_var("SHOW TABLES LIKE '$official_table'") == $official_table ) {
+            $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT wp_page_id FROM $official_table WHERE service_id = %d", $s['id'] ) );
+        }
+        
+        // B. Fallback to legacy meta search if no official link exists
+        if ( ! $page_id ) {
+            $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $s['id'] ) );
+        }
+        
         $item['page_id'] = $page_id;
         $item['permalink'] = $page_id ? get_permalink( $page_id ) : '/booking/';
         $item['thumbnail'] = $page_id ? get_the_post_thumbnail_url( $page_id, 'large' ) : '';
@@ -291,7 +321,6 @@ function gary_get_grouped_bookly_services() {
  * META BOXES
  */
 function gary_add_meta_boxes() {
-    add_meta_box( 'gary_bookly_id_box', 'Bookly Link', 'gary_bookly_mb_html', 'page', 'side' );
     add_meta_box( 'gary_editorial_mb', 'Editorial Options', 'gary_editorial_mb_html', 'page', 'side' );
 }
 add_action( 'add_meta_boxes', 'gary_add_meta_boxes' );
@@ -400,7 +429,7 @@ add_action( 'save_post', 'gary_save_meta_boxes' );
  * BUNDLE LOGIC (TOTAL RESTORATION)
  */
 function gary_get_sub_service_summary( $post_id ) {
-    $bookly_id = get_post_meta( $post_id, '_gary_bookly_id', true );
+    $bookly_id = gary_get_service_id_for_page( $post_id );
     $bookly_data = gary_get_bookly_service_data( $bookly_id );
     $parent_price = $bookly_data ? (float)$bookly_data['price'] : 0;
     
