@@ -38,7 +38,7 @@ function gary_featured_services_shortcode( $atts ) {
                             <img src="<?php echo esc_url( $final_thumb ); ?>" alt="<?php echo esc_attr( $card_title ); ?>" />
                         </div>
                         <div class="condensed-title-wrap">
-                            <h4 style="margin:0; font-family:var(--font-primary); text-transform:uppercase; letter-spacing:1px; font-size:1.1rem;"><?php echo esc_html( $card_title ); ?></h4>
+                            <h4 style="margin:0; font-family:var(--font-primary); text-transform:uppercase; letter-spacing:1px; font-size:1.1rem;"><?php echo esc_html( gary_clean_service_name( $card_title ) ); ?></h4>
                             <?php if ( $atts['show'] === 'included' ) : ?>
                                 <div style="font-size:0.7rem; color:var(--brand-crimson); font-weight:700; letter-spacing:1px; margin-top:4px;">
                                     <?php if($unit_price > 0): ?><span style="text-decoration:line-through; opacity:0.5; margin-right:8px;">£<?php echo number_format($unit_price, 0); ?></span><?php endif; ?>

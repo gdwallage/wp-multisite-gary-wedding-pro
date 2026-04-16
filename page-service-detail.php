@@ -50,7 +50,7 @@ $included_titles_str = $summary['included_str'];
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
         
         <header class="service-hero-header" style="text-align:center; margin-bottom: 80px;">
-            <h1 class="entry-title"><?php the_title(); ?></h1>
+            <h1 class="entry-title"><?php echo esc_html( gary_clean_service_name( get_the_title() ) ); ?></h1>
             <p style="opacity:0.6; text-transform:uppercase; letter-spacing:3px; font-size:0.8rem; margin-top:10px;">Comprehensive collections designed to cover every nuance of your celebration</p>
         </header>
 

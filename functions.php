@@ -2,8 +2,8 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3.9.7
- * Fixes: CACHE BUSTER + TOTAL RESTORATION.
+ * Version: 4.1.0
+ * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -119,11 +119,11 @@ add_action( 'wp_head', function() {
             letter-spacing: normal !important;
         }
 
-        /* 2. H2 - Gold Lato AllCaps */
+        /* 2. H2 - Gold Lato AllCaps removed */
         h2 {
             font-family: 'Lato', sans-serif !important;
             color: var(--brand-gold-light) !important;
-            text-transform: uppercase !important;
+            text-transform: none !important;
             letter-spacing: 3px !important;
             font-weight: 700 !important;
         }
@@ -132,7 +132,7 @@ add_action( 'wp_head', function() {
         h3, h4, h5, h6 {
             color: var(--brand-black) !important;
             font-family: 'Lato', sans-serif !important;
-            text-transform: uppercase !important;
+            text-transform: none !important;
             letter-spacing: 2px !important;
         }
 
@@ -158,11 +158,11 @@ require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3.9.7>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=4.1.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '3.9.7' ); }
+function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '4.1.0' ); }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
@@ -212,6 +212,79 @@ function gary_format_duration( $seconds ) {
     $hours = round( (int)$seconds / 3600, 1 );
     if ($hours <= 0) return '';
     return $hours . ' Hours';
+}
+
+/**
+ * HELPER: Strip identifier codes (e.g. "WE01 - ") from service names
+ */
+function gary_clean_service_name( $name ) {
+    if ( empty($name) ) return $name;
+    // 1. Strip identifier (WE01 - )
+    $name = preg_replace('/^.*? - /', '', $name);
+    // 2. Convert to Title Case for legibility in script font
+    return ucwords( strtolower( $name ) );
+}
+
+/**
+ * DATA: Fetch all Bookly services grouped by type with savings calculation
+ */
+function gary_get_grouped_bookly_services() {
+    global $wpdb;
+    $table_services = $wpdb->prefix . 'bookly_services';
+    $table_sub_services = $wpdb->prefix . 'bookly_sub_services';
+    
+    if ( $wpdb->get_var("SHOW TABLES LIKE '$table_services'") != $table_services ) return array('packages' => array(), 'individual' => array());
+    
+    // 1. Fetch all services
+    $all_services = $wpdb->get_results( "SELECT id, title, type, price, duration, info FROM $table_services ORDER BY title ASC", ARRAY_A );
+    
+    $packages = array();
+    $individual = array();
+    
+    // Map of all services for easy price lookup
+    $service_map = array();
+    foreach ( $all_services as $s ) {
+        $service_map[ $s['id'] ] = $s;
+    }
+    
+    foreach ( $all_services as $s ) {
+        $item = $s;
+        $item['clean_title'] = gary_clean_service_name( $s['title'] );
+        $item['savings'] = 0;
+        $item['sub_service_titles'] = array();
+        
+        // Find matching WP page for thumbnail/link
+        $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $s['id'] ) );
+        $item['page_id'] = $page_id;
+        $item['permalink'] = $page_id ? get_permalink( $page_id ) : '/booking/';
+        $item['thumbnail'] = $page_id ? get_the_post_thumbnail_url( $page_id, 'large' ) : '';
+        
+        // If Package (Compound/Package), calculate savings and fetch sub-services
+        if ( in_array( $s['type'], array( 'compound', 'package' ) ) ) {
+            $sub_relations = $wpdb->get_results( $wpdb->prepare( "SELECT sub_service_id FROM $table_sub_services WHERE service_id = %d ORDER BY position ASC", $s['id'] ) );
+            $total_sub_price = 0;
+            foreach ( $sub_relations as $rel ) {
+                if ( isset( $service_map[ $rel->sub_service_id ] ) ) {
+                    $sub_svc = $service_map[ $rel->sub_service_id ];
+                    $item['sub_service_titles'][] = gary_clean_service_name( $sub_svc['title'] );
+                    $total_sub_price += (float)$sub_svc['price'];
+                }
+            }
+            if ( $total_sub_price > (float)$s['price'] ) {
+                $item['savings'] = $total_sub_price - (float)$s['price'];
+                $item['retail_value'] = $total_sub_price;
+            }
+            $packages[] = $item;
+        } else {
+            // Individual (Simple/Collaborative)
+            $individual[] = $item;
+        }
+    }
+    
+    return array(
+        'packages'   => $packages,
+        'individual' => $individual
+    );
 }
 
 /**
@@ -378,12 +451,12 @@ function gary_get_sub_service_summary( $post_id ) {
         'grid_items'   => $inclusions, // Backward compatibility
         'inclusions'   => $inclusions,
         'paid_addons'  => $paid_addons,
-        'titles'       => $inc_titles,
+        'titles'       => array_map('gary_clean_service_name', $inc_titles),
         'total_value'  => $retail_value,
         'bought_separately' => $inc_total_val,
         'savings'      => $savings,
         'parent_price' => $parent_price,
-        'included_str' => implode(', ', $inc_titles)
+        'included_str' => implode(', ', array_map('gary_clean_service_name', $inc_titles))
     );
 }
 

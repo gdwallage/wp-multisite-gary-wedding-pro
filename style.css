@@ -1,4 +1,5 @@
- * Version: 3.9.7
+/* Theme Name: Gary Wallage Wedding Pro
+ * Version: 4.1.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  */
 
@@ -74,7 +75,7 @@ img { max-width: 100%; height: auto; }
 h2 {
     font-family: var(--font-primary) !important;
     color: var(--brand-gold-light) !important;
-    text-transform: uppercase !important;
+    text-transform: none !important;
     letter-spacing: 3px !important;
     font-weight: 700 !important;
 }
@@ -83,7 +84,7 @@ h2 {
 h3, h4, h5, h6 {
     color: var(--brand-black) !important;
     font-family: var(--font-primary) !important;
-    text-transform: uppercase !important;
+    text-transform: none !important;
     letter-spacing: 2px !important;
 }
 
@@ -106,13 +107,13 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 }
 
 .site-title-blacksword { color: var(--brand-accent); font-size: 1.6rem; margin: 0; line-height: 1.1; }
-.site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-top: 6px; }
+.site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: none; opacity: 0.7; margin-top: 6px; }
 .focal-center .custom-logo-link img { max-width: 220px; height: auto; transition: 0.3s; }
 
 .menu-toggle { 
     font-family: var(--font-primary); font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; 
     background: none; border: 1px solid var(--brand-gold-light); padding: 10px 20px; 
-    cursor: pointer; color: var(--brand-accent); text-transform: uppercase; 
+    cursor: pointer; color: var(--brand-accent); text-transform: none; 
     display: flex; align-items: center; gap: 12px;
 }
 
@@ -133,7 +134,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .nav-menu-overlay { list-style: none; padding: 0; text-align: center; }
 .nav-menu-overlay li { margin-bottom: 30px; }
 .nav-menu-overlay li a { 
-    font-size: 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 5px; color: var(--brand-text); 
+    font-size: 2.2rem; font-weight: 700; text-transform: none; letter-spacing: 5px; color: var(--brand-text); 
     transition: 0.4s;
 }
 .btn-black:hover { background: var(--brand-gold-light); color: var(--brand-white); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
@@ -160,7 +161,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     background: var(--brand-gold-light) !important; /* Standard Gold */
     border: none !important; 
     padding: 15px !important; 
-    text-transform: uppercase !important; 
+    text-transform: none !important; 
     letter-spacing: 2px !important; 
     font-size: 0.8rem !important; 
     line-height: 1.2 !important;
@@ -231,7 +232,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 
 .service-card-ribbon, .investment-savings-ribbon { 
     position: absolute; top: 35px; right: -65px; width: 250px; background: var(--brand-crimson); color: var(--brand-gold-light); 
-    padding: 10px 0; font-size: 0.82rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 10px 0; font-size: 0.82rem; font-weight: 700; letter-spacing: 1.5px; text-transform: none;
     transform: rotate(45deg); box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 300; text-align: center;
     border-top: 1px solid var(--brand-gold-light); border-bottom: 1px solid var(--brand-gold-light);
     line-height: 1.2; pointer-events: none;
@@ -245,8 +246,9 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .service-card-content { padding: 0 30px; text-align: center; }
 .service-card-title { 
     font-family: var(--font-script) !important; font-weight: normal !important; 
-    font-size: 1.6rem; color: var(--brand-gold-light); margin: 0 0 15px 0 !important; 
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 1.4rem; color: var(--brand-gold-light); margin: 0 0 15px 0 !important; 
+    white-space: normal; display: flex; align-items: center; justify-content: center;
+    height: 4.5rem; text-align: center; text-transform: none !important;
 }
 
 /* PRICE BLOCK (GOLD RESTORED) */
