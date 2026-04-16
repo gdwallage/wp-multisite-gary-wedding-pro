@@ -2,8 +2,9 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 4.1.0
+ * Version: 4.2.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
+ * Integration: GW Bookly Addons Official Table Support.
  */
 
 if ( ! function_exists( 'gary_wedding_setup' ) ) :
@@ -96,54 +97,6 @@ add_action( 'customize_register', 'gary_customize_register' );
  */
 add_action( 'wp_head', function() {
     $logo_size = get_theme_mod( 'logo_size_px', '125' );
-    ?>
-    <style type="text/css" id="gw-emergency-branding">
-        @font-face {
-            font-family: 'Blacksword';
-            src: url('<?php echo get_template_directory_uri(); ?>/fonts/Blacksword.woff2') format('woff2');
-            font-weight: normal; font-style: normal; font-display: swap;
-        }
-        
-        /* 1. FORCE BRAND FONT & GOLD */
-        /* 1. H1 - Gold Blacksword */
-        h1, 
-        .site-title-blacksword, 
-        .entry-title, 
-        .hero-title, 
-        .footer-branding h3, 
-        .about-sig span {
-            font-family: 'Blacksword', cursive !important;
-            color: var(--brand-gold-light) !important;
-            font-weight: normal !important;
-            text-transform: none !important;
-            letter-spacing: normal !important;
-        }
-
-        /* 2. H2 - Gold Lato AllCaps removed */
-        h2 {
-            font-family: 'Lato', sans-serif !important;
-            color: var(--brand-gold-light) !important;
-            text-transform: none !important;
-            letter-spacing: 3px !important;
-            font-weight: 700 !important;
-        }
-
-        /* 3. H3+ - Boutique Black */
-        h3, h4, h5, h6 {
-            color: var(--brand-black) !important;
-            font-family: 'Lato', sans-serif !important;
-            text-transform: none !important;
-            letter-spacing: 2px !important;
-        }
-
-        /* 2. FORCE LAYOUT BOXES (Overrides) */
-        .gw-z-pattern, .about-grid { display: flex !important; width: 80% !important; margin: 60px auto !important; max-width: 1500px !important; }
-        .gw-z-image img { border: 15px solid #fff !important; box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important; }
-        .gw-z-content { border: 2px solid #C5A059 !important; padding: 60px !important; background: #fff !important; }
-
-        .focal-center .custom-logo-link img { width: <?php echo $logo_size; ?>px !important; }
-    </style>
-    <?php
 });
 
 /**
@@ -162,7 +115,18 @@ function gary_send_performance_headers() {
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
-function gary_wedding_scripts() { wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '4.1.0' ); }
+function gary_wedding_scripts() { 
+    wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '4.2.0' ); 
+    
+    // Add My Account support for logged in users
+    if ( is_user_logged_in() ) {
+        $custom_css = "
+            .gw-credits-grid { margin-top: 20px; }
+            .gw-credit-card:hover { border-color: var(--brand-gold) !important; box-shadow: var(--shadow-deep); }
+        ";
+        wp_add_inline_style( 'gary-wedding-style', $custom_css );
+    }
+}
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 function gary_wedding_footer_scripts() {
@@ -214,10 +178,8 @@ function gary_get_service_id_for_page( $page_id ) {
     
     // 1. Try official link
     $official_table = $wpdb->prefix . 'gw_bookly_service_links';
-    if ( $wpdb->get_var("SHOW TABLES LIKE '$official_table'") == $official_table ) {
-        $service_id = $wpdb->get_var( $wpdb->prepare( "SELECT service_id FROM $official_table WHERE wp_page_id = %d", $page_id ) );
-        if ( $service_id ) return $service_id;
-    }
+    $service_id = $wpdb->get_var( $wpdb->prepare( "SELECT service_id FROM $official_table WHERE wp_page_id = %d", $page_id ) );
+    if ( $service_id ) return $service_id;
     
     // 2. Fallback to legacy meta
     return get_post_meta( $page_id, '_gary_bookly_id', true );
@@ -273,14 +235,16 @@ function gary_get_grouped_bookly_services() {
         $item['sub_service_titles'] = array();
         
         // Find matching WP page for thumbnail/link
-        // A. Try the official "GW Bookly Addon" link first
-        $official_table = $wpdb->prefix . 'gw_bookly_service_links';
+        $official_links_table = $wpdb->prefix . 'gw_bookly_service_links';
+        $inclusions_table = $wpdb->prefix . 'gw_bookly_service_inclusions';
         $page_id = false;
-        if ( $wpdb->get_var("SHOW TABLES LIKE '$official_table'") == $official_table ) {
-            $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT wp_page_id FROM $official_table WHERE service_id = %d", $s['id'] ) );
+        
+        // A. Try the official link table
+        if ( $wpdb->get_var("SHOW TABLES LIKE '$official_links_table'") == $official_links_table ) {
+            $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT wp_page_id FROM $official_links_table WHERE service_id = %d", $s['id'] ) );
         }
         
-        // B. Fallback to legacy meta search if no official link exists
+        // B. Fallback to legacy meta search
         if ( ! $page_id ) {
             $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $s['id'] ) );
         }
@@ -289,24 +253,46 @@ function gary_get_grouped_bookly_services() {
         $item['permalink'] = $page_id ? get_permalink( $page_id ) : '/booking/';
         $item['thumbnail'] = $page_id ? get_the_post_thumbnail_url( $page_id, 'large' ) : '';
         
-        // If Package (Compound/Package), calculate savings and fetch sub-services
-        if ( in_array( $s['type'], array( 'compound', 'package' ) ) ) {
-            $sub_relations = $wpdb->get_results( $wpdb->prepare( "SELECT sub_service_id FROM $table_sub_services WHERE service_id = %d ORDER BY position ASC", $s['id'] ) );
-            $total_sub_price = 0;
-            foreach ( $sub_relations as $rel ) {
-                if ( isset( $service_map[ $rel->sub_service_id ] ) ) {
-                    $sub_svc = $service_map[ $rel->sub_service_id ];
+        // --- INCLUSIONS LOGIC ---
+        $total_sub_price = 0;
+
+        // 1. Check Custom GW Inclusions (The New Standard)
+        if ( $wpdb->get_var("SHOW TABLES LIKE '$inclusions_table'") == $inclusions_table ) {
+            $custom_inclusions = $wpdb->get_results( $wpdb->prepare( "SELECT included_id FROM $inclusions_table WHERE parent_id = %d ORDER BY position ASC", $s['id'] ) );
+            foreach ( $custom_inclusions as $inc ) {
+                if ( isset( $service_map[ $inc->included_id ] ) ) {
+                    $sub_svc = $service_map[ $inc->included_id ];
                     $item['sub_service_titles'][] = gary_clean_service_name( $sub_svc['title'] );
                     $total_sub_price += (float)$sub_svc['price'];
                 }
             }
-            if ( $total_sub_price > (float)$s['price'] ) {
-                $item['savings'] = $total_sub_price - (float)$s['price'];
-                $item['retail_value'] = $total_sub_price;
+        }
+
+        // 2. Fallback/Merge with Native Bookly Compound/Package relations
+        if ( in_array( $s['type'], array( 'compound', 'package' ) ) ) {
+            $sub_relations = $wpdb->get_results( $wpdb->prepare( "SELECT sub_service_id FROM $table_sub_services WHERE service_id = %d ORDER BY position ASC", $s['id'] ) );
+            foreach ( $sub_relations as $rel ) {
+                if ( isset( $service_map[ $rel->sub_service_id ] ) ) {
+                    $sub_svc = $service_map[ $rel->sub_service_id ];
+                    $clean_sub_title = gary_clean_service_name( $sub_svc['title'] );
+                    if ( !in_array( $clean_sub_title, $item['sub_service_titles'] ) ) {
+                        $item['sub_service_titles'][] = $clean_sub_title;
+                        $total_sub_price += (float)$sub_svc['price'];
+                    }
+                }
             }
+        }
+
+        // Calculate Savings
+        if ( $total_sub_price > (float)$s['price'] ) {
+            $item['savings'] = $total_sub_price - (float)$s['price'];
+            $item['retail_value'] = $total_sub_price;
+        }
+
+        // Categorize
+        if ( !empty($item['sub_service_titles']) || in_array( $s['type'], array( 'compound', 'package' ) ) ) {
             $packages[] = $item;
         } else {
-            // Individual (Simple/Collaborative)
             $individual[] = $item;
         }
     }
@@ -377,35 +363,7 @@ function gary_editorial_mb_html( $post ) {
     echo '<p style="font-size:11px; color:#666; margin-bottom:0;">Leave empty to use the standard /booking/ page link.</p>';
     echo '</div>';
 
-    // Sub-service Slots
-    global $wpdb;
-    $table = $wpdb->prefix . 'bookly_services';
-    $services = array();
-    if ( $wpdb->get_var("SHOW TABLES LIKE '$table'") == $table ) {
-        $services = $wpdb->get_results( "SELECT id, title FROM $table ORDER BY title ASC" );
-    }
-
-    echo '<p><strong>Sub-Service Bundle Slots (INCLUDED):</strong></p>';
-    for ( $i = 1; $i <= 8; $i++ ) {
-        $val = get_post_meta( $post->ID, "_gary_sub_service_$i", true );
-        echo '<div style="margin-bottom:8px;">';
-        echo '<label style="font-size:11px; color:#666;">Included '.$i.':</label><br />';
-        echo '<select name="gary_sub_service_'.$i.'" style="width:100%;">';
-        echo '<option value="">-- No Sub-service --</option>';
-        foreach ( $services as $s ) { echo '<option value="'.$s->id.'" '.selected($val, $s->id, false).'>'.$s->title.'</option>'; }
-        echo '</select></div>';
-    }
-
-    echo '<p style="margin-top:20px;"><strong>Paid Add-On Slots (OPTIONAL):</strong></p>';
-    for ( $i = 1; $i <= 8; $i++ ) {
-        $val = get_post_meta( $post->ID, "_gary_paid_service_$i", true );
-        echo '<div style="margin-bottom:8px;">';
-        echo '<label style="font-size:11px; color:#666;">Add-On '.$i.':</label><br />';
-        echo '<select name="gary_paid_service_'.$i.'" style="width:100%;">';
-        echo '<option value="">-- No Add-on --</option>';
-        foreach ( $services as $s ) { echo '<option value="'.$s->id.'" '.selected($val, $s->id, false).'>'.$s->title.'</option>'; }
-        echo '</select></div>';
-    }
+    // Legacy slots removed - now handled via Bookly "GW Addons" tab
 }
 
 
@@ -419,65 +377,61 @@ function gary_save_meta_boxes( $post_id ) {
     if ( isset($_POST['gary_booking_shortcode']) ) update_post_meta( $post_id, '_gary_booking_shortcode', $_POST['gary_booking_shortcode'] );
     
     for ( $i = 1; $i <= 8; $i++ ) {
-        if ( isset($_POST["gary_sub_service_$i"]) ) update_post_meta( $post_id, "_gary_sub_service_$i", $_POST["gary_sub_service_$i"] );
-        if ( isset($_POST["gary_paid_service_$i"]) ) update_post_meta( $post_id, "_gary_paid_service_$i", $_POST["gary_paid_service_$i"] );
+        if ( isset($_POST["gary_sub_service_$i"]) ) delete_post_meta( $post_id, "_gary_sub_service_$i" );
+        if ( isset($_POST["gary_paid_service_$i"]) ) delete_post_meta( $post_id, "_gary_paid_service_$i" );
     }
 }
 add_action( 'save_post', 'gary_save_meta_boxes' );
 
 /**
- * BUNDLE LOGIC (TOTAL RESTORATION)
+ * BUNDLE LOGIC (DATA-DRIVEN DB UPGRADE)
+ * Prioritizes the official GW Bookly Addons inclusion table.
  */
 function gary_get_sub_service_summary( $post_id ) {
+    global $wpdb;
     $bookly_id = gary_get_service_id_for_page( $post_id );
     $bookly_data = gary_get_bookly_service_data( $bookly_id );
     $parent_price = $bookly_data ? (float)$bookly_data['price'] : 0;
     
     $inclusions = array();
-    $paid_addons = array();
     $inc_titles = array();
     $inc_total_val = 0;
     
-    // 1. INCLUDED ITEMS
-    for ( $i = 1; $i <= 8; $i++ ) {
-        $sub_id = get_post_meta( $post_id, "_gary_sub_service_$i", true );
-        if ( !empty($sub_id) ) {
-            $sub_data = gary_get_bookly_service_data($sub_id);
-            if($sub_data) {
+    // 1. DATABASE INCLUSIONS (The New Standard)
+    $table_inc = $wpdb->prefix . 'gw_bookly_service_inclusions';
+    if ( $bookly_id && $wpdb->get_var("SHOW TABLES LIKE '$table_inc'") == $table_inc ) {
+        $db_inclusions = $wpdb->get_results( $wpdb->prepare( "SELECT included_id FROM $table_inc WHERE parent_id = %d ORDER BY position ASC", $bookly_id ) );
+        foreach ( $db_inclusions as $db_inc ) {
+            $sub_data = gary_get_bookly_service_data( $db_inc->included_id );
+            if ( $sub_data ) {
                 $inc_titles[] = $sub_data['title'];
                 $unit_p = (float)$sub_data['price'];
                 $inc_total_val += $unit_p;
-                $page_id = gary_find_page_by_bookly_title($sub_data['title']);
+                $p_id = gary_find_page_by_bookly_title($sub_data['title']);
                 $inclusions[] = array(
-                    'page_id' => $page_id, 'bookly_id' => $sub_id, 'title' => $sub_data['title'],
-                    'price' => $unit_p, 'info' => $sub_data['info'], 'thumb' => $page_id ? get_the_post_thumbnail_url($page_id, 'medium') : ''
+                    'page_id' => $p_id, 'bookly_id' => $db_inc->included_id, 'title' => $sub_data['title'],
+                    'price' => $unit_p, 'info' => $sub_data['info'], 'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
                 );
             }
         }
     }
 
-    // 2. PAID ADDONS
-    for ( $i = 1; $i <= 8; $i++ ) {
-        $sub_id = get_post_meta( $post_id, "_gary_paid_service_$i", true );
-        if ( !empty($sub_id) ) {
-            $sub_data = gary_get_bookly_service_data($sub_id);
-            if($sub_data) {
-                $unit_p = (float)$sub_data['price'];
-                $page_id = gary_find_page_by_bookly_title($sub_data['title']);
-                $paid_addons[] = array(
-                    'page_id' => $page_id, 'bookly_id' => $sub_id, 'title' => $sub_data['title'],
-                    'price' => $unit_p, 'info' => $sub_data['info'], 'thumb' => $page_id ? get_the_post_thumbnail_url($page_id, 'medium') : ''
-                );
-            }
-        }
-    }
+    // 2. PAID ADDONS (Previously Meta-based, now ready for GW Addons migration)
+    $paid_addons = array();
 
     $retail_override = get_post_meta( $post_id, '_gary_retail_value_override', true );
-    $savings = !empty($retail_override) ? (float)$retail_override - $parent_price : $inc_total_val;
-    $retail_value = abs($parent_price) + abs($savings);
+    
+    // Total Retail Value is either the override or the sum of inclusions
+    $retail_value = !empty($retail_override) ? (float)$retail_override : $inc_total_val;
+    
+    // Savings is the difference between Retail Value and what we are charging (Parent Price)
+    $savings = $retail_value - $parent_price;
+    
+    // Ensure savings isn't negative (edge case)
+    if ( $savings < 0 ) $savings = 0;
 
     return array(
-        'grid_items'   => $inclusions, // Backward compatibility
+        'grid_items'   => $inclusions, 
         'inclusions'   => $inclusions,
         'paid_addons'  => $paid_addons,
         'titles'       => array_map('gary_clean_service_name', $inc_titles),
@@ -490,8 +444,140 @@ function gary_get_sub_service_summary( $post_id ) {
 }
 
 /**
- * Fetch Custom Bookly Forms (Appearances)
+ * PORTAL: WOOCOMMERCE "MY ACCOUNT" INTEGRATION
  */
+
+// 1. Register Endpoint
+function gary_add_my_bookings_endpoint() {
+    add_rewrite_endpoint( 'my-bookings', EP_PAGES );
+}
+add_action( 'init', 'gary_add_my_bookings_endpoint' );
+
+// 2. Add to Menu
+function gary_add_my_bookings_link_my_account( $items ) {
+    $new_items = array();
+    foreach ( $items as $key => $value ) {
+        $new_items[ $key ] = $value;
+        if ( 'dashboard' === $key ) {
+            $new_items['my-bookings'] = 'My Bookings';
+        }
+    }
+    return $new_items;
+}
+add_filter( 'woocommerce_account_menu_items', 'gary_add_my_bookings_link_my_account' );
+
+// 3. Render Content
+function gary_my_bookings_content() {
+    global $wpdb;
+    $user_id = get_current_user_id();
+    
+    echo '<h3>Your Entitlements & Credits</h3>';
+    $table_credits = $wpdb->prefix . 'gw_bookly_customer_credits';
+    $credits = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_credits WHERE customer_id = %d AND balance > 0", $user_id ) );
+
+    if ( $credits ) {
+        echo '<div class="gw-credits-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:40px;">';
+        foreach ( $credits as $c ) {
+            $s_data = gary_get_bookly_service_data($c->service_id);
+            if ( !$s_data ) continue;
+            ?>
+            <div class="gw-credit-card" style="border: 2px solid var(--brand-gold-light); padding: 20px; background: #fff; position:relative;">
+                <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6;">Included Session</span>
+                <h4 style="margin: 5px 0 15px;"><?php echo esc_html(gary_clean_service_name($s_data['title'])); ?></h4>
+                <div style="font-size:1.2rem; font-weight:700; margin-bottom:15px;"><?php echo (int)$c->balance; ?> Remaining</div>
+                <a href="/booking/?redeem=<?php echo $c->id; ?>" class="btn-black" style="display:block; background:#000; color:#fff; text-decoration:none; text-align:center; padding:10px; font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; font-weight:700;">Book Using Credit</a>
+            </div>
+            <?php
+        }
+        echo '</div>';
+    } else {
+        echo '<p style="opacity:0.6; margin-bottom:40px;">You currently have no outstanding session credits to redeem.</p>';
+    }
+
+    echo '<h3>Upcoming Appointments</h3>';
+    echo do_shortcode('[bookly-appointments-list columns="date,time,service,staff,price,status,cancel"]');
+}
+add_action( 'woocommerce_account_my-bookings_endpoint', 'gary_my_bookings_content' );
+
+/**
+ * ENGINE: ENTITLEMENT GRANTING (WooCommerce Order Completed)
+ */
+function gary_grant_credits_on_order_complete( $order_id ) {
+    global $wpdb;
+    $order = wc_get_order( $order_id );
+    $user_id = $order->get_user_id();
+    if ( !$user_id ) return;
+
+    $table_inc = $wpdb->prefix . 'gw_bookly_service_inclusions';
+    $table_credits = $wpdb->prefix . 'gw_bookly_customer_credits';
+
+    foreach ( $order->get_items() as $item ) {
+        // Find if this product is linked to a Bookly service
+        $bookly_id = $item->get_meta( 'Service ID' ); // Bookly stores this in WC meta
+        if ( !$bookly_id ) continue;
+
+        // Check for inclusions in our DB
+        $inclusions = $wpdb->get_results( $wpdb->prepare( "SELECT included_id FROM $table_inc WHERE parent_id = %d", $bookly_id ) );
+        foreach ( $inclusions as $inc ) {
+            // Grant 1 credit per inclusion
+            $wpdb->insert( $table_credits, array(
+                'customer_id' => $user_id,
+                'service_id'  => $inc->included_id,
+                'balance'     => 1
+            ) );
+        }
+    }
+}
+add_action( 'woocommerce_order_status_completed', 'gary_grant_credits_on_order_complete' );
+
+/**
+ * ENGINE: PRICE INTERCEPTOR (Zero the price if user has credit)
+ */
+function gary_intercept_bookly_price( $cart_info, $item ) {
+    global $wpdb;
+    $user_id = get_current_user_id();
+    if ( !$user_id ) return $cart_info;
+
+    $service_id = $item->getServiceId();
+    $table_credits = $wpdb->prefix . 'gw_bookly_customer_credits';
+
+    // Check if user has an active credit for this specific service
+    $credit_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_credits WHERE customer_id = %d AND service_id = %d AND balance > 0 LIMIT 1", $user_id, $service_id ) );
+
+    if ( $credit_id ) {
+        // Redraw price to Zero for WooCommerce cart
+        // Note: We'll consume the credit when the order is marked completed
+        $cart_info->setPayNow( 0 );
+        $cart_info->setTotal( 0 );
+    }
+
+    return $cart_info;
+}
+// We use the Proxy Shared filter to catch the cart info preparation
+add_filter( 'bookly_cart_info_prepare', 'gary_intercept_bookly_price', 10, 2 );
+
+// Consume credit only when the zero-price order is completed
+function gary_consume_credits_on_order_complete( $order_id ) {
+    global $wpdb;
+    $order = wc_get_order( $order_id );
+    if ( (float)$order->get_total() > 0 ) return; // Only process zero-price redemptions
+
+    $user_id = $order->get_user_id();
+    $table_credits = $wpdb->prefix . 'gw_bookly_customer_credits';
+
+    foreach ( $order->get_items() as $item ) {
+        $bookly_id = $item->get_meta( 'Service ID' );
+        if ( !$bookly_id ) continue;
+
+        // Decrease balance by 1
+        $credit_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_credits WHERE customer_id = %d AND service_id = %d AND balance > 0 LIMIT 1", $user_id, $bookly_id ) );
+        if ( $credit_id ) {
+            $wpdb->query( $wpdb->prepare( "UPDATE $table_credits SET balance = balance - 1 WHERE id = %d", $credit_id ) );
+        }
+    }
+}
+add_action( 'woocommerce_order_status_completed', 'gary_consume_credits_on_order_complete', 20 ); // Run after granting logic
+
 function gary_get_bookly_forms() {
     global $wpdb;
     $table = $wpdb->prefix . 'bookly_forms';

@@ -1,6 +1,7 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 4.1.0
+ * Version: 4.2.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
+ * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
 
 @font-face {
@@ -139,6 +140,38 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 }
 .btn-black:hover { background: var(--brand-gold-light); color: var(--brand-white); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
+/* --- MOBILE HEADER OVERRIDE --- */
+@media (max-width: 1024px) {
+    .header-focal-container { 
+        height: auto !important; 
+        flex-direction: column !important; 
+        padding: 20px 20px !important; 
+        align-items: center !important;
+    }
+    .focal-side { 
+        width: 100% !important; 
+        justify-content: center !important; 
+        text-align: center !important; 
+        margin: 5px 0 !important; 
+        flex: none !important;
+    }
+    .nav-toggle-container { order: -1 !important; margin-bottom: 20px !important; }
+    .branding-group { order: 0 !important; }
+    .focal-center { 
+        order: 1 !important; 
+        padding: 0 !important; 
+        margin-bottom: -50px !important; 
+        z-index: 1000 !important; 
+        position: relative !important;
+        top: 0 !important;
+    }
+    .focal-center .custom-logo-link img { max-width: 130px !important; }
+
+    .site-title-blacksword { font-size: 1.4rem !important; }
+    .site-tagline-lato { font-size: 0.6rem !important; letter-spacing: 1px !important; }
+}
+
+
 /* --- BOOKLY BUTTON & MODAL BRIDGE (3.9.5) --- */
 .dynamic-booking-wrapper, 
 .dynamic-booking-wrapper *, 
@@ -200,7 +233,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .gw-global-grid-wrapper { overflow: visible !important; }
 /* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
 .services-grid { 
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: var(--grid-gap); 
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--grid-gap); 
     row-gap: 60px; margin: 60px auto; width: var(--editorial-width) !important; max-width: 1250px; overflow: visible !important;
 }
 @media (max-width: 1024px) {
@@ -307,18 +340,37 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 
 /* --- 5. EDITORIAL BLOCKS (Z-PATTERN FULL FRAME) --- */
 .gw-z-pattern { 
-    display: flex; align-items: center; margin: 100px auto; position: relative; 
+    display: flex; align-items: center; margin: 80px auto; position: relative; 
     width: var(--editorial-width); max-width: var(--site-max-width);
 }
 .gw-z-image { flex: 0 0 55%; z-index: 1; }
-.gw-z-image img { border: 15px solid var(--brand-white); box-shadow: var(--shadow-deep); width: 100%; height: auto; object-fit: cover; }
+.gw-z-image img { border: 15px solid var(--brand-white) !important; box-shadow: var(--shadow-deep); width: 100%; height: auto; object-fit: cover; }
 .gw-z-content { 
     flex: 0 0 50%; background: var(--brand-white); padding: 60px; box-shadow: var(--shadow-deep); 
     margin-left: -8%; z-index: 10; position: relative; 
-    border: 4px solid var(--brand-gold-light);
+    border: 2px solid var(--brand-gold-light) !important;
 }
 .gw-z-pattern.is-right { flex-direction: row-reverse; }
 .gw-z-pattern.is-right .gw-z-content { margin-left: 0; margin-right: -8%; }
+
+/* --- 6. GALLERY WALL TRIO (EDITORIAL GRID) --- */
+.gw-trio-gallery-wrapper { margin-top: 80px; margin-bottom: 80px; }
+.gw-trio-gallery { display: flex; gap: 20px; align-items: stretch; }
+.gw-trio-main { flex: 2; position: relative; }
+.gw-trio-main img { width: 100%; height: 100%; object-fit: cover; border: 10px solid #fff; box-shadow: var(--shadow-soft); display: block; }
+.gw-trio-side { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.gw-trio-top, .gw-trio-bottom { flex: 1; position: relative; }
+.gw-trio-top img, .gw-trio-bottom img { width: 100%; height: 100%; object-fit: cover; border: 10px solid #fff; box-shadow: var(--shadow-soft); display: block; }
+
+@media (max-width: 1024px) {
+    .gw-z-pattern { flex-direction: column !important; margin: 40px auto !important; width: 100% !important; }
+    .gw-z-image, .gw-z-content { flex: none !important; width: 100% !important; margin: 0 !important; }
+    .gw-z-content { padding: 40px !important; margin-top: -20px !important; width: 90% !important; border-width: 2px !important; }
+    
+    .gw-trio-gallery { flex-direction: column; gap: 20px; }
+    .gw-trio-main, .gw-trio-side { width: 100%; }
+    .gw-trio-side { height: auto; }
+}
 
 /* --- 6. FOOTER (BOUTIQUE EDITORIAL) --- */
 .site-footer { 
@@ -605,7 +657,20 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .is-style-gw-included li::before { content: '+'; position: absolute; left: 0; color: var(--brand-gold-light); font-weight: bold; }
 .is-style-gw-perfect-for li::before { content: '♦'; position: absolute; left: 0; color: var(--brand-gold-light); }
 
-/* --- CONDENSED SUB-SERVICE GRID (3.8.4 - High Density 3.8.9) --- */
+/* --- GW BULLET LISTS (Cards & Detail) --- */
+.gw-bullet-list { list-style: none !important; padding: 0 !important; margin: 20px 0 !important; }
+.gw-bullet-list li { position: relative; padding-left: 35px; margin-bottom: 12px; line-height: 1.4; text-align: left; font-size: 0.95rem; }
+.gw-bullet-list li::before { 
+    content: '✳'; /* The Editorial Star/Sun */
+    position: absolute; left: 0; top: 2px;
+    color: var(--brand-gold-light); font-size: 1.2rem; line-height: 1;
+}
+
+/* Specific list tweaks */
+.gw-bullet-list.is-inclusions { border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 20px !important; margin-bottom: 20px !important; }
+.gw-bullet-list.is-highlights { opacity: 0.85; }
+
+/* --- CONDENSED SUB-SERVICE GRID --- */
 .condensed-service-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -657,3 +722,91 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     transform: translateY(-3px) !important;
     box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
 }
+
+/* --- 12. BOUTIQUE MOBILE OVERHAUL (v4.5.0) --- */
+@media (max-width: 1024px) {
+    /* 1. Global Overflow & Stability */
+    html, body { 
+        overflow-x: hidden !important; 
+        position: relative; 
+        width: 100%; 
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .container, .gw-global-grid-wrapper, .home-intro.container { 
+        width: 100% !important; 
+        max-width: 100% !important;
+        padding-left: 20px !important; 
+        padding-right: 20px !important; 
+        box-sizing: border-box !important;
+    }
+
+    /* 2. Grid Stacking Fixes */
+    .services-grid, 
+    .featured-shortcode-grid,
+    .component-grid, 
+    .components-grid,
+    .footer-grid, 
+    .gw-usps-row, 
+    .gw-process-row,
+    .gw-editorial-split,
+    .gw-z-pattern { 
+        grid-template-columns: 1fr !important; 
+        gap: 30px !important; 
+        display: grid !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    .service-card { width: 100% !important; box-sizing: border-box !important; }
+
+    /* 3. Hero Carousel Refinement */
+    .hero-peek-track { height: 65vh !important; min-height: 480px !important; }
+    .hero-peek-caption { 
+        padding: 30px 20px 100px !important; /* Huge bottom padding to clear the nav */
+        background: linear-gradient(to top, rgba(17,17,14,0.9) 0%, rgba(17,17,14,0.4) 100%) !important;
+        backdrop-filter: none !important;
+        display: flex !important;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    .hero-peek-title { font-size: 1.8rem !important; margin-bottom: 8px !important; }
+    .hero-peek-subtitle { display: block !important; font-size: 0.65rem !important; opacity: 0.7; margin-bottom: 20px !important; }
+    .hero-peek-cta { margin-bottom: 0 !important; } /* Caption padding handles spacing */
+    
+    /* Dedicated Nav Bar for Mobile */
+    .hero-peek-nav { 
+        bottom: 0 !important; 
+        left: 0 !important;
+        right: 0 !important;
+        background: rgba(17,17,14,0.95) !important;
+        padding: 15px 0 !important;
+        border-top: 1px solid rgba(197,160,89,0.2);
+        width: 100% !important;
+        border-radius: 0 !important;
+        z-index: 50 !important;
+    }
+    .hero-peek-arrow { width: 35px !important; height: 35px !important; border-radius: 50% !important; }
+    .hero-peek-dot { width: 6px !important; height: 6px !important; }
+}
+
+    /* 4. Service Card Adjustments */
+    .service-card { margin-bottom: 20px; }
+    .service-card-image { aspect-ratio: 16/9 !important; }
+    .service-card-ribbon { font-size: 0.65rem !important; right: -45px !important; top: 20px !important; width: 180px !important; }
+
+    /* 5. Typography Scaling */
+    .entry-title, h1 { font-size: 2.2rem !important; line-height: 1.2 !important; }
+    .section-divider-title { font-size: 1.6rem !important; margin-top: 60px !important; margin-bottom: 30px !important; }
+    .services-intro { font-size: 1rem !important; line-height: 1.6 !important; margin-bottom: 40px !important; }
+}
+
+@media (max-width: 600px) {
+    .hero-peek-track { height: 40vh !important; }
+    .hero-peek-title { font-size: 1.6rem !important; }
+    .hero-peek-cta { font-size: 0.6rem !important; padding: 6px 15px !important; }
+    .hero-peek-nav { display: none !important; } /* Hide arrows on tiny screens, rely on swipe */
+}
+

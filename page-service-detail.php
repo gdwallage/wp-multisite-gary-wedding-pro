@@ -212,8 +212,10 @@ document.addEventListener('DOMContentLoaded', gary_enforce_booking_visibility);
 
 <style>
 @media (max-width: 900px) {
-    .service-hero-split { flex-direction: column; }
-    .investment-sidebar { width: 100%; flex: none; }
+    .service-hero-split { flex-direction: column-reverse; gap: 40px !important; }
+    .investment-sidebar { width: 100%; flex: none; margin-bottom: 40px; }
+    .service-hero-header { margin-bottom: 40px !important; }
+    .entry-title { font-size: 2.2rem !important; }
 }
 </style>
 

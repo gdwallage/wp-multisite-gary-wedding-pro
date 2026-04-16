@@ -3,7 +3,7 @@
  * File: page-services.php
  * Template Name: Services
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.80.0
+ * Version: 4.2.0
  * Description: Clean grid with strictly aligned page title and beveled frames.
  */
 
@@ -68,7 +68,7 @@ get_header(); ?>
                             </div>
 
                             <?php if ( ! empty( $item['sub_service_titles'] ) ) : ?>
-                                <ul class="card-included-items">
+                                <ul class="gw-bullet-list is-inclusions">
                                     <?php foreach ( $item['sub_service_titles'] as $inc_title ) : ?>
                                         <li><?php echo esc_html( $inc_title ); ?></li>
                                     <?php endforeach; ?>
