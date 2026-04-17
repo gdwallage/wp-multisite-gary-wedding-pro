@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 1000.0.0
+ * Version: 3000.1.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -274,18 +274,23 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .investment-plaque .investment-savings-ribbon { z-index: 10 !important; }
 .service-card-ribbon span { display: block; filter: brightness(1.2); }
 
-/* THE CIRCLE NUKE (v12.0.0) */
-.service-card-image, 
-.service-card-image img, 
-.wp-block-gary-service-single-block .service-card-image img,
-.services-grid .service-card-image img,
-[class*="service-card"] img {
-    border-radius: 0 !important;
-    aspect-ratio: 1/1 !important;
-    object-fit: cover !important;
+/* THE MEDALLION FORMAT (High Fidelity) */
+.service-card-image {
+    max-width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+    border: 1px solid var(--brand-gold-light);
+    box-shadow: var(--shadow-deep);
 }
-
-.service-card-image { border: 1px solid var(--brand-gold-light); background: #000; overflow: hidden; }
+.service-card-image img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    display: block;
+}
 
 /* HIGH SPECIFICITY RESET: Kills circles on Home Page and Blocks */
 #primary .services-grid .service-card-image,

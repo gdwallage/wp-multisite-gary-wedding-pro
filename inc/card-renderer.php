@@ -19,15 +19,13 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
         $bookly_id = gary_get_service_id_for_page( $page_id );
     } else {
         $bookly_id = (int) $id;
-        // Find matching page by Bookly ID meta
-        $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $bookly_id ) );
+        $page_id = gary_get_page_id_for_service( $bookly_id );
     }
 
     $b_data = gary_get_bookly_service_data( $bookly_id );
     if ( !$b_data ) return false;
 
-    // Fetch Savings & Inclusions summary
-    // If we have a page_id, use it for overrides. Else just use the bookly_id.
+    // Fetch Savings & Inclusions summary (v3000.1.0 Unified Engine)
     $summary = $page_id ? gary_get_sub_service_summary( $page_id, true ) : gary_get_sub_service_summary( $bookly_id, false );
 
     $thumbnail = $page_id ? get_the_post_thumbnail_url($page_id, 'large') : '';
