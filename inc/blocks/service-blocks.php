@@ -253,96 +253,28 @@ function gary_render_single_service_block( $attributes ) {
     $b_data = gary_get_bookly_service_data( $b_id );
     if ( !$b_data ) return '';
 
-    global $wpdb;
-    $page_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $b_id ) );
+    $card_data = gary_get_service_data_unified($b_id, 'bookly');
+    if (!$card_data) return '';
 
-    $card_title = $b_data['title'];
-    $is_free = (float)$b_data['price'] <= 0;
-    $display_price = $is_free ? 'FREE' : 'From £' . number_format($b_data['price'], 2);
-    $dur_sec = !empty($b_data['duration']) ? (int)$b_data['duration'] : 0;
-    $dur_h = round($dur_sec / 3600, 1);
-    $display_duration = ($dur_h > 0) ? 'Typically ' . $dur_h . ' Hours' : '';
-    
-    if ($is_free) {
-        $display_duration = '';
-    }
-    
-    $card_url = $page_id ? get_permalink($page_id) : '/booking/';
-    $card_thumb = '';
-    $highlights = '';
-    $summary = array('savings' => 0, 'titles' => array());
-
-    if ($page_id) {
-        $card_thumb = get_the_post_thumbnail_url($page_id, 'large');
-        $highlights = get_post_meta($page_id, '_gary_service_highlights', true);
-        $summary = gary_get_sub_service_summary($page_id);
-    }
-
-    if (!$card_thumb) {
-        $logo_id = get_theme_mod('custom_logo');
-        $card_thumb = $logo_id ? wp_get_attachment_image_url($logo_id, 'full') : '';
-    }
-
-    $card_desc = !empty($b_data['info']) ? $b_data['info'] : '';
-
-    ob_start();
-    if ($layout === 'horizontal') : ?>
-        <a href="<?php echo esc_url($card_url); ?>" class="component-card style-bookly-service">
-            <div class="coin-icon-wrap"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
+    if ($layout === 'horizontal') : 
+        ob_start(); ?>
+        <a href="<?php echo esc_url($card_data['permalink']); ?>" class="component-card style-bookly-service">
+            <div class="service-card-image" style="flex: 0 0 120px; padding: 10px; border: 2px solid var(--brand-gold-light); margin-right: 25px; border-radius: 0 !important;">
+                <?php if($card_data['thumbnail']): ?><img src="<?php echo esc_url($card_data['thumbnail']); ?>" style="border-radius: 0 !important;" /><?php endif; ?>
+            </div>
             <div class="component-info">
-                <h3><?php echo esc_html( gary_clean_service_name( $card_title ) ); ?></h3>
-                <?php if( ($summary['savings'] > 0 || !empty($summary['titles'])) && !$is_free): ?>
-                    <div class="service-card-ribbon">
-                        <span class="ribbon-save">SAVE £<?php echo number_format($summary['savings'], 2); ?></span>
-                    </div>
+                <h2 class="service-card-title" style="font-size: 1.2rem; height: auto; text-align: left; justify-content: flex-start; margin-bottom: 5px !important;">
+                    <?php echo esc_html( $card_data['title'] ); ?>
+                </h2>
+                <?php if( $card_data['savings'] > 0 && !$card_data['is_free']): ?>
+                    <div class="service-card-ribbon" style="top: 15px; right: -45px; font-size: 0.6rem; width: 180px;">SAVING £<?php echo number_format($card_data['savings'], 0); ?></div>
                 <?php endif; ?>
             </div>
         </a>
-    <?php else : ?>
-        <a href="<?php echo esc_url($card_url); ?>" class="service-card-link">
-            <div class="service-card">
-                <?php if( ($summary['savings'] > 0 || !empty($summary['titles'])) && !$is_free): ?>
-                    <div class="service-card-ribbon">
-                        <span class="ribbon-save">SAVE £<?php echo number_format($summary['savings'], 2); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <div class="service-card-image"><?php if($card_thumb): ?><img src="<?php echo esc_url($card_thumb); ?>" /><?php endif; ?></div>
-                <div class="service-card-content">
-                    <h3 class="service-card-title"><?php echo esc_html( gary_clean_service_name( $card_title ) ); ?></h3>
-                    <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
-                        <span><?php echo esc_html($display_price); ?></span>
-                    </div>
-                    
-                    <?php if ( ! empty( $summary['titles'] ) ) : ?>
-                        <ul class="gw-bullet-list is-inclusions">
-                            <?php foreach ( $summary['titles'] as $inc_title ) : ?>
-                                <li><?php echo esc_html( $inc_title ); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
-
-                    <div class="service-card-description" style="text-align: center; margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
-                        <?php echo wp_kses_post(wp_trim_words($card_desc, 45)); ?>
-                    </div>
-
-                    <?php if (!empty($highlights)) : ?>
-                        <ul class="gw-bullet-list is-highlights">
-                            <?php 
-                            $lines = explode("\n", $highlights);
-                            foreach($lines as $line) {
-                                if (trim($line)) {
-                                    echo '<li>' . esc_html(trim($line)) . '</li>';
-                                }
-                            }
-                            ?>
-                        </ul>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </a>
-    <?php endif;
-    return ob_get_clean();
+        <?php return ob_get_clean();
+    else :
+        return gary_render_service_card_html( $card_data );
+    endif;
 }
 
 function gary_render_z_pattern_block( $attributes, $content ) {
@@ -351,7 +283,7 @@ function gary_render_z_pattern_block( $attributes, $content ) {
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
     $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
     ob_start(); ?>
-    <div class="gw-z-pattern is-<?php echo esc_attr($pos); ?>">
+    <div class="gw-z-pattern container is-<?php echo esc_attr($pos); ?>">
         <div class="gw-z-image"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
         <div class="gw-z-content"><?php echo $content; ?></div>
     </div>

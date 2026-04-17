@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 4.2.0
+ * Version: 1000.0.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -260,6 +260,7 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     box-shadow: var(--shadow-soft); display: flex; flex-direction: column; 
     transition: 0.45s cubic-bezier(0.165, 0.84, 0.44, 1); padding-bottom: 25px; height: 100%; 
     min-height: 520px; overflow: hidden !important;
+    border-radius: 0 !important;
 }
 .service-card:hover { transform: translateY(-12px); box-shadow: var(--shadow-deep); z-index: 100; }
 
@@ -273,8 +274,30 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 .investment-plaque .investment-savings-ribbon { z-index: 10 !important; }
 .service-card-ribbon span { display: block; filter: brightness(1.2); }
 
-.service-card-image { aspect-ratio: 1/1; overflow: hidden; padding: 25px; }
-.service-card-image img { width: 100%; height: 100%; object-fit: contain; }
+/* THE CIRCLE NUKE (v12.0.0) */
+.service-card-image, 
+.service-card-image img, 
+.wp-block-gary-service-single-block .service-card-image img,
+.services-grid .service-card-image img,
+[class*="service-card"] img {
+    border-radius: 0 !important;
+    aspect-ratio: 1/1 !important;
+    object-fit: cover !important;
+}
+
+.service-card-image { border: 1px solid var(--brand-gold-light); background: #000; overflow: hidden; }
+
+/* HIGH SPECIFICITY RESET: Kills circles on Home Page and Blocks */
+#primary .services-grid .service-card-image,
+#primary .services-grid .service-card-image img {
+    border-radius: 0 !important;
+    aspect-ratio: 1/1 !important;
+    height: auto !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.service-card-image img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 0 !important; }
 
 .service-card-content { padding: 0 30px; text-align: center; }
 .service-card-title { 
@@ -338,38 +361,73 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     z-index: 50 !important;
 }
 
-/* --- 5. EDITORIAL BLOCKS (Z-PATTERN FULL FRAME) --- */
-.gw-z-pattern { 
-    display: flex; align-items: center; margin: 80px auto; position: relative; 
-    width: var(--editorial-width); max-width: var(--site-max-width);
+/* --- 5. EDITORIAL BLOCKS (Z-PATTERN FULL FRAME - ID NUKE) --- */
+body #primary .gw-z-pattern, 
+main#primary .gw-z-pattern { 
+    display: flex !important; 
+    align-items: center !important; 
+    margin: 80px auto !important; 
+    position: relative !important; 
+    width: var(--editorial-width) !important; 
+    max-width: var(--site-max-width) !important;
+    box-sizing: border-box !important;
 }
-.gw-z-image { flex: 0 0 55%; z-index: 1; }
-.gw-z-image img { border: 15px solid var(--brand-white) !important; box-shadow: var(--shadow-deep); width: 100%; height: auto; object-fit: cover; }
-.gw-z-content { 
-    flex: 0 0 50%; background: var(--brand-white); padding: 60px; box-shadow: var(--shadow-deep); 
-    margin-left: -8%; z-index: 10; position: relative; 
+body #primary .gw-z-image img,
+main#primary .gw-z-image img { 
+    border: 15px solid var(--brand-white) !important; 
+    box-shadow: var(--shadow-deep) !important; 
+    width: 100% !important; 
+    height: auto !important; 
+    object-fit: cover !important; 
+    border-radius: 0 !important;
+}
+body #primary .gw-z-content,
+main#primary .gw-z-content { 
+    flex: 0 0 50% !important; 
+    background: var(--brand-white) !important; 
+    padding: 60px !important; 
+    box-shadow: var(--shadow-deep) !important; 
+    margin-left: -8% !important; 
+    z-index: 10 !important; 
+    position: relative !important; 
     border: 2px solid var(--brand-gold-light) !important;
 }
-.gw-z-pattern.is-right { flex-direction: row-reverse; }
-.gw-z-pattern.is-right .gw-z-content { margin-left: 0; margin-right: -8%; }
+body #primary .gw-z-pattern.is-right { flex-direction: row-reverse !important; }
+body #primary .gw-z-pattern.is-right .gw-z-content { margin-left: 0 !important; margin-right: -8% !important; }
 
-/* --- 6. GALLERY WALL TRIO (EDITORIAL GRID) --- */
+/* --- 6. GALLERY WALL TRIO (EDITORIAL GRID - ID NUKE) --- */
 .gw-trio-gallery-wrapper { margin-top: 80px; margin-bottom: 80px; }
-.gw-trio-gallery { display: flex; gap: 20px; align-items: stretch; }
-.gw-trio-main { flex: 2; position: relative; }
-.gw-trio-main img { width: 100%; height: 100%; object-fit: cover; border: 10px solid #fff; box-shadow: var(--shadow-soft); display: block; }
-.gw-trio-side { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-.gw-trio-top, .gw-trio-bottom { flex: 1; position: relative; }
-.gw-trio-top img, .gw-trio-bottom img { width: 100%; height: 100%; object-fit: cover; border: 10px solid #fff; box-shadow: var(--shadow-soft); display: block; }
+body #primary .gw-trio-gallery,
+main#primary .gw-trio-gallery { 
+    display: flex !important; 
+    flex-direction: row !important; 
+    gap: 20px !important; 
+    align-items: stretch !important; 
+}
+body #primary .gw-trio-main img,
+body #primary .gw-trio-top img,
+body #primary .gw-trio-bottom img { 
+    border-radius: 0 !important;
+    border: 10px solid #fff !important; 
+    box-shadow: var(--shadow-soft) !important; 
+}
+
+/* --- 7. SERVICE CARDS RECTANGULAR RESET (ID NUKE) --- */
+#primary .services-grid .service-card-image,
+#primary .services-grid .service-card-image img,
+.service-card .service-card-image,
+.service-card .service-card-image img {
+    border-radius: 0 !important;
+    aspect-ratio: 1/1 !important;
+    overflow: hidden !important;
+}
 
 @media (max-width: 1024px) {
-    .gw-z-pattern { flex-direction: column !important; margin: 40px auto !important; width: 100% !important; }
-    .gw-z-image, .gw-z-content { flex: none !important; width: 100% !important; margin: 0 !important; }
-    .gw-z-content { padding: 40px !important; margin-top: -20px !important; width: 90% !important; border-width: 2px !important; }
+    body #primary .gw-z-pattern { flex-direction: column !important; margin: 40px auto !important; width: 100% !important; }
+    body #primary .gw-z-image, body #primary .gw-z-content { flex: none !important; width: 100% !important; margin: 0 !important; }
+    body #primary .gw-z-content { padding: 40px !important; margin-top: -20px !important; width: 93% !important; border-width: 2px !important; }
     
-    .gw-trio-gallery { flex-direction: column; gap: 20px; }
-    .gw-trio-main, .gw-trio-side { width: 100%; }
-    .gw-trio-side { height: auto; }
+    body #primary .gw-trio-gallery { flex-direction: column !important; gap: 20px !important; }
 }
 
 /* --- 6. FOOTER (BOUTIQUE EDITORIAL) --- */

@@ -5,68 +5,43 @@
 
 function gary_featured_services_shortcode( $atts ) {
     $atts = shortcode_atts( array(
-        'page_ids' => '', // e.g. "12, 15, 23"
-        'show'     => 'included', // 'included' or 'paid'
+        'page_ids' => '', 
+        'show'     => 'included', 
     ), $atts, 'gary_featured_services' );
 
-    $summary = gary_get_sub_service_summary( get_the_ID() );
-    $grid_items = ($atts['show'] === 'paid') ? $summary['paid_addons'] : $summary['inclusions'];
+    $cards_html = '';
 
-    if ( empty( $grid_items ) ) {
-        return '';
+    if ( !empty($atts['page_ids']) ) {
+        // Mode 1: Show specific pages as cards
+        $ids = explode(',', $atts['page_ids']);
+        foreach ($ids as $id) {
+            $id = trim($id);
+            if (!$id) continue;
+            
+            $card_data = gary_get_service_data_unified($id, 'page');
+            if (!$card_data) continue;
+
+            $cards_html .= gary_render_service_card_html( $card_data );
+        }
+    } else {
+        // Mode 2: Show inclusions/addons of CURRENT page
+        $summary = gary_get_sub_service_summary( get_the_ID() );
+        $grid_items = ($atts['show'] === 'paid') ? $summary['paid_addons'] : $summary['inclusions'];
+        foreach ($grid_items as $item) {
+             // For sub-items, we already have the title/price, but we use the unified helper 
+             // to ensure consistent formatting.
+             $sub_id = !empty($item['bookly_id']) ? $item['bookly_id'] : 0;
+             $card_data = gary_get_service_data_unified($sub_id, 'bookly');
+             
+             if ($card_data) {
+                if ($atts['show'] === 'included') $card_data['show_inclusions_only'] = true;
+                $cards_html .= gary_render_service_card_html( $card_data );
+             }
+        }
     }
 
-    ob_start();
-    ?>
-    <div class="services-grid featured-shortcode-grid" style="margin-top: 20px;">
-        <?php foreach ( $grid_items as $item ) :
-            $card_title = !empty($item['title']) ? $item['title'] : '';
-            $card_desc  = !empty($item['info']) ? $item['info'] : '';
-            $card_thumb = !empty($item['thumb']) ? $item['thumb'] : '';
-            $unit_price = !empty($item['price']) ? (float)$item['price'] : 0;
-            $is_free    = ($unit_price <= 0);
-            
-            // Fallback Image
-            $logo_id = get_theme_mod( 'custom_logo' );
-            $logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'full' ) : '';
-            $final_thumb = $card_thumb ? $card_thumb : $logo_url;
-            
-            // Link Mapping
-            $permalink = !empty($item['page_id']) ? get_permalink($item['page_id']) : '/booking/';
-        ?>
-            <a href="<?php echo esc_url($permalink); ?>" class="service-card-link">
-                <div class="service-card">
-                    <?php if ( $atts['show'] === 'included' ) : ?>
-                        <div class="service-card-ribbon"><span>INCLUDED</span></div>
-                    <?php endif; ?>
+    if ( empty( $cards_html ) ) return '';
 
-                    <div class="service-card-image">
-                        <img src="<?php echo esc_url( $final_thumb ); ?>" alt="<?php echo esc_attr( $card_title ); ?>" />
-                    </div>
-
-                    <div class="service-card-content">
-                        <h2 class="service-card-title"><?php echo esc_html( gary_clean_service_name( $card_title ) ); ?></h2>
-                        
-                        <div class="service-card-price <?php echo $is_free ? 'is-free' : ''; ?>">
-                            <?php if ( $atts['show'] === 'included' ) : ?>
-                                <span style="text-decoration:line-through; opacity:0.5; font-size: 0.9rem; margin-right:10px;">£<?php echo number_format($unit_price, 0); ?></span>
-                                <span>FREE</span>
-                            <?php else : ?>
-                                <span>From £<?php echo number_format($unit_price, 0); ?></span>
-                            <?php endif; ?>
-                        </div>
-
-                        <?php if ( !empty($card_desc) ) : ?>
-                            <div class="service-card-inclusions">
-                                <?php echo wp_kses_post( $card_desc ); ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </a>
-        <?php endforeach; ?>
-    </div>
-    <?php
-    return ob_get_clean();
+    return '<div class="services-grid featured-shortcode-grid" style="margin-top: 20px;">' . $cards_html . '</div>';
 }
 add_shortcode( 'gary_featured_services', 'gary_featured_services_shortcode' );

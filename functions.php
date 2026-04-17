@@ -104,6 +104,7 @@ add_action( 'wp_head', function() {
  */
 require_once get_template_directory() . '/inc/shortcodes.php';
 require_once get_template_directory() . '/inc/blocks/service-blocks.php';
+require_once get_template_directory() . '/inc/card-renderer.php';
 
 /**
  * PERFORMANCE & SCRIPTS
@@ -111,12 +112,12 @@ require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=4.1.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=1000.0.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
 function gary_wedding_scripts() { 
-    wp_enqueue_style( 'gary-wedding-style', get_stylesheet_uri(), array(), '4.2.0' ); 
+    wp_enqueue_style( 'gary-wedding-endgame', get_stylesheet_uri(), array(), '1000.0.0' ); 
     
     // Add My Account support for logged in users
     if ( is_user_logged_in() ) {
@@ -128,7 +129,6 @@ function gary_wedding_scripts() {
     }
 }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
-
 function gary_wedding_footer_scripts() {
     if ( is_admin() ) return; ?>
     <script>
@@ -387,9 +387,22 @@ add_action( 'save_post', 'gary_save_meta_boxes' );
  * BUNDLE LOGIC (DATA-DRIVEN DB UPGRADE)
  * Prioritizes the official GW Bookly Addons inclusion table.
  */
-function gary_get_sub_service_summary( $post_id ) {
+/**
+ * BUNDLE LOGIC (DATA-DRIVEN DB UPGRADE)
+ * Prioritizes the official GW Bookly Addons inclusion table.
+ * Can be called with either a $post_id OR a direct $bookly_id.
+ */
+function gary_get_sub_service_summary( $id, $is_post_id = true ) {
     global $wpdb;
-    $bookly_id = gary_get_service_id_for_page( $post_id );
+    
+    if ( $is_post_id ) {
+        $post_id = (int)$id;
+        $bookly_id = gary_get_service_id_for_page( $post_id );
+    } else {
+        $bookly_id = (int)$id;
+        $post_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $bookly_id ) );
+    }
+
     $bookly_data = gary_get_bookly_service_data( $bookly_id );
     $parent_price = $bookly_data ? (float)$bookly_data['price'] : 0;
     
@@ -416,32 +429,55 @@ function gary_get_sub_service_summary( $post_id ) {
         }
     }
 
-    // 2. PAID ADDONS (Previously Meta-based, now ready for GW Addons migration)
-    $paid_addons = array();
+    // 2. Fallback to manual highlights if no DB inclusions found
+    if ( empty($inc_titles) && $post_id ) {
+        $highlights = get_post_meta($post_id, '_gary_service_highlights', true);
+        if ($highlights) {
+            $lines = explode("\n", $highlights);
+            foreach($lines as $line) {
+                if(trim($line)) $inc_titles[] = trim($line);
+            }
+        }
+    }
 
-    $retail_override = get_post_meta( $post_id, '_gary_retail_value_override', true );
+    $retail_override = $post_id ? get_post_meta( $post_id, '_gary_retail_value_override', true ) : '';
     
     // Total Retail Value is either the override or the sum of inclusions
     $retail_value = !empty($retail_override) ? (float)$retail_override : $inc_total_val;
-    
-    // Savings is the difference between Retail Value and what we are charging (Parent Price)
     $savings = $retail_value - $parent_price;
-    
-    // Ensure savings isn't negative (edge case)
-    if ( $savings < 0 ) $savings = 0;
+    if ( $savings <= 0 ) $savings = 0;
 
     return array(
         'grid_items'   => $inclusions, 
         'inclusions'   => $inclusions,
-        'paid_addons'  => $paid_addons,
         'titles'       => array_map('gary_clean_service_name', $inc_titles),
         'total_value'  => $retail_value,
-        'bought_separately' => $inc_total_val,
         'savings'      => $savings,
         'parent_price' => $parent_price,
         'included_str' => implode(', ', array_map('gary_clean_service_name', $inc_titles))
     );
 }
+
+/**
+ * CACHE NUKE: Forcefully purges common caching plugins and "touches" the Home Page.
+ */
+function gary_trigger_cache_purge() {
+
+    $front_id = get_option('page_on_front');
+    if ($front_id) {
+        $post = get_post($front_id);
+        if ($post) {
+            // "Touch" the post to trigger purge hooks
+            $post->post_content .= '<!-- gary_editorial_sync_trigger_v1000 -->';
+            wp_update_post($post);
+            set_transient('gary_endgame_purge_done', true, 3600);
+            
+            // Log it
+            error_log('Gary Wedding: Home Page Cache Purge Triggered.');
+        }
+    }
+}
+add_action('init', 'gary_trigger_cache_purge');
 
 /**
  * PORTAL: WOOCOMMERCE "MY ACCOUNT" INTEGRATION

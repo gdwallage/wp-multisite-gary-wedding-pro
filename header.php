@@ -16,6 +16,46 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v1000.0.0 - Endgame Sync) -->
+    <style id="gary-endgame-reset">
+        /* THE CIRCLE NUKE & RECTANGULAR RESET */
+        .service-card-image, 
+        .service-card-image img, 
+        .gold-frame, 
+        .gold-frame img,
+        [class*="service-card"] .service-card-image img {
+            border-radius: 0 !important;
+            aspect-ratio: 1/1 !important;
+            object-fit: cover !important;
+            clip-path: none !important;
+            mask-image: none !important;
+        }
+        .service-card-image {
+            overflow: hidden !important;
+            border: 1px solid #C5A059 !important;
+        }
+    </style>
+    <script>
+    (function() {
+        const resetStyles = () => {
+            document.querySelectorAll('.service-card-image, .service-card-image img, .gold-frame, .gold-frame img').forEach(el => {
+                el.style.setProperty('border-radius', '0', 'important');
+                el.style.setProperty('aspect-ratio', '1/1', 'important');
+            });
+            if (window.innerWidth > 1024) {
+               document.querySelectorAll('.gw-trio-gallery').forEach(el => {
+                   el.style.setProperty('display', 'flex', 'important');
+                   el.style.setProperty('flex-direction', 'row', 'important');
+               });
+            }
+        };
+        document.addEventListener('DOMContentLoaded', resetStyles);
+        window.addEventListener('load', resetStyles);
+        const observer = new MutationObserver(resetStyles);
+        observer.observe(document.documentElement, { attributes: true, childList: true, subtree: true });
+    })();
+    </script>
+
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
