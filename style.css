@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.1.0
+ * Version: 3000.2.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -368,8 +368,10 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
 
 /* --- 5. EDITORIAL BLOCKS (Z-PATTERN FULL FRAME - ID NUKE) --- */
 body #primary .gw-z-pattern, 
-main#primary .gw-z-pattern { 
+main#primary .gw-z-pattern,
+.gw-z-pattern { 
     display: flex !important; 
+    flex-direction: row !important;
     align-items: center !important; 
     margin: 80px auto !important; 
     position: relative !important; 
@@ -377,17 +379,24 @@ main#primary .gw-z-pattern {
     max-width: var(--site-max-width) !important;
     box-sizing: border-box !important;
 }
+body #primary .gw-z-pattern.is-right,
+.gw-z-pattern.is-right { flex-direction: row-reverse !important; }
+body #primary .gw-z-image,
+.gw-z-image { flex: 0 0 55% !important; }
 body #primary .gw-z-image img,
-main#primary .gw-z-image img { 
+main#primary .gw-z-image img,
+.gw-z-image img { 
     border: 15px solid var(--brand-white) !important; 
     box-shadow: var(--shadow-deep) !important; 
     width: 100% !important; 
     height: auto !important; 
     object-fit: cover !important; 
     border-radius: 0 !important;
+    display: block !important;
 }
 body #primary .gw-z-content,
-main#primary .gw-z-content { 
+main#primary .gw-z-content,
+.gw-z-content { 
     flex: 0 0 50% !important; 
     background: var(--brand-white) !important; 
     padding: 60px !important; 
@@ -398,23 +407,41 @@ main#primary .gw-z-content {
     border: 2px solid var(--brand-gold-light) !important;
 }
 body #primary .gw-z-pattern.is-right { flex-direction: row-reverse !important; }
-body #primary .gw-z-pattern.is-right .gw-z-content { margin-left: 0 !important; margin-right: -8% !important; }
+body #primary .gw-z-pattern.is-right .gw-z-content,
+.gw-z-pattern.is-right .gw-z-content { margin-left: 0 !important; margin-right: -8% !important; }
 
 /* --- 6. GALLERY WALL TRIO (EDITORIAL GRID - ID NUKE) --- */
 .gw-trio-gallery-wrapper { margin-top: 80px; margin-bottom: 80px; }
 body #primary .gw-trio-gallery,
-main#primary .gw-trio-gallery { 
+main#primary .gw-trio-gallery,
+.gw-trio-gallery { 
     display: flex !important; 
     flex-direction: row !important; 
     gap: 20px !important; 
-    align-items: stretch !important; 
+    align-items: stretch !important;
+    width: 100% !important;
 }
+body #primary .gw-trio-main,
+.gw-trio-main { flex: 0 0 60% !important; }
+body #primary .gw-trio-side,
+.gw-trio-side { flex: 1 !important; display: flex !important; flex-direction: column !important; gap: 20px !important; }
+body #primary .gw-trio-top,
+body #primary .gw-trio-bottom,
+.gw-trio-top,
+.gw-trio-bottom { flex: 1 !important; overflow: hidden !important; }
 body #primary .gw-trio-main img,
 body #primary .gw-trio-top img,
-body #primary .gw-trio-bottom img { 
+body #primary .gw-trio-bottom img,
+.gw-trio-main img,
+.gw-trio-top img,
+.gw-trio-bottom img { 
     border-radius: 0 !important;
     border: 10px solid #fff !important; 
-    box-shadow: var(--shadow-soft) !important; 
+    box-shadow: var(--shadow-soft) !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
 }
 
 /* --- 7. SERVICE CARDS RECTANGULAR RESET (ID NUKE) --- */
@@ -617,7 +644,14 @@ body #primary .gw-trio-bottom img {
 
 .gw-chapter-break { text-align: center; padding: 100px 0; max-width: 800px; margin: 0 auto; }
 .gw-gold-sep { border: 0; border-top: 2px solid var(--brand-gold-light); width: 60px; margin: 0 auto 30px; }
-.gw-chapter-title { font-family: var(--font-primary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 8px; color: var(--brand-black); }
+.gw-chapter-title { 
+    font-family: var(--font-script); 
+    font-size: 3.5rem; 
+    color: var(--brand-gold-light); 
+    font-weight: normal;
+    letter-spacing: 2px;
+    margin: 0;
+}
 
 .gw-cta-plaque { 
     background: var(--brand-black); border: 2px solid var(--brand-gold-light); color: var(--brand-white);
@@ -864,6 +898,20 @@ body #primary .gw-trio-bottom img {
     .entry-title, h1 { font-size: 2.2rem !important; line-height: 1.2 !important; }
     .section-divider-title { font-size: 1.6rem !important; margin-top: 60px !important; margin-bottom: 30px !important; }
     .services-intro { font-size: 1rem !important; line-height: 1.6 !important; margin-bottom: 40px !important; }
+
+    /* 6. Z-Pattern Mobile Stack */
+    .gw-z-pattern {
+        flex-direction: column !important;
+        display: flex !important;
+        margin: 40px auto !important;
+        width: 100% !important;
+    }
+    .gw-z-image, .gw-z-content { flex: none !important; width: 100% !important; margin: 0 !important; }
+    .gw-z-content { padding: 30px !important; margin-top: -20px !important; }
+
+    /* 7. Trio Gallery Mobile Stack */
+    .gw-trio-gallery { flex-direction: column !important; }
+    .gw-trio-main, .gw-trio-side { flex: none !important; width: 100% !important; }
 }
 
 @media (max-width: 600px) {

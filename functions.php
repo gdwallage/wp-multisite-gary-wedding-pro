@@ -112,12 +112,12 @@ require_once get_template_directory() . '/inc/card-renderer.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3000.1.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=3000.2.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
 function gary_wedding_scripts() { 
-    wp_enqueue_style( 'gary-wedding-final-sync', get_stylesheet_uri(), array(), '3000.1.0' ); 
+    wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), '3000.2.0' ); 
     
     // Add My Account support for logged in users
     if ( is_user_logged_in() ) {
