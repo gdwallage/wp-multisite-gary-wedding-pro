@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../plugins/bookly-addon-advanced-google-calendar"
+		},
+		{
+			"path": "../../plugins/bookly-addon-compound-services"
+		},
+		{
+			"path": "../../plugins/bookly-addon-multisite"
+		},
+		{
+			"path": "../../plugins/bookly-addon-pro"
+		},
+		{
+			"path": "../../plugins/bookly-responsive-appointment-booking-tool"
+		},
+		{
+			"path": "../../plugins/gw-bookly-addons"
+		}
+	],
+	"settings": {}
+}

@@ -172,6 +172,14 @@ $slide_count = count( $slides );
    PEEK CAROUSEL — Layout & Styles
    ================================================================ */
 
+/* Zero out the gap between header and hero — in this inline block
+   so it wins over any cached external stylesheet */
+main.site-main.home,
+.site-main.home {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
 /* Home intro section — full width by default, inner blocks constrain themselves */
 .home-intro { width: 100%; margin-top: 0; }
 .home-intro .entry-content > *:not(.gw-trust-bar):not(.wp-block-gw-trust-bar) { 
