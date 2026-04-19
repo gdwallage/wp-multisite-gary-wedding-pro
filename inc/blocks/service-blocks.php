@@ -98,16 +98,53 @@ function gary_register_service_blocks() {
         )
     ));
 
-    // 10. Process Steps (The 4-Step Journey)
-    register_block_type('gw/process-steps', array(
-        'render_callback' => 'gary_render_process_block',
+    // 10. Action Step Container (Parent)
+    register_block_type('gw/action-step-container', array(
+        'render_callback' => 'gary_render_action_container_block',
         'category' => 'gary-editorial-native',
         'attributes' => array(
-            'main_title' => array('type' => 'string', 'default' => 'The Journey'),
-            's1_t' => array('type'=>'string', 'default'=>'Consultation'), 's1_d' => array('type'=>'string', 'default'=>'Discussing your vision and vision.'),
-            's2_t' => array('type'=>'string', 'default'=>'Booking'),      's2_d' => array('type'=>'string', 'default'=>'Secure your date with a deposit.'),
-            's3_t' => array('type'=>'string', 'default'=>'The Day'),      's3_d' => array('type'=>'string', 'default'=>'Authentic, unscripted moments.'),
-            's4_t' => array('type'=>'string', 'default'=>'Delivery'),     's4_d' => array('type'=>'string', 'default'=>'Fully-edited high-res gallery.')
+            'main_title' => array('type' => 'string', 'default' => 'The Journey')
+        )
+    ));
+
+    // 11. Individual Action Step (Child)
+    register_block_type('gw/action-step', array(
+        'render_callback' => 'gary_render_action_step_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'step_type'   => array('type' => 'string', 'default' => 'link'), // 'link' or 'availability'
+            'title'       => array('type' => 'string', 'default' => 'Consultation'),
+            'description' => array('type' => 'string', 'default' => ''),
+            'target_page' => array('type' => 'number', 'default' => 0),
+            'step_num'    => array('type' => 'string', 'default' => '01')
+        )
+    ));
+
+    // 12. Atomic Check Your Date Block
+    register_block_type('gw/check-date-atomic', array(
+        'render_callback' => 'gary_render_check_date_atomic',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'title'          => array('type' => 'string', 'default' => 'Check Your Date!'),
+            'description'    => array('type' => 'string', 'default' => 'Select your wedding date to see if I am available for your celebration.'),
+            'duration'       => array('type' => 'string', 'default' => 'Full Day'),
+            'target_page_id' => array('type' => 'number', 'default' => 0)
+        )
+    ));
+
+    // 13. Editorial Triplet Container (Parent)
+    register_block_type('gw/editorial-triplet-container', array(
+        'render_callback' => 'gary_render_triplet_container',
+        'category' => 'gary-editorial-native',
+    ));
+
+    // 14. Editorial Triplet Item (Child)
+    register_block_type('gw/editorial-triplet-item', array(
+        'render_callback' => 'gary_render_triplet_item',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'heading' => array('type' => 'string', 'default' => ''),
+            'text'    => array('type' => 'string', 'default' => ''),
         )
     ));
 
@@ -191,8 +228,8 @@ add_filter( 'block_categories_all', 'gary_register_block_categories', 10, 2 );
 
 // Editor Enqueuing
 function gary_enqueue_block_editor_assets() {
-    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.6.0', true );
-    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.6.0' );
+    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.6.1', true );
+    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.6.1' );
 
     global $wpdb;
     $options = array( array( 'label' => '-- Select Service --', 'value' => '' ) );
@@ -202,6 +239,25 @@ function gary_enqueue_block_editor_assets() {
         foreach ( $services as $s ) { $options[] = array('label' => $s->title, 'value' => (string) $s->id); }
     }
     wp_localize_script( 'gw-service-blocks', 'garyBooklyServiceOptions', $options );
+
+    // Localize Page Options for CTAs (Optimized for large sites)
+    $page_options = array( array( 'label' => '-- Select Page --', 'value' => 0 ) );
+    $query = new WP_Query( array(
+        'post_type'      => 'page',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+    ) );
+    
+    if ( $query->have_posts() ) {
+        foreach ( $query->posts as $p_id ) {
+            $page_options[] = array( 'label' => get_the_title($p_id), 'value' => (int)$p_id );
+        }
+    }
+    wp_reset_postdata();
+    
+    wp_localize_script( 'gw-service-blocks', 'garyPageOptions', $page_options );
 }
 add_action( 'enqueue_block_editor_assets', 'gary_enqueue_block_editor_assets' );
 
@@ -374,20 +430,43 @@ function gary_render_usps_block( $atts ) {
     <?php return ob_get_clean();
 }
 
-function gary_render_process_block( $atts ) {
+function gary_render_action_container_block( $atts, $content ) {
     ob_start(); ?>
     <div class="gw-process-block container">
         <?php if (!empty($atts['main_title'])) : ?>
             <h2 class="gw-block-main-title"><?php echo esc_html($atts['main_title']); ?></h2>
         <?php endif; ?>
         <div class="gw-process-row">
-            <?php for($i=1; $i<=4; $i++) : ?>
-                <div class="gw-process-col">
-                    <span class="step-num">0<?php echo $i; ?></span>
-                    <h4><?php echo esc_html($atts["s{$i}_t"]); ?></h4>
-                    <p><?php echo esc_html($atts["s{$i}_d"]); ?></p>
+            <?php echo $content; ?>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+
+function gary_render_action_step_block( $atts ) {
+    $type = !empty($atts['step_type']) ? $atts['step_type'] : 'link';
+    $num = !empty($atts['step_num']) ? $atts['step_num'] : '01';
+    $title = !empty($atts['title']) ? $atts['title'] : '';
+    $desc = !empty($atts['description']) ? $atts['description'] : '';
+    $target_id = !empty($atts['target_page']) ? $atts['target_page'] : 0;
+    $link = $target_id ? get_permalink($target_id) : '#';
+
+    ob_start(); ?>
+    <div class="gw-process-col">
+        <span class="step-num"><?php echo esc_html($num); ?></span>
+        <h4><?php echo esc_html($title); ?></h4>
+        <p><?php echo esc_html($desc); ?></p>
+        
+        <div class="gw-step-action-wrap" style="margin-top:20px;">
+            <?php if ( $type === 'availability' ) : ?>
+                <div class="gw-availability-check">
+                    <input type="date" id="gw-check-date-<?php echo esc_attr($num); ?>" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:0.8rem;" />
+                    <button type="button" class="btn-black-gold gw-check-availability-btn" data-step-id="<?php echo esc_attr($num); ?>" style="margin-left:10px; cursor:pointer;">Check Date</button>
+                    <div id="gw-availability-result-<?php echo esc_attr($num); ?>" class="gw-avail-result" style="margin-top:10px; font-size:0.85rem; font-weight:700;"></div>
                 </div>
-            <?php endfor; ?>
+            <?php else : ?>
+                <a href="<?php echo esc_url($link); ?>" class="btn-black-gold">Begin Booking</a>
+            <?php endif; ?>
         </div>
     </div>
     <?php return ob_get_clean();
@@ -467,3 +546,81 @@ function gary_register_custom_block_styles() {
     register_block_style( 'core/list', array( 'name' => 'gw-perfect-for', 'label' => __( 'Perfect For (Diamonds)', 'garywedding' ) ));
 }
 add_action( 'init', 'gary_register_custom_block_styles' );
+function gary_render_check_date_atomic( $atts ) {
+    $title = !empty($atts['title']) ? $atts['title'] : 'Check Your Date!';
+    $desc = !empty($atts['description']) ? $atts['description'] : 'Select your wedding date...';
+    $duration = !empty($atts['duration']) ? $atts['duration'] : 'Full Day';
+    $target_id = !empty($atts['target_page_id']) ? $atts['target_page_id'] : 0;
+    $link = $target_id ? get_permalink($target_id) : '#';
+
+    ob_start(); ?>
+    <div class="gw-process-block container gw-atomic-check-wrap">
+        <div class="gw-process-col is-atomic-check condensed-check" style="max-width: 500px; margin: 0 auto; border: 2px solid var(--brand-gold-light); padding: 50px 30px; text-align:center;">
+            <h4 style="margin-top: 0;"><?php echo esc_html($title); ?></h4>
+            <p style="margin-bottom: 25px; opacity:0.8; font-size: 0.9rem;"><?php echo esc_html($desc); ?></p>
+            
+            <div class="gw-availability-box-inner" style="display: inline-block; width: 100%; max-width: 320px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 25px;">
+                <div class="gw-duration-badge" style="text-transform:uppercase; letter-spacing:2px; font-size:0.7rem; font-weight:700; color:var(--brand-accent); margin-bottom:15px;">
+                    Duration: <?php echo esc_html($duration); ?>
+                </div>
+
+                <div class="gw-input-with-icon" style="position: relative; margin-bottom: 20px;">
+                    <input type="date" id="gw-atomic-check-date" class="gw-date-picker-input" style="padding:12px 12px 12px 40px; border:1px solid #ddd; font-family:inherit; font-size:1.1rem; width:100%; text-align:center; box-sizing:border-box;" />
+                    <span class="gw-calendar-icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>
+                    </span>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                    <button type="button" 
+                            class="btn-black-gold gw-check-availability-btn-atomic" 
+                            data-duration="<?php echo esc_attr($duration); ?>"
+                            style="cursor:pointer; width: 100%;">Check Availability</button>
+                    
+                    <a href="<?php echo esc_url($link); ?>" 
+                       id="gw-atomic-booking-cta" 
+                       class="btn-black-gold" 
+                       style="display: none; background: #000; color: #fff; width: 100%; text-decoration:none; align-items:center; justify-content:center;">
+                       Book Now
+                    </a>
+                </div>
+
+                <div id="gw-atomic-availability-result" class="gw-avail-result" style="margin-top:20px; font-size:1rem; font-weight:700;"></div>
+            </div>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+function gary_render_triplet_container( $atts, $content ) {
+    ob_start(); ?>
+    <div class="gw-editorial-triplet-wrap container">
+        <div class="gw-triplet-row">
+            <?php echo $content; ?>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+
+function gary_render_triplet_item( $atts, $content ) {
+    $heading = !empty($atts['heading']) ? $atts['heading'] : '';
+    $text    = !empty($atts['text']) ? $atts['text'] : '';
+    ob_start(); ?>
+    <div class="gw-triplet-item">
+        <div class="gw-triplet-inner">
+            <?php if ( $heading ) : ?>
+                <h3 class="triplet-heading"><?php echo esc_html($heading); ?></h3>
+                <div class="triplet-h-rule"></div>
+            <?php endif; ?>
+            
+            <?php if ( $text ) : ?>
+                <div class="triplet-body-text"><?php echo wp_kses_post($text); ?></div>
+                <div class="triplet-h-rule"></div>
+            <?php endif; ?>
+            
+            <div class="triplet-list-content">
+                <?php echo $content; ?>
+            </div>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}

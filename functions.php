@@ -64,12 +64,24 @@ function gary_customize_register( $wp_customize ) {
         'choices' => array( '3' => '3 slides', '5' => '5 slides', '7' => '7 slides', '9' => '9 slides' ),
     ) );
 
-    // Build a flat list of all published pages for the dropdowns
-    $all_pages = get_posts( array( 'post_type' => 'page', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'title', 'order' => 'ASC' ) );
+    // Build a flat list of all published pages for the dropdowns (Optimized)
     $page_choices = array( '' => '— Select a page —' );
-    foreach ( $all_pages as $p ) {
-        $page_choices[ $p->ID ] = $p->post_title;
+    $query = new WP_Query( array(
+        'post_type'      => 'page',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
+        'orderby'        => 'title',
+        'order'          => 'ASC'
+    ) );
+    
+    if ( $query->have_posts() ) {
+        foreach ( $query->posts as $p_id ) {
+            $page_choices[ $p_id ] = get_the_title( $p_id );
+        }
     }
+    wp_reset_postdata();
 
     // One dropdown per possible slot (up to 9)
     for ( $i = 1; $i <= 9; $i++ ) {
@@ -112,12 +124,12 @@ require_once get_template_directory() . '/inc/card-renderer.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3000.6.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=3000.10.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
 function gary_wedding_scripts() { 
-    wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), '3000.6.0' ); 
+    wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), '3000.10.0' ); 
     
     // Add My Account support for logged in users
     if ( is_user_logged_in() ) {
@@ -135,15 +147,69 @@ function gary_wedding_footer_scripts() {
     document.addEventListener('DOMContentLoaded', function() {
         const toggleBtn = document.querySelector('.menu-toggle');
         const overlay = document.getElementById('primary-menu');
-        if(!toggleBtn || !overlay) return;
-        toggleBtn.addEventListener('click', () => {
-            const isOpened = overlay.getAttribute('aria-hidden') === 'false';
-            overlay.setAttribute('aria-hidden', isOpened ? 'true' : 'false');
-            document.body.style.overflow = isOpened ? '' : 'hidden';
-        });
-        document.querySelector('.menu-close')?.addEventListener('click', () => {
-            overlay.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
+        if(toggleBtn && overlay) {
+            toggleBtn.addEventListener('click', () => {
+                const isOpened = overlay.getAttribute('aria-hidden') === 'false';
+                overlay.setAttribute('aria-hidden', isOpened ? 'true' : 'false');
+                document.body.style.overflow = isOpened ? '' : 'hidden';
+            });
+            document.querySelector('.menu-close')?.addEventListener('click', () => {
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // --- AVAILABILITY CHECKER LOGIC (ATOMIC & JOURNEY) ---
+        const checkBtns = document.querySelectorAll('.gw-check-availability-btn, .gw-check-availability-btn-atomic');
+        checkBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const isAtomic = this.classList.contains('gw-check-availability-btn-atomic');
+                const stepId = isAtomic ? 'atomic' : this.dataset.stepId;
+                const dateInput = document.getElementById(isAtomic ? 'gw-atomic-check-date' : 'gw-check-date-' + stepId);
+                const resultDiv = document.getElementById(isAtomic ? 'gw-atomic-availability-result' : 'gw-availability-result-' + stepId);
+                const atomicCta = document.getElementById('gw-atomic-booking-cta');
+                
+                if ( !dateInput || !dateInput.value ) {
+                    if(resultDiv) resultDiv.innerText = 'Please select a date.';
+                    return;
+                }
+
+                this.disabled = true;
+                const originalText = this.innerText;
+                this.innerText = 'Checking...';
+                
+                if(atomicCta) atomicCta.style.display = 'none';
+
+                if(resultDiv) {
+                    resultDiv.innerText = 'Consulting the calendar...';
+                    resultDiv.className = 'gw-avail-result';
+                }
+
+                const duration = this.dataset.duration || 'Full Day';
+                
+                fetch('/wp-admin/admin-ajax.php?action=gary_check_availability&check_date=' + dateInput.value + '&duration=' + encodeURIComponent(duration))
+                    .then(response => response.json())
+                    .then(data => {
+                        this.disabled = false;
+                        this.innerText = originalText;
+                        if ( data.success ) {
+                            resultDiv.innerText = data.data.message;
+                            resultDiv.classList.add('is-available');
+                            // REVEAL CTA FOR ATOMIC
+                            if ( isAtomic && atomicCta ) {
+                                atomicCta.style.display = 'flex';
+                            }
+                        } else {
+                            resultDiv.innerText = data.data.message;
+                            resultDiv.classList.add('is-busy');
+                        }
+                    })
+                    .catch(err => {
+                        this.disabled = false;
+                        this.innerText = originalText;
+                        if(resultDiv) resultDiv.innerText = 'Could not connect. Please try again.';
+                    });
+            });
         });
     });
     </script>
@@ -209,6 +275,18 @@ function gary_format_duration( $seconds ) {
     $hours = round( (int)$seconds / 3600, 1 );
     if ($hours <= 0) return '';
     return $hours . ' Hours';
+}
+
+/**
+ * HELPER: Simple duration parser for availability checks
+ */
+function gary_parse_duration_to_seconds( $text ) {
+    if ( stripos($text, 'Full Day') !== false || stripos($text, 'Wedding') !== false ) {
+        return -1; // Flag for Full Day
+    }
+    preg_match('/(\d+)/', $text, $matches);
+    $hours = isset($matches[1]) ? intval($matches[1]) : 2; // Default 2 hours
+    return $hours * 3600;
 }
 
 /**
@@ -434,6 +512,7 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
     $inclusions = array();
     $inc_titles = array();
     $inc_total_val = 0;
+    $inc_total_duration = 0;
     $processed_ids = array();
     
     // 1. NATIVE BOOKLY COMPOUND RELATIONS
@@ -446,11 +525,14 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
                 $processed_ids[] = $rel->sub_service_id;
                 $inc_titles[] = $sub_data['title'];
                 $unit_p = (float)$sub_data['price'];
+                $unit_d = (int)( isset($sub_data['duration']) ? $sub_data['duration'] : 0 );
                 $inc_total_val += $unit_p;
+                $inc_total_duration += $unit_d;
                 $p_id = gary_get_page_id_for_service($rel->sub_service_id);
                 $inclusions[] = array(
                     'page_id' => $p_id, 'bookly_id' => $rel->sub_service_id, 'title' => $sub_data['title'],
-                    'price' => $unit_p, 'info' => $sub_data['info'], 'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
+                    'price' => $unit_p, 'duration' => $unit_d, 'info' => $sub_data['info'],
+                    'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
                 );
             }
         }
@@ -468,11 +550,14 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
                 $processed_ids[] = $db_inc->included_id;
                 $inc_titles[] = $sub_data['title'];
                 $unit_p = (float)$sub_data['price'];
+                $unit_d = (int)( isset($sub_data['duration']) ? $sub_data['duration'] : 0 );
                 $inc_total_val += $unit_p;
+                $inc_total_duration += $unit_d;
                 $p_id = gary_get_page_id_for_service($db_inc->included_id);
                 $inclusions[] = array(
                     'page_id' => $p_id, 'bookly_id' => $db_inc->included_id, 'title' => $sub_data['title'],
-                    'price' => $unit_p, 'info' => $sub_data['info'], 'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
+                    'price' => $unit_p, 'duration' => $unit_d, 'info' => $sub_data['info'],
+                    'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
                 );
             }
         }
@@ -501,36 +586,17 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
     }
 
     return array(
-        'grid_items'   => $inclusions, 
-        'inclusions'   => $inclusions,
-        'titles'       => array_map('gary_clean_service_name', $inc_titles),
-        'total_value'  => $retail_value,
-        'savings'      => $savings,
-        'parent_price' => $parent_price,
-        'included_str' => implode(', ', array_map('gary_clean_service_name', $inc_titles))
+        'grid_items'      => $inclusions, 
+        'inclusions'      => $inclusions,
+        'titles'          => array_map('gary_clean_service_name', $inc_titles),
+        'total_value'     => $retail_value,
+        'savings'         => $savings,
+        'parent_price'    => $parent_price,
+        'total_duration'  => $inc_total_duration,
+        'included_str'    => implode(', ', array_map('gary_clean_service_name', $inc_titles))
     );
 }
 
-/**
- * CACHE NUKE: Forcefully purges common caching plugins and "touches" the Home Page.
- */
-function gary_trigger_cache_purge() {
-
-    $front_id = get_option('page_on_front');
-    if ($front_id) {
-        $post = get_post($front_id);
-        if ($post) {
-            // "Touch" the post to trigger purge hooks
-            $post->post_content .= '<!-- gary_editorial_sync_trigger_v1000 -->';
-            wp_update_post($post);
-            set_transient('gary_endgame_purge_done', true, 3600);
-            
-            // Log it
-            error_log('Gary Wedding: Home Page Cache Purge Triggered.');
-        }
-    }
-}
-add_action('init', 'gary_trigger_cache_purge');
 
 /**
  * PORTAL: WOOCOMMERCE "MY ACCOUNT" INTEGRATION
@@ -675,6 +741,116 @@ function gary_get_bookly_forms() {
     $results = $wpdb->get_results( "SELECT id, name FROM $table ORDER BY name ASC", ARRAY_A );
     return $results ? $results : array();
 }
+
+/**
+ * AJAX: Check Bookly Availability for a specific date (Photography Category)
+ */
+function gary_ajax_check_availability() {
+    global $wpdb;
+    
+    $date = isset($_GET['check_date']) ? sanitize_text_field($_GET['check_date']) : '';
+    $duration_str = isset($_GET['duration']) ? sanitize_text_field($_GET['duration']) : 'Full Day';
+
+    if ( empty($date) ) {
+        wp_send_json_error( array( 'message' => 'Please select a date.' ) );
+    }
+
+    $duration_seconds = gary_parse_duration_to_seconds($duration_str);
+
+    // 1. Find the "Photography" Category ID
+    $cat_table = $wpdb->prefix . 'bookly_categories';
+    $cat_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $cat_table WHERE name LIKE %s LIMIT 1", '%Photography%' ) );
+    
+    // Looser staff selection to ensure we catch Gary regardless of exact category name
+    if ( !$cat_id ) {
+        $staff_query = "SELECT id FROM {$wpdb->prefix}bookly_staff LIMIT 20";
+    } else {
+        $staff_query = $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}bookly_staff WHERE category_id = %d OR id > 0", $cat_id );
+    }
+
+    $staff_members = $wpdb->get_col( $staff_query );
+    
+    if ( empty($staff_members) ) {
+        wp_send_json_error( array( 'message' => 'No photographers found in the system.' ) );
+    }
+
+    $is_available = false;
+    $day_of_week = date('N', strtotime($date)); // 1 (Mon) to 7 (Sun)
+    
+    foreach ( $staff_members as $staff_id ) {
+        // A. Is the staff member working on this day?
+        $schedule_table = $wpdb->prefix . 'bookly_staff_schedule';
+        $working_hours = $wpdb->get_row( $wpdb->prepare( "SELECT start_time, end_time FROM $schedule_table WHERE staff_id = %d AND day_index = %d LIMIT 1", $staff_id, $day_of_week ) );
+        
+        if ( !$working_hours || ( $working_hours->start_time === null && $working_hours->end_time === null ) ) {
+            continue; 
+        }
+
+        // B. Check appointments
+        $app_table = $wpdb->prefix . 'bookly_appointments';
+        $customer_app_table = $wpdb->prefix . 'bookly_customer_appointments';
+        
+        // We need start/end times precisely to find gaps
+        $appointments = $wpdb->get_results( $wpdb->prepare( 
+            "SELECT start_date, end_date FROM $app_table 
+             WHERE staff_id = %d AND DATE(start_date) = %s 
+             ORDER BY start_date ASC", 
+            $staff_id, $date 
+        ) );
+
+        // LOGIC 1: FULL DAY
+        if ( $duration_seconds === -1 ) {
+            if ( count($appointments) === 0 ) {
+                $is_available = true;
+                break;
+            }
+            continue;
+        }
+
+        // LOGIC 2: HOURLY GAP ANALYSIS
+        // Required gap = Requested duration + 30 mins before + 30 mins after (Total + 1 hour)
+        $required_gap = $duration_seconds + 3600; 
+        $work_start = strtotime($date . ' ' . $working_hours->start_time);
+        $work_end   = strtotime($date . ' ' . $working_hours->end_time);
+        
+        $current_cursor = $work_start;
+        $found_gap = false;
+
+        foreach ( $appointments as $app ) {
+            $app_start = strtotime($app->start_date);
+            $app_end   = strtotime($app->end_date);
+            
+            // Is there a big enough gap before this appointment?
+            if ( ($app_start - $current_cursor) >= $required_gap ) {
+                $found_gap = true;
+                break;
+            }
+            // Move cursor to end of appointment
+            $current_cursor = max($current_cursor, $app_end);
+        }
+
+        // Final check: gap between last appointment and end of work day
+        if ( !$found_gap && ($work_end - $current_cursor) >= $required_gap ) {
+            $found_gap = true;
+        }
+
+        if ( $found_gap ) {
+            $is_available = true;
+            break;
+        }
+    }
+
+    if ( $is_available ) {
+        wp_send_json_success( array( 'message' => 'Your date is available! Let\'s begin.' ) );
+    } else {
+        $msg = ($duration_seconds === -1) 
+            ? 'I am already booked on this date, but please check another.'
+            : 'I am tied up for parts of this day and cannot fit this session, please try another date.';
+        wp_send_json_error( array( 'message' => $msg ) );
+    }
+}
+add_action( 'wp_ajax_gary_check_availability', 'gary_ajax_check_availability' );
+add_action( 'wp_ajax_nopriv_gary_check_availability', 'gary_ajax_check_availability' );
 
 /**
  * SECURITY: Limit login error messages

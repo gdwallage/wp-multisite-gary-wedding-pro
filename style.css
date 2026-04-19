@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.6.0
+ * Version: 3000.10.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -91,6 +91,7 @@ h3, h4, h5, h6 {
 
 h1, h2, h3 { line-height: 1.2; margin-bottom: 20px; color: var(--brand-text); }
 h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 60px; margin-bottom: 40px; }
+body:not(.home) h1.entry-title { margin-top: 160px !important; }
 
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: none; }
@@ -99,19 +100,19 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     max-width: var(--site-max-width); margin: 0 auto; padding: 12px 40px 0; min-height: auto; 
     width: var(--editorial-width);
 }
-.focal-side { flex: 1; display: flex; align-items: flex-start; margin-top: 5px; }
+.focal-side { flex: 1; display: flex; align-items: flex-start; margin-top: 5px; padding-bottom: 12px; }
 .focal-left { justify-content: flex-start; }
 .focal-right { justify-content: flex-end; }
 .focal-center { 
     flex: 0 0 auto; text-align: center; padding: 0 40px; position: relative; 
-    top: 0px; z-index: 1100; margin-bottom: -40px;
+    top: 0px; z-index: 1100; margin-bottom: -120px;
 }
 
 .site-title-blacksword { color: var(--brand-accent); font-size: 1.6rem; margin: 0; line-height: 1.1; }
 .site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: none; opacity: 0.7; margin-top: 6px; }
 .focal-center .custom-logo-link img { 
     max-width: 220px; 
-    max-height: 80px; 
+    max-height: 140px; 
     width: auto; 
     height: auto; 
     transition: 0.3s; 
@@ -167,12 +168,12 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     .focal-center { 
         order: 1 !important; 
         padding: 0 !important; 
-        margin-bottom: -35px !important; 
+        margin-bottom: -80px !important; 
         z-index: 1000 !important; 
         position: relative !important;
         top: 0 !important;
     }
-    .focal-center .custom-logo-link img { max-width: 120px !important; max-height: 60px !important; width: auto !important; height: auto !important; }
+    .focal-center .custom-logo-link img { max-width: 160px !important; max-height: 100px !important; width: auto !important; height: auto !important; }
 
     .site-title-blacksword { font-size: 1.4rem !important; }
     .site-tagline-lato { font-size: 0.6rem !important; letter-spacing: 1px !important; }
@@ -252,6 +253,12 @@ h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: cent
     border: 2px solid var(--brand-gold-light);
     padding: 30px 25px;
     box-shadow: var(--shadow-deep);
+}
+.investment-sidebar { 
+    position: -webkit-sticky; 
+    position: sticky; 
+    top: 160px; 
+    z-index: 100;
 }
 .investment-summary-box {
     background: #fbfbfb;
@@ -483,7 +490,7 @@ body #primary .gw-trio-bottom img,
 .footer-col-center { text-align: center; border-left: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1); padding: 0 40px; }
 
 /* Footer Branding */
-.footer-branding h3 { font-size: 2.2rem; color: var(--brand-gold-light); margin: 0 0 20px 0; font-family: var(--font-script); font-weight: normal; }
+.footer-branding h3 { font-size: 2.2rem; color: var(--brand-gold-light) !important; margin: 0 0 20px 0; font-family: var(--font-script) !important; font-weight: normal !important; }
 .footer-branding p { font-size: 0.8rem; line-height: 1.7; opacity: 0.6; letter-spacing: 0.5px; }
 
 /* Footer Legal & Nav Lists */
@@ -928,3 +935,115 @@ body #primary .gw-trio-bottom img,
     .hero-peek-nav { display: none !important; } /* Hide arrows on tiny screens, rely on swipe */
 }
 
+
+/* --- 14. ACTION STEP BLOCKS (The Journey Refactored) --- */
+.gw-process-block { padding: 80px 0; }
+.gw-process-row { 
+    display: flex; gap: 40px; justify-content: center; align-items: stretch;
+}
+.gw-process-col { 
+    flex: 1; text-align: center; background: #fff; padding: 40px 30px; 
+    border: 1px solid rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+}
+.gw-process-col:hover { transform: translateY(-5px); box-shadow: var(--shadow-deep); border-color: var(--brand-gold-light); }
+
+.step-num { 
+    display: flex; align-items: center; justify-content: center;
+    width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--brand-gold-light);
+    color: var(--brand-gold-light); font-family: var(--font-primary); font-weight: 700;
+    font-size: 1.2rem; margin-bottom: 25px; background: #fff;
+}
+.gw-process-col h4 { 
+    font-family: var(--font-primary); font-size: 1.1rem; text-transform: uppercase; 
+    letter-spacing: 2px; margin-bottom: 15px; color: var(--brand-accent);
+}
+.gw-process-col p { font-size: 0.9rem; line-height: 1.6; opacity: 0.7; margin-bottom: 0; flex-grow: 1; }
+
+.gw-step-action-wrap { width: 100%; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 25px; }
+
+/* Availability Dialogue */
+.gw-availability-check { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.gw-date-picker-input { 
+    width: 100%; max-width: 200px; text-align: center; border: 1px solid #ddd; padding: 12px;
+    font-family: var(--font-primary); color: var(--brand-black); border-radius: 0;
+}
+.gw-avail-result { min-height: 20px; line-height: 1.4; color: var(--brand-accent); }
+.gw-avail-result.is-available { color: #2ecc71; }
+.gw-avail-result.is-busy { color: #e74c3c; }
+
+/* Responsive Actions */
+@media (max-width: 1024px) {
+    .gw-process-row { gap: 20px; }
+}
+@media (max-width: 768px) {
+    .gw-process-row { flex-direction: column; align-items: center; }
+    .gw-process-col { width: 100%; max-width: 400px; }
+}
+
+/* Atomic Availability Block */
+.gw-process-col.is-atomic-check { 
+    background: var(--brand-white); 
+    padding: 60px 40px; 
+    border-radius: 4px;
+}
+#gw-atomic-booking-cta.btn-black-gold { 
+    display: none; /* Controlled by JS */
+    background: #000 !important; 
+    color: #fff !important; 
+}
+#gw-atomic-booking-cta.btn-black-gold:hover { 
+    background: var(--brand-gold) !important;
+    color: #000 !important;
+}
+
+/* Editorial Triplet System */
+.gw-editorial-triplet-wrap { margin-top: 60px; margin-bottom: 80px; }
+.gw-triplet-row { 
+    display: flex; gap: 0; align-items: stretch; border-top: 1px solid rgba(197, 160, 89, 0.2); 
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2); background: #fff;
+    width: 100%;
+}
+.gw-triplet-item { 
+    flex: 1; padding: 50px 40px; position: relative; 
+}
+/* Vertical Subtle Gold Rules */
+.gw-triplet-item:not(:last-child)::after {
+    content: ''; position: absolute; top: 15%; right: 0; bottom: 15%; width: 1px; 
+    background: var(--brand-gold-light); opacity: 0.25;
+}
+.triplet-heading { 
+    font-family: var(--font-primary) !important; font-weight: 700 !important; 
+    text-transform: uppercase !important; letter-spacing: 2px !important; 
+    font-size: 1.1rem !important; color: var(--brand-accent) !important; margin-bottom: 20px !important; 
+}
+.triplet-h-rule { width: 40px; height: 1px; background: var(--brand-gold-light); opacity: 0.4; margin-bottom: 20px; }
+.triplet-body-text { font-size: 0.9rem; line-height: 1.7; opacity: 0.8; margin-bottom: 25px; }
+.triplet-list-content ul { list-style: none !important; padding: 0 !important; margin: 0 !important; }
+.triplet-list-content li { position: relative !important; padding-left: 20px !important; font-size: 0.85rem !important; margin-bottom: 8px !important; line-height: 1.5 !important; list-style: none !important; }
+.triplet-list-content li::before { content: '✧' !important; position: absolute !important; left: 0 !important; color: var(--brand-gold-light) !important; font-size: 0.7rem !important; }
+
+@media (max-width: 1024px) {
+    .gw-triplet-row { flex-direction: column; }
+    .gw-triplet-item:not(:last-child)::after { display: none; }
+    .gw-triplet-item { border-bottom: 1px solid rgba(197, 160, 89, 0.1); padding: 40px 20px; }
+}
+
+/* --- 15. LIGHTBOX SYSTEM --- */
+#gw-lightbox {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 9999;
+    display: none; align-items: center; justify-content: center;
+    padding: 40px; cursor: zoom-out;
+}
+#gw-lightbox.active { display: flex; }
+#gw-lightbox img { 
+    max-width: 100%; max-height: 100%; object-fit: contain; 
+    border: 2px solid var(--brand-gold-light); 
+}
+#gw-lightbox-close {
+    position: absolute; top: 30px; right: 40px; color: #fff;
+    font-size: 50px; cursor: pointer; line-height: 1;
+    transition: color 0.3s;
+}
+#gw-lightbox-close:hover { color: var(--brand-gold); }

@@ -117,39 +117,6 @@
     </div>
 </footer>
 
-<!-- LIGHTBOX MARKUP -->
-<div id="gw-lightbox">
-    <div id="gw-lightbox-close">&times;</div>
-    <img id="gw-lightbox-img" src="" alt="Full View">
-</div>
-
-<!-- LIGHTBOX SCRIPT -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const lightbox = document.getElementById('gw-lightbox');
-    const lightboxImg = document.getElementById('gw-lightbox-img');
-    const closeBtn = document.getElementById('gw-lightbox-close');
-    const triggers = document.querySelectorAll('.lightbox-trigger');
-
-    triggers.forEach(trigger => {
-        trigger.addEventListener('click', function(e) {
-            e.preventDefault();
-            const fullResUrl = this.getAttribute('href');
-            lightboxImg.src = fullResUrl;
-            lightbox.classList.add('active');
-        });
-    });
-
-    closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) lightbox.classList.remove('active');
-    });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === "Escape" && lightbox.classList.contains('active')) lightbox.classList.remove('active');
-    });
-});
-</script>
-
 <?php wp_footer(); ?>
 </body>
 </html>

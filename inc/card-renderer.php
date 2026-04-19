@@ -50,7 +50,7 @@ function gary_render_service_card_html( $data ) {
         'show_inclusions_only' => false,
     ));
 
-    $display_price = $item['is_free'] ? 'FREE' : 'From £' . number_format((float)$item['price'], 2);
+    $display_price = $item['is_free'] ? 'FREE' : '£' . number_format((float)$item['price'], 2);
     $display_duration = ($item['is_free'] || empty($item['duration'])) ? '' : 'Typically ' . gary_format_duration($item['duration']);
     
     $thumb_url = $item['thumbnail'];

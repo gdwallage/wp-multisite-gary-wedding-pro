@@ -361,28 +361,111 @@
         save: function() { return null; }
     });
 
-    // 10. Process Steps
-    registerBlockType('gw/process-steps', {
-        title: 'Step Process Journey', icon: 'editor-ol', category: 'gary-editorial-native',
+    // 10. Action Step Container (Parent)
+    registerBlockType('gw/action-step-container', {
+        title: 'The Journey (Action Steps)', icon: 'editor-ol', category: 'gary-editorial-native',
+        keywords: ['journey', 'steps', 'process', 'check date', 'availability'],
         attributes: {
-            main_title: { type: 'string', default: 'The Journey' },
-            s1_t: { type: 'string', default: 'Consultation' }, s1_d: { type: 'string', default: '...' },
-            s2_t: { type: 'string', default: 'Booking' },      s2_d: { type: 'string', default: '...' },
-            s3_t: { type: 'string', default: 'The Day' },      s3_d: { type: 'string', default: '...' },
-            s4_t: { type: 'string', default: 'Delivery' },     s4_d: { type: 'string', default: '...' }
+            main_title: { type: 'string', default: 'The Journey' }
         },
         edit: function(props) {
             const atts = props.attributes;
-            const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Process Content' },
-                    el(TextControl, { label: 'Main Block Title', value: atts.main_title, onChange: function(v) { props.setAttributes({ main_title: v }); } }),
-                    [1,2,3,4].map(i => el('div', { key: i, style: { borderTop: '1px solid #eee', marginTop: '15px', paddingTop: '15px' } },
-                        el(TextControl, { label: `Step ${i} Title`, value: atts[`s${i}_t`], onChange: function(v) { props.setAttributes({ [`s${i}_t`]: v }); } }),
-                        el(TextControl, { label: `Step ${i} Description`, value: atts[`s${i}_d`], onChange: function(v) { props.setAttributes({ [`s${i}_d`]: v }); } })
-                    ))
+            return el('div', { className: 'gw-process-block container edit-mode' },
+                el(RichText, {
+                    tagName: 'h2',
+                    className: 'gw-block-main-title',
+                    value: atts.main_title,
+                    onChange: function(v) { props.setAttributes({ main_title: v }); },
+                    style: { textAlign: 'center', marginBottom: '40px' }
+                }),
+                el('div', { className: 'gw-process-row' },
+                    el(InnerBlocks, {
+                        allowedBlocks: ['gw/action-step'],
+                        template: [
+                            ['gw/action-step', { step_num: '01', title: 'Check Your Date', step_type: 'availability' }],
+                            ['gw/action-step', { step_num: '02', title: 'Consultation', step_type: 'link' }],
+                            ['gw/action-step', { step_num: '03', title: 'The Day', step_type: 'link' }],
+                            ['gw/action-step', { step_num: '04', title: 'The Gallery', step_type: 'link' }]
+                        ]
+                    })
                 )
             );
-            return el('div', null, inspector, el(ServerSideRender, { block: 'gw/process-steps', attributes: atts }));
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
+    // 11. Individual Action Step (Child)
+    registerBlockType('gw/action-step', {
+        title: 'Individual Action Step', icon: 'star-filled', category: 'gary-editorial-native',
+        parent: ['gw/action-step-container'],
+        keywords: ['check date', 'availability', 'booking', 'step', 'action'],
+        attributes: {
+            step_type: { type: 'string', default: 'link' },
+            title: { type: 'string', default: 'Consultation' },
+            description: { type: 'string', default: '' },
+            target_page: { type: 'number', default: 0 },
+            step_num: { type: 'string', default: '01' }
+        },
+        variations: [
+            {
+                name: 'check-date',
+                title: 'Step: Check Your Date!',
+                icon: 'calendar-alt',
+                attributes: { step_type: 'availability', title: 'Check Your Date', step_num: '01' },
+                isDefault: false,
+            },
+            {
+                name: 'action-link',
+                title: 'Step: Action Link',
+                icon: 'admin-links',
+                attributes: { step_type: 'link', title: 'Consultation', step_num: '02' },
+                isDefault: true,
+            }
+        ],
+        edit: function(props) {
+            const atts = props.attributes;
+            const pageOptions = window.garyPageOptions || [];
+            
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Step Settings' },
+                    el(TextControl, { label: 'Step Number', value: atts.step_num, onChange: function(v) { props.setAttributes({ step_num: v }); } }),
+                    el(SelectControl, {
+                        label: 'Step Action Type',
+                        value: atts.step_type,
+                        options: [
+                            { label: 'Link to Page (CTA)', value: 'link' },
+                            { label: 'Check Availability (Lookup)', value: 'availability' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ step_type: v }); }
+                    }),
+                    atts.step_type === 'link' && el(SelectControl, {
+                        label: 'Target Page',
+                        value: atts.target_page,
+                        options: pageOptions,
+                        onChange: function(v) { props.setAttributes({ target_page: parseInt(v) }); }
+                    })
+                )
+            );
+
+            return el('div', { className: 'gw-process-col edit-box', style: { padding: '20px', border: '1px solid #eee', background: '#fff' } },
+                inspector,
+                el('span', { className: 'step-num' }, atts.step_num),
+                el(RichText, {
+                    tagName: 'h4',
+                    value: atts.title,
+                    placeholder: 'Enter Title...',
+                    onChange: function(v) { props.setAttributes({ title: v }); }
+                }),
+                el(RichText, {
+                    tagName: 'p',
+                    value: atts.description,
+                    placeholder: 'Enter description...',
+                    onChange: function(v) { props.setAttributes({ description: v }); }
+                }),
+                el('div', { className: 'action-preview', style: { marginTop: '10px', fontSize: '0.7rem', opacity: 0.5, fontStyle: 'italic' } },
+                    atts.step_type === 'availability' ? '[Availability Checker Active]' : '[Link to Page Active]'
+                )
+            );
         },
         save: function() { return null; }
     });
@@ -519,6 +602,116 @@
             },
             save: function() { return el(InnerBlocks.Content, null); }
         });
+    });
+
+    // 12. Atomic Check Your Date Block
+    registerBlockType('gw/check-date-atomic', {
+        title: 'Check Your Date!', icon: 'calendar-alt', category: 'gary-editorial-native',
+        keywords: ['check date', 'availability', 'booking', 'wedding', 'gary'],
+        attributes: {
+            title: { type: 'string', default: 'Check Your Date!' },
+            description: { type: 'string', default: 'Select your wedding date to see if I am available for your celebration.' },
+            duration: { type: 'string', default: 'Full Day' },
+            target_page_id: { type: 'number', default: 0 }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const pageOptions = window.garyPageOptions || [];
+
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Block Settings' },
+                    el(SelectControl, {
+                        label: 'Target Consultation Page',
+                        value: atts.target_page_id,
+                        options: pageOptions,
+                        onChange: function(v) { props.setAttributes({ target_page_id: parseInt(v) }); }
+                    })
+                )
+            );
+
+            return el('div', { className: 'gw-process-block container edit-mode-atomic', style: { padding: '40px', background: '#fff', border: '1px solid #ddd' } },
+                inspector,
+                el('div', { className: 'gw-process-col is-atomic-check condensed-preview', style: { textAlign: 'center', maxWidth: '400px', margin: '0 auto' } },
+                    el(RichText, {
+                        tagName: 'h4',
+                        value: atts.title,
+                        placeholder: 'Service Type...',
+                        onChange: function(v) { props.setAttributes({ title: v }); }
+                    }),
+                    el(RichText, {
+                        tagName: 'p',
+                        value: atts.description,
+                        style: { fontSize: '0.8rem', opacity: 0.7 },
+                        placeholder: 'Enter Description...',
+                        onChange: function(v) { props.setAttributes({ description: v }); }
+                    }),
+                    el('div', { style: { borderTop: '1px solid #eee', margin: '15px 0' } }),
+                    el(RichText, {
+                        tagName: 'div',
+                        value: atts.duration,
+                        style: { textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', fontWeight: '700', marginBottom: '10px' },
+                        placeholder: 'Duration (e.g. Full Day)',
+                        onChange: function(v) { props.setAttributes({ duration: v }); }
+                    }),
+                    el('div', { style: { border: '1px solid #ddd', padding: '10px', background: '#f9f9f9', fontSize: '0.8rem' } },
+                        '[ Calendar Box Preview ]'
+                    )
+                )
+            );
+        },
+        save: function() { return null; }
+    });
+
+    // 13. Editorial Triplet Container (Parent)
+    registerBlockType('gw/editorial-triplet-container', {
+        title: 'Editorial Triplet Container', icon: 'columns', category: 'gary-editorial-native',
+        edit: function() {
+            return el('div', { className: 'gw-triplet-container-edit', style: { padding: '20px', border: '2px dashed #C5A059' } },
+                el(InnerBlocks, {
+                    allowedBlocks: ['gw/editorial-triplet-item'],
+                    template: [
+                        ['gw/editorial-triplet-item', { heading: 'Perfect For' }],
+                        ['gw/editorial-triplet-item', { heading: 'What\'s Included' }],
+                        ['gw/editorial-triplet-item', { heading: 'How It Works' }]
+                    ],
+                    templateLock: 'all'
+                })
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
+    // 14. Editorial Triplet Item (Child)
+    registerBlockType('gw/editorial-triplet-item', {
+        title: 'Triplet Item', icon: 'media-text', category: 'gary-editorial-native',
+        parent: ['gw/editorial-triplet-container'],
+        attributes: {
+            heading: { type: 'string', default: '' },
+            text: { type: 'string', default: '' }
+        },
+        edit: function(props) {
+            return el('div', { className: 'gw-triplet-item-edit', style: { padding: '20px', background: '#fff', border: '1px solid #eee' } },
+                el(RichText, {
+                    tagName: 'h3',
+                    value: props.attributes.heading,
+                    placeholder: 'Heading...',
+                    onChange: function(v) { props.setAttributes({ heading: v }); }
+                }),
+                el('div', { style: { borderTop: '1px solid #C5A059', margin: '15px 0', opacity: 0.3 } }),
+                el(RichText, {
+                    tagName: 'p',
+                    value: props.attributes.text,
+                    placeholder: 'Intro paragraph...',
+                    onChange: function(v) { props.setAttributes({ text: v }); }
+                }),
+                el('div', { style: { borderTop: '1px solid #C5A059', margin: '15px 0', opacity: 0.3 } }),
+                el(InnerBlocks, {
+                    template: [['core/list', { className: 'is-style-gw-included' }]],
+                    allowedBlocks: ['core/list', 'core/paragraph', 'core/separator']
+                })
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
     });
 
     console.info('GW Editorial: Blocks Successfully Registered.');

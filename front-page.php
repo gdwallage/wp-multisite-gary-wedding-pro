@@ -14,6 +14,7 @@ get_header();
 // ---------------------------------------------------------------
 // HELPER: build one slide array from a page ID
 // ---------------------------------------------------------------
+if ( ! function_exists( 'gw_slide_from_page_id' ) ) :
 function gw_slide_from_page_id( $page_id ) {
     $page_id = (int) $page_id;
     if ( $page_id < 1 ) return null;
@@ -21,9 +22,9 @@ function gw_slide_from_page_id( $page_id ) {
     if ( ! $post_obj || $post_obj->post_status !== 'publish' ) return null;
 
     $thumb    = get_the_post_thumbnail_url( $page_id, 'large' );
-    $subtitle = '';
-    if ( $post_obj ) {
-        $content = apply_filters( 'the_content', $post_obj->post_content );
+    $subtitle = get_post_meta( $page_id, '_gary_service_subtitle', true );
+    if ( ! $subtitle ) {
+        $content = $post_obj->post_content;
         if ( preg_match( '/<h2[^>]*>(.*?)<\/h2>/si', $content, $matches ) ) {
             $subtitle = wp_strip_all_tags( $matches[1] );
         }
@@ -41,6 +42,7 @@ function gw_slide_from_page_id( $page_id ) {
         'page_id'  => $page_id,
     );
 }
+endif;
 
 // ---------------------------------------------------------------
 // BUILD SLIDE LIST — Customiser page picker first, then menu fallback
