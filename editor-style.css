@@ -1,0 +1,24 @@
+/*
+ * Editor-only overrides — loaded into the Gutenberg iframe preview.
+ * Hides front-page template chrome so the editing canvas stays clean.
+ * These styles have NO effect on the live frontend.
+ */
+
+/* Hide the hero carousel and its navigation in the editor */
+.hero-peek-carousel,
+.hero-peek-track,
+.hero-peek-nav {
+    display: none !important;
+}
+
+/* Remove the gap that front-page.php forces for the carousel */
+main.site-main.home,
+.site-main.home {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Give the editable content area breathing room */
+.home-intro {
+    padding-top: 40px !important;
+}

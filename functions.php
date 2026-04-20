@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 4.2.0
+ * Version: 3000.16.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -18,6 +18,7 @@ if ( ! function_exists( 'gary_wedding_setup' ) ) :
         add_post_type_support( 'page', 'excerpt' );
         add_theme_support( 'editor-styles' );
         add_editor_style( 'style.css' );
+        add_editor_style( 'editor-style.css' );
     }
 endif;
 add_action( 'after_setup_theme', 'gary_wedding_setup' );
@@ -69,7 +70,7 @@ function gary_customize_register( $wp_customize ) {
     $query = new WP_Query( array(
         'post_type'      => 'page',
         'post_status'    => 'publish',
-        'posts_per_page' => -1,
+        'posts_per_page' => 150, // Consistent safety limit
         'fields'         => 'ids',
         'no_found_rows'  => true,
         'orderby'        => 'title',
@@ -124,23 +125,26 @@ require_once get_template_directory() . '/inc/card-renderer.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3000.10.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=3000.17.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
 function gary_wedding_scripts() { 
-    wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), '3000.10.0' ); 
+    $ver = '3000.17.0';
+    wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), $ver ); 
     
-    // Add My Account support for logged in users
-    if ( is_user_logged_in() ) {
-        $custom_css = "
-            .gw-credits-grid { margin-top: 20px; }
-            .gw-credit-card:hover { border-color: var(--brand-gold) !important; box-shadow: var(--shadow-deep); }
-        ";
-        wp_add_inline_style( 'gary-wedding-style', $custom_css );
-    }
+    // Enqueue the block script for the frontend (certain blocks might need JS logic)
+    wp_enqueue_script( 'gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array( 'wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data', 'wp-i18n' ), $ver, true );
 }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
+
+// THE FIX: Enqueue block scripts FOR THE EDITOR specifically
+function gary_wedding_editor_assets() {
+    $ver = '3000.17.0';
+    wp_enqueue_script( 'gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render' ), $ver, true );
+}
+add_action( 'enqueue_block_editor_assets', 'gary_wedding_editor_assets' );
+
 function gary_wedding_footer_scripts() {
     if ( is_admin() ) return; ?>
     <script>
@@ -276,6 +280,39 @@ function gary_format_duration( $seconds ) {
     if ($hours <= 0) return '';
     return $hours . ' Hours';
 }
+
+/**
+ * HELPER: Build one slide array from a page ID (For Hero Carousel)
+ */
+if ( ! function_exists( 'gw_slide_from_page_id' ) ) :
+function gw_slide_from_page_id( $page_id ) {
+    $page_id = (int) $page_id;
+    if ( $page_id < 1 ) return null;
+    $post_obj = get_post( $page_id );
+    if ( ! $post_obj || $post_obj->post_status !== 'publish' ) return null;
+
+    $thumb    = get_the_post_thumbnail_url( $page_id, 'large' );
+    $subtitle = get_post_meta( $page_id, '_gary_service_subtitle', true );
+    if ( ! $subtitle ) {
+        $content = $post_obj->post_content;
+        if ( preg_match( '/<h2[^>]*>(.*?)<\/h2>/si', $content, $matches ) ) {
+            $subtitle = wp_strip_all_tags( $matches[1] );
+        }
+        // Fallback to excerpt
+        if ( ! $subtitle ) {
+            $subtitle = get_the_excerpt( $page_id );
+        }
+    }
+
+    return array(
+        'img'      => $thumb,           // may be false — placeholder shown instead
+        'title'    => get_the_title( $page_id ),
+        'subtitle' => $subtitle,
+        'url'      => get_permalink( $page_id ),
+        'page_id'  => $page_id,
+    );
+}
+endif;
 
 /**
  * HELPER: Simple duration parser for availability checks
@@ -487,7 +524,15 @@ function gary_get_manual_savings_fallback( $title ) {
     if (strpos($title, 'ceremony') !== false) return 50;
     if (strpos($title, 'celebration') !== false) return 100;
     if (strpos($title, 'registry') !== false) return 40;
-    return 0;
+    $title_clean = strtolower( gary_clean_service_name($title) );
+    $fallbacks = array(
+        'the highlights'  => 150, 
+        'the journey'     => 150, 
+        'elopement'       => 100,
+        'complete story'  => 500,
+        'ultimate legacy' => 1200
+    );
+    return isset($fallbacks[$title_clean]) ? $fallbacks[$title_clean] : 0;
 }
 
 /**
@@ -519,7 +564,8 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
     $table_sub = $wpdb->prefix . 'bookly_sub_services';
     if ( $bookly_id && $wpdb->get_var("SHOW TABLES LIKE '$table_sub'") == $table_sub ) {
         $native_sub = $wpdb->get_results( $wpdb->prepare( "SELECT sub_service_id FROM $table_sub WHERE service_id = %d ORDER BY position ASC", $bookly_id ) );
-        foreach ( $native_sub as $rel ) {
+        if ( is_array($native_sub) ) {
+            foreach ( $native_sub as $rel ) {
             $sub_data = gary_get_bookly_service_data( $rel->sub_service_id );
             if ( $sub_data && !in_array($rel->sub_service_id, $processed_ids) ) {
                 $processed_ids[] = $rel->sub_service_id;
@@ -537,13 +583,15 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
             }
         }
     }
+    }
 
     // 2. CUSTOM EDITORIAL INCLUSIONS (GW Addons)
     $table_inc = $wpdb->prefix . 'gw_bookly_service_inclusions';
     if ( $bookly_id && $wpdb->get_var("SHOW TABLES LIKE '$table_inc'") == $table_inc ) {
         $db_inclusions = $wpdb->get_results( $wpdb->prepare( "SELECT included_id FROM $table_inc WHERE parent_id = %d ORDER BY position ASC", $bookly_id ) );
-        foreach ( $db_inclusions as $db_inc ) {
-            if ( in_array($db_inc->included_id, $processed_ids) ) continue; // Deduplicate
+        if ( is_array($db_inclusions) ) {
+            foreach ( $db_inclusions as $db_inc ) {
+                if ( in_array($db_inc->included_id, $processed_ids) ) continue; // Deduplicate
             
             $sub_data = gary_get_bookly_service_data( $db_inc->included_id );
             if ( $sub_data ) {
@@ -561,6 +609,7 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
                 );
             }
         }
+    }
     }
 
     // 3. Fallback to manual highlights if no items found in database
@@ -586,8 +635,9 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
     }
 
     return array(
-        'grid_items'      => $inclusions, 
-        'inclusions'      => $inclusions,
+        'grid_items'      => is_array($inclusions) ? $inclusions : array(), 
+        'inclusions'      => is_array($inclusions) ? $inclusions : array(),
+        'paid_addons'     => array(), // Placeholder for future expansion, prevents fatals in shortcodes
         'titles'          => array_map('gary_clean_service_name', $inc_titles),
         'total_value'     => $retail_value,
         'savings'         => $savings,
@@ -637,6 +687,7 @@ function gary_my_bookings_content() {
             if ( !$s_data ) continue;
             ?>
             <div class="gw-credit-card" style="border: 2px solid var(--brand-gold-light); padding: 20px; background: #fff; position:relative;">
+
                 <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; opacity:0.6;">Included Session</span>
                 <h4 style="margin: 5px 0 15px;"><?php echo esc_html(gary_clean_service_name($s_data['title'])); ?></h4>
                 <div style="font-size:1.2rem; font-weight:700; margin-bottom:15px;"><?php echo (int)$c->balance; ?> Remaining</div>
@@ -757,30 +808,42 @@ function gary_ajax_check_availability() {
 
     $duration_seconds = gary_parse_duration_to_seconds($duration_str);
 
-    // 1. Find the "Photography" Category ID
-    $cat_table = $wpdb->prefix . 'bookly_categories';
-    $cat_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $cat_table WHERE name LIKE %s LIMIT 1", '%Photography%' ) );
+    // 1. Find Gary (Staff ID 4 is the confirmed primary photographer)
+    $staff_members = array(4); 
     
-    // Looser staff selection to ensure we catch Gary regardless of exact category name
-    if ( !$cat_id ) {
-        $staff_query = "SELECT id FROM {$wpdb->prefix}bookly_staff LIMIT 20";
-    } else {
-        $staff_query = $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}bookly_staff WHERE category_id = %d OR id > 0", $cat_id );
+    // Fallback search if ID 4 is somehow missing
+    if ( empty($staff_members) ) {
+        $staff_members = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}bookly_staff LIMIT 1" );
     }
 
-    $staff_members = $wpdb->get_col( $staff_query );
-    
+    // Combined staff list check
     if ( empty($staff_members) ) {
         wp_send_json_error( array( 'message' => 'No photographers found in the system.' ) );
     }
 
     $is_available = false;
-    $day_of_week = date('N', strtotime($date)); // 1 (Mon) to 7 (Sun)
+    // DEFENSIVE DAY INDEX MAPPING
+    // 1. Standard PHP "w": 0=Sun, 1=Mon... 6=Sat
+    $w = (int)date('w', strtotime($date));
+    // 2. Bookly Index A: 1=Sun, 2=Mon... 7=Sat
+    $idx_a = $w + 1;
+    // 3. Bookly Index B: 1=Mon, 2=Tue... 6=Sat, 7=Sun
+    $idx_b = ($w == 0) ? 7 : $w;
+    // 4. Bookly Index C: 0=Sun, 1=Mon... 6=Sat
+    $idx_c = $w;
     
     foreach ( $staff_members as $staff_id ) {
         // A. Is the staff member working on this day?
         $schedule_table = $wpdb->prefix . 'bookly_staff_schedule';
-        $working_hours = $wpdb->get_row( $wpdb->prepare( "SELECT start_time, end_time FROM $schedule_table WHERE staff_id = %d AND day_index = %d LIMIT 1", $staff_id, $day_of_week ) );
+        
+        // Defensive query: Try all common index standards to find a working schedule
+        $working_hours = $wpdb->get_row( $wpdb->prepare( 
+            "SELECT start_time, end_time FROM $schedule_table 
+             WHERE staff_id = %d AND (day_index = %d OR day_index = %d OR day_index = %d) 
+             AND start_time IS NOT NULL 
+             LIMIT 1", 
+            $staff_id, $idx_a, $idx_b, $idx_c
+        ) );
         
         if ( !$working_hours || ( $working_hours->start_time === null && $working_hours->end_time === null ) ) {
             continue; 

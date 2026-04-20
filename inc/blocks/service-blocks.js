@@ -593,15 +593,40 @@
             icon: 'editor-ul',
             category: 'gary-editorial-native',
             edit: function() {
-                return el('div', { style: { padding: '30px', background: '#fdfdfd', border: '1px solid #eee' } },
-                    el(InnerBlocks, { template: [
-                        ['core/heading', { level: 4, content: type.toUpperCase() }],
-                        ['core/list', { className: `is-style-gw-${type}` }]
-                    ] })
+                return el('div', { className: `gw-list-box-edit type-${type}` },
+                    el(InnerBlocks, { 
+                        template: [
+                            ['core/heading', { level: 4, content: type === 'perfect-for' ? "WHO IT'S FOR" : "WHAT'S INCLUDED" }],
+                            ['core/paragraph', { placeholder: 'Brief overview...' }],
+                            ['core/list', { className: `is-style-gw-${type}` }]
+                        ],
+                        allowedBlocks: ['core/paragraph', 'core/list', 'core/heading']
+                    })
                 );
             },
             save: function() { return el(InnerBlocks.Content, null); }
         });
+    });
+
+    // 17. Dual Column Overview Container
+    registerBlockType('gw/editorial-dual-column', {
+        title: 'Editorial Dual Column',
+        icon: 'columns',
+        category: 'gary-editorial-native',
+        description: 'Two columns with horizontal and vertical dividers for service overviews.',
+        edit: function() {
+            return el('div', { className: 'gw-dual-column-edit-wrap' },
+                el(InnerBlocks, {
+                    template: [
+                        ['gw/list-perfect-for', {}],
+                        ['gw/list-included', {}]
+                    ],
+                    templateLock: false,
+                    allowedBlocks: ['gw/list-perfect-for', 'gw/list-included', 'gw/list-highlights', 'core/paragraph', 'core/list']
+                })
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
     });
 
     // 12. Atomic Check Your Date Block

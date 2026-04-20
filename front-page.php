@@ -1,7 +1,6 @@
 <?php
 /**
  * File: front-page.php
- * Template Name: Front Page
  * Theme: Gary Wallage Wedding Pro
  * Version: 3.1.0
  * Description: Peek carousel — active slide centred & fully visible, adjacent pages
@@ -10,39 +9,6 @@
  */
 
 get_header();
-
-// ---------------------------------------------------------------
-// HELPER: build one slide array from a page ID
-// ---------------------------------------------------------------
-if ( ! function_exists( 'gw_slide_from_page_id' ) ) :
-function gw_slide_from_page_id( $page_id ) {
-    $page_id = (int) $page_id;
-    if ( $page_id < 1 ) return null;
-    $post_obj = get_post( $page_id );
-    if ( ! $post_obj || $post_obj->post_status !== 'publish' ) return null;
-
-    $thumb    = get_the_post_thumbnail_url( $page_id, 'large' );
-    $subtitle = get_post_meta( $page_id, '_gary_service_subtitle', true );
-    if ( ! $subtitle ) {
-        $content = $post_obj->post_content;
-        if ( preg_match( '/<h2[^>]*>(.*?)<\/h2>/si', $content, $matches ) ) {
-            $subtitle = wp_strip_all_tags( $matches[1] );
-        }
-        // Fallback to excerpt
-        if ( ! $subtitle ) {
-            $subtitle = get_the_excerpt( $page_id );
-        }
-    }
-
-    return array(
-        'img'      => $thumb,           // may be false — placeholder shown instead
-        'title'    => get_the_title( $page_id ),
-        'subtitle' => $subtitle,
-        'url'      => get_permalink( $page_id ),
-        'page_id'  => $page_id,
-    );
-}
-endif;
 
 // ---------------------------------------------------------------
 // BUILD SLIDE LIST — Customiser page picker first, then menu fallback
@@ -157,13 +123,13 @@ $slide_count = count( $slides );
     <!-- Front Page Body Content -->
     <section class="home-intro" style="margin-top:0;">
         <?php
-        wp_reset_postdata();
         if ( have_posts() ) :
             while ( have_posts() ) : the_post(); ?>
                 <div class="entry-content">
                     <?php the_content(); ?>
                 </div>
             <?php endwhile;
+            wp_reset_postdata();
         endif; ?>
     </section>
 

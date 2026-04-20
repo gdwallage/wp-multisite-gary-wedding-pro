@@ -217,6 +217,12 @@ function gary_register_service_blocks() {
         'category' => 'gary-editorial-native',
         'attributes' => array( 'type' => array('type' => 'string', 'default' => 'perfect-for') )
     ));
+
+    // 19. Dual Column Container
+    register_block_type('gw/editorial-dual-column', array(
+        'render_callback' => 'gary_render_dual_column_block',
+        'category' => 'gary-editorial-native',
+    ));
 }
 add_action('init', 'gary_register_service_blocks');
 
@@ -226,28 +232,28 @@ function gary_register_block_categories( $categories, $post ) {
 }
 add_filter( 'block_categories_all', 'gary_register_block_categories', 10, 2 );
 
-// Editor Enqueuing
-function gary_enqueue_block_editor_assets() {
-    wp_enqueue_script( 'gw-service-blocks', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), '1.6.1', true );
-    wp_enqueue_style( 'gw-service-blocks-editor', get_stylesheet_uri(), array(), '1.6.1' );
-
+function gary_localize_block_data() {
     global $wpdb;
     $options = array( array( 'label' => '-- Select Service --', 'value' => '' ) );
     $table_name = $wpdb->prefix . 'bookly_services';
     if ( $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name ) {
         $services = $wpdb->get_results( "SELECT id, title FROM $table_name ORDER BY title ASC" );
-        foreach ( $services as $s ) { $options[] = array('label' => $s->title, 'value' => (string) $s->id); }
+        if ( is_array($services) ) {
+            foreach ( $services as $s ) { $options[] = array('label' => $s->title, 'value' => (string) $s->id); }
+        }
     }
-    wp_localize_script( 'gw-service-blocks', 'garyBooklyServiceOptions', $options );
+    wp_localize_script( 'gary-editorial-blocks-js', 'garyBooklyServiceOptions', $options );
 
-    // Localize Page Options for CTAs (Optimized for large sites)
+    // Localize Page Options for CTAs (Performance Optimized)
     $page_options = array( array( 'label' => '-- Select Page --', 'value' => 0 ) );
     $query = new WP_Query( array(
         'post_type'      => 'page',
         'post_status'    => 'publish',
-        'posts_per_page' => -1,
+        'posts_per_page' => 150, // Safety limit to prevent editor crashes
         'fields'         => 'ids',
         'no_found_rows'  => true,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
     ) );
     
     if ( $query->have_posts() ) {
@@ -257,10 +263,12 @@ function gary_enqueue_block_editor_assets() {
     }
     wp_reset_postdata();
     
-    wp_localize_script( 'gw-service-blocks', 'garyPageOptions', $page_options );
+    wp_localize_script( 'gary-editorial-blocks-js', 'garyPageOptions', $page_options );
 }
-add_action( 'enqueue_block_editor_assets', 'gary_enqueue_block_editor_assets' );
+add_action( 'enqueue_block_editor_assets', 'gary_localize_block_data', 20 );
 
+
+if ( ! function_exists( 'gary_wedding_editor_grid_fix' ) ) :
 function gary_wedding_editor_grid_fix() {
     echo '<style id="gary-editor-grid-fix">
         /* Unbox wrappers */
@@ -289,6 +297,7 @@ function gary_wedding_editor_grid_fix() {
     </style>';
 }
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
+endif;
 
 // -----------------------------------------------------------------------------------
 // RENDER CALLBACKS
@@ -310,7 +319,7 @@ function gary_render_single_service_block( $attributes ) {
     if ( !$b_data ) return '';
 
     $card_data = gary_get_service_data_unified($b_id, 'bookly');
-    if (!$card_data) return '';
+    if ( empty($card_data) || !is_array($card_data) ) return '';
 
     if ($layout === 'horizontal') : 
         ob_start(); ?>
@@ -475,7 +484,8 @@ function gary_render_action_step_block( $atts ) {
 // --- NEW RENDER CALLBACKS ---
 
 function gary_render_hero_bleed_block( $atts, $content ) {
-    $img_url = $atts['image_id'] ? wp_get_attachment_image_url($atts['image_id'], 'full') : $atts['image_url'];
+    $img_id = !empty($atts['image_id']) ? $atts['image_id'] : 0;
+    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
     $opacity = isset($atts['overlay_opacity']) ? (int)$atts['overlay_opacity'] : 10;
     ob_start(); ?>
     <div class="gw-hero-bleed alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
@@ -503,7 +513,8 @@ function gary_render_storyteller_grid_block( $atts ) {
 }
 
 function gary_render_testimonial_quote_block( $atts, $content ) {
-    $img_url = $atts['image_id'] ? wp_get_attachment_image_url($atts['image_id'], 'full') : $atts['image_url'];
+    $img_id = !empty($atts['image_id']) ? $atts['image_id'] : 0;
+    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
     ob_start(); ?>
     <div class="gw-testimonial-quote-block alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
         <div class="gw-testimonial-overlay"></div>
@@ -521,7 +532,8 @@ function gary_render_polaroid_frame_block( $atts, $content ) {
 }
 
 function gary_render_cta_fullwidth_block( $atts, $content ) {
-    $img_url = $atts['image_id'] ? wp_get_attachment_image_url($atts['image_id'], 'full') : $atts['image_url'];
+    $img_id = !empty($atts['image_id']) ? $atts['image_id'] : 0;
+    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
     ob_start(); ?>
     <div class="gw-cta-fullwidth alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
         <div class="gw-cta-fullwidth-overlay"></div>
@@ -537,7 +549,22 @@ function gary_render_cta_fullwidth_block( $atts, $content ) {
 function gary_render_styled_list_box( $atts, $content ) {
     $type = !empty($atts['type']) ? $atts['type'] : 'highlights';
     $class = "gw-list-box is-style-{$type}";
+    
+    // Sanitize: Remove empty <li> tags or tags with only whitespace/nbsp/br
+    $content = preg_replace('/<li[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/li>/i', '', $content);
+
+    
     return "<div class='{$class}'><div class='gw-list-box-inner'>{$content}</div></div>";
+}
+
+
+function gary_render_dual_column_block( $atts, $content ) {
+    return '
+    <div class="gw-dual-column-overview alignwide">
+        <div class="gw-dual-column-row">
+            ' . $content . '
+        </div>
+    </div>';
 }
 
 function gary_register_custom_block_styles() {
@@ -618,9 +645,14 @@ function gary_render_triplet_item( $atts, $content ) {
             <?php endif; ?>
             
             <div class="triplet-list-content">
-                <?php echo $content; ?>
+                <?php 
+                // Sanitize: Remove empty <li> tags (including whitespace and nbsp)
+                echo preg_replace('/<li[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/li>/i', '', $content); 
+                ?>
             </div>
+
         </div>
     </div>
+
     <?php return ob_get_clean();
 }

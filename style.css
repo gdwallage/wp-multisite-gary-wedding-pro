@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.10.0
+ * Version: 3000.21.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -91,7 +91,7 @@ h3, h4, h5, h6 {
 
 h1, h2, h3 { line-height: 1.2; margin-bottom: 20px; color: var(--brand-text); }
 h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 60px; margin-bottom: 40px; }
-body:not(.home) h1.entry-title { margin-top: 160px !important; }
+body:not(.home) h1.entry-title { margin-top: 180px !important; }
 
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: none; }
@@ -168,7 +168,8 @@ body:not(.home) h1.entry-title { margin-top: 160px !important; }
     .focal-center { 
         order: 1 !important; 
         padding: 0 !important; 
-        margin-bottom: -80px !important; 
+        margin-bottom: 0px !important; 
+        padding-bottom: 20px !important; 
         z-index: 1000 !important; 
         position: relative !important;
         top: 0 !important;
@@ -177,7 +178,11 @@ body:not(.home) h1.entry-title { margin-top: 160px !important; }
 
     .site-title-blacksword { font-size: 1.4rem !important; }
     .site-tagline-lato { font-size: 0.6rem !important; letter-spacing: 1px !important; }
+
+    /* Tight Desktop H1 Adjustment (Closer to Logo) */
+    body:not(.home) .page-content h1:first-of-type { margin-top: 120px !important; margin-bottom: 40px !important; }
 }
+
 
 
 /* --- BOOKLY BUTTON & MODAL BRIDGE (3.9.5) --- */
@@ -755,18 +760,41 @@ body #primary .gw-trio-bottom img,
 .gw-cta-fullwidth h2 { color: var(--brand-gold-light) !important; text-transform: uppercase; letter-spacing: 3px; }
 .gw-cta-fullwidth p { color: #ccc; max-width: 700px; margin: 0 auto 40px; }
 
-.gw-list-box { padding: 30px; margin-bottom: 40px; }
-.gw-list-box.is-style-highlights { background: #fdfdfd; }
-.gw-list-box.is-style-included { border: 1px solid #e0e0e0; background: #fff; }
-.gw-list-box.is-style-perfect-for { padding: 20px; }
-.gw-list-box h4 { text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+.gw-list-box { padding: 40px; margin-bottom: 0; display: flex; flex-direction: column; flex: 1; }
+.gw-list-box.is-style-highlights { background: transparent; }
+.gw-list-box.is-style-included { border: none; background: transparent; }
+.gw-list-box.is-style-perfect-for { padding: 40px; background: transparent; }
+.gw-list-box h4 { font-family: var(--font-primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-accent); margin-bottom: 25px; opacity: 0.9; }
+.gw-list-box p { font-size: 1.05rem; line-height: 1.8; opacity: 0.8; margin-bottom: 25px; }
+
+/* --- DUAL COLUMN OVERVIEW (NEW) --- */
+.gw-dual-column-overview { 
+    margin: 80px auto; 
+    border-top: 1px solid var(--brand-gold-light) !important; 
+    border-bottom: 1px solid var(--brand-gold-light) !important; 
+    padding: 0;
+}
+.gw-dual-column-row { 
+    display: flex; 
+    align-items: stretch; /* Forces equal height columns */
+    position: relative;
+}
+.gw-dual-column-row > *:nth-child(2) { 
+    border-left: 1px solid var(--brand-gold-light); 
+}
+
+@media (max-width: 900px) {
+    .gw-dual-column-row { flex-direction: column; }
+    .gw-dual-column-row > *:nth-child(2) { border-left: none; border-top: 1px solid rgba(197, 160, 89, 0.2); }
+    .gw-list-box { padding: 40px 20px; }
+}
 
 /* RE-ENFORCING LIST STYLES (GOLD ICONS) */
 .is-style-gw-highlights, .is-style-gw-included, .is-style-gw-perfect-for { list-style: none !important; padding: 0 !important; }
 .is-style-gw-highlights li, .is-style-gw-included li, .is-style-gw-perfect-for li { position: relative; padding-left: 35px; margin-bottom: 15px; line-height: 1.6; text-align: left; }
-.is-style-gw-highlights li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-gold-light); font-weight: bold; }
-.is-style-gw-included li::before { content: '+'; position: absolute; left: 0; color: var(--brand-gold-light); font-weight: bold; }
-.is-style-gw-perfect-for li::before { content: '♦'; position: absolute; left: 0; color: var(--brand-gold-light); }
+.is-style-gw-highlights li:not(:empty)::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--brand-gold-light); font-weight: 700; font-size: 1rem; }
+.is-style-gw-included li:not(:empty)::before { content: '+'; position: absolute; left: 0; top: 0; color: var(--brand-gold-light); font-weight: 700; font-size: 1rem; }
+.is-style-gw-perfect-for li:not(:empty)::before { content: '◆'; position: absolute; left: 0; top: 0; color: var(--brand-gold-light); font-weight: 700; font-size: 0.8rem; }
 
 /* --- GW BULLET LISTS (Cards & Detail) --- */
 .gw-bullet-list { list-style: none !important; padding: 0 !important; margin: 20px 0 !important; }
@@ -997,21 +1025,41 @@ body #primary .gw-trio-bottom img,
     color: #000 !important;
 }
 
-/* Editorial Triplet System */
+/* --- EDITORIAL TRIPLET SYSTEM --- */
 .gw-editorial-triplet-wrap { margin-top: 60px; margin-bottom: 80px; }
 .gw-triplet-row { 
-    display: flex; gap: 0; align-items: stretch; border-top: 1px solid rgba(197, 160, 89, 0.2); 
-    border-bottom: 1px solid rgba(197, 160, 89, 0.2); background: #fff;
+    display: grid; 
+    grid-template-columns: 1fr 1fr;
+    gap: 0; 
+    align-items: stretch; 
+    border: 2px solid #C5A059 !important; /* Outer Border Strong */
+    background: #fff;
     width: 100%;
+    margin-top: 40px;
 }
+
+
+
 .gw-triplet-item { 
-    flex: 1; padding: 50px 40px; position: relative; 
+    padding: 50px 40px; 
+    position: relative; 
 }
-/* Vertical Subtle Gold Rules */
-.gw-triplet-item:not(:last-child)::after {
-    content: ''; position: absolute; top: 15%; right: 0; bottom: 15%; width: 1px; 
-    background: var(--brand-gold-light); opacity: 0.25;
+
+/* Row 1 / Col 1 Vertical Divider - SOLID 2PX */
+.gw-triplet-item:nth-child(1) {
+    border-right: 2px solid #C5A059 !important;
 }
+
+/* Row 2 (item 3) spanning - SOLID 2PX */
+.gw-triplet-item:nth-child(3) {
+    grid-column: 1 / span 2;
+    border-top: 2px solid #C5A059 !important;
+    padding: 60px 50px;
+}
+
+
+
+
 .triplet-heading { 
     font-family: var(--font-primary) !important; font-weight: 700 !important; 
     text-transform: uppercase !important; letter-spacing: 2px !important; 
@@ -1019,9 +1067,54 @@ body #primary .gw-trio-bottom img,
 }
 .triplet-h-rule { width: 40px; height: 1px; background: var(--brand-gold-light); opacity: 0.4; margin-bottom: 20px; }
 .triplet-body-text { font-size: 0.9rem; line-height: 1.7; opacity: 0.8; margin-bottom: 25px; }
-.triplet-list-content ul { list-style: none !important; padding: 0 !important; margin: 0 !important; }
-.triplet-list-content li { position: relative !important; padding-left: 20px !important; font-size: 0.85rem !important; margin-bottom: 8px !important; line-height: 1.5 !important; list-style: none !important; }
-.triplet-list-content li::before { content: '✧' !important; position: absolute !important; left: 0 !important; color: var(--brand-gold-light) !important; font-size: 0.7rem !important; }
+/* GLOBAL BULLET SUPPRESSION FOR EDITORIAL BLOCKS */
+.gw-list-box ul, 
+.gw-triplet-row ul, 
+.is-style-gw-highlights, 
+.is-style-gw-included, 
+.is-style-gw-perfect-for,
+.triplet-list-content ul { 
+    list-style: none !important; 
+    list-style-type: none !important; 
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.gw-list-box li, 
+.gw-triplet-row li { 
+    list-style: none !important; 
+    list-style-type: none !important; 
+}
+
+/* Explicitly kill markers for all list items in these containers */
+.gw-list-box li::marker, 
+.gw-triplet-row li::marker,
+.is-style-gw-highlights li::marker,
+.is-style-gw-included li::marker,
+.is-style-gw-perfect-for li::marker { 
+    content: none !important; 
+    display: none !important; 
+}
+
+.triplet-list-content li::before,
+.is-style-gw-highlights li::before,
+.is-style-gw-included li::before,
+.is-style-gw-perfect-for li::before { 
+    /* Common editorial icon styles */
+    position: absolute !important; 
+    left: 0 !important; 
+    top: 2px !important;
+    font-weight: 700 !important;
+}
+
+.is-style-gw-highlights li:not(:empty)::before { content: '✓' !important; color: var(--brand-gold-light) !important; font-size: 1rem !important; }
+.is-style-gw-included li:not(:empty)::before { content: '+' !important; color: var(--brand-gold-light) !important; font-size: 1rem !important; }
+.is-style-gw-perfect-for li:not(:empty)::before { content: '◆' !important; color: var(--brand-gold-light) !important; font-size: 0.8rem !important; }
+.triplet-list-content li::before { content: '✧' !important; color: #C5A059 !important; font-size: 0.9rem !important; }
+
+
+
+
 
 @media (max-width: 1024px) {
     .gw-triplet-row { flex-direction: column; }
