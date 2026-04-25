@@ -11,7 +11,8 @@
     const RichText = wp.blockEditor.RichText;
     const TextControl = wp.components.TextControl;
 
-    console.info('GW Editorial: Initializing Native Blocks v1.3.0...');
+    const Fragment = wp.element.Fragment;
+    console.info('GW Editorial: Initializing Native Blocks v1.3.1...');
 
     // 1. Singular Service Box
     registerBlockType('gw/single-service', {
@@ -404,7 +405,9 @@
             title: { type: 'string', default: 'Consultation' },
             description: { type: 'string', default: '' },
             target_page: { type: 'number', default: 0 },
-            step_num: { type: 'string', default: '01' }
+            step_num: { type: 'string', default: '01' },
+            msg_available: { type: 'string', default: '' },
+            msg_tentative: { type: 'string', default: '' }
         },
         variations: [
             {
@@ -443,7 +446,11 @@
                         value: atts.target_page,
                         options: pageOptions,
                         onChange: function(v) { props.setAttributes({ target_page: parseInt(v) }); }
-                    })
+                    }),
+                    atts.step_type === 'availability' && el(Fragment, null,
+                        el(TextControl, { label: 'Available Message', value: atts.msg_available, onChange: function(v) { props.setAttributes({ msg_available: v }); } }),
+                        el(TextControl, { label: 'Tentative Message', value: atts.msg_tentative, onChange: function(v) { props.setAttributes({ msg_tentative: v }); } })
+                    )
                 )
             );
 
@@ -636,25 +643,43 @@
         attributes: {
             title: { type: 'string', default: 'Check Your Date!' },
             description: { type: 'string', default: 'Select your wedding date to see if I am available for your celebration.' },
-            duration: { type: 'string', default: 'Full Day' },
-            target_page_id: { type: 'number', default: 0 }
+            service_id: { type: 'string', default: '' },
+            target_page_id: { type: 'number', default: 0 },
+            msg_available: { type: 'string', default: "Excellent... Now let's book your FREE wedding consultation to discuss this in detail." },
+            msg_tentative: { type: 'string', default: "I may be free! I have restricted hours on this day, but I may be able to rearrange plans for your wedding. Please book a FREE consultation to discuss." }
         },
         edit: function(props) {
             const atts = props.attributes;
             const pageOptions = window.garyPageOptions || [];
 
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Block Settings' },
+                el(PanelBody, { title: 'Block Configuration', initialOpen: true },
                     el(SelectControl, {
-                        label: 'Target Consultation Page',
+                        label: '1. Service Looking For',
+                        value: atts.service_id,
+                        options: window.garyBooklyServiceOptions || [],
+                        onChange: function(v) { props.setAttributes({ service_id: v }); }
+                    }),
+                    el(SelectControl, {
+                        label: '2. Target Consultation Page',
                         value: atts.target_page_id,
                         options: pageOptions,
                         onChange: function(v) { props.setAttributes({ target_page_id: parseInt(v) }); }
+                    }),
+                    el(TextControl, {
+                        label: '3. Available Message',
+                        value: atts.msg_available,
+                        onChange: function(v) { props.setAttributes({ msg_available: v }); }
+                    }),
+                    el(TextControl, {
+                        label: '4. Tentative Message',
+                        value: atts.msg_tentative,
+                        onChange: function(v) { props.setAttributes({ msg_tentative: v }); }
                     })
                 )
             );
 
-            return el('div', { className: 'gw-process-block container edit-mode-atomic', style: { padding: '40px', background: '#fff', border: '1px solid #ddd' } },
+            return el('div', { className: 'gw-process-block container edit-mode-atomic', style: { padding: '20px', background: '#fff', border: '1px solid #ddd' } },
                 inspector,
                 el('div', { className: 'gw-process-col is-atomic-check condensed-preview', style: { textAlign: 'center', maxWidth: '400px', margin: '0 auto' } },
                     el(RichText, {
@@ -671,13 +696,9 @@
                         onChange: function(v) { props.setAttributes({ description: v }); }
                     }),
                     el('div', { style: { borderTop: '1px solid #eee', margin: '15px 0' } }),
-                    el(RichText, {
-                        tagName: 'div',
-                        value: atts.duration,
-                        style: { textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', fontWeight: '700', marginBottom: '10px' },
-                        placeholder: 'Duration (e.g. Full Day)',
-                        onChange: function(v) { props.setAttributes({ duration: v }); }
-                    }),
+                    el('div', { style: { fontSize: '0.7rem', opacity: 0.5, fontStyle: 'italic', marginBottom: '10px' } },
+                        atts.service_id ? 'Checking availability for selected service...' : '(Please select a service in the sidebar)'
+                    ),
                     el('div', { style: { border: '1px solid #ddd', padding: '10px', background: '#f9f9f9', fontSize: '0.8rem' } },
                         '[ Calendar Box Preview ]'
                     )

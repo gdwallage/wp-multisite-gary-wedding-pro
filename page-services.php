@@ -1,9 +1,9 @@
-<?php
+<?php
 /**
  * File: page-services.php
  * Template Name: Services
  * Theme: Gary Wallage Wedding Pro
- * Version: 4.2.0
+ * Version: 3000.21.0
  * Description: Clean grid with strictly aligned page title and beveled frames.
  */
 

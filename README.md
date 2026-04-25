@@ -1,6 +1,6 @@
 # Gary Wallage Wedding Pro — Theme Design Guide & Technical Reference
 
-> **Version 3.8.3** | WordPress Multisite | Boutique Editorial Aesthetic
+> **Version 3000.21.0** | WordPress Multisite | Boutique Editorial Aesthetic
 > **Live Site**: https://wedding.garywallage.uk
 
 ---
@@ -249,7 +249,7 @@ The theme version string appears in three places. **Always update all three toge
 2. `functions.php` — `gary_send_performance_headers()` preload header
 3. `functions.php` — `gary_wedding_scripts()` enqueue call
 
-Current version: **3.6.0**
+Current version: **3000.21.0**
 
 ---
 

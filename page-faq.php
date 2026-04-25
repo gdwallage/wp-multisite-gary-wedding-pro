@@ -3,7 +3,7 @@
  * File: page-faq.php
  * Template Name: FAQ
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.42.0
+ * Version: 3000.21.0
  * Description: Clean accordion layout. Turns H3 into triggers.
  */
 

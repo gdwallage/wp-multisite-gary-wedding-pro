@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.16.0
+ * Version: 3000.21.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -125,12 +125,12 @@ require_once get_template_directory() . '/inc/card-renderer.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3000.17.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver=3000.21.0>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
 function gary_wedding_scripts() { 
-    $ver = '3000.17.0';
+    $ver = '3000.22.1';
     wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), $ver ); 
     
     // Enqueue the block script for the frontend (certain blocks might need JS logic)
@@ -140,7 +140,7 @@ add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 // THE FIX: Enqueue block scripts FOR THE EDITOR specifically
 function gary_wedding_editor_assets() {
-    $ver = '3000.17.0';
+    $ver = '3000.22.1';
     wp_enqueue_script( 'gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render' ), $ver, true );
 }
 add_action( 'enqueue_block_editor_assets', 'gary_wedding_editor_assets' );
@@ -172,6 +172,7 @@ function gary_wedding_footer_scripts() {
                 const dateInput = document.getElementById(isAtomic ? 'gw-atomic-check-date' : 'gw-check-date-' + stepId);
                 const resultDiv = document.getElementById(isAtomic ? 'gw-atomic-availability-result' : 'gw-availability-result-' + stepId);
                 const atomicCta = document.getElementById('gw-atomic-booking-cta');
+                const stepCta = document.getElementById('gw-step-booking-cta-' + stepId);
                 
                 if ( !dateInput || !dateInput.value ) {
                     if(resultDiv) resultDiv.innerText = 'Please select a date.';
@@ -183,6 +184,7 @@ function gary_wedding_footer_scripts() {
                 this.innerText = 'Checking...';
                 
                 if(atomicCta) atomicCta.style.display = 'none';
+                if(stepCta) stepCta.style.display = 'none';
 
                 if(resultDiv) {
                     resultDiv.innerText = 'Consulting the calendar...';
@@ -197,11 +199,25 @@ function gary_wedding_footer_scripts() {
                         this.disabled = false;
                         this.innerText = originalText;
                         if ( data.success ) {
-                            resultDiv.innerText = data.data.message;
-                            resultDiv.classList.add('is-available');
-                            // REVEAL CTA FOR ATOMIC
+                            const wrapper = this.closest('.gw-atomic-check-wrap, .gw-availability-check');
+                            let displayMsg = data.data.message;
+                            const status = data.data.status || 'available';
+
+                            if ( wrapper ) {
+                                const customAvailable = wrapper.getAttribute('data-msg-available');
+                                const customTentative = wrapper.getAttribute('data-msg-tentative');
+                                if ( status === 'available' && customAvailable ) displayMsg = customAvailable;
+                                if ( status === 'tentative' && customTentative ) displayMsg = customTentative;
+                            }
+
+                            resultDiv.innerText = displayMsg;
+                            resultDiv.classList.remove('is-available', 'is-busy', 'is-tentative');
+                            resultDiv.classList.add('is-' + status);
+                            // REVEAL CTA FOR ATOMIC & JOURNEY
                             if ( isAtomic && atomicCta ) {
                                 atomicCta.style.display = 'flex';
+                            } else if ( !isAtomic && stepCta ) {
+                                stepCta.style.display = 'inline-block';
                             }
                         } else {
                             resultDiv.innerText = data.data.message;
@@ -794,126 +810,8 @@ function gary_get_bookly_forms() {
 }
 
 /**
- * AJAX: Check Bookly Availability for a specific date (Photography Category)
+ * AVAILABILITY LOGIC MOVED TO GW-BOOKLY-ADDONS PLUGIN
  */
-function gary_ajax_check_availability() {
-    global $wpdb;
-    
-    $date = isset($_GET['check_date']) ? sanitize_text_field($_GET['check_date']) : '';
-    $duration_str = isset($_GET['duration']) ? sanitize_text_field($_GET['duration']) : 'Full Day';
-
-    if ( empty($date) ) {
-        wp_send_json_error( array( 'message' => 'Please select a date.' ) );
-    }
-
-    $duration_seconds = gary_parse_duration_to_seconds($duration_str);
-
-    // 1. Find Gary (Staff ID 4 is the confirmed primary photographer)
-    $staff_members = array(4); 
-    
-    // Fallback search if ID 4 is somehow missing
-    if ( empty($staff_members) ) {
-        $staff_members = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}bookly_staff LIMIT 1" );
-    }
-
-    // Combined staff list check
-    if ( empty($staff_members) ) {
-        wp_send_json_error( array( 'message' => 'No photographers found in the system.' ) );
-    }
-
-    $is_available = false;
-    // DEFENSIVE DAY INDEX MAPPING
-    // 1. Standard PHP "w": 0=Sun, 1=Mon... 6=Sat
-    $w = (int)date('w', strtotime($date));
-    // 2. Bookly Index A: 1=Sun, 2=Mon... 7=Sat
-    $idx_a = $w + 1;
-    // 3. Bookly Index B: 1=Mon, 2=Tue... 6=Sat, 7=Sun
-    $idx_b = ($w == 0) ? 7 : $w;
-    // 4. Bookly Index C: 0=Sun, 1=Mon... 6=Sat
-    $idx_c = $w;
-    
-    foreach ( $staff_members as $staff_id ) {
-        // A. Is the staff member working on this day?
-        $schedule_table = $wpdb->prefix . 'bookly_staff_schedule';
-        
-        // Defensive query: Try all common index standards to find a working schedule
-        $working_hours = $wpdb->get_row( $wpdb->prepare( 
-            "SELECT start_time, end_time FROM $schedule_table 
-             WHERE staff_id = %d AND (day_index = %d OR day_index = %d OR day_index = %d) 
-             AND start_time IS NOT NULL 
-             LIMIT 1", 
-            $staff_id, $idx_a, $idx_b, $idx_c
-        ) );
-        
-        if ( !$working_hours || ( $working_hours->start_time === null && $working_hours->end_time === null ) ) {
-            continue; 
-        }
-
-        // B. Check appointments
-        $app_table = $wpdb->prefix . 'bookly_appointments';
-        $customer_app_table = $wpdb->prefix . 'bookly_customer_appointments';
-        
-        // We need start/end times precisely to find gaps
-        $appointments = $wpdb->get_results( $wpdb->prepare( 
-            "SELECT start_date, end_date FROM $app_table 
-             WHERE staff_id = %d AND DATE(start_date) = %s 
-             ORDER BY start_date ASC", 
-            $staff_id, $date 
-        ) );
-
-        // LOGIC 1: FULL DAY
-        if ( $duration_seconds === -1 ) {
-            if ( count($appointments) === 0 ) {
-                $is_available = true;
-                break;
-            }
-            continue;
-        }
-
-        // LOGIC 2: HOURLY GAP ANALYSIS
-        // Required gap = Requested duration + 30 mins before + 30 mins after (Total + 1 hour)
-        $required_gap = $duration_seconds + 3600; 
-        $work_start = strtotime($date . ' ' . $working_hours->start_time);
-        $work_end   = strtotime($date . ' ' . $working_hours->end_time);
-        
-        $current_cursor = $work_start;
-        $found_gap = false;
-
-        foreach ( $appointments as $app ) {
-            $app_start = strtotime($app->start_date);
-            $app_end   = strtotime($app->end_date);
-            
-            // Is there a big enough gap before this appointment?
-            if ( ($app_start - $current_cursor) >= $required_gap ) {
-                $found_gap = true;
-                break;
-            }
-            // Move cursor to end of appointment
-            $current_cursor = max($current_cursor, $app_end);
-        }
-
-        // Final check: gap between last appointment and end of work day
-        if ( !$found_gap && ($work_end - $current_cursor) >= $required_gap ) {
-            $found_gap = true;
-        }
-
-        if ( $found_gap ) {
-            $is_available = true;
-            break;
-        }
-    }
-
-    if ( $is_available ) {
-        wp_send_json_success( array( 'message' => 'Your date is available! Let\'s begin.' ) );
-    } else {
-        $msg = ($duration_seconds === -1) 
-            ? 'I am already booked on this date, but please check another.'
-            : 'I am tied up for parts of this day and cannot fit this session, please try another date.';
-        wp_send_json_error( array( 'message' => $msg ) );
-    }
-}
-add_action( 'wp_ajax_gary_check_availability', 'gary_ajax_check_availability' );
-add_action( 'wp_ajax_nopriv_gary_check_availability', 'gary_ajax_check_availability' );
 
 /**
  * SECURITY: Limit login error messages

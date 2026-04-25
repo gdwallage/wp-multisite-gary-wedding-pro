@@ -965,7 +965,7 @@ body #primary .gw-trio-bottom img,
 
 
 /* --- 14. ACTION STEP BLOCKS (The Journey Refactored) --- */
-.gw-process-block { padding: 80px 0; }
+.gw-process-block { padding: 20px 0; }
 .gw-process-row { 
     display: flex; gap: 40px; justify-content: center; align-items: stretch;
 }
@@ -998,6 +998,7 @@ body #primary .gw-trio-bottom img,
 }
 .gw-avail-result { min-height: 20px; line-height: 1.4; color: var(--brand-accent); }
 .gw-avail-result.is-available { color: #2ecc71; }
+.gw-avail-result.is-tentative { color: #f39c12; }
 .gw-avail-result.is-busy { color: #e74c3c; }
 
 /* Responsive Actions */

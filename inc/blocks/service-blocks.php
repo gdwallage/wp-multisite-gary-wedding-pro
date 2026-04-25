@@ -116,7 +116,9 @@ function gary_register_service_blocks() {
             'title'       => array('type' => 'string', 'default' => 'Consultation'),
             'description' => array('type' => 'string', 'default' => ''),
             'target_page' => array('type' => 'number', 'default' => 0),
-            'step_num'    => array('type' => 'string', 'default' => '01')
+            'step_num'    => array('type' => 'string', 'default' => '01'),
+            'msg_available'  => array('type' => 'string', 'default' => ""),
+            'msg_tentative'  => array('type' => 'string', 'default' => "")
         )
     ));
 
@@ -127,8 +129,10 @@ function gary_register_service_blocks() {
         'attributes' => array(
             'title'          => array('type' => 'string', 'default' => 'Check Your Date!'),
             'description'    => array('type' => 'string', 'default' => 'Select your wedding date to see if I am available for your celebration.'),
-            'duration'       => array('type' => 'string', 'default' => 'Full Day'),
-            'target_page_id' => array('type' => 'number', 'default' => 0)
+            'service_id'     => array('type' => 'string', 'default' => ''),
+            'target_page_id' => array('type' => 'number', 'default' => 0),
+            'msg_available'  => array('type' => 'string', 'default' => "Excellent... Now let's book your FREE wedding consultation to discuss this in detail."),
+            'msg_tentative'  => array('type' => 'string', 'default' => "I may be free! I have restricted hours on this day, but I may be able to rearrange plans for your wedding. Please book a FREE consultation to discuss.")
         )
     ));
 
@@ -466,15 +470,27 @@ function gary_render_action_step_block( $atts ) {
         <h4><?php echo esc_html($title); ?></h4>
         <p><?php echo esc_html($desc); ?></p>
         
-        <div class="gw-step-action-wrap" style="margin-top:20px;">
-            <?php if ( $type === 'availability' ) : ?>
-                <div class="gw-availability-check">
+        <div class="gw-step-action-wrap" style="margin-top:15px;">
+            <?php if ( $type === 'availability' ) : 
+                $msg_available = !empty($atts['msg_available']) ? $atts['msg_available'] : '';
+                $msg_tentative = !empty($atts['msg_tentative']) ? $atts['msg_tentative'] : '';
+            ?>
+                <div class="gw-availability-check" 
+                     data-msg-available="<?php echo esc_attr($msg_available); ?>"
+                     data-msg-tentative="<?php echo esc_attr($msg_tentative); ?>">
                     <input type="date" id="gw-check-date-<?php echo esc_attr($num); ?>" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:0.8rem;" />
                     <button type="button" class="btn-black-gold gw-check-availability-btn" data-step-id="<?php echo esc_attr($num); ?>" style="margin-left:10px; cursor:pointer;">Check Date</button>
                     <div id="gw-availability-result-<?php echo esc_attr($num); ?>" class="gw-avail-result" style="margin-top:10px; font-size:0.85rem; font-weight:700;"></div>
+                    
+                    <a href="<?php echo esc_url($link); ?>" 
+                       id="gw-step-booking-cta-<?php echo esc_attr($num); ?>" 
+                       class="btn-black-gold" 
+                       style="display: none; margin-top:15px; width:100%; text-align:center; background:#000; color:#fff;">
+                       Book Free Consultation
+                    </a>
                 </div>
             <?php else : ?>
-                <a href="<?php echo esc_url($link); ?>" class="btn-black-gold">Begin Booking</a>
+                <a href="<?php echo esc_url($link); ?>" class="btn-black-gold">Book Free Consultation</a>
             <?php endif; ?>
         </div>
     </div>
@@ -576,39 +592,62 @@ add_action( 'init', 'gary_register_custom_block_styles' );
 function gary_render_check_date_atomic( $atts ) {
     $title = !empty($atts['title']) ? $atts['title'] : 'Check Your Date!';
     $desc = !empty($atts['description']) ? $atts['description'] : 'Select your wedding date...';
-    $duration = !empty($atts['duration']) ? $atts['duration'] : 'Full Day';
+    $service_id = !empty($atts['service_id']) ? $atts['service_id'] : '';
     $target_id = !empty($atts['target_page_id']) ? $atts['target_page_id'] : 0;
     $link = $target_id ? get_permalink($target_id) : '#';
+    
+    // FETCH DYNAMIC SERVICE DETAILS
+    $service_label = 'Select a service...';
+    $duration = '---';
+    if ( $service_id ) {
+        $s_data = gary_get_bookly_service_data( $service_id );
+        if ( $s_data ) {
+            $service_label = $s_data['title'];
+            // STRIP PREFIX like "CW04 - "
+            $service_label = preg_replace('/^[A-Z0-9]+\s*-\s*/', '', $service_label);
+            // Convert seconds to human duration or use "Full Day" if large
+            $secs = (int)$s_data['duration'];
+            if ( $secs >= 28800 ) {
+                $duration = 'Full Day Coverage';
+            } else {
+                $hours = floor($secs / 3600);
+                $duration = $hours . ($hours == 1 ? ' Hour' : ' Hours');
+            }
+        }
+    }
+
+    $msg_available = !empty($atts['msg_available']) ? $atts['msg_available'] : '';
+    $msg_tentative = !empty($atts['msg_tentative']) ? $atts['msg_tentative'] : '';
 
     ob_start(); ?>
-    <div class="gw-process-block container gw-atomic-check-wrap">
-        <div class="gw-process-col is-atomic-check condensed-check" style="max-width: 500px; margin: 0 auto; border: 2px solid var(--brand-gold-light); padding: 50px 30px; text-align:center;">
+    <div class="gw-process-block container gw-atomic-check-wrap"
+         data-msg-available="<?php echo esc_attr($msg_available); ?>"
+         data-msg-tentative="<?php echo esc_attr($msg_tentative); ?>">
+        <div class="gw-process-col is-atomic-check condensed-check" style="max-width: 500px; margin: 0 auto; border: 2px solid var(--brand-gold-light); padding: 20px; text-align:center;">
             <h4 style="margin-top: 0;"><?php echo esc_html($title); ?></h4>
-            <p style="margin-bottom: 25px; opacity:0.8; font-size: 0.9rem;"><?php echo esc_html($desc); ?></p>
+            <p style="margin-bottom: 15px; opacity:0.8; font-size: 0.9rem;"><?php echo esc_html($desc); ?></p>
             
-            <div class="gw-availability-box-inner" style="display: inline-block; width: 100%; max-width: 320px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 25px;">
-                <div class="gw-duration-badge" style="text-transform:uppercase; letter-spacing:2px; font-size:0.7rem; font-weight:700; color:var(--brand-accent); margin-bottom:15px;">
-                    Duration: <?php echo esc_html($duration); ?>
+            <div class="gw-availability-box-inner" style="display: inline-block; width: 100%; max-width: 320px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px;">
+
+                <div class="gw-service-looking-for" style="text-transform:uppercase; letter-spacing:1px; font-size:0.65rem; font-weight:700; color:var(--brand-accent); margin-bottom:10px; opacity:0.6;">
+                    <?php echo esc_html($service_label); ?>
                 </div>
 
-                <div class="gw-input-with-icon" style="position: relative; margin-bottom: 20px;">
-                    <input type="date" id="gw-atomic-check-date" class="gw-date-picker-input" style="padding:12px 12px 12px 40px; border:1px solid #ddd; font-family:inherit; font-size:1.1rem; width:100%; text-align:center; box-sizing:border-box;" />
-                    <span class="gw-calendar-icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>
-                    </span>
+                <div class="gw-input-with-icon" style="position: relative; margin-bottom: 15px;">
+                    <input type="date" id="gw-atomic-check-date" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:1.1rem; width:100%; text-align:center; box-sizing:border-box;" />
                 </div>
                 
                 <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
                     <button type="button" 
                             class="btn-black-gold gw-check-availability-btn-atomic" 
-                            data-duration="<?php echo esc_attr($duration); ?>"
+                            data-duration="<?php echo esc_attr($service_id); ?>"
                             style="cursor:pointer; width: 100%;">Check Availability</button>
                     
                     <a href="<?php echo esc_url($link); ?>" 
                        id="gw-atomic-booking-cta" 
                        class="btn-black-gold" 
                        style="display: none; background: #000; color: #fff; width: 100%; text-decoration:none; align-items:center; justify-content:center;">
-                       Book Now
+                       Book Free Consultation
                     </a>
                 </div>
 
