@@ -481,11 +481,12 @@ function gary_render_action_step_block( $atts ) {
                     <input type="date" id="gw-check-date-<?php echo esc_attr($num); ?>" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:0.8rem;" />
                     <button type="button" class="btn-black-gold gw-check-availability-btn" data-step-id="<?php echo esc_attr($num); ?>" style="margin-left:10px; cursor:pointer;">Check Date</button>
                     <div id="gw-availability-result-<?php echo esc_attr($num); ?>" class="gw-avail-result" style="margin-top:10px; font-size:0.85rem; font-weight:700;"></div>
-                    
-                    <a href="<?php echo esc_url($link); ?>" 
-                       id="gw-step-booking-cta-<?php echo esc_attr($num); ?>" 
-                       class="btn-black-gold" 
-                       style="display: none; margin-top:15px; width:100%; text-align:center; background:#000; color:#fff;">
+                        <input type="date" 
+                               id="gw-check-date-atomic" 
+                               value="<?php echo date('Y-m-d'); ?>" 
+                               min="<?php echo date('Y-m-d'); ?>"
+                               class="gw-date-picker-atomic" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ccc; font-family: inherit; font-size: 16px; margin-bottom: 5px;">
                        Book Free Consultation
                     </a>
                 </div>
@@ -598,21 +599,12 @@ function gary_render_check_date_atomic( $atts ) {
     
     // FETCH DYNAMIC SERVICE DETAILS
     $service_label = 'Select a service...';
-    $duration = '---';
     if ( $service_id ) {
         $s_data = gary_get_bookly_service_data( $service_id );
         if ( $s_data ) {
             $service_label = $s_data['title'];
             // STRIP PREFIX like "CW04 - "
             $service_label = preg_replace('/^[A-Z0-9]+\s*-\s*/', '', $service_label);
-            // Convert seconds to human duration or use "Full Day" if large
-            $secs = (int)$s_data['duration'];
-            if ( $secs >= 28800 ) {
-                $duration = 'Full Day Coverage';
-            } else {
-                $hours = floor($secs / 3600);
-                $duration = $hours . ($hours == 1 ? ' Hour' : ' Hours');
-            }
         }
     }
 
@@ -634,7 +626,12 @@ function gary_render_check_date_atomic( $atts ) {
                 </div>
 
                 <div class="gw-input-with-icon" style="position: relative; margin-bottom: 15px;">
-                    <input type="date" id="gw-atomic-check-date" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:1.1rem; width:100%; text-align:center; box-sizing:border-box;" />
+                    <input type="date" 
+                           id="gw-atomic-check-date" 
+                           value="<?php echo date('Y-m-d'); ?>" 
+                           min="<?php echo date('Y-m-d'); ?>" 
+                           class="gw-date-picker-input" 
+                           style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:1.1rem; width:100%; text-align:center; box-sizing:border-box;" />
                 </div>
                 
                 <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
