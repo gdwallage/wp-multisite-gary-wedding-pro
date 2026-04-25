@@ -165,6 +165,19 @@ function gary_wedding_footer_scripts() {
 
         // --- AVAILABILITY CHECKER LOGIC (ATOMIC & JOURNEY) ---
         const checkBtns = document.querySelectorAll('.gw-check-availability-btn, .gw-check-availability-btn-atomic');
+        const todayStr = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        // Enforce tomorrow as minimum date
+        document.querySelectorAll('input[type="date"][id^="gw-check-date"], #gw-atomic-check-date').forEach(input => {
+            input.setAttribute('min', tomorrowStr);
+            if (!input.value || input.value < tomorrowStr) {
+                input.value = tomorrowStr;
+            }
+        });
+
         checkBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 const isAtomic = this.classList.contains('gw-check-availability-btn-atomic');
@@ -208,6 +221,14 @@ function gary_wedding_footer_scripts() {
                                 const customTentative = wrapper.getAttribute('data-msg-tentative');
                                 if ( status === 'available' && customAvailable ) displayMsg = customAvailable;
                                 if ( status === 'tentative' && customTentative ) displayMsg = customTentative;
+                            }
+
+                            // Force debug visibility if present
+                            if ( data.data.debug_prefix ) {
+                                displayMsg = data.data.debug_prefix + ' ' + displayMsg;
+                            }
+                            if ( data.data.message && data.data.message.indexOf('*** DEBUG') !== -1 ) {
+                                displayMsg = data.data.message;
                             }
 
                             resultDiv.innerText = displayMsg;
