@@ -89,15 +89,15 @@ h3, h4, h5, h6 {
     letter-spacing: 2px !important;
 }
 
-h1, h2, h3 { line-height: 1.2; margin-bottom: 20px; color: var(--brand-text); }
-h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 60px; margin-bottom: 40px; }
-body:not(.home) h1.entry-title { margin-top: 180px !important; }
+h1, h2, h3 { line-height: 1.2; margin-bottom: 10px; color: var(--brand-text); }
+h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 30px; margin-bottom: 25px; }
+body:not(.home) h1.entry-title { margin-top: 5px !important; }
 
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: none; }
 .header-focal-container { 
     display: flex; align-items: flex-start; justify-content: space-between; 
-    max-width: var(--site-max-width); margin: 0 auto; padding: 12px 40px 0; min-height: auto; 
+    max-width: var(--site-max-width); margin: 0 auto; padding: 5px 40px 0; min-height: auto; 
     width: var(--editorial-width);
 }
 .focal-side { flex: 1; display: flex; align-items: flex-start; margin-top: 5px; padding-bottom: 12px; }
@@ -163,7 +163,23 @@ body:not(.home) h1.entry-title { margin-top: 180px !important; }
         margin: 2px 0 !important; 
         flex: none !important;
     }
-    .nav-toggle-container { order: -1 !important; margin-bottom: 6px !important; }
+    .nav-toggle-container { 
+        order: -1 !important; 
+        margin-bottom: 15px !important;
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    .menu-toggle {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        padding: 8px 15px !important;
+        font-size: 0.75rem !important;
+        border: 1px solid var(--brand-gold-light) !important;
+    }
     .branding-group { order: 0 !important; }
     .focal-center { 
         order: 1 !important; 
@@ -179,8 +195,9 @@ body:not(.home) h1.entry-title { margin-top: 180px !important; }
     .site-title-blacksword { font-size: 1.4rem !important; }
     .site-tagline-lato { font-size: 0.6rem !important; letter-spacing: 1px !important; }
 
-    /* Tight Desktop H1 Adjustment (Closer to Logo) */
-    body:not(.home) .page-content h1:first-of-type { margin-top: 120px !important; margin-bottom: 40px !important; }
+    /* Mobile H1 Adjustment (Closer to Logo) */
+    body:not(.home) h1.entry-title,
+    body:not(.home) .page-content h1:first-of-type { margin-top: 40px !important; margin-bottom: 30px !important; }
 }
 
 
@@ -247,7 +264,7 @@ body:not(.home) h1.entry-title { margin-top: 180px !important; }
 /* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
 .services-grid { 
     display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--grid-gap); 
-    row-gap: 60px; margin: 60px auto; width: var(--editorial-width) !important; max-width: 1250px; overflow: visible !important;
+    row-gap: 40px; margin: 30px auto; width: var(--editorial-width) !important; max-width: 1250px; overflow: visible !important;
 }
 @media (max-width: 1024px) {
     .services-grid { width: 100% !important; grid-template-columns: 1fr !important; }
@@ -599,9 +616,16 @@ body #primary .gw-trio-bottom img,
 .investment-sidebar { 
     position: sticky; top: 40px;
 }
+@media (max-width: 1024px) {
+    .investment-sidebar {
+        flex: none !important;
+        width: 100% !important;
+        margin-top: 40px !important;
+    }
+}
 .investment-plaque { 
     background: var(--brand-white); border: 2px solid var(--brand-gold-light); 
-    padding: 50px 40px; text-align: center; box-shadow: var(--shadow-deep);
+    padding: 40px; text-align: center; box-shadow: var(--shadow-deep);
     position: relative; overflow: hidden;
 }
 .investment-plaque h2 { 
@@ -730,7 +754,30 @@ body #primary .gw-trio-bottom img,
 @media (max-width: 900px) {
     .gw-usps-row, .gw-process-row { grid-template-columns: 1fr; gap: 40px; }
     .gw-block-main-title { font-size: 2.5rem; }
+    
+    .gw-process-block.is-atomic-check { margin: 60px auto; }
+.gw-process-col.is-atomic-check.condensed-check { 
+    max-width: 500px; 
+    margin: 0 auto; 
+    border: 2px solid var(--brand-gold-light); 
+    padding: 40px; 
+    text-align: center; 
+    background: var(--brand-white);
+    box-shadow: var(--shadow-soft);
 }
+.atomic-title { margin-top: 0; font-family: var(--font-primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-accent); }
+.atomic-desc { margin-bottom: 25px; opacity: 0.8; font-size: 0.95rem; line-height: 1.6; }
+.gw-availability-box-inner { 
+    display: inline-block; 
+    width: 100%; 
+    max-width: 340px; 
+    border-top: 1px solid rgba(197, 160, 89, 0.2); 
+    padding-top: 25px; 
+}
+@media (max-width: 600px) {
+    .gw-process-col.is-atomic-check.condensed-check { padding: 30px 20px; }
+}
+
 
 /* --- 10. NATIVE CONTROL CONVERTED BLOCKS --- */
 
@@ -1030,13 +1077,13 @@ body #primary .gw-trio-bottom img,
 .gw-editorial-triplet-wrap { margin-top: 60px; margin-bottom: 80px; }
 .gw-triplet-row { 
     display: grid; 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 0; 
     align-items: stretch; 
-    border: 2px solid #C5A059 !important; /* Outer Border Strong */
+    border: 2px solid #C5A059 !important;
     background: #fff;
     width: 100%;
-    margin-top: 40px;
+    margin: 40px auto;
 }
 
 
@@ -1118,9 +1165,15 @@ body #primary .gw-trio-bottom img,
 
 
 @media (max-width: 1024px) {
-    .gw-triplet-row { flex-direction: column; }
-    .gw-triplet-item:not(:last-child)::after { display: none; }
-    .gw-triplet-item { border-bottom: 1px solid rgba(197, 160, 89, 0.1); padding: 40px 20px; }
+    .gw-triplet-row { display: flex !important; flex-direction: column !important; border: none !important; }
+    .gw-triplet-item { 
+        width: 100% !important; 
+        border: 2px solid var(--brand-gold-light) !important; 
+        margin-bottom: 20px !important; 
+        padding: 40px 25px !important; 
+        grid-column: auto !important;
+    }
+    .gw-triplet-item:nth-child(1) { border-right: 2px solid var(--brand-gold-light) !important; }
 }
 
 /* --- 15. LIGHTBOX SYSTEM --- */

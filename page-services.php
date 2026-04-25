@@ -15,7 +15,7 @@ get_header(); ?>
     <h1 class="entry-title"><?php the_title(); ?></h1>
     
     <?php if ( get_the_content() ) : ?>
-        <div class="services-intro" style="max-width:850px; margin:0 auto 80px; opacity:0.8; text-align:center; font-size:1.15rem; line-height:1.8;">
+        <div class="services-intro" style="max-width:850px; margin:0 auto 30px; opacity:0.8; text-align:center; font-size:1.15rem; line-height:1.8;">
             <?php the_content(); ?>
         </div>
     <?php endif; ?>
@@ -28,7 +28,7 @@ get_header(); ?>
 
     <!-- 1. PACKAGES SECTION -->
     <?php if ( ! empty( $packages ) ) : ?>
-        <h2 class="section-divider-title" style="text-align:center; margin: 100px 0 60px; font-size: 2.2rem;">Packages</h2>
+        <h2 class="section-divider-title" style="text-align:center; margin: 60px 0 30px; font-size: 2.2rem;">Packages</h2>
         <div class="services-grid">
             <?php foreach ( $packages as $item ) : 
                 echo gary_render_service_card_html( array(
@@ -48,7 +48,7 @@ get_header(); ?>
 
     <!-- 2. INDIVIDUAL SERVICES SECTION -->
     <?php if ( ! empty( $individual ) ) : ?>
-        <h2 class="section-divider-title" style="text-align:center; margin: 120px 0 60px; font-size: 2.2rem;">Individual Services</h2>
+        <h2 class="section-divider-title" style="text-align:center; margin: 80px 0 30px; font-size: 2.2rem;">Individual Services</h2>
         <div class="services-grid">
             <?php foreach ( $individual as $item ) : 
                 echo gary_render_service_card_html( array(

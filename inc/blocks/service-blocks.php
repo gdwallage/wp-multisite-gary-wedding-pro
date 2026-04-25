@@ -222,12 +222,14 @@ function gary_register_service_blocks() {
         'attributes' => array( 'type' => array('type' => 'string', 'default' => 'perfect-for') )
     ));
 
-    // 19. Dual Column Container
+    // 20. Dual Column Container
     register_block_type('gw/editorial-dual-column', array(
         'render_callback' => 'gary_render_dual_column_block',
         'category' => 'gary-editorial-native',
     ));
+
 }
+
 add_action('init', 'gary_register_service_blocks');
 
 // Category Registration
@@ -615,11 +617,11 @@ function gary_render_check_date_atomic( $atts ) {
     <div class="gw-process-block container gw-atomic-check-wrap"
          data-msg-available="<?php echo esc_attr($msg_available); ?>"
          data-msg-tentative="<?php echo esc_attr($msg_tentative); ?>">
-        <div class="gw-process-col is-atomic-check condensed-check" style="max-width: 500px; margin: 0 auto; border: 2px solid var(--brand-gold-light); padding: 20px; text-align:center;">
-            <h4 style="margin-top: 0;"><?php echo esc_html($title); ?></h4>
-            <p style="margin-bottom: 15px; opacity:0.8; font-size: 0.9rem;"><?php echo esc_html($desc); ?></p>
+        <div class="gw-process-col is-atomic-check condensed-check">
+            <h4 class="atomic-title"><?php echo esc_html($title); ?></h4>
+            <p class="atomic-desc"><?php echo esc_html($desc); ?></p>
             
-            <div class="gw-availability-box-inner" style="display: inline-block; width: 100%; max-width: 320px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px;">
+            <div class="gw-availability-box-inner">
 
                 <div class="gw-service-looking-for" style="text-transform:uppercase; letter-spacing:1px; font-size:0.65rem; font-weight:700; color:var(--brand-accent); margin-bottom:10px; opacity:0.6;">
                     <?php echo esc_html($service_label); ?>
@@ -692,3 +694,5 @@ function gary_render_triplet_item( $atts, $content ) {
 
     <?php return ob_get_clean();
 }
+
+
