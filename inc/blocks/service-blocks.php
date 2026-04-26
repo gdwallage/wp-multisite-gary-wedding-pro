@@ -641,7 +641,8 @@ function gary_render_check_date_atomic( $atts ) {
                     
                     <a href="<?php echo esc_url($link); ?>" 
                        id="gw-atomic-booking-cta" 
-                       class="btn-black">
+                       class="btn-black-gold" 
+                       style="display: none; width: 100%; text-decoration:none; align-items:center; justify-content:center;">
                        Book Free Consultation
                     </a>
                 </div>

@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.22.0
+ * Version: 3000.33.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -90,8 +90,8 @@ h3, h4, h5, h6 {
 }
 
 h1, h2, h3 { line-height: 1.1; margin-bottom: 8px; color: var(--brand-text); }
-h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 20px; margin-bottom: 15px; }
-body:not(.home) h1.entry-title { margin-top: 10px !important; }
+h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 70px !important; margin-bottom: 10px; }
+body:not(.home) h1.entry-title { margin-top: 80px !important; }
 
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: none; }
@@ -105,7 +105,7 @@ body:not(.home) h1.entry-title { margin-top: 10px !important; }
 .focal-right { justify-content: flex-end; }
 .focal-center { 
     flex: 0 0 auto; text-align: center; padding: 0 40px; position: relative; 
-    top: 0px; z-index: 1100; margin-bottom: -120px;
+    top: 0px; z-index: 1100; margin-bottom: -80px;
 }
 
 .site-title-blacksword { color: var(--brand-accent); font-size: 1.6rem; margin: 0; line-height: 1.1; }
@@ -750,13 +750,10 @@ body #primary .gw-trio-bottom img,
 /* Editorial Titles */
 .gw-block-main-title { 
     font-family: var(--font-script); font-size: 3.5rem; color: var(--brand-accent); 
-    text-align: center; margin-bottom: 60px; font-weight: normal; 
+    text-align: center; margin-bottom: 40px; font-weight: normal; 
 }
 
-@media (max-width: 900px) {
-    .gw-usps-row, .gw-process-row { grid-template-columns: 1fr; gap: 40px; }
-    .gw-block-main-title { font-size: 2.5rem; }
-    
+/* --- COMPONENT: BOUTIQUE GOLD BOX --- */
 .gw-editorial-gold-box {
     background: var(--brand-white);
     border: 2px solid var(--brand-gold-light);
@@ -765,27 +762,30 @@ body #primary .gw-trio-bottom img,
     position: relative;
     overflow: hidden;
     transition: 0.3s ease;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 }
 .gw-editorial-gold-box:hover { box-shadow: var(--shadow-deep); }
 
-.gw-process-block.is-atomic-check { margin: 30px auto; }
+.gw-process-block.gw-atomic-check-wrap { margin: 20px auto; width: 100%; display: flex; justify-content: center; }
 .is-atomic-check.gw-editorial-gold-box { 
     max-width: 500px; 
-    margin: 0 auto; 
-    text-align: center; 
+    margin: 0 auto !important; 
+    text-align: center !important; 
 }
-.atomic-title { margin-top: 0; font-family: var(--font-primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-accent); margin-bottom: 10px !important; }
+.atomic-title { margin-top: 0; font-family: var(--font-primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-accent); margin-bottom: 8px !important; }
 .atomic-desc { margin-bottom: 15px; opacity: 0.8; font-size: 0.95rem; line-height: 1.5; }
 .gw-availability-box-inner { 
     display: inline-block; 
     width: 100%; 
     max-width: 340px; 
     border-top: 1px solid rgba(197, 160, 89, 0.15); 
-    padding-top: 20px; 
+    padding-top: 15px; 
 }
-.gw-service-looking-for { text-transform:uppercase; letter-spacing:1px; font-size:0.65rem; font-weight:700; color:var(--brand-accent); margin-bottom:10px; opacity:0.6; }
-.gw-input-with-icon { position: relative; margin-bottom: 15px; }
-.gw-atomic-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.gw-service-looking-for { text-transform:uppercase; letter-spacing:1px; font-size:0.65rem; font-weight:700; color:var(--brand-accent); margin-bottom:8px; opacity:0.6; }
+.gw-input-with-icon { position: relative; margin-bottom: 12px; }
+.gw-atomic-actions { display: flex; flex-direction: column; gap: 8px; align-items: center; }
 
 @media (max-width: 600px) {
     .gw-editorial-gold-box { padding: 25px 20px; }
@@ -1087,7 +1087,7 @@ body #primary .gw-trio-bottom img,
 }
 
 /* --- EDITORIAL TRIPLET SYSTEM --- */
-.gw-editorial-triplet-wrap { margin-top: 60px; margin-bottom: 80px; }
+.gw-editorial-triplet-wrap { margin: 30px auto; width: 100%; }
 .gw-triplet-row { 
     display: grid; 
     grid-template-columns: repeat(2, 1fr);
@@ -1096,26 +1096,25 @@ body #primary .gw-trio-bottom img,
     border: 2px solid #C5A059 !important;
     background: #fff;
     width: 100%;
-    margin: 40px auto;
+    margin: 20px auto;
 }
 
 
 
 .gw-triplet-item { 
-    padding: 50px 40px; 
-    position: relative; 
+    padding: 25px; 
+    background: var(--brand-white);
+    border: 2px solid var(--brand-gold-light);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
+.gw-triplet-item:hover { box-shadow: var(--shadow-deep); transition: 0.3s ease; }
 
-/* Row 1 / Col 1 Vertical Divider - SOLID 2PX */
-.gw-triplet-item:nth-child(1) {
-    border-right: 2px solid #C5A059 !important;
-}
-
-/* Row 2 (item 3) spanning - SOLID 2PX */
+/* Special spanning for item 3 (Overview) */
 .gw-triplet-item:nth-child(3) {
     grid-column: 1 / span 2;
-    border-top: 2px solid #C5A059 !important;
-    padding: 60px 50px;
 }
 
 
@@ -1124,21 +1123,31 @@ body #primary .gw-trio-bottom img,
 .triplet-heading { 
     font-family: var(--font-primary) !important; font-weight: 700 !important; 
     text-transform: uppercase !important; letter-spacing: 2px !important; 
-    font-size: 1.1rem !important; color: var(--brand-accent) !important; margin-bottom: 20px !important; 
+    font-size: 1rem !important; color: var(--brand-accent) !important; margin-bottom: 10px !important; 
 }
-.triplet-h-rule { width: 40px; height: 1px; background: var(--brand-gold-light); opacity: 0.4; margin-bottom: 20px; }
-.triplet-body-text { font-size: 0.9rem; line-height: 1.7; opacity: 0.8; margin-bottom: 25px; }
+.triplet-h-rule { width: 30px; height: 1px; background: var(--brand-gold-light); opacity: 0.3; margin-bottom: 15px; }
+.triplet-body-text { font-size: 0.95rem; line-height: 1.6; opacity: 0.8; margin-bottom: 15px; }
 /* GLOBAL BULLET SUPPRESSION FOR EDITORIAL BLOCKS */
 .gw-list-box ul, 
 .gw-triplet-row ul, 
-.is-style-gw-highlights, 
-.is-style-gw-included, 
-.is-style-gw-perfect-for,
 .triplet-list-content ul { 
     list-style: none !important; 
     list-style-type: none !important; 
     padding: 0 !important;
     margin: 0 !important;
+}
+
+/* Block Style Pizazz (Gutenberg styles) */
+.is-style-gw-included, 
+.is-style-gw-perfect-for,
+.is-style-gw-highlights {
+    background: var(--brand-white) !important;
+    border: 2px solid var(--brand-gold-light) !important;
+    padding: 25px !important;
+    box-shadow: var(--shadow-soft) !important;
+    margin-bottom: 30px !important;
+    list-style: none !important;
+    position: relative;
 }
 
 .gw-list-box li, 

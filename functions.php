@@ -124,13 +124,16 @@ require_once get_template_directory() . '/inc/card-renderer.php';
  */
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
+    $theme = wp_get_theme();
+    $ver = $theme->get( 'Version' );
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3000.21.0>; rel=preload; as=style", false );
+    header( "Link: <{$template_uri}/style.css?ver={$ver}>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
 function gary_wedding_scripts() { 
-    $ver = '3000.22.1';
+    $theme = wp_get_theme();
+    $ver = $theme->get( 'Version' );
     wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), $ver ); 
     
     // Enqueue the block script for the frontend (certain blocks might need JS logic)
@@ -140,7 +143,8 @@ add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 // THE FIX: Enqueue block scripts FOR THE EDITOR specifically
 function gary_wedding_editor_assets() {
-    $ver = '3000.22.1';
+    $theme = wp_get_theme();
+    $ver = $theme->get( 'Version' );
     wp_enqueue_script( 'gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render' ), $ver, true );
 }
 add_action( 'enqueue_block_editor_assets', 'gary_wedding_editor_assets' );
@@ -577,6 +581,14 @@ function gary_get_manual_savings_fallback( $title ) {
  * Merges native Bookly compound services with custom editorial inclusions.
  */
 function gary_get_sub_service_summary( $id, $is_post_id = true ) {
+    if ( class_exists( 'GW_BooklyAddons\Lib\Utils' ) ) {
+        $summary = \GW_BooklyAddons\Lib\Utils::getSubServiceSummary( $id, $is_post_id );
+        // Compatibility mapping for theme expectations
+        $summary['titles'] = $summary['titles'];
+        $summary['included_str'] = implode( ', ', $summary['titles'] );
+        return $summary;
+    }
+    
     global $wpdb;
     
     if ( $is_post_id ) {
