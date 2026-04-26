@@ -614,43 +614,39 @@ function gary_render_check_date_atomic( $atts ) {
     $msg_tentative = !empty($atts['msg_tentative']) ? $atts['msg_tentative'] : '';
 
     ob_start(); ?>
-    <div class="gw-process-block container gw-atomic-check-wrap"
+    <div class="gw-process-block gw-atomic-check-wrap"
          data-msg-available="<?php echo esc_attr($msg_available); ?>"
          data-msg-tentative="<?php echo esc_attr($msg_tentative); ?>">
-        <div class="gw-process-col is-atomic-check condensed-check">
+        <div class="gw-editorial-gold-box is-atomic-check">
             <h4 class="atomic-title"><?php echo esc_html($title); ?></h4>
             <p class="atomic-desc"><?php echo esc_html($desc); ?></p>
             
             <div class="gw-availability-box-inner">
-
-                <div class="gw-service-looking-for" style="text-transform:uppercase; letter-spacing:1px; font-size:0.65rem; font-weight:700; color:var(--brand-accent); margin-bottom:10px; opacity:0.6;">
+                <div class="gw-service-looking-for">
                     <?php echo esc_html($service_label); ?>
                 </div>
 
-                <div class="gw-input-with-icon" style="position: relative; margin-bottom: 15px;">
+                <div class="gw-input-with-icon">
                     <input type="date" 
                            id="gw-atomic-check-date" 
                            value="<?php echo date('Y-m-d'); ?>" 
                            min="<?php echo date('Y-m-d'); ?>" 
-                           class="gw-date-picker-input" 
-                           style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:1.1rem; width:100%; text-align:center; box-sizing:border-box;" />
+                           class="gw-date-picker-input" />
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                <div class="gw-atomic-actions">
                     <button type="button" 
                             class="btn-black-gold gw-check-availability-btn-atomic" 
-                            data-duration="<?php echo esc_attr($service_id); ?>"
-                            style="cursor:pointer; width: 100%;">Check Availability</button>
+                            data-duration="<?php echo esc_attr($service_id); ?>">Check Availability</button>
                     
                     <a href="<?php echo esc_url($link); ?>" 
                        id="gw-atomic-booking-cta" 
-                       class="btn-black-gold" 
-                       style="display: none; background: #000; color: #fff; width: 100%; text-decoration:none; align-items:center; justify-content:center;">
+                       class="btn-black">
                        Book Free Consultation
                     </a>
                 </div>
 
-                <div id="gw-atomic-availability-result" class="gw-avail-result" style="margin-top:20px; font-size:1rem; font-weight:700;"></div>
+                <div id="gw-atomic-availability-result" class="gw-avail-result"></div>
             </div>
         </div>
     </div>

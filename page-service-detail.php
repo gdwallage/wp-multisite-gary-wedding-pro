@@ -78,7 +78,7 @@ $is_package = !empty( $summary['grid_items'] );
             </p>
         </header>
 
-        <div class="service-hero-split" style="display:flex; gap:80px; align-items: flex-start; margin-bottom:100px;">
+        <div class="service-hero-single-column">
             
             <!-- Left: Intro area (Editorial Blocks) -->
             <div class="experience-intro-wrap" style="flex:1;">
@@ -108,10 +108,7 @@ $is_package = !empty( $summary['grid_items'] );
 
             </div>
 
-            <!-- Right: Investment Plaque block (gw/investment-plaque) -->
-            <aside class="investment-sidebar" style="flex: 0 0 380px;">
-                <?php echo do_blocks( '<!-- wp:gw/investment-plaque /-->' ); ?>
-            </aside>
+            </div>
         </div>
 
 
