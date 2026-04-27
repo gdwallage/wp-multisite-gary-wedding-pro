@@ -442,7 +442,7 @@ main#primary .gw-z-pattern,
 body #primary .gw-z-pattern.is-right,
 .gw-z-pattern.is-right { flex-direction: row-reverse !important; }
 body #primary .gw-z-image,
-.gw-z-image { flex: 0 0 55% !important; }
+.gw-z-image { flex: 0 0 35% !important; max-width: 35% !important; }
 body #primary .gw-z-image img,
 main#primary .gw-z-image img,
 .gw-z-image img { 

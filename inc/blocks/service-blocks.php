@@ -351,7 +351,7 @@ function gary_render_single_service_block( $attributes ) {
 function gary_render_z_pattern_block( $attributes, $content ) {
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'left';
-    $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'medium_large';
+    $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
     $img_html = '';
     if ( $img_id ) {
         $img_html = wp_get_attachment_image( $img_id, $size, false, array( 'loading' => 'lazy', 'decoding' => 'async' ) );
