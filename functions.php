@@ -190,9 +190,6 @@ function gary_wedding_scripts()
     $theme = wp_get_theme();
     $ver = $theme->get('Version');
     wp_enqueue_style('gary-wedding-v3-editorial', get_stylesheet_uri(), array(), $ver);
-
-    // Enqueue the block script for the frontend (certain blocks might need JS logic)
-    wp_enqueue_script('gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data', 'wp-i18n'), $ver, true);
 }
 add_action('wp_enqueue_scripts', 'gary_wedding_scripts');
 

@@ -42,35 +42,30 @@
         <!-- RIGHT COLUMN: Contact Info -->
         <div class="footer-col-right">
             <div class="footer-contact">
-                <?php if ( get_theme_mod( 'footer_contact' ) ) : ?>
-                    <span class="contact-row">
-                        <?php echo nl2br( esc_html( get_theme_mod( 'footer_contact' ) ) ); ?>
-                    </span>
-                <?php endif; ?>
-
-                <?php if ( get_theme_mod( 'footer_email' ) ) : ?>
-                    <span class="contact-row" style="margin-top:10px;">
-                        <a href="mailto:<?php echo esc_attr( get_theme_mod( 'footer_email' ) ); ?>">
-                            <?php echo esc_html( get_theme_mod( 'footer_email' ) ); ?>
-                        </a>
-                    </span>
-                <?php endif; ?>
+                <span class="contact-row">
+                    63 Twineham Road, Swindon, SN25 2AG
+                </span>
+                
+                <span class="contact-row" style="margin-top:10px;">
+                    <a href="mailto:gary@garywallage.uk">
+                        gary@garywallage.uk
+                    </a>
+                </span>
 
                 <?php 
-                $phone_raw = get_theme_mod( 'footer_phone' );
-                if ( $phone_raw ) :
-                    $phone_clean = preg_replace('/[^0-9+]/', '', $phone_raw);
+                // NAP Consistency: Rigidly formatted phone number
+                $display_phone = '+44 7970 262 387'; 
+                $phone_clean   = '447970262387';
                 ?>
-                    <span class="contact-row">
-                        <a href="tel:<?php echo esc_attr( $phone_clean ); ?>">
-                            <?php echo esc_html( $phone_raw ); ?>
-                        </a>
-                        <!-- WhatsApp Dual Link -->
-                        <a href="https://wa.me/<?php echo esc_attr( $phone_clean ); ?>" class="whatsapp-link" target="_blank" aria-label="Chat on WhatsApp">
-                            <span style="font-size:1.1em; vertical-align:middle;">&rarr;</span> WhatsApp
-                        </a>
-                    </span>
-                <?php endif; ?>
+                <span class="contact-row">
+                    <a href="tel:<?php echo esc_attr( $phone_clean ); ?>">
+                        <?php echo esc_html( $display_phone ); ?>
+                    </a>
+                    <!-- WhatsApp Dual Link -->
+                    <a href="https://wa.me/<?php echo esc_attr( $phone_clean ); ?>" class="whatsapp-link" target="_blank" aria-label="Chat on WhatsApp">
+                        <span style="font-size:1.1em; vertical-align:middle;">&rarr;</span> WhatsApp
+                    </a>
+                </span>
             </div>
         </div>
 
@@ -111,8 +106,8 @@
 
     <!-- Bottom Copyright -->
     <div class="footer-meta" style="border-top:1px solid #333; padding-top:30px; margin-top:30px; text-align:center;">
-        <p style="font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; opacity:0.6;">
-            &copy; <?php echo date('Y'); ?> <?php echo esc_html( get_theme_mod( 'footer_copyright', 'Gary Wallage Digital Ecosystem | Wiltshire Historian' ) ); ?>
+        <p>
+            &copy; <?php echo date('Y'); ?> Gary Wallage Photography | Wiltshire Historian & Visual Poet
         </p>
     </div>
 </footer>

@@ -41,6 +41,7 @@
     --brand-text: var(--brand-black);
     --brand-accent: #B08D55; 
     --brand-gold-light: #C5A059; 
+    --brand-gold-text: #8A6B32; /* High-contrast Gold for WCAG AA on white */
     --brand-crimson: #630000;
     --brand-white: #ffffff;
     
@@ -70,12 +71,13 @@ img { max-width: 100%; height: auto; }
 /* Enforce Script Weights (H1 and Site Title) */
 .site-title-blacksword, .entry-title, h1, .hero-title, .footer-branding h3, .about-sig span {
     font-family: var(--font-script) !important; font-weight: normal !important; text-transform: none !important; letter-spacing: normal !important;
+    color: var(--brand-black);
 }
 
 /* H2 - Gold Lato AllCaps */
 h2 {
     font-family: var(--font-primary) !important;
-    color: var(--brand-gold-light) !important;
+    color: var(--brand-gold-text) !important; /* Fixed for contrast */
     text-transform: none !important;
     letter-spacing: 3px !important;
     font-weight: 700 !important;
@@ -98,7 +100,22 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
 .header-focal-container { 
     display: flex; align-items: flex-start; justify-content: space-between; 
     max-width: var(--site-max-width); margin: 0 auto; padding: 5px 40px 0; min-height: auto; 
-    width: var(--editorial-width);
+}
+
+/* Accessibility: Ensure menu text and buttons have sufficient contrast */
+.menu-text { 
+    color: var(--brand-black) !important; 
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-left: 12px;
+    font-weight: 700;
+}
+.wp-block-button__link { color: var(--brand-black) !important; font-weight: 700 !important; }
+.whatsapp-link { color: var(--brand-black) !important; font-weight: 700; }
+.gw-service-looking-for { color: var(--brand-black) !important; font-weight: 700; }
+.footer-meta p { opacity: 1 !important; color: #fff !important; } /* Fix footer contrast */    width: var(--editorial-width);
 }
 .focal-side { flex: 1; display: flex; align-items: flex-start; margin-top: 5px; padding-bottom: 12px; }
 .focal-left { justify-content: flex-start; }
@@ -350,7 +367,7 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
 .service-card-content { padding: 0 30px; text-align: center; }
 .service-card-title { 
     font-family: var(--font-script) !important; font-weight: normal !important; 
-    font-size: 1.4rem; color: var(--brand-gold-light); margin: 0 0 15px 0 !important; 
+    font-size: 1.4rem; color: var(--brand-gold-text); margin: 0 0 15px 0 !important; 
     white-space: normal; display: flex; align-items: center; justify-content: center;
     height: 4.5rem; text-align: center; text-transform: none !important;
 }
@@ -358,16 +375,16 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
 /* PRICE BLOCK (GOLD RESTORED) */
 .service-card-price { 
     background: var(--brand-gold-light); padding: 22px 10px; border: none; margin-bottom: 30px; 
-    color: var(--brand-white); text-align: center; position: relative;
+    color: var(--brand-black); text-align: center; position: relative;
     border-bottom: 3px solid rgba(0,0,0,0.1);
 }
-.service-card-price span { font-weight: 700; font-size: 1.4rem; color: var(--brand-white); letter-spacing: 1px; font-family: var(--font-primary); }
+.service-card-price span { font-weight: 700; font-size: 1.4rem; color: var(--brand-black); letter-spacing: 1px; font-family: var(--font-primary); }
 .service-card-price.is-free { background: var(--brand-gold-light); }
-.service-card-price.is-free span { color: var(--brand-white) !important; font-size: 1.25rem; }
+.service-card-price.is-free span { color: var(--brand-black) !important; font-size: 1.25rem; }
 
 .duration-label, .service-duration-text { 
     display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; 
-    color: var(--brand-gold-light); margin: 5px 0 15px; font-weight: 700; text-align: center;
+    color: var(--brand-gold-text); margin: 5px 0 15px; font-weight: 700; text-align: center;
 }
 .service-card-price .duration-label { display: none !important; } /* Safeguard against transition */
 
@@ -1021,11 +1038,24 @@ body #primary .gw-trio-bottom img,
         width: 100% !important;
     }
     .gw-z-image, .gw-z-content { flex: none !important; width: 100% !important; margin: 0 !important; }
+    .gw-z-image img { 
+        max-height: 50vh !important; 
+        width: 100% !important; 
+        object-fit: cover !important; 
+        border-radius: 2px !important;
+    }
     .gw-z-content { padding: 30px !important; margin-top: -20px !important; }
 
     /* 7. Trio Gallery Mobile Stack */
     .gw-trio-gallery { flex-direction: column !important; }
     .gw-trio-main, .gw-trio-side { flex: none !important; width: 100% !important; }
+}
+
+/* --- TABLET REFINEMENT (768px - 1024px) --- */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .gw-z-pattern { gap: 40px !important; flex-direction: row !important; }
+    .gw-z-image { flex: 0 0 45% !important; max-width: 45% !important; }
+    .gw-z-content { flex: 1 !important; padding: 20px !important; margin: 0 !important; }
 }
 
 @media (max-width: 600px) {

@@ -23,6 +23,12 @@
 		},
 		{
 			"path": "../../plugins/gallery-master-sync"
+		},
+		{
+			"path": "../../plugins"
+		},
+		{
+			"path": "../../mu-plugins"
 		}
 	],
 	"settings": {}

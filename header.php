@@ -70,7 +70,7 @@
                 <span class="hamburger-box">
                     <span class="hamburger-inner"></span>
                 </span>
-                <span class="menu-text" style="font-family:'Lato', sans-serif; font-size:0.9rem; letter-spacing:2px; text-transform:uppercase; margin-left:12px; font-weight:700;">MENU</span>
+                <span class="menu-text">MENU</span>
             </button>
         </div>
 

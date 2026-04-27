@@ -352,10 +352,15 @@ function gary_render_z_pattern_block( $attributes, $content ) {
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'left';
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'medium_large';
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
+    $img_html = '';
+    if ( $img_id ) {
+        $img_html = wp_get_attachment_image( $img_id, $size, false, array( 'loading' => 'lazy', 'decoding' => 'async' ) );
+    } elseif ( !empty($attributes['image_url']) ) {
+        $img_html = '<img src="' . esc_url($attributes['image_url']) . '" alt="" loading="lazy" decoding="async" />';
+    }
     ob_start(); ?>
     <div class="gw-z-pattern container is-<?php echo esc_attr($pos); ?>">
-        <div class="gw-z-image"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
+        <div class="gw-z-image"><?php echo $img_html; ?></div>
         <div class="gw-z-content"><?php echo $content; ?></div>
     </div>
     <?php return ob_get_clean();
@@ -376,10 +381,16 @@ function gary_render_trio_gallery_block( $attributes ) {
             </h2>
         <?php endif; ?>
         <div class="gw-trio-gallery">
-            <div class="gw-trio-main"><?php if($imgs[1]): ?><img src="<?php echo esc_url($imgs[1]); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
+            <div class="gw-trio-main">
+                <?php if(!empty($attributes['img1_id'])) echo wp_get_attachment_image($attributes['img1_id'], $attributes['img1_size'] ?: 'large'); ?>
+            </div>
             <div class="gw-trio-side">
-                <div class="gw-trio-top"><?php if($imgs[2]): ?><img src="<?php echo esc_url($imgs[2]); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
-                <div class="gw-trio-bottom"><?php if($imgs[3]): ?><img src="<?php echo esc_url($imgs[3]); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
+                <div class="gw-trio-top">
+                    <?php if(!empty($attributes['img2_id'])) echo wp_get_attachment_image($attributes['img2_id'], $attributes['img2_size'] ?: 'medium'); ?>
+                </div>
+                <div class="gw-trio-bottom">
+                    <?php if(!empty($attributes['img3_id'])) echo wp_get_attachment_image($attributes['img3_id'], $attributes['img3_size'] ?: 'medium'); ?>
+                </div>
             </div>
         </div>
     </div>
@@ -393,7 +404,9 @@ function gary_render_split_block( $attributes, $content ) {
     $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : '';
     ob_start(); ?>
     <div class="gw-editorial-split container is-<?php echo esc_attr($pos); ?>">
-        <div class="gw-split-media"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
+        <div class="gw-split-media">
+            <?php if($img_id) echo wp_get_attachment_image($img_id, $size); ?>
+        </div>
         <div class="gw-split-content"><?php echo $content; ?></div>
     </div>
     <?php return ob_get_clean();
@@ -469,7 +482,7 @@ function gary_render_action_step_block( $atts ) {
     ob_start(); ?>
     <div class="gw-process-col">
         <span class="step-num"><?php echo esc_html($num); ?></span>
-        <h4><?php echo esc_html($title); ?></h4>
+        <h3><?php echo esc_html($title); ?></h3>
         <p><?php echo esc_html($desc); ?></p>
         
         <div class="gw-step-action-wrap" style="margin-top:15px;">
@@ -619,7 +632,7 @@ function gary_render_check_date_atomic( $atts ) {
          data-msg-available="<?php echo esc_attr($msg_available); ?>"
          data-msg-tentative="<?php echo esc_attr($msg_tentative); ?>">
         <div class="gw-editorial-gold-box is-atomic-check">
-            <h4 class="atomic-title"><?php echo esc_html($title); ?></h4>
+            <h3 class="atomic-title"><?php echo esc_html($title); ?></h3>
             <p class="atomic-desc"><?php echo esc_html($desc); ?></p>
             
             <div class="gw-availability-box-inner">
