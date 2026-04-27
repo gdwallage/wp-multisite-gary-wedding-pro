@@ -62,8 +62,16 @@ $is_package = !empty( $summary['grid_items'] );
 
 <main id="primary" class="site-main page-template-service-detail">
 
-    <?php if ( $bg_img ) : ?>
-        <div class="service-bg-layer" style="background-image: url('<?php echo esc_url($bg_img); ?>');"></div>
+    <?php 
+    $bg_img_url = $bg_img;
+    if ( is_numeric($bg_img) ) {
+        $bg_img_url = wp_get_attachment_image_url($bg_img, 'gw-hero');
+    } elseif ( $bg_img ) {
+        $attachment_id = attachment_url_to_postid($bg_img);
+        if ( $attachment_id ) $bg_img_url = wp_get_attachment_image_url($attachment_id, 'gw-hero');
+    }
+    if ( $bg_img_url ) : ?>
+        <div class="service-bg-layer" style="background-image: url('<?php echo esc_url($bg_img_url); ?>');"></div>
     <?php endif; ?>
 
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">

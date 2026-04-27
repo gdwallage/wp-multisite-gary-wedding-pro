@@ -1,9 +1,9 @@
-<?php
+<?php
 /**
  * File: page-services.php
  * Template Name: Services
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.21.0
+ * Version: 3000.54.0
  * Description: Clean grid with strictly aligned page title and beveled frames.
  */
 
@@ -22,8 +22,9 @@ get_header(); ?>
 
     <?php
     $grouped_services = gary_get_grouped_bookly_services();
-    $packages = $grouped_services['packages'];
-    $individual = $grouped_services['individual'];
+    // Interleave sorting (High, Low, 2nd High, 2nd Low...)
+    $packages = gary_interleave_by_price($grouped_services['packages']);
+    $individual = gary_interleave_by_price($grouped_services['individual']);
     ?>
 
     <!-- 1. PACKAGES SECTION -->

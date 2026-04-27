@@ -29,7 +29,7 @@ function gary_register_service_blocks() {
             'image_url'  => array( 'type' => 'string', 'default' => '' ),
             'image_id'   => array( 'type' => 'number', 'default' => 0 ),
             'image_pos'  => array( 'type' => 'string', 'default' => 'left' ),
-            'image_size' => array( 'type' => 'string', 'default' => 'large' )
+            'image_size' => array( 'type' => 'string', 'default' => 'medium_large' )
         )
     ));
 
@@ -52,7 +52,7 @@ function gary_register_service_blocks() {
         'attributes' => array(
             'image_id'   => array( 'type' => 'number', 'default' => 0 ),
             'image_pos'  => array( 'type' => 'string', 'default' => 'right' ),
-            'image_size' => array( 'type' => 'string', 'default' => 'large' )
+            'image_size' => array( 'type' => 'string', 'default' => 'medium_large' )
         )
     ));
 
@@ -331,7 +331,7 @@ function gary_render_single_service_block( $attributes ) {
         ob_start(); ?>
         <a href="<?php echo esc_url($card_data['permalink']); ?>" class="component-card style-bookly-service">
             <div class="service-card-image" style="flex: 0 0 120px; padding: 10px; border: 2px solid var(--brand-gold-light); margin-right: 25px; border-radius: 0 !important;">
-                <?php if($card_data['thumbnail']): ?><img src="<?php echo esc_url($card_data['thumbnail']); ?>" style="border-radius: 0 !important;" /><?php endif; ?>
+                <?php if($card_data['icon']): ?><img src="<?php echo esc_url($card_data['icon']); ?>" style="border-radius: 0 !important;" loading="lazy" decoding="async" /><?php endif; ?>
             </div>
             <div class="component-info">
                 <h2 class="service-card-title" style="font-size: 1.2rem; height: auto; text-align: left; justify-content: flex-start; margin-bottom: 5px !important;">
@@ -351,11 +351,11 @@ function gary_render_single_service_block( $attributes ) {
 function gary_render_z_pattern_block( $attributes, $content ) {
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'left';
-    $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
+    $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'medium_large';
     $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
     ob_start(); ?>
     <div class="gw-z-pattern container is-<?php echo esc_attr($pos); ?>">
-        <div class="gw-z-image"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
+        <div class="gw-z-image"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
         <div class="gw-z-content"><?php echo $content; ?></div>
     </div>
     <?php return ob_get_clean();
@@ -376,10 +376,10 @@ function gary_render_trio_gallery_block( $attributes ) {
             </h2>
         <?php endif; ?>
         <div class="gw-trio-gallery">
-            <div class="gw-trio-main"><?php if($imgs[1]): ?><img src="<?php echo esc_url($imgs[1]); ?>" /><?php endif; ?></div>
+            <div class="gw-trio-main"><?php if($imgs[1]): ?><img src="<?php echo esc_url($imgs[1]); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
             <div class="gw-trio-side">
-                <div class="gw-trio-top"><?php if($imgs[2]): ?><img src="<?php echo esc_url($imgs[2]); ?>" /><?php endif; ?></div>
-                <div class="gw-trio-bottom"><?php if($imgs[3]): ?><img src="<?php echo esc_url($imgs[3]); ?>" /><?php endif; ?></div>
+                <div class="gw-trio-top"><?php if($imgs[2]): ?><img src="<?php echo esc_url($imgs[2]); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
+                <div class="gw-trio-bottom"><?php if($imgs[3]): ?><img src="<?php echo esc_url($imgs[3]); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
             </div>
         </div>
     </div>
@@ -393,7 +393,7 @@ function gary_render_split_block( $attributes, $content ) {
     $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : '';
     ob_start(); ?>
     <div class="gw-editorial-split container is-<?php echo esc_attr($pos); ?>">
-        <div class="gw-split-media"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
+        <div class="gw-split-media"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" loading="lazy" decoding="async" /><?php endif; ?></div>
         <div class="gw-split-content"><?php echo $content; ?></div>
     </div>
     <?php return ob_get_clean();
@@ -480,11 +480,12 @@ function gary_render_action_step_block( $atts ) {
                 <div class="gw-availability-check" 
                      data-msg-available="<?php echo esc_attr($msg_available); ?>"
                      data-msg-tentative="<?php echo esc_attr($msg_tentative); ?>">
-                    <input type="date" id="gw-check-date-<?php echo esc_attr($num); ?>" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:0.8rem;" />
+                    <input type="date" aria-label="Select your preferred date" id="gw-check-date-<?php echo esc_attr($num); ?>" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:0.8rem;" />
                     <button type="button" class="btn-black-gold gw-check-availability-btn" data-step-id="<?php echo esc_attr($num); ?>" style="margin-left:10px; cursor:pointer;">Check Date</button>
                     <div id="gw-availability-result-<?php echo esc_attr($num); ?>" class="gw-avail-result" style="margin-top:10px; font-size:0.85rem; font-weight:700;"></div>
                         <input type="date" 
                                id="gw-check-date-atomic" 
+                               aria-label="Select your preferred date"
                                value="<?php echo date('Y-m-d'); ?>" 
                                min="<?php echo date('Y-m-d'); ?>"
                                class="gw-date-picker-atomic" 
@@ -504,7 +505,7 @@ function gary_render_action_step_block( $atts ) {
 
 function gary_render_hero_bleed_block( $atts, $content ) {
     $img_id = !empty($atts['image_id']) ? $atts['image_id'] : 0;
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
+    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'gw-hero') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
     $opacity = isset($atts['overlay_opacity']) ? (int)$atts['overlay_opacity'] : 10;
     ob_start(); ?>
     <div class="gw-hero-bleed alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
@@ -521,10 +522,10 @@ function gary_render_storyteller_grid_block( $atts ) {
     <div class="gw-storyteller-grid container">
         <?php for($i=1; $i<=4; $i++) : 
             $img_id = !empty($atts["img{$i}_id"]) ? $atts["img{$i}_id"] : 0;
-            $url = $img_id ? wp_get_attachment_image_url($img_id, 'large') : 'data:image/svg+xml;utf8,%3Csvg width="100%25" height="100%25" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23eee"/%3E%3C/svg%3E';
+            $url = $img_id ? wp_get_attachment_image_url($img_id, 'medium_large') : 'data:image/svg+xml;utf8,%3Csvg width="100%25" height="100%25" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23eee"/%3E%3C/svg%3E';
         ?>
             <div class="gw-story-item">
-                <img src="<?php echo esc_url($url); ?>" alt="" />
+                <img src="<?php echo esc_url($url); ?>" alt="" loading="lazy" decoding="async" />
             </div>
         <?php endfor; ?>
     </div>
@@ -533,7 +534,7 @@ function gary_render_storyteller_grid_block( $atts ) {
 
 function gary_render_testimonial_quote_block( $atts, $content ) {
     $img_id = !empty($atts['image_id']) ? $atts['image_id'] : 0;
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
+    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'gw-hero') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
     ob_start(); ?>
     <div class="gw-testimonial-quote-block alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
         <div class="gw-testimonial-overlay"></div>
@@ -552,7 +553,7 @@ function gary_render_polaroid_frame_block( $atts, $content ) {
 
 function gary_render_cta_fullwidth_block( $atts, $content ) {
     $img_id = !empty($atts['image_id']) ? $atts['image_id'] : 0;
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
+    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'gw-hero') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
     ob_start(); ?>
     <div class="gw-cta-fullwidth alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
         <div class="gw-cta-fullwidth-overlay"></div>
@@ -629,6 +630,7 @@ function gary_render_check_date_atomic( $atts ) {
                 <div class="gw-input-with-icon">
                     <input type="date" 
                            id="gw-atomic-check-date" 
+                           aria-label="Select your preferred date"
                            value="<?php echo date('Y-m-d'); ?>" 
                            min="<?php echo date('Y-m-d'); ?>" 
                            class="gw-date-picker-input" />

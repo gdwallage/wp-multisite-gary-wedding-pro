@@ -22,7 +22,7 @@ get_header(); ?>
                 <?php if ( has_post_thumbnail() ) : ?>
                     <div class="portrait-frame-wrapper">
                         <div class="portrait-frame">
-                            <?php the_post_thumbnail('large'); ?>
+                            <?php the_post_thumbnail('medium_large'); ?>
                             
                             <!-- Gold Plaque Integrated into Frame -->
                             <div class="frame-plaque">

@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.50.0
+ * Version: 3000.64.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -271,7 +271,7 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
 /* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
 .services-grid { 
     display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--grid-gap); 
-    row-gap: 30px; margin: 20px auto; width: var(--editorial-width) !important; max-width: 1250px; overflow: visible !important;
+    row-gap: 60px; margin: 20px auto; width: var(--editorial-width) !important; max-width: 1250px; overflow: visible !important;
 }
 @media (max-width: 1024px) {
     .services-grid { width: 100% !important; grid-template-columns: 1fr !important; }
@@ -615,7 +615,7 @@ body #primary .gw-trio-bottom img,
 .about-grid { 
     display: flex; gap: 80px; align-items: flex-start; margin-bottom: 100px;
 }
-.about-image { flex: 0 0 45%; }
+.about-image { flex: 0 0 32%; }
 .about-content { flex: 1; }
 .about-sig { border-top: 1px solid rgba(0,0,0,0.05); padding-top: 30px; }
 
@@ -1160,6 +1160,22 @@ body #primary .gw-trio-bottom img,
     margin-bottom: 0 !important;
     list-style: none !important;
     position: relative;
+    height: 100% !important; /* Force fill for height matching */
+}
+
+/* --- HEIGHT MATCHING ENGINE (DESKTOP ONLY) --- */
+@media (min-width: 1025px) {
+    .wp-block-columns, .gw-triplet-row, .gw-dual-column-row {
+        align-items: stretch !important;
+    }
+    .wp-block-column, .gw-triplet-item, .gw-list-box {
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .gw-list-box, .gw-triplet-item {
+        flex: 1 !important;
+    }
 }
 
 .gw-list-box li, 
@@ -1176,6 +1192,27 @@ body #primary .gw-trio-bottom img,
 .is-style-gw-perfect-for li::marker { 
     content: none !important; 
     display: none !important; 
+}
+/* --- GLOBAL PAGE HEADER (H1) --- */
+.entry-header, .service-hero-header, .archive-header {
+    text-align: center !important;
+    margin-top: 0 !important;
+    margin-bottom: 40px !important;
+    width: 100% !important;
+}
+.entry-title {
+    font-size: 3.5rem !important;
+    margin: 0 !important;
+    line-height: 1.1 !important;
+    color: var(--brand-accent) !important;
+    font-family: var(--font-script) !important;
+    font-weight: normal !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+@media (max-width: 1024px) {
+    .entry-title { font-size: 2.2rem !important; }
 }
 
 .triplet-list-content li::before,

@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.21.0
+ * Version: 3000.64.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -20,9 +20,45 @@ if (!function_exists('gary_wedding_setup')):
         add_theme_support('editor-styles');
         add_editor_style('style.css');
         add_editor_style('editor-style.css');
+
+        // High-Precision Editorial Sizes (Aggressive Optimization)
+        add_image_size('gw-card-thumb', 500, 500, true);
+        add_image_size('gw-service-icon', 160, 160, true); // Perfectly matched for 160px Retina icons
+        add_image_size('gw-hero', 1920, 1080, true);
+        add_image_size('gw-logo', 250, 250, false); // Exactly 2x for 125px display
     }
 endif;
 add_action('after_setup_theme', 'gary_wedding_setup');
+
+/**
+ * PERFORMANCE: High-Efficiency Image Compression (v3000.63.0)
+ * Lowering quality from 100 to 82 saves ~40% file size with zero visible loss.
+ */
+add_filter('jpeg_quality', function() { return 82; });
+add_filter('wp_editor_set_quality', function() { return 82; });
+
+/**
+ * BRANDING OPTIMIZATION: High-Fidelity Logo Filter
+ */
+function gary_optimized_custom_logo($html) {
+    $logo_id = get_theme_mod('custom_logo');
+    if (!$logo_id) return $html;
+
+    $logo_size = get_theme_mod('logo_size_px', '150');
+    $image = wp_get_attachment_image($logo_id, 'gw-logo', false, array(
+        'class'    => 'custom-logo',
+        'itemprop' => 'logo',
+        'fetchpriority' => 'high',
+        'style'    => "max-width: {$logo_size}px; height: auto;",
+    ));
+
+    $html = sprintf( '<a href="%1$s" class="custom-logo-link" rel="home" itemprop="url">%2$s</a>',
+        esc_url( home_url( '/' ) ),
+        $image
+    );
+    return $html;
+}
+add_filter('get_custom_logo', 'gary_optimized_custom_logo');
 
 /**
  * COLOR HELPER
@@ -51,7 +87,7 @@ function gary_customize_register($wp_customize)
 {
     // Header & Logo
     $wp_customize->add_section('gary_header_options', array('title' => 'Header Options'));
-    $wp_customize->add_setting('logo_size_px', array('default' => '125', 'transport' => 'refresh'));
+    $wp_customize->add_setting('logo_size_px', array('default' => '150', 'transport' => 'refresh'));
     $wp_customize->add_control('logo_size_px', array('label' => 'Logo Size (px)', 'section' => 'gary_header_options', 'type' => 'number'));
 
     // Hero Slider — Page Picker
@@ -114,7 +150,18 @@ add_action('customize_register', 'gary_customize_register');
  * DYNAMIC STYLING
  */
 add_action('wp_head', function () {
-    $logo_size = get_theme_mod('logo_size_px', '125');
+    $logo_size = get_theme_mod('logo_size_px', '150');
+    $theme_uri = get_template_directory_uri();
+    
+    // Dynamic Logo Sizing
+    if ($logo_size) {
+        echo "<style>.custom-logo { max-width: " . (int)$logo_size . "px !important; }</style>\n";
+    }
+
+    // PRIORITY FIX #2: Resource Hints (Font Preloading)
+    echo '<link rel="preload" as="font" href="' . esc_url($theme_uri . '/fonts/Blacksword.woff2') . '" type="font/woff2" crossorigin>' . "\n";
+    echo '<link rel="preload" as="font" href="' . esc_url($theme_uri . '/fonts/lato-bold.woff2') . '" type="font/woff2" crossorigin>' . "\n";
+    echo '<link rel="preload" as="font" href="' . esc_url($theme_uri . '/fonts/lato-regular.woff2') . '" type="font/woff2" crossorigin>' . "\n";
 });
 
 /**
@@ -280,11 +327,19 @@ function gary_get_bookly_service_data($service_id)
 {
     if (empty($service_id))
         return false;
+
+    $cache_key = 'gw_bookly_svc_' . $service_id;
+    $cached = wp_cache_get($cache_key, 'gary_theme');
+    if ($cached !== false) return $cached;
+
     global $wpdb;
     $table = $wpdb->prefix . 'bookly_services';
     if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table)
         return false;
-    return $wpdb->get_row($wpdb->prepare("SELECT title, price, duration, info FROM $table WHERE id = %d", $service_id), ARRAY_A);
+    
+    $data = $wpdb->get_row($wpdb->prepare("SELECT title, price, duration, info FROM $table WHERE id = %d", $service_id), ARRAY_A);
+    wp_cache_set($cache_key, $data ? $data : 'not_found', 'gary_theme', HOUR_IN_SECONDS);
+    return $data;
 }
 
 function gary_find_page_by_bookly_title($title)
@@ -305,14 +360,21 @@ function gary_get_page_id_for_service($service_id)
     if (empty($service_id))
         return false;
 
+    $cache_key = 'gw_page_for_svc_' . $service_id;
+    $cached = wp_cache_get($cache_key, 'gary_theme');
+    if ($cached !== false) return $cached === 'not_found' ? false : $cached;
+
     // 1. Try official link
     $official_table = $wpdb->prefix . 'gw_bookly_service_links';
     $page_id = $wpdb->get_var($wpdb->prepare("SELECT wp_page_id FROM $official_table WHERE service_id = %d", $service_id));
-    if ($page_id)
-        return $page_id;
+    
+    // 2. Fallback
+    if (!$page_id) {
+        $page_id = $wpdb->get_var($wpdb->prepare("SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $service_id));
+    }
 
-    // 2. Fallback to legacy meta
-    return $wpdb->get_var($wpdb->prepare("SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_gary_bookly_id' AND meta_value = %s LIMIT 1", $service_id));
+    wp_cache_set($cache_key, $page_id ? $page_id : 'not_found', 'gary_theme', HOUR_IN_SECONDS);
+    return $page_id;
 }
 
 /**
@@ -324,14 +386,21 @@ function gary_get_service_id_for_page($page_id)
     if (empty($page_id))
         return false;
 
+    $cache_key = 'gw_svc_for_page_' . $page_id;
+    $cached = wp_cache_get($cache_key, 'gary_theme');
+    if ($cached !== false) return $cached === 'not_found' ? false : $cached;
+
     // 1. Try official link
     $official_table = $wpdb->prefix . 'gw_bookly_service_links';
     $service_id = $wpdb->get_var($wpdb->prepare("SELECT service_id FROM $official_table WHERE wp_page_id = %d", $page_id));
-    if ($service_id)
-        return $service_id;
+    
+    // 2. Fallback
+    if (!$service_id) {
+        $service_id = get_post_meta($page_id, '_gary_bookly_id', true);
+    }
 
-    // 2. Fallback to legacy meta
-    return get_post_meta($page_id, '_gary_bookly_id', true);
+    wp_cache_set($cache_key, $service_id ? $service_id : 'not_found', 'gary_theme', HOUR_IN_SECONDS);
+    return $service_id;
 }
 
 /**
@@ -375,6 +444,7 @@ if (!function_exists('gw_slide_from_page_id')):
 
         return array(
             'img' => $thumb,           // may be false — placeholder shown instead
+            'img_id' => get_post_thumbnail_id($page_id),
             'title' => get_the_title($page_id),
             'subtitle' => $subtitle,
             'url' => get_permalink($page_id),
@@ -456,7 +526,7 @@ function gary_get_grouped_bookly_services()
 
         $item['page_id'] = $page_id;
         $item['permalink'] = $page_id ? get_permalink($page_id) : '/booking/';
-        $item['thumbnail'] = $page_id ? get_the_post_thumbnail_url($page_id, 'large') : '';
+        $item['thumbnail'] = $page_id ? get_the_post_thumbnail_url($page_id, 'gw-card-thumb') : '';
 
         // --- INCLUSIONS LOGIC ---
         $total_sub_price = 0;
@@ -506,6 +576,35 @@ function gary_get_grouped_bookly_services()
         'packages' => $packages,
         'individual' => $individual
     );
+}
+
+/**
+ * HELPER: Interleave items by price (High, Low, 2nd High, 2nd Low...)
+ * Avoids putting off lower budgets by mixing price points.
+ */
+function gary_interleave_by_price($items)
+{
+    if (empty($items)) return $items;
+
+    // 1. Sort by price DESC
+    usort($items, function ($a, $b) {
+        return (float)$b['price'] <=> (float)$a['price'];
+    });
+
+    $interleaved = [];
+    $left = 0;
+    $right = count($items) - 1;
+
+    while ($left <= $right) {
+        // High
+        $interleaved[] = $items[$left++];
+        if ($left <= $right) {
+            // Low
+            $interleaved[] = $items[$right--];
+        }
+    }
+
+    return $interleaved;
 }
 
 /**
@@ -683,7 +782,7 @@ function gary_get_sub_service_summary($id, $is_post_id = true)
                         'price' => $unit_p,
                         'duration' => $unit_d,
                         'info' => $sub_data['info'],
-                        'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
+                        'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'gw-service-icon') : ''
                     );
                 }
             }
@@ -715,7 +814,7 @@ function gary_get_sub_service_summary($id, $is_post_id = true)
                         'price' => $unit_p,
                         'duration' => $unit_d,
                         'info' => $sub_data['info'],
-                        'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
+                        'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'gw-service-icon') : ''
                     );
                 }
             }

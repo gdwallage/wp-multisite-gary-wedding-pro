@@ -2,7 +2,7 @@
 /**
  * File: front-page.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.21.0
+ * Version: 3000.22.0
  * Description: Peek carousel — active slide centred & fully visible, adjacent pages
  *              peek in from left/right. Data source: Customiser page-picker (falls
  *              back to Primary Menu pages if nothing is selected).
@@ -46,6 +46,7 @@ if ( empty( $slides ) ) {
 if ( empty( $slides ) ) {
     $slides[] = array(
         'img'      => get_the_post_thumbnail_url( get_the_ID(), 'large' ) ?: false,
+        'img_id'   => get_post_thumbnail_id( get_the_ID() ),
         'title'    => get_bloginfo( 'name' ),
         'subtitle' => get_bloginfo( 'description' ),
         'url'      => '',
@@ -67,13 +68,21 @@ $slide_count = count( $slides );
             $pos_class = 'hidden';
             if ( $index === 0 )                     $pos_class = 'active';
             elseif ( $index === 1 )                 $pos_class = 'next';
+            elseif ( $index === 2 )                 $pos_class = 'far-next';
             elseif ( $index === $slide_count - 1 )  $pos_class = 'prev';
+            elseif ( $index === $slide_count - 2 )  $pos_class = 'far-prev';
         ?>
         <div class="hero-peek-slide <?php echo $pos_class; ?>"
              data-index="<?php echo $index; ?>"
              data-url="<?php echo esc_url( $slide['url'] ); ?>">
 
-            <?php if ( $slide['img'] ) : ?>
+            <?php if ( !empty($slide['img_id']) ) : ?>
+                <?php echo wp_get_attachment_image( $slide['img_id'], 'large', false, array(
+                    'class' => 'hero-peek-img',
+                    'loading' => $index === 0 ? 'eager' : 'lazy',
+                    'sizes' => '(max-width: 900px) 100vw, 30vw'
+                ) ); ?>
+            <?php elseif ( !empty($slide['img']) ) : ?>
                 <img class="hero-peek-img" src="<?php echo esc_url( $slide['img'] ); ?>"
                      alt="<?php echo esc_attr( $slide['title'] ); ?>" loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>" />
             <?php else : ?>
@@ -100,11 +109,10 @@ $slide_count = count( $slides );
     <?php if ( $slide_count > 1 ) : ?>
     <div class="hero-peek-nav" role="navigation" aria-label="Slide navigation">
         <button class="hero-peek-arrow hero-peek-prev" id="heroPeekPrev" aria-label="Previous slide">&#8592;</button>
-        <div class="hero-peek-dots" role="list">
+        <div class="hero-peek-dots">
             <?php foreach ( $slides as $i => $s ) : ?>
                 <button class="hero-peek-dot <?php echo $i === 0 ? 'active' : ''; ?>"
                         data-index="<?php echo $i; ?>"
-                        role="listitem"
                         aria-label="Go to slide <?php echo $i + 1; ?>"><?php echo $i + 1; ?></button>
             <?php endforeach; ?>
         </div>
@@ -184,11 +192,10 @@ main.site-main.home,
     border-radius: 3px;
     cursor: pointer;
     transition: width 0.55s cubic-bezier(0.4,0,0.2,1),
-                left 0.55s cubic-bezier(0.4,0,0.2,1),
-                right 0.55s cubic-bezier(0.4,0,0.2,1),
                 opacity 0.55s ease,
                 transform 0.55s cubic-bezier(0.4,0,0.2,1),
                 box-shadow 0.55s ease;
+    will-change: transform, opacity, width;
 }
 
 /* ---- Position States ---- */
@@ -196,7 +203,7 @@ main.site-main.home,
 .hero-peek-slide.active {
     width: 30%;
     left: 35%;
-    transform: none;
+    transform: translate3d(0, 0, 0);
     opacity: 1;
     z-index: 10;
     box-shadow: 0 40px 100px rgba(0,0,0,0.9);
@@ -206,9 +213,8 @@ main.site-main.home,
 /* Inner Peeks — absolutely flush with 35%-65% center */
 .hero-peek-slide.prev {
     width: 25%;
-    left: 10%;
-    right: auto;
-    transform: none;
+    left: 35%;
+    transform: translate3d(-100%, 0, 0);
     opacity: 0.5;
     z-index: 5;
     cursor: pointer;
@@ -216,8 +222,8 @@ main.site-main.home,
 
 .hero-peek-slide.next {
     width: 25%;
-    left: 65%;
-    transform: none;
+    left: 35%;
+    transform: translate3d(120%, 0, 0);
     opacity: 0.5;
     z-index: 5;
     cursor: pointer;
@@ -226,14 +232,16 @@ main.site-main.home,
 /* Outer Peeks — absolutely flush with inner peeks */
 .hero-peek-slide.far-prev {
     width: 20%;
-    left: -10%;
+    left: 35%;
+    transform: translate3d(-225%, 0, 0);
     opacity: 0.2;
     z-index: 2;
     pointer-events: none;
 }
 .hero-peek-slide.far-next {
     width: 20%;
-    left: 90%;
+    left: 35%;
+    transform: translate3d(275%, 0, 0);
     opacity: 0.2;
     z-index: 2;
     pointer-events: none;
@@ -245,8 +253,8 @@ main.site-main.home,
     pointer-events: none;
     z-index: 1;
     width: 10%;
-    left: 50%;
-    transform: translateX(-50%) scale(0.8);
+    left: 35%;
+    transform: translate3d(150%, 0, 0) scale(0.8);
 }
 
 /* Hover effects on side peeks */

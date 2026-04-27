@@ -28,7 +28,7 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
     // Fetch Savings & Inclusions summary (v3000.1.0 Unified Engine)
     $summary = $page_id ? gary_get_sub_service_summary( $page_id, true ) : gary_get_sub_service_summary( $bookly_id, false );
 
-    $thumbnail = $page_id ? get_the_post_thumbnail_url($page_id, 'large') : '';
+    $thumbnail = $page_id ? get_the_post_thumbnail_url($page_id, 'gw-card-thumb') : '';
 
     return array(
         'title'      => gary_clean_service_name($b_data['title']),
@@ -39,7 +39,8 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
         'thumbnail'  => $thumbnail,
         'info'       => $b_data['info'],
         'is_free'    => (float)$b_data['price'] <= 0,
-        'duration'   => $b_data['duration']
+        'duration'   => $b_data['duration'],
+        'icon'       => $page_id ? get_the_post_thumbnail_url($page_id, 'gw-service-icon') : ''
     );
 }
 
@@ -56,7 +57,7 @@ function gary_render_service_card_html( $data ) {
     $thumb_url = $item['thumbnail'];
     if ( !$thumb_url ) {
         $logo_id = get_theme_mod( 'custom_logo' );
-        $thumb_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'full' ) : '';
+        $thumb_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'gw-logo' ) : '';
     }
 
     ob_start(); ?>
@@ -70,7 +71,7 @@ function gary_render_service_card_html( $data ) {
 
             <div class="service-card-image">
                 <?php if ( $thumb_url ) : ?>
-                    <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($item['title']); ?>" />
+                    <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($item['title']); ?>" width="500" height="500" loading="lazy" />
                 <?php else : ?>
                     <div class="fallback-placeholder">GW</div>
                 <?php endif; ?>

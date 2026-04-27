@@ -11,7 +11,7 @@ get_header(); ?>
             <!-- Full Width Hero Image if exists -->
             <?php if ( has_post_thumbnail() ) : ?>
                 <div class="legacy-hero" style="height:70vh; width:100%; overflow:hidden;">
-                    <?php the_post_thumbnail('full', array('style' => 'width:100%; height:100%; object-fit:cover;')); ?>
+                    <?php the_post_thumbnail('gw-hero', array('style' => 'width:100%; height:100%; object-fit:cover;')); ?>
                 </div>
             <?php endif; ?>
 
