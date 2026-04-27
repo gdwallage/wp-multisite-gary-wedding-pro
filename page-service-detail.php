@@ -70,12 +70,6 @@ $is_package = !empty( $summary['grid_items'] );
         
         <header class="service-hero-header" style="text-align:center; margin-bottom: 30px; margin-top: 0;">
             <h1 class="entry-title"><?php echo esc_html( gary_clean_service_name( get_the_title() ) ); ?></h1>
-            <p style="opacity:0.6; text-transform:uppercase; letter-spacing:3px; font-size:0.8rem; margin-top:10px;">
-                <?php echo $is_package
-                    ? 'A curated package — every moment of your day, expertly covered'
-                    : 'A dedicated session — focused, personal and crafted around you';
-                ?>
-            </p>
         </header>
 
         <div class="service-hero-single-column">
@@ -86,12 +80,6 @@ $is_package = !empty( $summary['grid_items'] );
                     <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
                 </div>
 
-                <?php if ( ! empty( $summary['titles'] ) ) : ?>
-                    <p style="font-family:'Lato', sans-serif; font-size:1rem; line-height:1.6; color:var(--brand-accent); font-weight:700; margin-bottom: 30px; border-left: 2px solid var(--brand-gold-light); padding-left: 15px;">
-                        <?php echo $is_package ? 'This package includes:' : 'This session covers:'; ?>
-                        <?php echo esc_html( implode(', ', $summary['titles']) ); ?>
-                    </p>
-                <?php endif; ?>
 
                 <?php if ( !empty($highlights) ) : ?>
                     <h3 style="font-family:'Lato', sans-serif; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">The finer details of your day:</h3>
@@ -115,7 +103,7 @@ $is_package = !empty( $summary['grid_items'] );
         <!-- Bottom Section Placeholder (Sub-services now immediately follow main split) -->
 
         <div style="margin-top: 80px; text-align: center;">
-            <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--brand-gold-light); text-decoration:none; font-weight:700;">Back to top level packages &rarr;</a>
+            <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--brand-gold-light); text-decoration:none; font-weight:700;">Back to top level packages and Individual Services &rarr;</a>
         </div>
 
     </div>
