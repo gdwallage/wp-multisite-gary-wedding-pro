@@ -177,8 +177,8 @@ main.site-main.home,
 .hero-peek-track {
     position: relative;
     width: 100%;
-    height: 80vh;
-    min-height: 550px;
+    height: 72vh;
+    min-height: 530px;
     display: flex;
     align-items: stretch;
     justify-content: center;

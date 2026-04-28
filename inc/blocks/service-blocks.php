@@ -70,10 +70,11 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_cta_plaque_block',
         'category' => 'gary-editorial-native',
         'attributes' => array(
-            'title'    => array( 'type' => 'string', 'default' => 'Ready to Secure Your Date?' ),
-            'content'  => array( 'type' => 'string', 'default' => 'I take on a limited number of weddings each year.' ),
-            'btn_text' => array( 'type' => 'string', 'default' => 'Inquire Now' ),
-            'btn_url'  => array( 'type' => 'string', 'default' => '/contact/' )
+            'title'         => array( 'type' => 'string', 'default' => 'Ready to Secure Your Date?' ),
+            'content'       => array( 'type' => 'string', 'default' => 'I take on a limited number of weddings each year.' ),
+            'btn_text'      => array( 'type' => 'string', 'default' => 'Contact Me' ),
+            'contact_email' => array( 'type' => 'string', 'default' => '' ),
+            'btn_url'       => array( 'type' => 'string', 'default' => '' ) // Legacy — kept for BC
         )
     ));
 
@@ -281,23 +282,38 @@ function gary_wedding_editor_grid_fix() {
         .wp-block-gw-single-service { display: contents !important; }
         .wp-block-gw-single-service > div { display: contents !important; }
         
-        /* Force 3 Columns on Desktop in Editor */
+        /* -------------------------------------------------------
+           FEATURED SERVICES GRID — Editor parity with live site
+           The JS editor wraps InnerBlocks in .gw-grid-container > .services-grid
+           We must unbox the block-editor intermediate elements so the grid
+           columns flow correctly.
+        ------------------------------------------------------- */
         @media (min-width: 1024px) {
+            /* The outer GW block wrapper must not interfere */
+            .wp-block[data-type="gw/service-grid"] { max-width: 100% !important; }
+
+            /* The editor div.gw-grid-container itself becomes the 3-col grid */
+            .editor-styles-wrapper .gw-grid-container {
+                display: block !important;
+            }
+            /* The .services-grid inside the editor matches live: 3-col */
             .editor-styles-wrapper .services-grid {
                 display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
                 gap: 20px !important;
                 width: 100% !important;
+                row-gap: 40px !important;
+            }
+            /* Unwrap the block-editor inner layers so cards sit directly in grid */
+            .editor-styles-wrapper .services-grid > .block-editor-inner-blocks,
+            .editor-styles-wrapper .services-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
+                display: contents !important;
             }
         }
 
         /* Disable Clickability in Editor */
         .editor-styles-wrapper a.service-card-link { pointer-events: none !important; cursor: default !important; }
         .editor-styles-wrapper .service-card-link * { pointer-events: none !important; }
-
-        .editor-styles-wrapper .services-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
-            display: contents !important;
-        }
 
         .editor-styles-wrapper .service-card { border: var(--gold-frame-border) solid var(--brand-gold-light) !important; background: var(--brand-white) !important; height: 100% !important; }
 
@@ -318,7 +334,7 @@ function gary_wedding_editor_grid_fix() {
             margin-left: -5% !important; 
             z-index: 10 !important; 
             background: #fff; 
-            padding: 60px !important; 
+            padding: 38px 48px !important; 
             border: 2px solid #C5A059 !important;
             display: flex !important;
             flex-direction: column !important;
@@ -333,7 +349,7 @@ function gary_wedding_editor_grid_fix() {
         .wp-block[data-type="gw/trio-gallery"] .gw-trio-side { flex: 1 !important; display: flex !important; flex-direction: column !important; gap: 20px !important; }
 
         /* USPs Spacing Fix */
-        .wp-block[data-type="gw/usps-3col"] { margin-top: 10px !important; margin-bottom: 10px !important; }
+        .wp-block[data-type="gw/usps-3col"] { margin-top: 0 !important; margin-bottom: 0 !important; padding: 0 !important; }
         
         /* Check Your Date (Action Steps) */
         .wp-block[data-type="gw/action-step-container"] > div { width: 80% !important; margin: 40px auto !important; }
@@ -458,17 +474,24 @@ function gary_render_chapter_break_block( $atts ) {
 }
 
 function gary_render_cta_plaque_block( $atts ) {
-    $target_email = get_option('admin_email');
+    // Use the block's explicitly set email, fall back to site admin email
+    $email = !empty($atts['contact_email']) ? $atts['contact_email'] : get_option('admin_email');
     $service = get_the_title();
+    $subject = urlencode( 'Wedding Photography Enquiry — ' . $service );
+    $mailto  = 'mailto:' . esc_attr( $email ) . '?subject=' . $subject;
+
     return '
     <div class="gw-cta-plaque gw-editorial-gold-box container" style="background: var(--brand-white); border: 2px solid var(--brand-gold-light); padding: 50px; text-align: center; box-shadow: var(--shadow-deep); margin: 60px auto; max-width: 800px;">
         <h3 style="font-family: var(--font-primary); font-size: 2rem; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-gold-light); margin-bottom: 20px;">' . esc_html($atts['title']) . '</h3>
         <p style="font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px;">' . esc_html($atts['content']) . '</p>
         <div class="gw-cta-btn-wrap">
-            <a href="javascript:void(0)" class="btn-black gw-request-modal-trigger" data-email="' . esc_attr($target_email) . '" data-service="' . esc_attr($service) . '">' . esc_html($atts['btn_text']) . '</a>
+            <a href="' . esc_url($mailto) . '" class="btn-black" style="display:inline-flex; align-items:center; gap:10px; padding:16px 36px; text-decoration:none; letter-spacing:2px; font-size:0.85rem;">'
+                . esc_html($atts['btn_text']) .
+            '</a>
         </div>
     </div>';
 }
+
 
 function gary_render_trust_bar_block( $atts ) {
     return '

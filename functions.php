@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.70.0
+ * Version: 3000.72.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -44,7 +44,7 @@ function gary_optimized_custom_logo($html) {
     $logo_id = get_theme_mod('custom_logo');
     if (!$logo_id) return $html;
 
-    $logo_size = get_theme_mod('logo_size_px', '150');
+    $logo_size = get_theme_mod('logo_size_px', '225');
     $image = wp_get_attachment_image($logo_id, 'gw-logo', false, array(
         'class'    => 'custom-logo',
         'itemprop' => 'logo',
@@ -87,7 +87,7 @@ function gary_customize_register($wp_customize)
 {
     // Header & Logo
     $wp_customize->add_section('gary_header_options', array('title' => 'Header Options'));
-    $wp_customize->add_setting('logo_size_px', array('default' => '150', 'transport' => 'refresh'));
+    $wp_customize->add_setting('logo_size_px', array('default' => '225', 'transport' => 'refresh'));
     $wp_customize->add_control('logo_size_px', array('label' => 'Logo Size (px)', 'section' => 'gary_header_options', 'type' => 'number'));
 
     // Hero Slider — Page Picker
@@ -150,7 +150,7 @@ add_action('customize_register', 'gary_customize_register');
  * DYNAMIC STYLING
  */
 add_action('wp_head', function () {
-    $logo_size = get_theme_mod('logo_size_px', '150');
+    $logo_size = get_theme_mod('logo_size_px', '225');
     $theme_uri = get_template_directory_uri();
     
     // Dynamic Logo Sizing

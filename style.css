@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.70.0
+ * Version: 3000.72.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -98,8 +98,8 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: none; }
 .header-focal-container { 
-    display: flex; align-items: flex-start; justify-content: space-between; 
-    max-width: var(--site-max-width); margin: 0 auto; padding: 5px 40px 0; min-height: auto; 
+    display: flex; align-items: center; justify-content: space-between; 
+    max-width: var(--site-max-width); margin: 0 auto; padding: 24px 40px 0; min-height: auto; 
 }
 
 /* Accessibility: Ensure menu text and buttons have sufficient contrast */
@@ -117,29 +117,30 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
 .gw-service-looking-for { color: var(--brand-black) !important; font-weight: 700; }
 .footer-meta p { opacity: 1 !important; color: #fff !important; } /* Fix footer contrast */    width: var(--editorial-width);
 }
-.focal-side { flex: 1; display: flex; align-items: flex-start; margin-top: 5px; padding-bottom: 12px; }
+.focal-side { flex: 1; display: flex; align-items: center; margin-top: 0; padding-bottom: 16px; }
 .focal-left { justify-content: flex-start; }
 .focal-right { justify-content: flex-end; }
 .focal-center { 
     flex: 0 0 auto; text-align: center; padding: 0 40px; position: relative; 
-    top: 0px; z-index: 1100; margin-bottom: -80px;
+    top: 0px; z-index: 1100; margin-bottom: -100px;
 }
 
-.site-title-blacksword { color: var(--brand-accent); font-size: 1.6rem; margin: 0; line-height: 1.1; }
-.site-tagline-lato { font-size: 0.65rem; letter-spacing: 2px; text-transform: none; opacity: 0.7; margin-top: 6px; }
+.site-title-blacksword { color: var(--brand-accent); font-size: 1.9rem; margin: 0; line-height: 1.1; }
+.site-tagline-lato { font-size: 0.72rem; letter-spacing: 2px; text-transform: none; opacity: 0.7; margin-top: 8px; }
 .focal-center .custom-logo-link img { 
-    max-width: 220px; 
-    max-height: 140px; 
+    max-width: 330px; 
+    max-height: 210px; 
     width: auto; 
     height: auto; 
     transition: 0.3s; 
 }
 
 .menu-toggle { 
-    font-family: var(--font-primary); font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; 
-    background: none; border: 1px solid var(--brand-gold-light); padding: 10px 20px; 
+    font-family: var(--font-primary); font-weight: 700; letter-spacing: 3px; font-size: 1rem; 
+    background: none; border: 1px solid var(--brand-gold-light); padding: 16px 28px; 
     cursor: pointer; color: var(--brand-accent); text-transform: none; 
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
+    min-height: 60px;
 }
 
 .hamburger-box { width: 24px; height: 14px; position: relative; }
@@ -154,14 +155,65 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
 .menu-toggle[aria-expanded="true"] .hamburger-inner::before { transform: rotate(45deg); top: 0; }
 .menu-toggle[aria-expanded="true"] .hamburger-inner::after { transform: rotate(-45deg); top: 0; }
 
-.menu-overlay { position: fixed; inset: 0; background: rgba(249, 249, 247, 0.98); z-index: 9999; opacity: 0; visibility: hidden; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
+/* Menu overlay: 80% wide / 80% tall floating panel — never fullscreen */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55); /* Dark scrim behind the panel */
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+    backdrop-filter: blur(3px);
+}
 .menu-overlay[aria-hidden="false"] { opacity: 1; visibility: visible; }
-.nav-menu-overlay { list-style: none; padding: 0; text-align: center; }
-.nav-menu-overlay li { margin-bottom: 30px; }
+
+/* The inner panel — the actual 80×80 floating box */
+.menu-overlay-inner {
+    position: relative;
+    width: 80%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: rgba(249, 249, 247, 0.98);
+    border: 1px solid rgba(197, 160, 89, 0.35);
+    box-shadow: 0 40px 120px rgba(0,0,0,0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    box-sizing: border-box;
+    transform: scale(0.92) translateY(20px);
+    transition: transform 0.45s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.45s ease;
+    opacity: 0;
+}
+.menu-overlay[aria-hidden="false"] .menu-overlay-inner {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.menu-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: none; border: none;
+    font-size: 2rem; cursor: pointer;
+    color: var(--brand-accent);
+    line-height: 1;
+    transition: color 0.3s;
+}
+.menu-close:hover { color: var(--brand-gold-light); }
+
+.nav-menu-overlay { list-style: none; padding: 0; margin: 0; text-align: center; }
+.nav-menu-overlay li { margin-bottom: 28px; }
 .nav-menu-overlay li a { 
-    font-size: 2.2rem; font-weight: 700; text-transform: none; letter-spacing: 5px; color: var(--brand-text); 
+    font-size: 2rem; font-weight: 700; text-transform: none; letter-spacing: 5px; color: var(--brand-text); 
     transition: 0.4s;
 }
+.nav-menu-overlay li a:hover { color: var(--brand-accent); }
 .btn-black:hover { background: var(--brand-gold-light); color: var(--brand-white); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
 /* --- MOBILE HEADER OVERRIDE --- */
@@ -169,7 +221,7 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
     .header-focal-container { 
         height: auto !important; 
         flex-direction: column !important; 
-        padding: 30px 20px 0 !important; /* Increased top buffer */
+        padding: 30px 20px 0 !important;
         min-height: auto !important;
         align-items: center !important;
     }
@@ -195,12 +247,13 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
-        padding: 10px 20px !important;
-        font-size: 0.8rem !important;
+        padding: 14px 24px !important;
+        font-size: 0.9rem !important;
         border: 2px solid var(--brand-gold-light) !important;
         background: var(--brand-white) !important;
         color: var(--brand-black) !important;
         z-index: 1200 !important;
+        min-height: 54px !important;
         align-items: center;
         justify-content: center;
     }
@@ -214,14 +267,18 @@ body:not(.home) h1.entry-title { margin-top: 90px !important; }
         position: relative !important;
         top: 0 !important;
     }
-    .focal-center .custom-logo-link img { max-width: 160px !important; max-height: 100px !important; width: auto !important; height: auto !important; }
+    .focal-center .custom-logo-link img { max-width: 200px !important; max-height: 130px !important; width: auto !important; height: auto !important; }
 
-    .site-title-blacksword { font-size: 1.4rem !important; }
-    .site-tagline-lato { font-size: 0.6rem !important; letter-spacing: 1px !important; }
+    .site-title-blacksword { font-size: 1.6rem !important; }
+    .site-tagline-lato { font-size: 0.65rem !important; letter-spacing: 1px !important; }
 
     /* Mobile H1 Adjustment (Closer to Logo) */
     body:not(.home) h1.entry-title,
     body:not(.home) .page-content h1:first-of-type { margin-top: 40px !important; margin-bottom: 30px !important; }
+
+    /* Mobile overlay: narrower panel */
+    .menu-overlay-inner { width: 94% !important; padding: 50px 24px !important; max-height: 85vh !important; }
+    .nav-menu-overlay li a { font-size: 1.6rem !important; letter-spacing: 3px !important; }
 }
 
 
@@ -459,7 +516,7 @@ main#primary .gw-z-content,
 .gw-z-content { 
     flex: 1 !important; 
     background: var(--brand-white) !important; 
-    padding: 60px !important; 
+    padding: 38px 48px !important; 
     box-shadow: var(--shadow-deep) !important; 
     margin-left: -5% !important; 
     z-index: 10 !important; 
@@ -754,10 +811,12 @@ body #primary .gw-trio-bottom img,
 }
 .gw-trust-bar p { color: var(--brand-gold-light); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; text-align: center; margin: 0 auto; font-weight: 700; max-width: 80%; }
 
-.gw-usps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; padding: 80px 0; }
+.gw-usps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; padding: 32px 0; }
+.gw-usps-block.container { padding-top: 10px; padding-bottom: 10px; }
+.gw-block-main-title { margin-bottom: 20px !important; }
 .gw-usp-col { text-align: center; }
-.gw-usp-col h4 { font-family: var(--font-primary); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-gold-light); margin-bottom: 20px; }
-.gw-usp-col p { font-size: 0.95rem; line-height: 1.7; opacity: 0.7; }
+.gw-usp-col h4 { font-family: var(--font-primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-gold-light); margin-bottom: 10px; }
+.gw-usp-col p { font-size: 0.9rem; line-height: 1.6; opacity: 0.7; margin: 0; }
 
 .gw-process-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; padding: 80px 0; border-top: 1px solid #eee; }
 .gw-process-col { position: relative; }

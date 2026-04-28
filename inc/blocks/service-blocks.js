@@ -313,21 +313,43 @@
         attributes: {
             title: { type: 'string', default: 'Ready to Secure Your Date?' },
             content: { type: 'string', default: 'I take on a limited number of weddings each year.' },
-            btn_text: { type: 'string', default: 'Inquire Now' },
-            btn_url: { type: 'string', default: '/contact/' }
+            btn_text: { type: 'string', default: 'Contact Me' },
+            contact_email: { type: 'string', default: '' },
+            btn_url: { type: 'string', default: '' } // Legacy — kept for BC
         },
         edit: function(props) {
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'CTA Settings' },
-                    el(TextControl, { label: 'Button Text', value: atts.btn_text, onChange: function(v) { props.setAttributes({ btn_text: v }); } }),
-                    el(TextControl, { label: 'Button URL', value: atts.btn_url, onChange: function(v) { props.setAttributes({ btn_url: v }); } })
+                el(PanelBody, { title: 'CTA Settings', initialOpen: true },
+                    el(TextControl, {
+                        label: 'Heading',
+                        value: atts.title,
+                        onChange: function(v) { props.setAttributes({ title: v }); }
+                    }),
+                    el(TextControl, {
+                        label: 'Body Text',
+                        value: atts.content,
+                        onChange: function(v) { props.setAttributes({ content: v }); }
+                    }),
+                    el(TextControl, {
+                        label: 'Button Label',
+                        value: atts.btn_text,
+                        onChange: function(v) { props.setAttributes({ btn_text: v }); }
+                    }),
+                    el(TextControl, {
+                        label: 'Contact Email (mailto:)',
+                        help: 'The email address the button will open. Leave blank to use the site admin email.',
+                        type: 'email',
+                        value: atts.contact_email,
+                        onChange: function(v) { props.setAttributes({ contact_email: v }); }
+                    })
                 )
             );
             return el('div', null, inspector, el(ServerSideRender, { block: 'gw/cta-plaque', attributes: atts }));
         },
         save: function() { return null; }
     });
+
 
     // 8. Trust Bar
     registerBlockType('gw/trust-bar', {
