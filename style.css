@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.64.0
+ * Version: 3000.70.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -442,7 +442,7 @@ main#primary .gw-z-pattern,
 body #primary .gw-z-pattern.is-right,
 .gw-z-pattern.is-right { flex-direction: row-reverse !important; }
 body #primary .gw-z-image,
-.gw-z-image { flex: 0 0 35% !important; max-width: 35% !important; }
+.gw-z-image { flex: 0 0 38% !important; max-width: 38% !important; }
 body #primary .gw-z-image img,
 main#primary .gw-z-image img,
 .gw-z-image img { 
@@ -457,21 +457,24 @@ main#primary .gw-z-image img,
 body #primary .gw-z-content,
 main#primary .gw-z-content,
 .gw-z-content { 
-    flex: 0 0 50% !important; 
+    flex: 1 !important; 
     background: var(--brand-white) !important; 
     padding: 60px !important; 
     box-shadow: var(--shadow-deep) !important; 
-    margin-left: -8% !important; 
+    margin-left: -5% !important; 
     z-index: 10 !important; 
     position: relative !important; 
     border: 2px solid var(--brand-gold-light) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
 }
 body #primary .gw-z-pattern.is-right { flex-direction: row-reverse !important; }
 body #primary .gw-z-pattern.is-right .gw-z-content,
-.gw-z-pattern.is-right .gw-z-content { margin-left: 0 !important; margin-right: -8% !important; }
+.gw-z-pattern.is-right .gw-z-content { margin-left: 0 !important; margin-right: -5% !important; }
 
 /* --- 6. GALLERY WALL TRIO (EDITORIAL GRID - ID NUKE) --- */
-.gw-trio-gallery-wrapper { margin-top: 80px; margin-bottom: 80px; }
+.gw-trio-gallery-wrapper { margin: 80px auto !important; max-width: 80% !important; }
 body #primary .gw-trio-gallery,
 main#primary .gw-trio-gallery,
 .gw-trio-gallery { 
@@ -482,7 +485,7 @@ main#primary .gw-trio-gallery,
     width: 100% !important;
 }
 body #primary .gw-trio-main,
-.gw-trio-main { flex: 0 0 60% !important; }
+.gw-trio-main { flex: 0 0 48% !important; }
 body #primary .gw-trio-side,
 .gw-trio-side { flex: 1 !important; display: flex !important; flex-direction: column !important; gap: 20px !important; }
 body #primary .gw-trio-top,
@@ -582,7 +585,7 @@ body #primary .gw-trio-bottom img,
 .footer-meta { 
     border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; margin-top: 60px; 
     text-align: center; font-size: 0.68rem; letter-spacing: 3px; 
-    text-transform: uppercase; opacity: 0.4; 
+    text-transform: uppercase; opacity: 0.65; 
     width: var(--editorial-width); max-width: var(--site-max-width); margin-left: auto; margin-right: auto;
 }
 

@@ -92,7 +92,8 @@ $slide_count = count( $slides );
             <?php endif; ?>
 
             <div class="hero-peek-caption">
-                <h1 class="hero-peek-title"><?php echo esc_html( $slide['title'] ); ?></h1>
+                <?php $title_tag = ($index === 0) ? 'h1' : 'h2'; ?>
+                <<?php echo $title_tag; ?> class="hero-peek-title"><?php echo esc_html( $slide['title'] ); ?></<?php echo $title_tag; ?>>
                 <?php if ( ! empty( $slide['subtitle'] ) ) : ?>
                     <p class="hero-peek-subtitle"><?php echo esc_html( wp_trim_words( $slide['subtitle'], 12 ) ); ?></p>
                 <?php endif; ?>

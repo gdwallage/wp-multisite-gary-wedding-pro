@@ -1,6 +1,6 @@
 # Gary Wallage Wedding Pro — Theme Design Guide & Technical Reference
 
-> **Version 3000.21.0** | WordPress Multisite | Boutique Editorial Aesthetic
+> **Version 3000.70.0** | WordPress Multisite | Boutique Editorial Aesthetic
 > **Live Site**: https://wedding.garywallage.uk
 
 ---
@@ -133,9 +133,10 @@ Right-hand sidebar on `page-service-detail.php`. Shows:
 
 **CSS:** `.gw-z-pattern` — alternates image left/right with overlapping text box
 - Width constrained: `80%` / max `1500px` — **never edge-to-edge**
-- Image: 55% width, white border frame, deep shadow
-- Content box: 50% width, overlaps image by 8%, 4-sided gold border `2px solid var(--brand-gold-light)`
-- Alternating direction: `.is-right` reverses flex order
+- Image: 38% width, acting as a high-fidelity 'teaser' to support the storytelling.
+- Content box: 62% width, flexbox vertically centered text, overlapping image by 5%.
+- Border: 4-sided gold border `2px solid var(--brand-gold-light)` around the content.
+- Alternating direction: `.is-right` reverses flex order.
 
 ---
 
@@ -159,6 +160,21 @@ Only active on pages using the `page-about.php` template (body class: `page-temp
 - CSS: answers hidden (`max-height: 0`), expand on `.open` class
 - Trigger shows `+` / `−` indicator via `::after` pseudo-element
 - **No plugin required** — pure CSS + vanilla JS
+
+---
+
+### 7. Trio Gallery Wall
+
+- Constrained to `80%` max width to avoid edge-to-edge blowouts.
+- Ratio: Main featured image uses `48%` of the width; the remaining two images stack vertically on the side.
+- Used for high-end curated teaser clusters, rather than full portfolio dumps.
+
+---
+
+### 8. Gutenberg Editor Parity
+
+- **1:1 Live Preview:** Editor uses `data-type` CSS overrides (`max-width: 100%`) so that blocks can expand to the live site's `80%` constraint.
+- **De-coupled Uploads:** Images in the editor preview are un-clickable to prevent accidental media library popups. All image replacement controls are located in the right-hand Inspector Sidebar.
 
 ---
 
@@ -249,7 +265,7 @@ The theme version string appears in three places. **Always update all three toge
 2. `functions.php` — `gary_send_performance_headers()` preload header
 3. `functions.php` — `gary_wedding_scripts()` enqueue call
 
-Current version: **3000.21.0**
+Current version: **3000.70.0**
 
 ---
 

@@ -117,6 +117,13 @@
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
                 el(PanelBody, { title: 'Media Settings', initialOpen: true },
+                    el(MediaUpload, {
+                        onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
+                        allowedTypes: ['image'], value: atts.image_id,
+                        render: function(obj) {
+                            return el(Button, { isPrimary: true, onClick: obj.open, style: { width: '100%', marginBottom: '15px', justifyContent: 'center' } }, atts.image_id ? 'Replace Image' : 'Select Image');
+                        }
+                    }),
                     el(SelectControl, {
                         label: 'Image Position', value: atts.image_pos,
                         options: [{ label: 'Left', value: 'left' }, { label: 'Right', value: 'right' }],
@@ -135,21 +142,13 @@
                 )
             );
 
-            const mediaUploader = el(MediaUpload, {
-                onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
-                allowedTypes: ['image'], value: atts.image_id,
-                render: function(obj) {
-                    return el(Button, {
-                        onClick: obj.open,
-                        className: 'button button-large',
-                        style: { width: '100%', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' }
-                    }, atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'cover' } }) : 'Upload Image');
-                }
-            });
+            const imagePreview = atts.image_url 
+                ? el('img', { src: atts.image_url, style: { width: '100%', height: 'auto', objectFit: 'cover', display: 'block' } }) 
+                : el('div', { style: { minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' } }, 'Select Image in Sidebar');
 
             return el('div', { className: 'gw-z-pattern is-' + atts.image_pos },
                 inspector,
-                el('div', { className: 'gw-z-image' }, mediaUploader),
+                el('div', { className: 'gw-z-image' }, imagePreview),
                 el('div', { className: 'gw-z-content' },
                     el(InnerBlocks, {
                         template: [
@@ -176,8 +175,22 @@
         },
         edit: function(props) {
             const atts = props.attributes;
+            
+            const createSidebarUploader = (targetPrefix, label) => el(MediaUpload, {
+                onSelect: function(media) { props.setAttributes({ [`${targetPrefix}_url`]: media.url, [`${targetPrefix}_id`]: media.id }); },
+                allowedTypes: ['image'], value: atts[`${targetPrefix}_id`],
+                render: function(obj) {
+                    return el(Button, { isSecondary: true, onClick: obj.open, style: { width: '100%', marginBottom: '15px', justifyContent: 'center' } }, atts[`${targetPrefix}_id`] ? `Replace ${label}` : `Select ${label}`);
+                }
+            });
+
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Media Settings', initialOpen: true },
+                el(PanelBody, { title: 'Media Selection', initialOpen: true },
+                    createSidebarUploader('img1', 'Main Image'),
+                    createSidebarUploader('img2', 'Top Side Image'),
+                    createSidebarUploader('img3', 'Bottom Side Image')
+                ),
+                el(PanelBody, { title: 'Image Resolutions', initialOpen: false },
                     [1,2,3].map(i => el(SelectControl, {
                         label: `Image ${i} Resolution`, value: atts[`img${i}_size`],
                         options: [
@@ -191,15 +204,9 @@
                 )
             );
 
-            const createUploader = (targetPrefix, height) => el(MediaUpload, {
-                onSelect: function(media) { props.setAttributes({ [`${targetPrefix}_url`]: media.url, [`${targetPrefix}_id`]: media.id }); },
-                allowedTypes: ['image'], value: atts[`${targetPrefix}_id`],
-                render: function(obj) {
-                    return el(Button, {
-                        onClick: obj.open, style: { width: '100%', height: height, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc', overflow:'hidden' }
-                    }, atts[`${targetPrefix}_url`] ? el('img', { src: atts[`${targetPrefix}_url`], style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Upload');
-                }
-            });
+            const createPreview = (targetPrefix, height) => atts[`${targetPrefix}_url`] 
+                ? el('img', { src: atts[`${targetPrefix}_url`], style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) 
+                : el('div', { style: { width: '100%', height: height, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' } }, 'Select Image');
 
             return el('div', { className: 'gw-trio-gallery-wrapper' },
                 inspector,
@@ -212,10 +219,10 @@
                     style: { textAlign: 'center', fontFamily: 'Blacksword, cursive', fontSize: '2.5rem', fontWeight: 'normal', color: '#B08D55', marginBottom: '20px' }
                 }),
                 el('div', { className: 'gw-trio-gallery' },
-                    el('div', { className: 'gw-trio-main' }, createUploader('img1', '620px')),
+                    el('div', { className: 'gw-trio-main' }, createPreview('img1', '620px')),
                     el('div', { className: 'gw-trio-side' }, 
-                        createUploader('img2', '295px'), 
-                        createUploader('img3', '295px')
+                        el('div', { className: 'gw-trio-top' }, createPreview('img2', '295px')), 
+                        el('div', { className: 'gw-trio-bottom' }, createPreview('img3', '295px'))
                     )
                 )
             );
@@ -238,6 +245,13 @@
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
                 el(PanelBody, { title: 'Media Settings', initialOpen: true },
+                    el(MediaUpload, {
+                        onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
+                        allowedTypes: ['image'], value: atts.image_id,
+                        render: function(obj) {
+                            return el(Button, { isPrimary: true, onClick: obj.open, style: { width: '100%', marginBottom: '15px', justifyContent: 'center' } }, atts.image_id ? 'Replace Image' : 'Select Image');
+                        }
+                    }),
                     el(SelectControl, {
                         label: 'Media Position', value: atts.image_pos,
                         options: [{ label: 'Left', value: 'left' }, { label: 'Right', value: 'right' }],
@@ -256,19 +270,13 @@
                 )
             );
 
-            const mediaUploader = el(MediaUpload, {
-                onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
-                allowedTypes: ['image'], value: atts.image_id,
-                render: function(obj) {
-                    return el(Button, { onClick: obj.open, style: { width: '100%', minHeight: '400px', display: 'flex', background: '#f5f5f5', border: '2px dashed #ccc' } },
-                        atts.image_url ? el('img', { src: atts.image_url, style: { width: '100%', height:'100%', objectFit: 'cover' } }) : 'Upload'
-                    );
-                }
-            });
+            const imagePreview = atts.image_url 
+                ? el('img', { src: atts.image_url, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) 
+                : el('div', { style: { minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' } }, 'Select Image in Sidebar');
 
             return el('div', { className: 'gw-editorial-split is-' + atts.image_pos },
                 inspector,
-                el('div', { className: 'gw-split-media' }, mediaUploader),
+                el('div', { className: 'gw-split-media' }, imagePreview),
                 el('div', { className: 'gw-split-content' },
                     el(InnerBlocks, {
                         template: [

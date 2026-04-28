@@ -300,6 +300,43 @@ function gary_wedding_editor_grid_fix() {
         }
 
         .editor-styles-wrapper .service-card { border: var(--gold-frame-border) solid var(--brand-gold-light) !important; background: var(--brand-white) !important; height: 100% !important; }
+
+        /* Force our blocks to use full editor width so internal constraints work */
+        .wp-block[data-type^="gw/"] { max-width: 100% !important; }
+
+        /* Z-Pattern Editor Alignment */
+        .wp-block[data-type="gw/z-pattern"] > div { 
+            display: flex !important; 
+            align-items: center !important; 
+            width: 80% !important;
+            margin: 40px auto !important;
+        }
+        .wp-block[data-type="gw/z-pattern"] > div.is-right { flex-direction: row-reverse !important; }
+        .wp-block[data-type="gw/z-pattern"] .gw-z-image { flex: 0 0 38% !important; max-width: 38% !important; }
+        .wp-block[data-type="gw/z-pattern"] .gw-z-content { 
+            flex: 1 !important; 
+            margin-left: -5% !important; 
+            z-index: 10 !important; 
+            background: #fff; 
+            padding: 60px !important; 
+            border: 2px solid #C5A059 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+        }
+        .wp-block[data-type="gw/z-pattern"] > div.is-right .gw-z-content { margin-left: 0 !important; margin-right: -5% !important; }
+
+        /* Trio Gallery Alignment */
+        .wp-block[data-type="gw/trio-gallery"] > div { width: 80% !important; margin: 40px auto !important; }
+        .wp-block[data-type="gw/trio-gallery"] .gw-trio-gallery { display: flex !important; gap: 20px !important; align-items: stretch !important; }
+        .wp-block[data-type="gw/trio-gallery"] .gw-trio-main { flex: 0 0 48% !important; }
+        .wp-block[data-type="gw/trio-gallery"] .gw-trio-side { flex: 1 !important; display: flex !important; flex-direction: column !important; gap: 20px !important; }
+
+        /* USPs Spacing Fix */
+        .wp-block[data-type="gw/usps-3col"] { margin-top: 10px !important; margin-bottom: 10px !important; }
+        
+        /* Check Your Date (Action Steps) */
+        .wp-block[data-type="gw/action-step-container"] > div { width: 80% !important; margin: 40px auto !important; }
     </style>';
 }
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
@@ -421,12 +458,14 @@ function gary_render_chapter_break_block( $atts ) {
 }
 
 function gary_render_cta_plaque_block( $atts ) {
+    $target_email = get_option('admin_email');
+    $service = get_the_title();
     return '
-    <div class="gw-cta-plaque container">
-        <h3>' . esc_html($atts['title']) . '</h3>
-        <p>' . esc_html($atts['content']) . '</p>
+    <div class="gw-cta-plaque gw-editorial-gold-box container" style="background: var(--brand-white); border: 2px solid var(--brand-gold-light); padding: 50px; text-align: center; box-shadow: var(--shadow-deep); margin: 60px auto; max-width: 800px;">
+        <h3 style="font-family: var(--font-primary); font-size: 2rem; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-gold-light); margin-bottom: 20px;">' . esc_html($atts['title']) . '</h3>
+        <p style="font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px;">' . esc_html($atts['content']) . '</p>
         <div class="gw-cta-btn-wrap">
-            <a href="' . esc_url($atts['btn_url']) . '" class="btn-black-gold">' . esc_html($atts['btn_text']) . '</a>
+            <a href="javascript:void(0)" class="btn-black gw-request-modal-trigger" data-email="' . esc_attr($target_email) . '" data-service="' . esc_attr($service) . '">' . esc_html($atts['btn_text']) . '</a>
         </div>
     </div>';
 }
