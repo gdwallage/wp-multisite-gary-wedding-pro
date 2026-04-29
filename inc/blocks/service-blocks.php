@@ -401,7 +401,7 @@ function gary_render_single_service_block( $attributes ) {
                     <?php echo esc_html( $card_data['title'] ); ?>
                 </h2>
                 <?php if( $card_data['savings'] > 0 && !$card_data['is_free']): ?>
-                    <div class="service-card-ribbon" style="top: 15px; right: -45px; font-size: 0.6rem; width: 180px;">SAVING £<?php echo number_format($card_data['savings'], 0); ?></div>
+                    <div class="service-card-ribbon">SAVING £<?php echo number_format($card_data['savings'], 0); ?></div>
                 <?php endif; ?>
             </div>
         </a>

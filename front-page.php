@@ -21,6 +21,30 @@ for ( $i = 1; $i <= $count; $i++ ) {
         );
     }
 }
+
+// FALLBACK: If no slides selected, fetch latest 3 pages with thumbnails
+if ( empty( $slides ) ) {
+    $fallback_query = new WP_Query( array(
+        'post_type'      => 'page',
+        'posts_per_page' => 3,
+        'post_status'    => 'publish',
+        'meta_key'       => '_thumbnail_id', // Only pages with images
+        'orderby'        => 'date',
+        'order'          => 'DESC'
+    ) );
+    if ( $fallback_query->have_posts() ) {
+        while ( $fallback_query->have_posts() ) {
+            $fallback_query->the_post();
+            $slides[] = array(
+                'img_id'   => get_post_thumbnail_id(),
+                'title'    => get_the_title(),
+                'subtitle' => get_the_excerpt(),
+                'url'      => get_permalink()
+            );
+        }
+    }
+    wp_reset_postdata();
+}
 $slide_count = count( $slides );
 ?>
 

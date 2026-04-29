@@ -107,6 +107,31 @@
             &copy; <?php echo date('Y'); ?> Gary Wallage Photography | Wiltshire Historian & Visual Poet
         </p>
     </div>
+    <!-- Inquiry Modal (High Fidelity Boutique Style) -->
+    <div id="gw-request-modal" class="gw-modal-overlay" style="display:none;">
+        <div class="gw-modal-content">
+            <button class="gw-modal-close" aria-label="Close Modal">&times;</button>
+            <div class="gw-modal-header">
+                <h3 class="modal-service-name">Request Details</h3>
+                <p>Let's discuss how I can preserve your legacy.</p>
+            </div>
+            <form id="gw-request-form">
+                <input type="hidden" name="target_email" id="modal-target-email">
+                <input type="hidden" name="service_name" id="modal-service-name-input">
+                <div class="gw-form-row">
+                    <input type="text" name="user_name" placeholder="Your Name" required>
+                </div>
+                <div class="gw-form-row">
+                    <input type="email" name="user_email" placeholder="Email Address" required>
+                </div>
+                <div class="gw-form-row">
+                    <textarea name="user_note" placeholder="Tell me about your day..." rows="4" required></textarea>
+                </div>
+                <div class="gw-form-status" style="margin-bottom:15px; font-size:0.85rem; min-height:1.2em;"></div>
+                <button type="submit" class="btn-black-gold">Send Inquiry</button>
+            </form>
+        </div>
+    </div>
 </footer>
 
 <?php wp_footer(); ?>
