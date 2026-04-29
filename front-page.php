@@ -28,7 +28,6 @@ if ( empty( $slides ) ) {
         'post_type'      => 'page',
         'posts_per_page' => 3,
         'post_status'    => 'publish',
-        'meta_key'       => '_thumbnail_id', // Only pages with images
         'orderby'        => 'date',
         'order'          => 'DESC'
     ) );

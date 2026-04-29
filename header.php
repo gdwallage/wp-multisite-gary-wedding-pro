@@ -16,10 +16,12 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.2.0 - High Fidelity Sync) -->
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.3.0 - High Fidelity Sync) -->
     <style id="gary-final-sync-reset">
-        /* Global Editorial Spacing & Logo Sizing (Overrides Stale Optimization CSS) */
-        body { padding-top: 20px !important; }
+        /* 1. Global Layout & Spacing */
+        body { padding-top: 20px !important; background-color: var(--brand-bg) !important; }
+        
+        /* 2. Header & Branding */
         .site-header .custom-logo { 
             width: 380px !important; 
             max-width: 380px !important; 
@@ -27,8 +29,36 @@
             display: block !important;
             margin: 0 auto !important;
         }
-        .service-card-ribbon { z-index: 100 !important; transform: rotate(45deg) !important; }
-        .gw-bullet-list.is-inclusions { margin-top: 15px !important; }
+        .menu-toggle { gap: 30px !important; border: none !important; background: none !important; }
+        .menu-text { margin-left: 0 !important; }
+
+        /* 3. Component Fidelity (Gold Box & Ribbons) */
+        .gw-editorial-gold-box { 
+            background: #ffffff !important; 
+            border: 2px solid #C5A059 !important; 
+            padding: 40px !important; 
+            display: block !important;
+            box-shadow: 0 15px 45px rgba(189, 161, 114, 0.15) !important;
+        }
+        .service-card-ribbon { 
+            display: block !important;
+            transform: rotate(45deg) !important; 
+            z-index: 100 !important; 
+            background: #B08D55 !important;
+            color: #fff !important;
+        }
+
+        /* 4. Footer & Legal Alignment (Aggressive Reset) */
+        body .footer-legal-list, 
+        body ul.footer-legal-list { list-style: none !important; padding: 0 !important; margin: 0 !important; }
+        body .footer-legal-list li,
+        body ul.footer-legal-list li { list-style-type: none !important; list-style-image: none !important; margin-left: 0 !important; padding-left: 0 !important; }
+        body .footer-legal-list li::marker, 
+        body .footer-legal-list li::before { content: none !important; display: none !important; }
+        
+        .site-footer .footer-social,
+        body .footer-social { text-align: center !important; display: block !important; width: 100% !important; margin-top: 30px !important; padding-top: 20px !important; }
+        .footer-social-icons { justify-content: center !important; display: flex !important; gap: 15px !important; }
     </style>
     <script>
     (function() {
