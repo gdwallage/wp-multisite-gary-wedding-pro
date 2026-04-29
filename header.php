@@ -48,17 +48,41 @@
             color: #fff !important;
         }
 
-        /* 4. Footer & Legal Alignment (Aggressive Reset) */
+        /* 4. Footer & Legal Alignment (High-Fidelity Reset) */
         body .footer-legal-list, 
-        body ul.footer-legal-list { list-style: none !important; padding: 0 !important; margin: 0 !important; }
-        body .footer-legal-list li,
-        body ul.footer-legal-list li { list-style-type: none !important; list-style-image: none !important; margin-left: 0 !important; padding-left: 0 !important; }
-        body .footer-legal-list li::marker, 
-        body .footer-legal-list li::before { content: none !important; display: none !important; }
+        body ul.footer-legal-list,
+        body .footer-nav-list,
+        body ul.footer-nav-list { list-style: none !important; padding: 0 !important; margin: 0 !important; }
         
+        body .footer-legal-list li,
+        body ul.footer-legal-list li,
+        body .footer-nav-list li,
+        body ul.footer-nav-list li { list-style-type: none !important; list-style-image: none !important; margin-left: 0 !important; padding-left: 0 !important; }
+        
+        /* Removal of Diamond Bullets (Pseudo-elements) */
+        body .footer-legal-list li::marker, 
+        body .footer-legal-list li::before,
+        body .footer-nav-list li::marker,
+        body .footer-nav-list li::before { content: none !important; display: none !important; }
+        
+        /* Enforced Social Centering */
         .site-footer .footer-social,
-        body .footer-social { text-align: center !important; display: block !important; width: 100% !important; margin-top: 30px !important; padding-top: 20px !important; }
-        .footer-social-icons { justify-content: center !important; display: flex !important; gap: 15px !important; }
+        body .footer-social { 
+            text-align: center !important; 
+            display: flex !important; 
+            flex-direction: column !important;
+            align-items: center !important;
+            width: 100% !important; 
+            margin-top: 30px !important; 
+            padding-top: 20px !important; 
+            border-top: 1px solid rgba(255,255,255,0.05) !important;
+        }
+        .footer-social-icons { 
+            justify-content: center !important; 
+            display: flex !important; 
+            gap: 15px !important; 
+            margin: 0 auto !important;
+        }
     </style>
     <script>
     (function() {
