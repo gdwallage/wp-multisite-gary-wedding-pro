@@ -1,7 +1,7 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.88.0
- * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
- * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
+ * Version: 3000.100.0
+ * Fixes: GLOBAL CACHE PURGE + ZERO-DEPENDENCY MENU.
+ * Added: Milestone v3000.100.0 for Boutique Stability.
  */
 
 @font-face {
@@ -705,25 +705,111 @@ body:not(.home) h1.entry-title {
     transform: translateY(0) !important;
 }
 
-/* --- 2. HERO PEEK CAROUSEL (base reset — full styles in front-page.php) --- */
-/* The peek carousel uses absolute positioning with JS-driven class switching.  */
-/* All detailed styles are co-located in front-page.php for maintainability.    */
+/* --- 2. HERO PEEK CAROUSEL (PEEK THEME ENGINE) --- */
 .hero-peek-carousel {
     position: relative;
     width: 100%;
+    height: 70vh; /* Fixed height to ensure visibility */
+    min-height: 500px;
+    background: #000;
     overflow: hidden;
+}
+
+.hero-peek-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .hero-peek-slide {
     position: absolute;
-    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    transform: scale(1.1);
+}
+
+.hero-peek-slide.active {
+    opacity: 1;
+    z-index: 2;
+    transform: scale(1);
 }
 
 .hero-peek-img {
-    display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: contain !important; /* CARDINAL RULE: NEVER CROP */
+    background: #000;
+}
+
+.hero-peek-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 60px 40px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+    color: #fff;
+    z-index: 10;
+    text-align: center;
+}
+
+.hero-peek-title {
+    font-family: var(--font-script);
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    color: var(--brand-gold-light);
+}
+
+.hero-peek-nav {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    z-index: 20;
+}
+
+.hero-peek-arrow {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.hero-peek-arrow:hover {
+    border-color: var(--brand-gold-light);
+    color: var(--brand-gold-light);
+}
+
+.hero-peek-dots {
+    display: flex;
+    gap: 12px;
+}
+
+.hero-peek-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.hero-peek-dot.active {
+    background: var(--brand-gold-light);
+    transform: scale(1.3);
 }
 
 
@@ -1026,10 +1112,11 @@ body #primary .gw-z-image,
     box-shadow: var(--shadow-deep) !important;
     width: 100% !important;
     height: auto !important;
-    max-height: 25vh !important; /* Reduced from 70vh as requested */
-    object-fit: cover !important;
+    max-height: 45vh !important; /* Adjusted for better proportion */
+    object-fit: contain !important; /* CARDINAL RULE: NEVER CROP */
     border-radius: 0 !important;
     display: block !important;
+    background: var(--brand-bg);
 }
 
 body #primary .gw-z-content,

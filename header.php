@@ -16,88 +16,137 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.5.0 - High Fidelity Sync) -->
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.9.0 - Ultimate Fidelity Sync) -->
     <style id="gary-final-sync-reset">
-        /* 1. Global Layout & Spacing */
+        /* 1. Global Fidelity & No-Crop Rule */
         body { padding-top: 15px !important; background-color: var(--brand-bg) !important; }
         
-        /* 2. Header & Branding */
-        .site-header .custom-logo { 
-            width: 320px !important; /* Slightly reduced to prevent overflow */
-            max-width: 320px !important; 
+        /* CARDINAL RULE: NEVER CROP ANY PHOTOS */
+        img, 
+        .hero-peek-img, 
+        .service-card-image img, 
+        .gw-z-image img, 
+        .gw-trio-gallery img { 
+            object-fit: contain !important; 
+            max-width: 100% !important; 
             height: auto !important; 
-            aspect-ratio: auto !important; /* Ensure no stretching */
-            display: block !important;
-            margin: 0 auto !important;
-            object-fit: contain !important;
-        }
-        .menu-toggle { gap: 30px !important; border: none !important; background: none !important; }
-        .menu-text { margin-left: 0 !important; }
+            background: transparent !important; 
+        } 
 
-        /* 3. Component Fidelity (Gold Box & Ribbons) */
-        .gw-editorial-gold-box { 
-            background: #ffffff !important; 
-            border: 2px solid #C5A059 !important; 
-            padding: 40px !important; 
-            display: block !important;
-            box-shadow: 0 15px 45px rgba(189, 161, 114, 0.15) !important;
+        /* 2. Slider Visibility Fix */
+        .hero-peek-carousel,
+        body .hero-peek-carousel { 
+            height: 70vh !important; 
+            min-height: 500px !important; 
+            display: block !important; 
+            visibility: visible !important;
+            opacity: 1 !important;
+            background: #000 !important;
+            position: relative !important;
+            z-index: 5 !important;
         }
-        .service-card-ribbon { 
-            display: block !important;
-            transform: rotate(45deg) !important; 
-            z-index: 100 !important; 
-            background: #630000 !important; /* Restored Crimson */
-            color: #C5A059 !important; /* Gold text on Crimson */
+        .hero-peek-slide.active { opacity: 1 !important; visibility: visible !important; transform: scale(1) !important; }
+        .hero-peek-track { height: 100% !important; display: block !important; }
+
+        /* 3. Header & Branding */
+        .site-header .custom-logo { width: 320px !important; max-width: 320px !important; height: auto !important; aspect-ratio: auto !important; display: block !important; margin: 0 auto !important; }
+        .menu-toggle { gap: 30px !important; border: none !important; background: none !important; display: flex !important; align-items: center !important; cursor: pointer; }
+        .menu-text { color: var(--brand-accent) !important; font-weight: 700 !important; letter-spacing: 2px !important; }
+
+        /* 4. Component Fidelity (Gold Box, Ribbons & Z-Pattern) */
+        .gw-editorial-gold-box { background: #ffffff !important; border: 2px solid #C5A059 !important; padding: 40px !important; display: block !important; }
+        .service-card-ribbon { display: block !important; transform: rotate(45deg) !important; z-index: 100 !important; background: #630000 !important; color: #C5A059 !important; top: 15px !important; right: -45px !important; position: absolute !important; }
+        
+        /* Enforced Z-Pattern Sizing (45vh Target) */
+        body #primary .gw-z-image img, 
+        main .gw-z-image img { 
+            max-height: 45vh !important; 
+            min-height: 350px !important; 
+            width: auto !important; 
+            border: 15px solid #fff !important;
         }
 
-        /* 4. Footer & Legal Alignment (High-Fidelity Squeeze) */
-        .site-footer { padding-top: 10px !important; margin-top: 30px !important; }
-        .footer-branding h3 { margin-bottom: 5px !important; }
-        body .footer-legal-list, 
-        body ul.footer-legal-list,
-        body .footer-nav-list,
-        body ul.footer-nav-list { list-style: none !important; padding: 0 !important; margin: 0 !important; }
-        
-        body .footer-legal-list li,
-        body ul.footer-legal-list li,
-        body .footer-nav-list li,
-        body ul.footer-nav-list li { list-style-type: none !important; list-style-image: none !important; margin-left: 0 !important; padding-left: 0 !important; }
-        
-        /* Removal of Diamond Bullets (Pseudo-elements) */
-        body .footer-legal-list li::marker, 
-        body .footer-legal-list li::before,
-        body .footer-nav-list li::marker,
-        body .footer-nav-list li::before { content: none !important; display: none !important; }
-        
-        /* Enforced Social Centering */
-        .site-footer .footer-social,
-        body .footer-social { 
-            text-align: center !important; 
-            display: flex !important; 
-            flex-direction: column !important;
-            align-items: center !important;
-            width: 100% !important; 
-            margin-top: 15px !important; /* Reduced from 30px */
-            padding-top: 10px !important; /* Reduced from 20px */
-            border-top: 1px solid rgba(255,255,255,0.05) !important;
-        }
-        .footer-social-icons { 
-            justify-content: center !important; 
-            display: flex !important; 
-            gap: 12px !important; 
-            margin: 0 auto !important;
-            padding-top: 5px !important;
-        }
+        /* 5. Menu & Modal UI Force */
+        .menu-overlay[aria-hidden="false"] { opacity: 1 !important; visibility: visible !important; display: flex !important; }
+        #gw-request-modal { align-items: center !important; justify-content: center !important; z-index: 99999 !important; }
+
+        /* 6. Footer & Legal Alignment */
+        body .footer-legal-list, body ul.footer-legal-list { list-style: none !important; padding: 0 !important; }
+        body .footer-legal-list li::before { content: none !important; display: none !important; }
+        .site-footer .footer-social { text-align: center !important; display: flex !important; flex-direction: column !important; align-items: center !important; width: 100% !important; margin-top: 10px !important; }
     </style>
-    <script>
+
+    <script id="gary-zero-dep-boot">
     (function() {
-        // Observer to ensure dynamic elements (Ribbons, etc.) are stable
+        const ver = '3000.102.0';
+        
+        // 1. ZERO-DEPENDENCY MENU & MODAL LOGIC
+        const initComponents = () => {
+            const toggle = document.querySelector('.menu-toggle');
+            const close = document.querySelector('.menu-close');
+            const overlay = document.getElementById('primary-menu');
+            
+            if (toggle && overlay) {
+                const openMenu = () => { overlay.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; };
+                const closeMenu = () => { overlay.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; };
+                toggle.onclick = (e) => { e.preventDefault(); openMenu(); };
+                if (close) close.onclick = (e) => { e.preventDefault(); closeMenu(); };
+            }
+
+            // INQUIRY MODAL LOGIC
+            const modal = document.getElementById('gw-request-modal');
+            const modalForm = document.getElementById('gw-request-form');
+            if (modal) {
+                document.querySelectorAll('.gw-request-modal-trigger').forEach(btn => {
+                    btn.onclick = (e) => {
+                        e.preventDefault();
+                        const service = btn.dataset.service || 'General Inquiry';
+                        document.querySelector('.modal-service-name').innerText = service;
+                        document.getElementById('modal-service-name-input').value = service;
+                        modal.style.display = 'flex';
+                    };
+                });
+                const modalClose = modal.querySelector('.gw-modal-close');
+                if (modalClose) modalClose.onclick = () => { modal.style.display = 'none'; };
+                
+                if (modalForm) {
+                    modalForm.onsubmit = (e) => {
+                        e.preventDefault();
+                        const status = modalForm.querySelector('.gw-form-status');
+                        status.innerText = 'Sending...';
+                        const data = new FormData(modalForm);
+                        data.append('action', 'gw_submit_request');
+                        fetch('/wp-admin/admin-ajax.php', { method: 'POST', body: data })
+                            .then(r => r.json())
+                            .then(res => {
+                                if (res.success) {
+                                    status.innerText = 'Sent successfully!';
+                                    setTimeout(() => { modal.style.display = 'none'; modalForm.reset(); status.innerText = ''; }, 2000);
+                                } else {
+                                    status.innerText = 'Error: ' + res.data;
+                                }
+                            });
+                    };
+                }
+            }
+        };
+
+        // 2. FIDELITY OBSERVER
         const ensureFidelity = () => {
             document.querySelectorAll('.service-card-ribbon').forEach(el => {
                 el.style.setProperty('display', 'block', 'important');
             });
+            if (document.querySelector('.menu-toggle') && !document.querySelector('.menu-toggle').dataset.init) {
+                document.querySelector('.menu-toggle').dataset.init = 'true';
+                initComponents();
+            }
         };
-        document.addEventListener('DOMContentLoaded', ensureFidelity);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initComponents();
+            ensureFidelity();
+        });
+        
         const observer = new MutationObserver(ensureFidelity);
         observer.observe(document.documentElement, { childList: true, subtree: true });
     })();
