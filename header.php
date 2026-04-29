@@ -16,18 +16,20 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.3.0 - High Fidelity Sync) -->
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.5.0 - High Fidelity Sync) -->
     <style id="gary-final-sync-reset">
         /* 1. Global Layout & Spacing */
-        body { padding-top: 20px !important; background-color: var(--brand-bg) !important; }
+        body { padding-top: 15px !important; background-color: var(--brand-bg) !important; }
         
         /* 2. Header & Branding */
         .site-header .custom-logo { 
-            width: 380px !important; 
-            max-width: 380px !important; 
+            width: 320px !important; /* Slightly reduced to prevent overflow */
+            max-width: 320px !important; 
             height: auto !important; 
+            aspect-ratio: auto !important; /* Ensure no stretching */
             display: block !important;
             margin: 0 auto !important;
+            object-fit: contain !important;
         }
         .menu-toggle { gap: 30px !important; border: none !important; background: none !important; }
         .menu-text { margin-left: 0 !important; }
@@ -44,11 +46,13 @@
             display: block !important;
             transform: rotate(45deg) !important; 
             z-index: 100 !important; 
-            background: #B08D55 !important;
-            color: #fff !important;
+            background: #630000 !important; /* Restored Crimson */
+            color: #C5A059 !important; /* Gold text on Crimson */
         }
 
-        /* 4. Footer & Legal Alignment (High-Fidelity Reset) */
+        /* 4. Footer & Legal Alignment (High-Fidelity Squeeze) */
+        .site-footer { padding-top: 10px !important; margin-top: 30px !important; }
+        .footer-branding h3 { margin-bottom: 5px !important; }
         body .footer-legal-list, 
         body ul.footer-legal-list,
         body .footer-nav-list,
@@ -73,15 +77,16 @@
             flex-direction: column !important;
             align-items: center !important;
             width: 100% !important; 
-            margin-top: 30px !important; 
-            padding-top: 20px !important; 
+            margin-top: 15px !important; /* Reduced from 30px */
+            padding-top: 10px !important; /* Reduced from 20px */
             border-top: 1px solid rgba(255,255,255,0.05) !important;
         }
         .footer-social-icons { 
             justify-content: center !important; 
             display: flex !important; 
-            gap: 15px !important; 
+            gap: 12px !important; 
             margin: 0 auto !important;
+            padding-top: 5px !important;
         }
     </style>
     <script>

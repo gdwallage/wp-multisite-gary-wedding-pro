@@ -1026,7 +1026,7 @@ body #primary .gw-z-image,
     box-shadow: var(--shadow-deep) !important;
     width: 100% !important;
     height: auto !important;
-    max-height: 70vh !important;
+    max-height: 25vh !important; /* Reduced from 70vh as requested */
     object-fit: cover !important;
     border-radius: 0 !important;
     display: block !important;

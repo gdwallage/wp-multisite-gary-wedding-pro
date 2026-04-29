@@ -13,8 +13,15 @@ $count = (int) get_theme_mod( 'hero_slider_count', 3 );
 for ( $i = 1; $i <= $count; $i++ ) {
     $pid = (int) get_theme_mod( "hero_slide_page_{$i}", 0 );
     if ( $pid > 0 ) {
+        $img_id = get_post_thumbnail_id( $pid );
+        // If page has no thumbnail, fallback to logo or a specific branding asset
+        if ( !$img_id ) {
+            $logo_id = get_theme_mod( 'custom_logo' );
+            $img_id = $logo_id;
+        }
+        
         $slides[] = array(
-            'img_id'   => get_post_thumbnail_id( $pid ),
+            'img_id'   => $img_id,
             'title'    => get_the_title( $pid ),
             'subtitle' => get_the_excerpt( $pid ),
             'url'      => get_permalink( $pid )
