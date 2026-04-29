@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.72.0
+ * Version: 3000.90.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -43,8 +43,8 @@ add_filter('wp_editor_set_quality', function() { return 82; });
 function gary_optimized_custom_logo($html) {
     $logo_id = get_theme_mod('custom_logo');
     if (!$logo_id) return $html;
-
-    $logo_size = get_theme_mod('logo_size_px', '225');
+ 
+    $logo_size = get_theme_mod('logo_size_px', '380'); // Increased default to match editorial request
     $image = wp_get_attachment_image($logo_id, 'gw-logo', false, array(
         'class'    => 'custom-logo',
         'itemprop' => 'logo',
@@ -176,12 +176,8 @@ require_once get_template_directory() . '/inc/card-renderer.php';
  */
 function gary_send_performance_headers()
 {
-    if (is_admin())
-        return;
-    $theme = wp_get_theme();
-    $ver = $theme->get('Version');
-    $template_uri = get_template_directory_uri();
-    header("Link: <{$template_uri}/style.css?ver={$ver}>; rel=preload; as=style", false);
+    // Performance headers logic moved to optimization plugin
+    return;
 }
 add_action('send_headers', 'gary_send_performance_headers');
 
@@ -189,7 +185,13 @@ function gary_wedding_scripts()
 {
     $theme = wp_get_theme();
     $ver = $theme->get('Version');
-    wp_enqueue_style('gary-wedding-v3-editorial', get_stylesheet_uri(), array(), $ver);
+    wp_enqueue_script('jquery'); // Enforce jQuery for Inquiry Modals & Availability
+    // Use template_directory_uri to ensure the correct path even if stylesheet_uri is misbehaving
+    wp_enqueue_style('gary-wedding-v3-editorial', get_template_directory_uri() . '/style.css', array(), $ver);
+
+    if ( is_front_page() ) {
+        wp_enqueue_script('gw-hero-slider', get_template_directory_uri() . '/js/hero-slider.js', array('jquery'), $ver, true);
+    }
 }
 add_action('wp_enqueue_scripts', 'gary_wedding_scripts');
 
@@ -198,16 +200,46 @@ function gary_wedding_editor_assets()
 {
     $theme = wp_get_theme();
     $ver = $theme->get('Version');
-    wp_enqueue_script('gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), $ver, true);
+    wp_enqueue_script('gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('jquery', 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render'), $ver, true);
 }
 add_action('enqueue_block_editor_assets', 'gary_wedding_editor_assets');
+
+// Enable Editor Style for Iframe Parity
+function gary_setup_theme() {
+    add_editor_style('style.css');
+}
+add_action('after_setup_theme', 'gary_setup_theme');
+
+// CTA Enquiry AJAX Handler
+function gw_handle_enquiry() {
+    $name    = sanitize_text_field($_POST['user_name']);
+    $email   = sanitize_email($_POST['user_email']);
+    $note    = sanitize_textarea_field($_POST['user_note']);
+    $target  = sanitize_email($_POST['target_email']);
+    $service = sanitize_text_field($_POST['service_name']);
+    
+    if (!$target) $target = get_option('admin_email');
+    
+    $subject = "Enquiry: $service - From $name";
+    $body    = "Name: $name\nEmail: $email\nService: $service\n\nNote:\n$note";
+    $headers = array('Content-Type: text/plain; charset=UTF-8', "From: Gary Wallage Wedding <$target>");
+    
+    $sent = wp_mail($target, $subject, $body, $headers);
+    
+    if ($sent) wp_send_json_success();
+    else wp_send_json_error('Email failed to send.');
+}
+add_action('wp_ajax_gw_submit_request', 'gw_handle_enquiry');
+add_action('wp_ajax_nopriv_gw_submit_request', 'gw_handle_enquiry');
+
 
 function gary_wedding_footer_scripts()
 {
     if (is_admin())
         return; ?>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        (function($){
+            document.addEventListener('DOMContentLoaded', function () {
             const toggleBtn = document.querySelector('.menu-toggle');
             const overlay = document.getElementById('primary-menu');
             if (toggleBtn && overlay) {
@@ -311,9 +343,46 @@ function gary_wedding_footer_scripts()
                         });
                 });
             });
+
+            // --- INQUIRY MODAL LOGIC (CONSOLIDATED) ---
+            $(document).on('click', '.gw-request-modal-trigger', function(){
+                const email = $(this).data('email');
+                const service = $(this).data('service');
+                $('#modal-target-email').val(email);
+                $('#modal-service-name-input').val(service);
+                $('.modal-service-name').text('For: ' + service);
+                $('#gw-request-modal').fadeIn(300).css('display', 'flex');
+                $('body').css('overflow', 'hidden');
+            });
+            $(document).on('click', '.gw-modal-close, .gw-modal-overlay', function(){
+                $('#gw-request-modal').fadeOut(300);
+                $('body').css('overflow', 'auto');
+            });
+            $('#gw-request-form').on('submit', function(e){
+                e.preventDefault();
+                const $status = $(this).find('.gw-form-status').text('Sending Inquiry...').css('color', '#C5A059');
+                const $btn = $(this).find('button').prop('disabled', true).css('opacity', '0.5');
+                
+                $.post('<?php echo admin_url('admin-ajax.php'); ?>', $(this).serialize(), function(res){
+                    if(res.success){
+                        $status.text('Inquiry sent successfully!').css('color', '#2ecc71');
+                        setTimeout(function(){ 
+                            $('#gw-request-modal').fadeOut(300); 
+                            $('body').css('overflow', 'auto');
+                            $btn.prop('disabled', false).css('opacity', '1');
+                            $status.text('');
+                        }, 2500);
+                    } else {
+                        $status.text('Error: ' + (res.data || 'Submission failed')).css('color', '#e74c3c');
+                        $btn.prop('disabled', false).css('opacity', '1');
+                    }
+                });
+            });
+
         });
+        })(jQuery);
     </script>
-    <?php
+<?php
 }
 add_action('wp_footer', 'gary_wedding_footer_scripts');
 

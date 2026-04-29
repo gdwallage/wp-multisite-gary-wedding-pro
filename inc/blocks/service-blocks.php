@@ -70,11 +70,23 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_cta_plaque_block',
         'category' => 'gary-editorial-native',
         'attributes' => array(
-            'title'         => array( 'type' => 'string', 'default' => 'Ready to Secure Your Date?' ),
-            'content'       => array( 'type' => 'string', 'default' => 'I take on a limited number of weddings each year.' ),
-            'btn_text'      => array( 'type' => 'string', 'default' => 'Contact Me' ),
+            'subtitle'      => array( 'type' => 'string', 'default' => '' ),
+            'title'         => array( 'type' => 'string', 'default' => 'Ready to tell your story?' ),
+            'content'       => array( 'type' => 'string', 'default' => 'I take on a limited number of weddings each year to ensure every couple receives my full creative energy. Let’s chat about your plans.' ),
+            'btn_text'      => array( 'type' => 'string', 'default' => 'Inquire Now' ),
+            'btn_text_2'    => array( 'type' => 'string', 'default' => 'Book Consultation' ),
             'contact_email' => array( 'type' => 'string', 'default' => '' ),
-            'btn_url'       => array( 'type' => 'string', 'default' => '' ) // Legacy — kept for BC
+            'btn_url'       => array( 'type' => 'string', 'default' => '/booking/' )
+        )
+    ));
+
+    // 19. Visual Navigation Wall (Tessellated Menu)
+    register_block_type('gw/tessellated-menu', array(
+        'render_callback' => 'gary_render_tessellated_menu',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'menu_slug' => array( 'type' => 'string', 'default' => 'primary' ),
+            'height'    => array( 'type' => 'string', 'default' => '600px' )
         )
     ));
 
@@ -117,6 +129,7 @@ function gary_register_service_blocks() {
             'title'       => array('type' => 'string', 'default' => 'Consultation'),
             'description' => array('type' => 'string', 'default' => ''),
             'target_page' => array('type' => 'number', 'default' => 0),
+            'service_id'  => array('type' => 'string', 'default' => ''),
             'step_num'    => array('type' => 'string', 'default' => '01'),
             'msg_available'  => array('type' => 'string', 'default' => ""),
             'msg_tentative'  => array('type' => 'string', 'default' => "")
@@ -192,22 +205,9 @@ function gary_register_service_blocks() {
         'category' => 'gary-editorial-native',
     ));
 
-    // 15. Full-Width CTA (Was Pattern)
-    register_block_type('gw/cta-fullwidth', array(
-        'render_callback' => 'gary_render_cta_fullwidth_block',
-        'category' => 'gary-editorial-native',
-        'attributes' => array(
-            'image_id' => array('type' => 'number', 'default' => 0),
-            'image_url' => array('type' => 'string', 'default' => ''),
-        )
-    ));
 
-    // 16. Highlights Box
-    register_block_type('gw/list-highlights', array(
-        'render_callback' => 'gary_render_styled_list_box',
-        'category' => 'gary-editorial-native',
-        'attributes' => array( 'type' => array('type' => 'string', 'default' => 'highlights') )
-    ));
+
+
 
     // 17. Included Box
     register_block_type('gw/list-included', array(
@@ -278,84 +278,94 @@ add_action( 'enqueue_block_editor_assets', 'gary_localize_block_data', 20 );
 if ( ! function_exists( 'gary_wedding_editor_grid_fix' ) ) :
 function gary_wedding_editor_grid_fix() {
     echo '<style id="gary-editor-grid-fix">
-        /* Unbox wrappers */
-        .wp-block-gw-single-service { display: contents !important; }
-        .wp-block-gw-single-service > div { display: contents !important; }
+        /* 1. FORCE THE EDITOR IFRAME TO BEHAVE */
+        html, body, .editor-styles-wrapper { background: var(--brand-bg) !important; }
+        .editor-styles-wrapper { padding: 0 !important; }
+        .is-root-container { max-width: 100% !important; padding: 0 !important; }
+        .wp-block-post-content { max-width: 100% !important; margin: 0 !important; }
         
-        /* -------------------------------------------------------
-           FEATURED SERVICES GRID — Editor parity with live site
-           The JS editor wraps InnerBlocks in .gw-grid-container > .services-grid
-           We must unbox the block-editor intermediate elements so the grid
-           columns flow correctly.
-        ------------------------------------------------------- */
-        @media (min-width: 1024px) {
-            /* The outer GW block wrapper must not interfere */
-            .wp-block[data-type="gw/service-grid"] { max-width: 100% !important; }
-
-            /* The editor div.gw-grid-container itself becomes the 3-col grid */
-            .editor-styles-wrapper .gw-grid-container {
-                display: block !important;
-            }
-            /* The .services-grid inside the editor matches live: 3-col */
-            .editor-styles-wrapper .services-grid {
-                display: grid !important;
-                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-                gap: 20px !important;
-                width: 100% !important;
-                row-gap: 40px !important;
-            }
-            /* Unwrap the block-editor inner layers so cards sit directly in grid */
-            .editor-styles-wrapper .services-grid > .block-editor-inner-blocks,
-            .editor-styles-wrapper .services-grid > .block-editor-inner-blocks > .block-editor-block-list__layout {
-                display: contents !important;
-            }
+        /* 2. CORE BLOCK CONSTRAINTS (80% Parity) */
+        .wp-block-post-content > *:not(.alignfull):not(.gw-trust-bar):not([data-type^="gw/"]) {
+            max-width: var(--editorial-width) !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
         }
 
-        /* Disable Clickability in Editor */
-        .editor-styles-wrapper a.service-card-link { pointer-events: none !important; cursor: default !important; }
-        .editor-styles-wrapper .service-card-link * { pointer-events: none !important; }
+        /* 3. HERO SLIDER PLACEHOLDER (FRONT PAGE ONLY) */
+        .editor-post-title__block::before {
+            content: "FRONT PAGE HERO SLIDER (ACTIVE)";
+            display: flex; background: #11110e; color: var(--brand-gold-light); height: 200px;
+            align-items: center; justify-content: center; font-family: var(--font-primary);
+            letter-spacing: 5px; text-transform: uppercase; font-weight: 700; margin-bottom: 40px;
+            border: 2px solid var(--brand-gold-light); opacity: 0.8;
+        }
+        
+        /* 4. CUSTOM BLOCK PARITY (Aggressive Unboxing) */
+        .wp-block[data-type^="gw/"] { 
+            max-width: 100% !important; 
+            width: 100% !important;
+            margin: 0 !important; 
+        }
 
-        .editor-styles-wrapper .service-card { border: var(--gold-frame-border) solid var(--brand-gold-light) !important; background: var(--brand-white) !important; height: 100% !important; }
-
-        /* Force our blocks to use full editor width so internal constraints work */
-        .wp-block[data-type^="gw/"] { max-width: 100% !important; }
-
-        /* Z-Pattern Editor Alignment */
-        .wp-block[data-type="gw/z-pattern"] > div { 
+        /* 5. Z-PATTERN PARITY (Forced Row) */
+        .wp-block[data-type="gw/z-pattern"] .gw-z-pattern { 
             display: flex !important; 
+            flex-direction: row !important;
             align-items: center !important; 
-            width: 80% !important;
-            margin: 40px auto !important;
+            width: var(--editorial-width) !important;
+            margin: 80px auto !important;
+            max-width: var(--site-max-width) !important;
         }
-        .wp-block[data-type="gw/z-pattern"] > div.is-right { flex-direction: row-reverse !important; }
-        .wp-block[data-type="gw/z-pattern"] .gw-z-image { flex: 0 0 38% !important; max-width: 38% !important; }
+        .wp-block[data-type="gw/z-pattern"] .gw-z-pattern.is-right { flex-direction: row-reverse !important; }
+        .wp-block[data-type="gw/z-pattern"] .gw-z-image { flex: 0 0 35% !important; max-width: 35% !important; }
         .wp-block[data-type="gw/z-pattern"] .gw-z-content { 
-            flex: 1 !important; 
-            margin-left: -5% !important; 
-            z-index: 10 !important; 
-            background: #fff; 
-            padding: 38px 48px !important; 
-            border: 2px solid #C5A059 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: center !important;
+            flex: 1 !important; margin-left: -5% !important; background: #fff !important; 
+            padding: 40px !important; border: 2px solid var(--brand-gold-light) !important; 
+            z-index: 10 !important; box-shadow: var(--shadow-soft) !important;
         }
-        .wp-block[data-type="gw/z-pattern"] > div.is-right .gw-z-content { margin-left: 0 !important; margin-right: -5% !important; }
+        .wp-block[data-type="gw/z-pattern"] .gw-z-pattern.is-right .gw-z-content { margin-left: 0 !important; margin-right: -5% !important; }
+        
+        /* Image Height Constraint (70vh Rule) */
+        .wp-block[data-type^="gw/"] img { max-height: 70vh !important; object-fit: cover !important; }
 
-        /* Trio Gallery Alignment */
-        .wp-block[data-type="gw/trio-gallery"] > div { width: 80% !important; margin: 40px auto !important; }
-        .wp-block[data-type="gw/trio-gallery"] .gw-trio-gallery { display: flex !important; gap: 20px !important; align-items: stretch !important; }
-        .wp-block[data-type="gw/trio-gallery"] .gw-trio-main { flex: 0 0 48% !important; }
+        /* 6. FEATURED SERVICES GRID PARITY */
+        .wp-block[data-type="gw/service-grid"] .services-grid { 
+            display: grid !important; 
+            grid-template-columns: repeat(3, 1fr) !important; 
+            gap: 40px !important; 
+            width: var(--editorial-width) !important; 
+            margin: 80px auto !important;
+            max-width: var(--site-max-width) !important;
+        }
+
+        /* 7. TRIO GALLERY PARITY */
+        .wp-block[data-type="gw/trio-gallery"] .gw-trio-gallery { 
+            display: flex !important; 
+            gap: 20px !important; 
+            width: var(--editorial-width) !important;
+            margin: 80px auto !important;
+        }
+        .wp-block[data-type="gw/trio-gallery"] .gw-trio-main { flex: 1.5 !important; }
         .wp-block[data-type="gw/trio-gallery"] .gw-trio-side { flex: 1 !important; display: flex !important; flex-direction: column !important; gap: 20px !important; }
 
-        /* USPs Spacing Fix */
-        .wp-block[data-type="gw/usps-3col"] { margin-top: 0 !important; margin-bottom: 0 !important; padding: 0 !important; }
-        
-        /* Check Your Date (Action Steps) */
-        .wp-block[data-type="gw/action-step-container"] > div { width: 80% !important; margin: 40px auto !important; }
+        /* 8. CTA PLAQUE PARITY */
+        .wp-block[data-type="gw/cta-plaque"] .investment-plaque {
+            width: 500px !important; margin: 80px auto !important;
+            background: #fff !important; border: 2px solid var(--brand-gold-light) !important;
+            padding: 40px !important; text-align: center !important;
+        }
+
+        .editor-styles-wrapper a { pointer-events: none !important; }
     </style>';
 }
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
+add_action( 'enqueue_block_editor_assets', function() {
+    wp_add_inline_style( 'gary-editorial-blocks-js', '
+        .wp-block[data-type^="gw/"] { max-width: 100% !important; width: 100% !important; }
+        .is-root-container { max-width: 100% !important; }
+    ');
+});
+
 endif;
 
 // -----------------------------------------------------------------------------------
@@ -474,23 +484,126 @@ function gary_render_chapter_break_block( $atts ) {
 }
 
 function gary_render_cta_plaque_block( $atts ) {
-    // Use the block's explicitly set email, fall back to site admin email
-    $email = !empty($atts['contact_email']) ? $atts['contact_email'] : get_option('admin_email');
-    $service = get_the_title();
-    $subject = urlencode( 'Wedding Photography Enquiry — ' . $service );
-    $mailto  = 'mailto:' . esc_attr( $email ) . '?subject=' . $subject;
+    static $modal_injected = false;
+    $email    = !empty($atts['contact_email']) ? $atts['contact_email'] : get_option('admin_email');
+    $title    = !empty($atts['title']) ? $atts['title'] : 'Ready to tell your story?';
+    $content  = !empty($atts['content']) ? $atts['content'] : 'I take on a limited number of weddings each year to ensure every couple receives my full creative energy. Let’s chat about your plans.';
+    $btn1     = !empty($atts['btn_text']) ? $atts['btn_text'] : 'Inquire Now';
 
-    return '
-    <div class="gw-cta-plaque gw-editorial-gold-box container" style="background: var(--brand-white); border: 2px solid var(--brand-gold-light); padding: 50px; text-align: center; box-shadow: var(--shadow-deep); margin: 60px auto; max-width: 800px;">
-        <h3 style="font-family: var(--font-primary); font-size: 2rem; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-gold-light); margin-bottom: 20px;">' . esc_html($atts['title']) . '</h3>
-        <p style="font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px;">' . esc_html($atts['content']) . '</p>
-        <div class="gw-cta-btn-wrap">
-            <a href="' . esc_url($mailto) . '" class="btn-black" style="display:inline-flex; align-items:center; gap:10px; padding:16px 36px; text-decoration:none; letter-spacing:2px; font-size:0.85rem;">'
-                . esc_html($atts['btn_text']) .
-            '</a>
+    ob_start(); ?>
+    <div class="gw-cta-plaque-rebuilt container" style="margin: 80px auto; max-width: 500px;">
+        <div class="investment-plaque" style="text-align: center; position: relative; overflow: hidden;">
+            <div class="plaque-decorative-label" style="font-family: var(--font-script); font-size: 2.2rem; color: var(--brand-gold-light); margin-bottom: -15px; opacity: 0.6;">Enquire</div>
+            <h3 class="plaque-title" style="margin-bottom:20px; font-size:1.1rem; text-transform:uppercase; letter-spacing:2px; color:var(--brand-text);"><?php echo esc_html($title); ?></h3>
+            
+            <div class="cta-plaque-body" style="font-size: 0.95rem; opacity: 0.8; margin-bottom: 30px; line-height: 1.8; padding: 0 10%;">
+                <?php echo esc_html($content); ?>
+            </div>
+
+            <div class="investment-buttons">
+                <a href="javascript:void(0)" class="btn-black-gold gw-request-modal-trigger" 
+                   data-email="<?php echo esc_attr($email); ?>"
+                   data-service="<?php echo esc_attr($title); ?>"
+                   style="display: inline-flex; align-items: center; gap: 10px; justify-content: center; width: auto; min-width: 200px;">
+                    <?php echo esc_html($btn1); ?>
+                    <span style="font-size: 1.2rem; line-height: 1;">&rarr;</span>
+                </a>
+            </div>
         </div>
-    </div>';
+    </div>
+
+    <?php 
+    // Modal HTML (Only once per page)
+    if ( ! $modal_injected ) : $modal_injected = true; ?>
+        <div id="gw-request-modal" class="gw-modal" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center;">
+            <div class="gw-modal-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(5px);"></div>
+            <div class="gw-modal-content gw-editorial-gold-box" style="position:relative; z-index:2; max-width:500px; width:90%; background:#fff; padding:40px; border:2px solid var(--brand-gold-light); box-shadow:var(--shadow-deep);">
+                <span class="gw-modal-close" style="position:absolute; top:20px; right:20px; font-size:30px; cursor:pointer; line-height:1; color:var(--brand-gold-light);">&times;</span>
+                <h3 style="text-align:center; text-transform:uppercase; letter-spacing:3px; margin-bottom:10px; color:var(--brand-accent);">Enquiry</h3>
+                <p class="modal-service-name" style="text-align:center; font-size:0.9rem; opacity:0.7; margin-bottom:30px;"></p>
+                
+                <form id="gw-request-form">
+                    <input type="hidden" name="action" value="gw_submit_request">
+                    <input type="hidden" name="target_email" id="modal-target-email">
+                    <input type="hidden" name="service_name" id="modal-service-name-input">
+                    
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; margin-bottom:8px; opacity:0.6;">Your Name</label>
+                        <input type="text" name="user_name" required style="width:100%; padding:12px; border:1px solid #ddd; font-family:var(--font-primary);">
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; margin-bottom:8px; opacity:0.6;">Email Address</label>
+                        <input type="email" name="user_email" required style="width:100%; padding:12px; border:1px solid #ddd; font-family:var(--font-primary);">
+                    </div>
+                    <div style="margin-bottom:25px;">
+                        <label style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; margin-bottom:8px; opacity:0.6;">Message / Note</label>
+                        <textarea name="user_note" rows="4" style="width:100%; padding:12px; border:1px solid #ddd; font-family:var(--font-primary);"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-black-gold" style="width:100%; border:none; padding:18px; cursor:pointer;">Send Request</button>
+                    <div class="gw-form-status" style="margin-top:20px; text-align:center; font-weight:700; font-size:0.9rem;"></div>
+                </form>
+            </div>
+        </div>
+
+    <?php endif; ?>
+
+    <?php return ob_get_clean();
 }
+
+function gary_render_tessellated_menu( $atts ) {
+    $slug = !empty($atts['menu_slug']) ? $atts['menu_slug'] : 'primary';
+    $height = !empty($atts['height']) ? $atts['height'] : '600px';
+    
+    // Get menu items by location or slug
+    $locations = get_nav_menu_locations();
+    $menu_id = isset($locations[$slug]) ? $locations[$slug] : 0;
+    
+    if ( ! $menu_id ) {
+        $menu = get_term_by('slug', $slug, 'nav_menu');
+        $menu_id = $menu ? $menu->term_id : 0;
+    }
+
+    $items = wp_get_nav_menu_items( $menu_id );
+    if ( ! $items ) return is_admin() ? '<div style="padding:40px; background:#eee; text-align:center;">No menu items found for slug: ' . esc_html($slug) . '</div>' : '';
+
+    ob_start(); ?>
+    <div class="gw-tessellated-wall alignfull" style="--wall-height: <?php echo esc_attr($height); ?>;">
+        <div class="gw-tessellation-grid">
+            <?php 
+            $count = 0;
+            foreach ( $items as $item ) : 
+                if ( $item->menu_item_parent ) continue; // Only top level
+                $count++;
+                $post_id = $item->object_id;
+                $img_url = get_the_post_thumbnail_url( $post_id, 'large' );
+                if ( ! $img_url ) {
+                    // Fallback to a placeholder or a default wedding image
+                    $img_url = 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1000';
+                }
+                
+                // Complex Tessellation Pattern
+                $span_class = '';
+                if ( $count % 8 == 1 ) $span_class = 'span-2-2'; // Large Feature
+                elseif ( $count % 8 == 3 ) $span_class = 'span-1-2'; // Tall
+                elseif ( $count % 8 == 6 ) $span_class = 'span-2-1'; // Wide
+                ?>
+                <a href="<?php echo esc_url($item->url); ?>" class="gw-wall-tile <?php echo $span_class; ?>">
+                    <div class="tile-image" style="background-image: url('<?php echo esc_url($img_url); ?>');"></div>
+                    <div class="tile-overlay">
+                        <div class="tile-content">
+                            <span class="tile-subtitle"><?php echo esc_html($count < 10 ? '0'.$count : $count); ?></span>
+                            <h3 class="tile-title"><?php echo esc_html($item->title); ?></h3>
+                            <span class="tile-btn">View Details</span>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php return ob_get_clean();
+}
+
 
 
 function gary_render_trust_bar_block( $atts ) {
@@ -539,6 +652,7 @@ function gary_render_action_step_block( $atts ) {
     $title = !empty($atts['title']) ? $atts['title'] : '';
     $desc = !empty($atts['description']) ? $atts['description'] : '';
     $target_id = !empty($atts['target_page']) ? $atts['target_page'] : 0;
+    $service_id = !empty($atts['service_id']) ? $atts['service_id'] : 0;
     $link = $target_id ? get_permalink($target_id) : '#';
 
     ob_start(); ?>
@@ -556,15 +670,9 @@ function gary_render_action_step_block( $atts ) {
                      data-msg-available="<?php echo esc_attr($msg_available); ?>"
                      data-msg-tentative="<?php echo esc_attr($msg_tentative); ?>">
                     <input type="date" aria-label="Select your preferred date" id="gw-check-date-<?php echo esc_attr($num); ?>" class="gw-date-picker-input" style="padding:10px; border:1px solid #ddd; font-family:inherit; font-size:0.8rem;" />
-                    <button type="button" class="btn-black-gold gw-check-availability-btn" data-step-id="<?php echo esc_attr($num); ?>" style="margin-left:10px; cursor:pointer;">Check Date</button>
+                    <button type="button" class="btn-black-gold gw-check-availability-btn" data-step-id="<?php echo esc_attr($num); ?>" data-duration="<?php echo esc_attr($service_id); ?>" style="margin-left:10px; cursor:pointer;">Check Date</button>
                     <div id="gw-availability-result-<?php echo esc_attr($num); ?>" class="gw-avail-result" style="margin-top:10px; font-size:0.85rem; font-weight:700;"></div>
-                        <input type="date" 
-                               id="gw-check-date-atomic" 
-                               aria-label="Select your preferred date"
-                               value="<?php echo date('Y-m-d'); ?>" 
-                               min="<?php echo date('Y-m-d'); ?>"
-                               class="gw-date-picker-atomic" 
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; font-family: inherit; font-size: 16px; margin-bottom: 5px;">
+                    <a href="<?php echo esc_url($link); ?>" id="gw-step-booking-cta-<?php echo esc_attr($num); ?>" class="btn-black-gold" style="display: none; margin-top:10px;">
                        Book Free Consultation
                     </a>
                 </div>
@@ -626,20 +734,7 @@ function gary_render_polaroid_frame_block( $atts, $content ) {
     return '<div class="gw-polaroid-frame container">' . $content . '</div>';
 }
 
-function gary_render_cta_fullwidth_block( $atts, $content ) {
-    $img_id = !empty($atts['image_id']) ? $atts['image_id'] : 0;
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'gw-hero') : (!empty($atts['image_url']) ? $atts['image_url'] : '');
-    ob_start(); ?>
-    <div class="gw-cta-fullwidth alignfull" style="background-image: url('<?php echo esc_url($img_url); ?>');">
-        <div class="gw-cta-fullwidth-overlay"></div>
-        <div class="container">
-            <div class="gw-cta-fullwidth-content">
-                <?php echo $content; ?>
-            </div>
-        </div>
-    </div>
-    <?php return ob_get_clean();
-}
+
 
 function gary_render_styled_list_box( $atts, $content ) {
     $type = !empty($atts['type']) ? $atts['type'] : 'highlights';

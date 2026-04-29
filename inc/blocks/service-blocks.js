@@ -12,7 +12,28 @@
     const TextControl = wp.components.TextControl;
 
     const Fragment = wp.element.Fragment;
-    console.info('GW Editorial: Initializing Native Blocks v1.3.1...');
+    console.info('GW Editorial: Initializing Native Blocks v3000.79.0...');
+ 
+    // 19. Tessellated Menu Wall (PRIORITY)
+    registerBlockType('gw/tessellated-menu', {
+        title: 'Visual Navigation Wall', icon: 'grid-view', category: 'gary-editorial-native',
+        attributes: {
+            menu_slug: { type: 'string', default: 'primary' },
+            height: { type: 'string', default: '600px' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Wall Configuration' },
+                    el(TextControl, { label: 'Menu Slug', value: atts.menu_slug, onChange: function(v) { props.setAttributes({ menu_slug: v }); } }),
+                    el(TextControl, { label: 'Block Height', value: atts.height, onChange: function(v) { props.setAttributes({ height: v }); } })
+                )
+            );
+            return el('div', null, inspector, el(ServerSideRender, { block: 'gw/tessellated-menu', attributes: atts }));
+        },
+        save: function() { return null; }
+    });
+    console.info('GW Editorial: Visual Navigation Wall Registered.');
 
     // 1. Singular Service Box
     registerBlockType('gw/single-service', {
@@ -307,48 +328,42 @@
         save: function() { return null; }
     });
 
-    // 7. CTA Plaque
+    // 7. CTA Plaque (Rebuilt Anew)
     registerBlockType('gw/cta-plaque', {
         title: 'CTA Action Plaque', icon: 'megaphone', category: 'gary-editorial-native',
         attributes: {
-            title: { type: 'string', default: 'Ready to Secure Your Date?' },
-            content: { type: 'string', default: 'I take on a limited number of weddings each year.' },
-            btn_text: { type: 'string', default: 'Contact Me' },
+            subtitle: { type: 'string', default: '' },
+            title: { type: 'string', default: 'Ready to tell your story?' },
+            content: { type: 'string', default: 'I take on a limited number of weddings each year to ensure every couple receives my full creative energy. Let’s chat about your plans.' },
+            btn_text: { type: 'string', default: 'Inquire Now' },
+            btn_text_2: { type: 'string', default: 'Book Consultation' },
             contact_email: { type: 'string', default: '' },
-            btn_url: { type: 'string', default: '' } // Legacy — kept for BC
+            btn_url: { type: 'string', default: '/booking/' }
         },
         edit: function(props) {
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'CTA Settings', initialOpen: true },
-                    el(TextControl, {
-                        label: 'Heading',
-                        value: atts.title,
-                        onChange: function(v) { props.setAttributes({ title: v }); }
-                    }),
-                    el(TextControl, {
-                        label: 'Body Text',
-                        value: atts.content,
-                        onChange: function(v) { props.setAttributes({ content: v }); }
-                    }),
-                    el(TextControl, {
-                        label: 'Button Label',
-                        value: atts.btn_text,
-                        onChange: function(v) { props.setAttributes({ btn_text: v }); }
-                    }),
-                    el(TextControl, {
-                        label: 'Contact Email (mailto:)',
-                        help: 'The email address the button will open. Leave blank to use the site admin email.',
-                        type: 'email',
-                        value: atts.contact_email,
-                        onChange: function(v) { props.setAttributes({ contact_email: v }); }
-                    })
+                el(PanelBody, { title: '1. Text Content', initialOpen: true },
+                    el(TextControl, { label: 'Subtitle (Small Top)', value: atts.subtitle, onChange: function(v) { props.setAttributes({ subtitle: v }); } }),
+                    el(TextControl, { label: 'Main Heading', value: atts.title, onChange: function(v) { props.setAttributes({ title: v }); } }),
+                    el(TextControl, { label: 'Body Content', value: atts.content, onChange: function(v) { props.setAttributes({ content: v }); } })
+                ),
+                el(PanelBody, { title: '2. Button Actions', initialOpen: false },
+                    el(TextControl, { label: 'Button 1 (Contact)', value: atts.btn_text, onChange: function(v) { props.setAttributes({ btn_text: v }); } }),
+                    el(TextControl, { label: 'Contact Email (mailto:)', type: 'email', value: atts.contact_email, onChange: function(v) { props.setAttributes({ contact_email: v }); } }),
+                    el('hr'),
+                    el(TextControl, { label: 'Button 2 (Booking)', value: atts.btn_text_2, onChange: function(v) { props.setAttributes({ btn_text_2: v }); } }),
+                    el(TextControl, { label: 'Booking URL', value: atts.btn_url, onChange: function(v) { props.setAttributes({ btn_url: v }); } })
                 )
             );
             return el('div', null, inspector, el(ServerSideRender, { block: 'gw/cta-plaque', attributes: atts }));
         },
         save: function() { return null; }
     });
+
+
+
+
 
 
     // 8. Trust Bar
@@ -597,34 +612,10 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
-    // 15. Full-Width CTA
-    registerBlockType('gw/cta-fullwidth', {
-        title: 'Full-Width Action Plate', icon: 'megaphone', category: 'gary-editorial-native',
-        attributes: { image_url: { type:'string' }, image_id: { type:'number' } },
-        edit: function(props) {
-            const atts = props.attributes;
-            const mediaUploader = el(MediaUpload, {
-                onSelect: (m) => props.setAttributes({ image_url: m.url, image_id: m.id }),
-                allowedTypes: ['image'], value: atts.image_id,
-                render: obj => el(Button, { onClick: obj.open, style: { width: '100%', minHeight: '200px', background: '#f5f5f5', border: '2px dashed #ccc' } },
-                    atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%' } }) : 'Upload CTA Background')
-            });
-            return el('div', null,
-                mediaUploader,
-                el('div', { style: { padding: '40px', background: '#fff', border: '1px solid #eee', marginTop: '10px' } },
-                    el(InnerBlocks, { template: [
-                        ['core/heading', { textAlign: 'center', content: 'Ready to Tell Your Story?', level: 2 }],
-                        ['core/paragraph', { textAlign: 'center', content: 'I take on a limited number of bookings each year.' }],
-                        ['core/buttons', { layout: { type: 'flex', justifyContent: 'center' } }]
-                    ] })
-                )
-            );
-        },
-        save: function() { return el(InnerBlocks.Content, null); }
-    });
+
 
     // 16-18. List Boxes
-    ['highlights', 'included', 'perfect-for'].forEach(type => {
+    ['included', 'perfect-for'].forEach(type => {
         registerBlockType(`gw/list-${type}`, {
             title: `Box: ${type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}`,
             icon: 'editor-ul',

@@ -1,4 +1,4 @@
-<footer id="colophon" class="site-footer" style="background:#1a1a1a; color:#fff; text-align:center; margin-top:100px;">
+<footer id="colophon" class="site-footer">
     
     <div class="footer-grid">
         
@@ -84,19 +84,16 @@
     foreach ( $social_links as $s ) { if ( ! empty( $s['url'] ) ) { $has_social = true; break; } }
     if ( $has_social ) :
     ?>
-    <div class="footer-social" style="margin-top:30px; padding-bottom:20px; text-align:center;">
-        <p style="font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; opacity:0.5; margin-bottom:14px;">Follow the Story</p>
-        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+    <div class="footer-social">
+        <p class="footer-social-label">Follow the Story</p>
+        <div class="footer-social-icons">
             <?php foreach ( $social_links as $platform => $s ) :
                 if ( empty( $s['url'] ) ) continue; ?>
                 <a href="<?php echo esc_url( $s['url'] ); ?>"
                    target="_blank"
                    rel="noopener noreferrer"
                    aria-label="<?php echo esc_attr( $s['label'] ); ?> — Gary Wallage Wedding Photography"
-                   class="footer-social-link"
-                   style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border:1px solid rgba(201,168,76,0.4); border-radius:50%; color:#C9A84C; text-decoration:none; font-size:0.85rem; font-weight:700; letter-spacing:0; transition:background 0.3s, border-color 0.3s;"
-                   onmouseover="this.style.background='rgba(201,168,76,0.15)'; this.style.borderColor='#C9A84C';"
-                   onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(201,168,76,0.4)';">
+                   class="footer-social-link">
                     <?php echo $s['icon']; ?>
                 </a>
             <?php endforeach; ?>
@@ -105,7 +102,7 @@
     <?php endif; ?>
 
     <!-- Bottom Copyright -->
-    <div class="footer-meta" style="border-top:1px solid #333; padding-top:30px; margin-top:30px; text-align:center;">
+    <div class="footer-meta">
         <p>
             &copy; <?php echo date('Y'); ?> Gary Wallage Photography | Wiltshire Historian & Visual Poet
         </p>

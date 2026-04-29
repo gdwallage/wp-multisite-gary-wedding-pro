@@ -16,10 +16,18 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.1.0 - High Fidelity Sync) -->
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.2.0 - High Fidelity Sync) -->
     <style id="gary-final-sync-reset">
-        /* Ensuring Ribbons and Star Bullets are High Fidelity */
-        .service-card-ribbon { z-index: 100 !important; }
+        /* Global Editorial Spacing & Logo Sizing (Overrides Stale Optimization CSS) */
+        body { padding-top: 20px !important; }
+        .site-header .custom-logo { 
+            width: 380px !important; 
+            max-width: 380px !important; 
+            height: auto !important; 
+            display: block !important;
+            margin: 0 auto !important;
+        }
+        .service-card-ribbon { z-index: 100 !important; transform: rotate(45deg) !important; }
         .gw-bullet-list.is-inclusions { margin-top: 15px !important; }
     </style>
     <script>
