@@ -1,5 +1,22 @@
 # Changelog - Gary Wallage Wedding Pro
 
+## [3000.120.0] - 2026-04-29
+### Changed
+- **Restored "Classic" 3D Peek Slider**: Analyzed the Git repository history to restore the high-fidelity overlapping peek effect while maintaining the 3D depth and editorial typography standards.
+- **Global Asset Refresh**: Bumped all versions to v3000.120.0 to ensure a clean cache state for all users.
+
+## [3000.102.0] - 2026-04-29
+### Changed
+- **Automated Hero Slider**: The front-page slider now automatically syncs with the **Primary Menu**. It filters for top-level pages and utilizes their featured images, eliminating the need for manual Customizer selection.
+- **Editorial Visibility (100% Rule)**: Adjusted the slider height and CSS to ensure 100% of featured images are visible without cropping (using `object-fit: contain`).
+- **Peek Carousel UI**: Restored the missing "peek" transition classes (`.next`, `.prev`) and implemented a responsive 80%/95% width strategy for mobile/desktop balance.
+
+## [3000.101.0] - 2026-04-29
+### Added
+- **Persona & Development Rules**: Created `PERSONA.md` to codify the "Antigravity" persona and establish a permanent set of overarching rules for the workspace.
+- **Universal Device Compatibility Mandate**: Formalized the requirement for the theme to perform flawlessly on MS Edge, Chrome (Android), iPhone, and Tablets.
+- **P: Drive Persistence**: Established the `P:` workspace as the primary location for rules and changelogs to ensure device-independent continuity.
+
 ## [3000.70.0] - 2026-04-28
 ### Added
 - **1:1 Gutenberg Editor Parity**: Injected powerful CSS overrides (`.wp-block[data-type="..."]`) into the editor to ensure custom blocks (Z-Pattern, Trio Gallery, Action Steps) match their frontend constraints (`80%` width) instead of Gutenberg's narrow default column.

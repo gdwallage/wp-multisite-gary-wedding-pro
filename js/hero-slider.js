@@ -1,8 +1,10 @@
 /**
  * File: js/hero-slider.js
  * Description: High-performance peek carousel logic for the Gary Wallage Wedding Pro theme.
+ * Version: 3000.110.0
  */
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('Gary Wallage 3D Slider Engine v3000.110.0 Loaded');
     const carousel = document.getElementById('heroPeekCarousel');
     if (!carousel) return;
 

@@ -1,6 +1,6 @@
 # Gary Wallage Wedding Pro — Theme Design Guide & Technical Reference
 
-> **Version 3000.70.0** | WordPress Multisite | Boutique Editorial Aesthetic
+> **Version 3000.120.0** | WordPress Multisite | Boutique Editorial Aesthetic
 > **Live Site**: https://wedding.garywallage.uk
 
 ---

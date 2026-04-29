@@ -2,41 +2,64 @@
 /**
  * File: front-page.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.87.0
- * Description: Minimalist Hero Slider + Gutenberg Content.
+ * Version: 3000.110.0
+ * Description: Automated 3D Hero Slider synced with Primary Menu.
  */
 
 get_header();
 
+// Fetch items from the 'primary' menu location to automatically sync slider with navigation
+$locations = get_nav_menu_locations();
+$menu_obj = isset($locations['primary']) ? wp_get_nav_menu_object($locations['primary']) : null;
+$menu_items = $menu_obj ? wp_get_nav_menu_items($menu_obj->term_id) : array();
+
 $slides = array();
-$count = (int) get_theme_mod( 'hero_slider_count', 3 );
-for ( $i = 1; $i <= $count; $i++ ) {
-    $pid = (int) get_theme_mod( "hero_slide_page_{$i}", 0 );
-    if ( $pid > 0 ) {
-        $img_id = get_post_thumbnail_id( $pid );
-        // If page has no thumbnail, fallback to logo or a specific branding asset
-        if ( !$img_id ) {
-            $logo_id = get_theme_mod( 'custom_logo' );
-            $img_id = $logo_id;
+
+if ($menu_items) {
+    foreach ($menu_items as $item) {
+        // Only include top-level pages that have a featured image
+        if ($item->menu_item_parent == 0 && $item->object === 'page') {
+            $pid = $item->object_id;
+            $img_id = get_post_thumbnail_id($pid);
+            
+            if ($img_id) {
+                // Fetch subtitle: Prefer manual meta _gary_service_subtitle, then first H2, then excerpt
+                $subtitle = get_post_meta($pid, '_gary_service_subtitle', true);
+                if (!$subtitle) {
+                    $post_obj = get_post($pid);
+                    if ($post_obj && preg_match('/<h2[^>]*>(.*?)<\/h2>/si', $post_obj->post_content, $matches)) {
+                        $subtitle = wp_strip_all_tags($matches[1]);
+                    }
+                    if (!$subtitle) {
+                        $subtitle = get_the_excerpt($pid);
+                    }
+                }
+
+                $slides[] = array(
+                    'img_id'   => $img_id,
+                    'title'    => get_the_title($pid),
+                    'subtitle' => $subtitle,
+                    'url'      => get_permalink($pid)
+                );
+            }
         }
-        
-        $slides[] = array(
-            'img_id'   => $img_id,
-            'title'    => get_the_title( $pid ),
-            'subtitle' => get_the_excerpt( $pid ),
-            'url'      => get_permalink( $pid )
-        );
     }
 }
 
-// FALLBACK: If no slides selected, fetch latest 3 pages with thumbnails
+// FALLBACK: If no menu slides found, fetch latest 3 pages with thumbnails
 if ( empty( $slides ) ) {
     $fallback_query = new WP_Query( array(
         'post_type'      => 'page',
         'posts_per_page' => 3,
         'post_status'    => 'publish',
-        'orderby'        => 'date',
-        'order'          => 'DESC'
+        'orderby'        => 'menu_order',
+        'order'          => 'ASC',
+        'meta_query'     => array(
+            array(
+                'key' => '_thumbnail_id',
+                'compare' => 'EXISTS'
+            )
+        )
     ) );
     if ( $fallback_query->have_posts() ) {
         while ( $fallback_query->have_posts() ) {
@@ -67,7 +90,7 @@ $slide_count = count( $slides );
                 <div class="hero-peek-caption">
                     <h1 class="hero-peek-title"><?php echo esc_html( $s['title'] ); ?></h1>
                     <?php if ( $s['subtitle'] ) : ?>
-                        <p class="hero-peek-subtitle"><?php echo esc_html( wp_trim_words( $s['subtitle'], 12 ) ); ?></p>
+                        <p class="hero-peek-subtitle"><?php echo esc_html( $s['subtitle'] ); ?></p>
                     <?php endif; ?>
                     <span class="hero-peek-cta">Explore <span aria-hidden="true">→</span></span>
                 </div>
