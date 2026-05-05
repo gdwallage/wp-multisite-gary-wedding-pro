@@ -60,7 +60,7 @@ $layout_class = 'layout-' . $layout_type;
                     <div class="gallery-item">
                         <a href="<?php echo wp_get_original_image_url( get_the_ID() ); ?>" class="lightbox-trigger">
                             <?php 
-                            echo wp_get_attachment_image( get_the_ID(), 'large', false, array( 'class' => 'gallery-img' ) ); 
+                            echo wp_get_attachment_image( get_the_ID(), 'medium_large', false, array( 'class' => 'gallery-img' ) ); 
                             ?>
                         </a>
                     </div>

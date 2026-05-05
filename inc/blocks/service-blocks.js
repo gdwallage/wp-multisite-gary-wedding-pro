@@ -11,7 +11,29 @@
     const RichText = wp.blockEditor.RichText;
     const TextControl = wp.components.TextControl;
 
-    console.info('GW Editorial: Initializing Native Blocks v1.3.0...');
+    const Fragment = wp.element.Fragment;
+    console.info('GW Editorial: Initializing Native Blocks v3000.79.0...');
+ 
+    // 19. Tessellated Menu Wall (PRIORITY)
+    registerBlockType('gw/tessellated-menu', {
+        title: 'Visual Navigation Wall', icon: 'grid-view', category: 'gary-editorial-native',
+        attributes: {
+            menu_slug: { type: 'string', default: 'primary' },
+            height: { type: 'string', default: '600px' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Wall Configuration' },
+                    el(TextControl, { label: 'Menu Slug', value: atts.menu_slug, onChange: function(v) { props.setAttributes({ menu_slug: v }); } }),
+                    el(TextControl, { label: 'Block Height', value: atts.height, onChange: function(v) { props.setAttributes({ height: v }); } })
+                )
+            );
+            return el('div', null, inspector, el(ServerSideRender, { block: 'gw/tessellated-menu', attributes: atts }));
+        },
+        save: function() { return null; }
+    });
+    console.info('GW Editorial: Visual Navigation Wall Registered.');
 
     // 1. Singular Service Box
     registerBlockType('gw/single-service', {
@@ -117,6 +139,13 @@
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
                 el(PanelBody, { title: 'Media Settings', initialOpen: true },
+                    el(MediaUpload, {
+                        onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
+                        allowedTypes: ['image'], value: atts.image_id,
+                        render: function(obj) {
+                            return el(Button, { isPrimary: true, onClick: obj.open, style: { width: '100%', marginBottom: '15px', justifyContent: 'center' } }, atts.image_id ? 'Replace Image' : 'Select Image');
+                        }
+                    }),
                     el(SelectControl, {
                         label: 'Image Position', value: atts.image_pos,
                         options: [{ label: 'Left', value: 'left' }, { label: 'Right', value: 'right' }],
@@ -135,21 +164,13 @@
                 )
             );
 
-            const mediaUploader = el(MediaUpload, {
-                onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
-                allowedTypes: ['image'], value: atts.image_id,
-                render: function(obj) {
-                    return el(Button, {
-                        onClick: obj.open,
-                        className: 'button button-large',
-                        style: { width: '100%', minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' }
-                    }, atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'cover' } }) : 'Upload Image');
-                }
-            });
+            const imagePreview = atts.image_url 
+                ? el('img', { src: atts.image_url, style: { width: '100%', height: 'auto', objectFit: 'cover', display: 'block' } }) 
+                : el('div', { style: { minHeight: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' } }, 'Select Image in Sidebar');
 
             return el('div', { className: 'gw-z-pattern is-' + atts.image_pos },
                 inspector,
-                el('div', { className: 'gw-z-image' }, mediaUploader),
+                el('div', { className: 'gw-z-image' }, imagePreview),
                 el('div', { className: 'gw-z-content' },
                     el(InnerBlocks, {
                         template: [
@@ -176,8 +197,22 @@
         },
         edit: function(props) {
             const atts = props.attributes;
+            
+            const createSidebarUploader = (targetPrefix, label) => el(MediaUpload, {
+                onSelect: function(media) { props.setAttributes({ [`${targetPrefix}_url`]: media.url, [`${targetPrefix}_id`]: media.id }); },
+                allowedTypes: ['image'], value: atts[`${targetPrefix}_id`],
+                render: function(obj) {
+                    return el(Button, { isSecondary: true, onClick: obj.open, style: { width: '100%', marginBottom: '15px', justifyContent: 'center' } }, atts[`${targetPrefix}_id`] ? `Replace ${label}` : `Select ${label}`);
+                }
+            });
+
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Media Settings', initialOpen: true },
+                el(PanelBody, { title: 'Media Selection', initialOpen: true },
+                    createSidebarUploader('img1', 'Main Image'),
+                    createSidebarUploader('img2', 'Top Side Image'),
+                    createSidebarUploader('img3', 'Bottom Side Image')
+                ),
+                el(PanelBody, { title: 'Image Resolutions', initialOpen: false },
                     [1,2,3].map(i => el(SelectControl, {
                         label: `Image ${i} Resolution`, value: atts[`img${i}_size`],
                         options: [
@@ -191,15 +226,9 @@
                 )
             );
 
-            const createUploader = (targetPrefix, height) => el(MediaUpload, {
-                onSelect: function(media) { props.setAttributes({ [`${targetPrefix}_url`]: media.url, [`${targetPrefix}_id`]: media.id }); },
-                allowedTypes: ['image'], value: atts[`${targetPrefix}_id`],
-                render: function(obj) {
-                    return el(Button, {
-                        onClick: obj.open, style: { width: '100%', height: height, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc', overflow:'hidden' }
-                    }, atts[`${targetPrefix}_url`] ? el('img', { src: atts[`${targetPrefix}_url`], style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Upload');
-                }
-            });
+            const createPreview = (targetPrefix, height) => atts[`${targetPrefix}_url`] 
+                ? el('img', { src: atts[`${targetPrefix}_url`], style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) 
+                : el('div', { style: { width: '100%', height: height, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' } }, 'Select Image');
 
             return el('div', { className: 'gw-trio-gallery-wrapper' },
                 inspector,
@@ -212,10 +241,10 @@
                     style: { textAlign: 'center', fontFamily: 'Blacksword, cursive', fontSize: '2.5rem', fontWeight: 'normal', color: '#B08D55', marginBottom: '20px' }
                 }),
                 el('div', { className: 'gw-trio-gallery' },
-                    el('div', { className: 'gw-trio-main' }, createUploader('img1', '620px')),
+                    el('div', { className: 'gw-trio-main' }, createPreview('img1', '620px')),
                     el('div', { className: 'gw-trio-side' }, 
-                        createUploader('img2', '295px'), 
-                        createUploader('img3', '295px')
+                        el('div', { className: 'gw-trio-top' }, createPreview('img2', '295px')), 
+                        el('div', { className: 'gw-trio-bottom' }, createPreview('img3', '295px'))
                     )
                 )
             );
@@ -238,6 +267,13 @@
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
                 el(PanelBody, { title: 'Media Settings', initialOpen: true },
+                    el(MediaUpload, {
+                        onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
+                        allowedTypes: ['image'], value: atts.image_id,
+                        render: function(obj) {
+                            return el(Button, { isPrimary: true, onClick: obj.open, style: { width: '100%', marginBottom: '15px', justifyContent: 'center' } }, atts.image_id ? 'Replace Image' : 'Select Image');
+                        }
+                    }),
                     el(SelectControl, {
                         label: 'Media Position', value: atts.image_pos,
                         options: [{ label: 'Left', value: 'left' }, { label: 'Right', value: 'right' }],
@@ -256,19 +292,13 @@
                 )
             );
 
-            const mediaUploader = el(MediaUpload, {
-                onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
-                allowedTypes: ['image'], value: atts.image_id,
-                render: function(obj) {
-                    return el(Button, { onClick: obj.open, style: { width: '100%', minHeight: '400px', display: 'flex', background: '#f5f5f5', border: '2px dashed #ccc' } },
-                        atts.image_url ? el('img', { src: atts.image_url, style: { width: '100%', height:'100%', objectFit: 'cover' } }) : 'Upload'
-                    );
-                }
-            });
+            const imagePreview = atts.image_url 
+                ? el('img', { src: atts.image_url, style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) 
+                : el('div', { style: { minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f5f5f5', border: '2px dashed #ccc' } }, 'Select Image in Sidebar');
 
             return el('div', { className: 'gw-editorial-split is-' + atts.image_pos },
                 inspector,
-                el('div', { className: 'gw-split-media' }, mediaUploader),
+                el('div', { className: 'gw-split-media' }, imagePreview),
                 el('div', { className: 'gw-split-content' },
                     el(InnerBlocks, {
                         template: [
@@ -299,27 +329,43 @@
         save: function() { return null; }
     });
 
-    // 7. CTA Plaque
+    // 7. CTA Plaque (Rebuilt Anew)
     registerBlockType('gw/cta-plaque', {
         title: 'CTA Action Plaque', icon: 'megaphone', category: 'gary-editorial-native',
         attributes: {
-            title: { type: 'string', default: 'Ready to Secure Your Date?' },
-            content: { type: 'string', default: 'I take on a limited number of weddings each year.' },
+            subtitle: { type: 'string', default: '' },
+            title: { type: 'string', default: 'Ready to tell your story?' },
+            content: { type: 'string', default: 'I take on a limited number of weddings each year to ensure every couple receives my full creative energy. Let’s chat about your plans.' },
             btn_text: { type: 'string', default: 'Inquire Now' },
-            btn_url: { type: 'string', default: '/contact/' }
+            btn_text_2: { type: 'string', default: 'Book Consultation' },
+            contact_email: { type: 'string', default: '' },
+            btn_url: { type: 'string', default: '/booking/' }
         },
         edit: function(props) {
             const atts = props.attributes;
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'CTA Settings' },
-                    el(TextControl, { label: 'Button Text', value: atts.btn_text, onChange: function(v) { props.setAttributes({ btn_text: v }); } }),
-                    el(TextControl, { label: 'Button URL', value: atts.btn_url, onChange: function(v) { props.setAttributes({ btn_url: v }); } })
+                el(PanelBody, { title: '1. Text Content', initialOpen: true },
+                    el(TextControl, { label: 'Subtitle (Small Top)', value: atts.subtitle, onChange: function(v) { props.setAttributes({ subtitle: v }); } }),
+                    el(TextControl, { label: 'Main Heading', value: atts.title, onChange: function(v) { props.setAttributes({ title: v }); } }),
+                    el(TextControl, { label: 'Body Content', value: atts.content, onChange: function(v) { props.setAttributes({ content: v }); } })
+                ),
+                el(PanelBody, { title: '2. Button Actions', initialOpen: false },
+                    el(TextControl, { label: 'Button 1 (Contact)', value: atts.btn_text, onChange: function(v) { props.setAttributes({ btn_text: v }); } }),
+                    el(TextControl, { label: 'Contact Email (mailto:)', type: 'email', value: atts.contact_email, onChange: function(v) { props.setAttributes({ contact_email: v }); } }),
+                    el('hr'),
+                    el(TextControl, { label: 'Button 2 (Booking)', value: atts.btn_text_2, onChange: function(v) { props.setAttributes({ btn_text_2: v }); } }),
+                    el(TextControl, { label: 'Booking URL', value: atts.btn_url, onChange: function(v) { props.setAttributes({ btn_url: v }); } })
                 )
             );
             return el('div', null, inspector, el(ServerSideRender, { block: 'gw/cta-plaque', attributes: atts }));
         },
         save: function() { return null; }
     });
+
+
+
+
+
 
     // 8. Trust Bar
     registerBlockType('gw/trust-bar', {
@@ -405,7 +451,9 @@
             title: { type: 'string', default: 'Consultation' },
             description: { type: 'string', default: '' },
             target_page: { type: 'number', default: 0 },
-            step_num: { type: 'string', default: '01' }
+            step_num: { type: 'string', default: '01' },
+            msg_available: { type: 'string', default: '' },
+            msg_tentative: { type: 'string', default: '' }
         },
         variations: [
             {
@@ -444,7 +492,11 @@
                         value: atts.target_page,
                         options: pageOptions,
                         onChange: function(v) { props.setAttributes({ target_page: parseInt(v) }); }
-                    })
+                    }),
+                    atts.step_type === 'availability' && el(Fragment, null,
+                        el(TextControl, { label: 'Available Message', value: atts.msg_available, onChange: function(v) { props.setAttributes({ msg_available: v }); } }),
+                        el(TextControl, { label: 'Tentative Message', value: atts.msg_tentative, onChange: function(v) { props.setAttributes({ msg_tentative: v }); } })
+                    )
                 )
             );
 
@@ -561,34 +613,10 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
-    // 15. Full-Width CTA
-    registerBlockType('gw/cta-fullwidth', {
-        title: 'Full-Width Action Plate', icon: 'megaphone', category: 'gary-editorial-native',
-        attributes: { image_url: { type:'string' }, image_id: { type:'number' } },
-        edit: function(props) {
-            const atts = props.attributes;
-            const mediaUploader = el(MediaUpload, {
-                onSelect: (m) => props.setAttributes({ image_url: m.url, image_id: m.id }),
-                allowedTypes: ['image'], value: atts.image_id,
-                render: obj => el(Button, { onClick: obj.open, style: { width: '100%', minHeight: '200px', background: '#f5f5f5', border: '2px dashed #ccc' } },
-                    atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%' } }) : 'Upload CTA Background')
-            });
-            return el('div', null,
-                mediaUploader,
-                el('div', { style: { padding: '40px', background: '#fff', border: '1px solid #eee', marginTop: '10px' } },
-                    el(InnerBlocks, { template: [
-                        ['core/heading', { textAlign: 'center', content: 'Ready to Tell Your Story?', level: 2 }],
-                        ['core/paragraph', { textAlign: 'center', content: 'I take on a limited number of bookings each year.' }],
-                        ['core/buttons', { layout: { type: 'flex', justifyContent: 'center' } }]
-                    ] })
-                )
-            );
-        },
-        save: function() { return el(InnerBlocks.Content, null); }
-    });
+
 
     // 16-18. List Boxes
-    ['highlights', 'included', 'perfect-for'].forEach(type => {
+    ['included', 'perfect-for'].forEach(type => {
         registerBlockType(`gw/list-${type}`, {
             title: `Box: ${type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}`,
             icon: 'editor-ul',
@@ -637,25 +665,43 @@
         attributes: {
             title: { type: 'string', default: 'Check Your Date!' },
             description: { type: 'string', default: 'Select your wedding date to see if I am available for your celebration.' },
-            duration: { type: 'string', default: 'Full Day' },
-            target_page_id: { type: 'number', default: 0 }
+            service_id: { type: 'string', default: '' },
+            target_page_id: { type: 'number', default: 0 },
+            msg_available: { type: 'string', default: "Excellent... Now let's book your FREE wedding consultation to discuss this in detail." },
+            msg_tentative: { type: 'string', default: "I may be free! I have restricted hours on this day, but I may be able to rearrange plans for your wedding. Please book a FREE consultation to discuss." }
         },
         edit: function(props) {
             const atts = props.attributes;
             const pageOptions = window.garyPageOptions || [];
 
             const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Block Settings' },
+                el(PanelBody, { title: 'Block Configuration', initialOpen: true },
                     el(SelectControl, {
-                        label: 'Target Consultation Page',
+                        label: '1. Service Looking For',
+                        value: atts.service_id,
+                        options: window.garyBooklyServiceOptions || [],
+                        onChange: function(v) { props.setAttributes({ service_id: v }); }
+                    }),
+                    el(SelectControl, {
+                        label: '2. Target Consultation Page',
                         value: atts.target_page_id,
                         options: pageOptions,
                         onChange: function(v) { props.setAttributes({ target_page_id: parseInt(v) }); }
+                    }),
+                    el(TextControl, {
+                        label: '3. Available Message',
+                        value: atts.msg_available,
+                        onChange: function(v) { props.setAttributes({ msg_available: v }); }
+                    }),
+                    el(TextControl, {
+                        label: '4. Tentative Message',
+                        value: atts.msg_tentative,
+                        onChange: function(v) { props.setAttributes({ msg_tentative: v }); }
                     })
                 )
             );
 
-            return el('div', { className: 'gw-process-block container edit-mode-atomic', style: { padding: '40px', background: '#fff', border: '1px solid #ddd' } },
+            return el('div', { className: 'gw-process-block container edit-mode-atomic', style: { padding: '20px', background: '#fff', border: '1px solid #ddd' } },
                 inspector,
                 el('div', { className: 'gw-process-col is-atomic-check condensed-preview', style: { textAlign: 'center', maxWidth: '400px', margin: '0 auto' } },
                     el(RichText, {
@@ -672,13 +718,9 @@
                         onChange: function(v) { props.setAttributes({ description: v }); }
                     }),
                     el('div', { style: { borderTop: '1px solid #eee', margin: '15px 0' } }),
-                    el(RichText, {
-                        tagName: 'div',
-                        value: atts.duration,
-                        style: { textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.7rem', fontWeight: '700', marginBottom: '10px' },
-                        placeholder: 'Duration (e.g. Full Day)',
-                        onChange: function(v) { props.setAttributes({ duration: v }); }
-                    }),
+                    el('div', { style: { fontSize: '0.7rem', opacity: 0.5, fontStyle: 'italic', marginBottom: '10px' } },
+                        atts.service_id ? 'Checking availability for selected service...' : '(Please select a service in the sidebar)'
+                    ),
                     el('div', { style: { border: '1px solid #ddd', padding: '10px', background: '#f9f9f9', fontSize: '0.8rem' } },
                         '[ Calendar Box Preview ]'
                     )

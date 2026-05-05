@@ -3,7 +3,7 @@
  * File: page-about.php
  * Template Name: About Me
  * Theme: Gary Wallage Wedding Pro
- * Version: 1.81.0
+ * Version: 3000.82.0
  * Description: Precision alignment and synced 3D Gold Frame for the portrait.
  */
 
@@ -22,7 +22,7 @@ get_header(); ?>
                 <?php if ( has_post_thumbnail() ) : ?>
                     <div class="portrait-frame-wrapper">
                         <div class="portrait-frame">
-                            <?php the_post_thumbnail('large'); ?>
+                            <?php the_post_thumbnail('medium_large'); ?>
                             
                             <!-- Gold Plaque Integrated into Frame -->
                             <div class="frame-plaque">

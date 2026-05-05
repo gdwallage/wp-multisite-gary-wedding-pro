@@ -22,6 +22,7 @@
 			"path": "../../plugins/gw-bookly-addons"
 		},
 		{
+<<<<<<< HEAD
 			"path": "../../plugins/force-regenerate-thumbnails"
 		},
 		{
@@ -29,6 +30,15 @@
 		},
 		{
 			"path": "../../plugins/image-regenerate-select-crop"
+=======
+			"path": "../../plugins/gallery-master-sync"
+		},
+		{
+			"path": "../../plugins"
+		},
+		{
+			"path": "../../mu-plugins"
+>>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
 		}
 	],
 	"settings": {}

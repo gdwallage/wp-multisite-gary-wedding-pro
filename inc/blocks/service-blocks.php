@@ -1,16 +1,16 @@
 <?php
+/**
+ * File: inc/blocks/service-blocks.php
+ * Description: Main entry point for custom editorial blocks.
+ */
 
-function gary_register_service_blocks() {
-    
-    // 1. Featured Services Grid
-    register_block_type('gw/service-grid', array(
-        'render_callback' => 'gary_render_service_grid_block',
-        'category' => 'gary-editorial-native',
-        'attributes' => array(
-            'grid_layout' => array( 'type' => 'string', 'default' => '3-cols' )
-        )
-    ));
+$block_modules = array(
+    'registration.php',
+    'rendering.php',
+    'editor.php',
+);
 
+<<<<<<< HEAD
     // 2. Singular Service Box
     register_block_type('gw/single-service', array(
         'render_callback' => 'gary_render_single_service_block',
@@ -682,4 +682,8 @@ function gary_render_triplet_item( $atts, $content ) {
     </div>
 
     <?php return ob_get_clean();
+=======
+foreach ($block_modules as $module) {
+    require_once plugin_dir_path(__FILE__) . $module;
+>>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
 }

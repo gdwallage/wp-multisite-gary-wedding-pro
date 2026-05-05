@@ -16,8 +16,9 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.39.0 - High Fidelity Sync) -->
-    <style id="gary-final-sync-reset-v3000-39-0">
+<<<<<<< HEAD
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.40.0 - High Fidelity Sync) -->
+    <style id="gary-final-sync-reset-v3000-40-0">
         /* Absolute specificity override to defeat style.css legacy rules */
         html body:not(.home) .entry-title, 
         html body:not(.home) h1.entry-title, 
@@ -25,7 +26,7 @@
         html body:not(.home) .service-hero-header h1,
         html body:not(.home) .post-title,
         html body:not(.home) h1:first-of-type { 
-            font-size: 4rem !important; 
+            font-size: 3.2rem !important; 
             margin-top: 0 !important; 
             position: relative !important; 
             top: 30px !important; 
@@ -50,6 +51,9 @@
         /* Ensuring Ribbons and Star Bullets are High Fidelity */
         .service-card-ribbon { z-index: 100 !important; }
         .gw-bullet-list.is-inclusions { margin-top: 15px !important; }
+        
+        /* Grid Dynamicism Overrides */
+        .services-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; max-width: 1600px !important; }
     </style>
     <script>
     (function() {
@@ -65,8 +69,11 @@
     })();
     </script>
 
+=======
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.120.0 - Unified Logic) -->
+>>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
     <?php wp_head(); ?>
-</head>
+</head></head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
@@ -99,7 +106,7 @@
                 <span class="hamburger-box">
                     <span class="hamburger-inner"></span>
                 </span>
-                <span class="menu-text" style="font-family:'Lato', sans-serif; font-size:0.9rem; letter-spacing:2px; text-transform:uppercase; margin-left:12px; font-weight:700;">MENU</span>
+                <span class="menu-text">MENU</span>
             </button>
         </div>
 

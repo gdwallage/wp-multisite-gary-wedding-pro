@@ -28,7 +28,7 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
     // Fetch Savings & Inclusions summary (v3000.1.0 Unified Engine)
     $summary = $page_id ? gary_get_sub_service_summary( $page_id, true ) : gary_get_sub_service_summary( $bookly_id, false );
 
-    $thumbnail = $page_id ? get_the_post_thumbnail_url($page_id, 'large') : '';
+    $thumbnail = $page_id ? get_the_post_thumbnail_url($page_id, 'gw-card-thumb') : '';
 
     // Fallback: If no WP Page thumbnail, try to use the Bookly native attachment_id
     if ( !$thumbnail && !empty($b_data['attachment_id']) ) {
@@ -44,7 +44,12 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
         'thumbnail'  => $thumbnail,
         'info'       => $b_data['info'],
         'is_free'    => (float)$b_data['price'] <= 0,
+<<<<<<< HEAD
         'duration'   => (!empty($summary['total_duration'])) ? $summary['total_duration'] : ($b_data['duration'] ?: (($page_id ?: get_the_ID()) ? get_post_meta(($page_id ?: get_the_ID()), '_gary_service_duration', true) : ''))
+=======
+        'duration'   => $b_data['duration'],
+        'icon'       => $page_id ? get_the_post_thumbnail_url($page_id, 'gw-service-icon') : ''
+>>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
     );
 }
 
@@ -61,7 +66,7 @@ function gary_render_service_card_html( $data ) {
     $thumb_url = $item['thumbnail'];
     if ( !$thumb_url ) {
         $logo_id = get_theme_mod( 'custom_logo' );
-        $thumb_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'full' ) : '';
+        $thumb_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'gw-logo' ) : '';
     }
 
     ob_start(); ?>
@@ -75,7 +80,7 @@ function gary_render_service_card_html( $data ) {
 
             <div class="service-card-image">
                 <?php if ( $thumb_url ) : ?>
-                    <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($item['title']); ?>" />
+                    <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($item['title']); ?>" width="500" height="500" loading="lazy" />
                 <?php else : ?>
                     <div class="fallback-placeholder">GW</div>
                 <?php endif; ?>

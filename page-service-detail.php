@@ -62,35 +62,42 @@ $is_package = !empty( $summary['grid_items'] );
 
 <main id="primary" class="site-main page-template-service-detail">
 
-    <?php if ( $bg_img ) : ?>
-        <div class="service-bg-layer" style="background-image: url('<?php echo esc_url($bg_img); ?>');"></div>
+    <?php 
+    $bg_img_url = $bg_img;
+    if ( is_numeric($bg_img) ) {
+        $bg_img_url = wp_get_attachment_image_url($bg_img, 'gw-hero');
+    } elseif ( $bg_img ) {
+        $attachment_id = attachment_url_to_postid($bg_img);
+        if ( $attachment_id ) $bg_img_url = wp_get_attachment_image_url($attachment_id, 'gw-hero');
+    }
+    if ( $bg_img_url ) : ?>
+        <div class="service-bg-layer" style="background-image: url('<?php echo esc_url($bg_img_url); ?>');"></div>
     <?php endif; ?>
 
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
         
+<<<<<<< HEAD
         <header class="service-hero-header" style="text-align:center; margin-bottom: 40px; margin-top: 0; padding-top: 20px;">
+=======
+        <header class="service-hero-header" style="text-align:center; margin-bottom: 30px; margin-top: 0;">
+>>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
             <h1 class="entry-title"><?php echo esc_html( gary_clean_service_name( get_the_title() ) ); ?></h1>
-            <p style="opacity:0.6; text-transform:uppercase; letter-spacing:3px; font-size:0.8rem; margin-top:10px;">
-                <?php echo $is_package
-                    ? 'A curated package — every moment of your day, expertly covered'
-                    : 'A dedicated session — focused, personal and crafted around you';
-                ?>
-            </p>
         </header>
 
+<<<<<<< HEAD
         <div class="service-editorial-content" style="margin-bottom:100px;">
             <!-- Main Body Content (Editorial) -->
             <div class="experience-intro-wrap">
+=======
+        <div class="service-hero-single-column">
+            
+            <!-- Left: Intro area (Editorial Blocks) -->
+            <div class="experience-intro-wrap" style="flex:1;">
+>>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
                 <div class="main-body-text" style="font-size:1.15rem; line-height:1.8; margin-bottom:40px;">
                     <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
                 </div>
 
-                <?php if ( ! empty( $summary['titles'] ) ) : ?>
-                    <p style="font-family:'Lato', sans-serif; font-size:1rem; line-height:1.6; color:var(--brand-accent); font-weight:700; margin-bottom: 30px; border-left: 2px solid var(--brand-gold-light); padding-left: 15px;">
-                        <?php echo $is_package ? 'This package includes:' : 'This session covers:'; ?>
-                        <?php echo esc_html( implode(', ', $summary['titles']) ); ?>
-                    </p>
-                <?php endif; ?>
 
                 <?php if ( !empty($highlights) ) : ?>
                     <h3 style="font-family:'Lato', sans-serif; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">The finer details of your day:</h3>
@@ -104,12 +111,18 @@ $is_package = !empty( $summary['grid_items'] );
                     </ul>
                 <?php endif; ?>
             </div>
+<<<<<<< HEAD
+=======
+
+            </div>
+>>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
         </div>
+
 
         <!-- Bottom Section Placeholder (Sub-services now immediately follow main split) -->
 
         <div style="margin-top: 80px; text-align: center;">
-            <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--brand-gold-light); text-decoration:none; font-weight:700;">Back to top level packages &rarr;</a>
+            <a href="/services/" style="text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; color:var(--brand-gold-light); text-decoration:none; font-weight:700;">Back to top level packages and Individual Services &rarr;</a>
         </div>
 
     </div>
