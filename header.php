@@ -16,13 +16,28 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.34.0 - High Fidelity Sync) -->
-    <style id="gary-final-sync-reset-v3000-34-0">
-        /* Absolute Prominence & Tucking Overrides */
-        body:not(.home) .service-hero-header h1.entry-title { font-size: 4rem !important; margin-top: 0 !important; position: relative !important; top: -30px !important; z-index: 100 !important; }
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.39.0 - High Fidelity Sync) -->
+    <style id="gary-final-sync-reset-v3000-39-0">
+        /* Absolute specificity override to defeat style.css legacy rules */
+        html body:not(.home) .entry-title, 
+        html body:not(.home) h1.entry-title, 
+        html body:not(.home) .page-header h1,
+        html body:not(.home) .service-hero-header h1,
+        html body:not(.home) .post-title,
+        html body:not(.home) h1:first-of-type { 
+            font-size: 4rem !important; 
+            margin-top: 0 !important; 
+            position: relative !important; 
+            top: 30px !important; 
+            z-index: 100 !important; 
+            display: block !important;
+            visibility: visible !important;
+        }
+        
         .service-card-title, .condensed-info h3 { font-family: var(--font-script) !important; font-size: 1.8rem !important; visibility: visible !important; display: block !important; }
         
-        /* Footer Tightening */
+        /* Layout & Border Fixes */
+        .gw-list-box.is-style-included, .gw-editorial-gold-box.detailed-components-section { border: none !important; }
         .footer-meta { margin-top: 15px !important; padding-top: 20px !important; }
         .footer-social { margin-top: 15px !important; }
         .site-footer { margin-top: 60px !important; }

@@ -193,7 +193,7 @@ function gary_render_service_plaque_html( $data ) {
             </div>
 
             <div class="investment-buttons" style="display:flex; flex-direction:column; gap:12px; margin-top: 0;">
-                <a href="#request" class="btn-black" style="background:#000; color:#fff; text-decoration:none; text-align:center; padding:18px; text-transform:uppercase; letter-spacing:2px; font-size:0.85rem; font-weight:700;">Request Details</a>
+                <a href="#request" class="btn-black gw-request-modal-trigger" style="background:#000; color:#fff; text-decoration:none; text-align:center; padding:18px; text-transform:uppercase; letter-spacing:2px; font-size:0.85rem; font-weight:700;">Request Details</a>
                 <a href="/booking/" class="btn-gold" style="background:var(--brand-gold-light); color:#fff; text-decoration:none; text-align:center; padding:18px; text-transform:uppercase; letter-spacing:2px; font-size:0.85rem; font-weight:700;">Book Consultation</a>
             </div>
         </div>

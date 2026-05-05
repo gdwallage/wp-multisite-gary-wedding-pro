@@ -587,7 +587,8 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
                     'page_id' => $p_id, 'bookly_id' => $rel->sub_service_id, 
                     'title' => $sub_data['title'], 'clean_title' => gary_clean_service_name($sub_data['title']),
                     'price' => $unit_p, 'duration' => $unit_d, 'info' => $sub_data['info'],
-                    'thumbnail' => $thumb
+                    'thumbnail' => $thumb,
+                    'permalink' => $p_id ? get_permalink($p_id) : '#'
                 );
             }
         }
@@ -620,7 +621,8 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
                     'page_id' => $p_id, 'bookly_id' => $db_inc->included_id, 
                     'title' => $sub_data['title'], 'clean_title' => gary_clean_service_name($sub_data['title']),
                     'price' => (float)$sub_data['price'], 'duration' => (int)$sub_data['duration'], 'info' => $sub_data['info'],
-                    'thumbnail' => $thumb
+                    'thumbnail' => $thumb,
+                    'permalink' => $p_id ? get_permalink($p_id) : '#'
                 );
             }
         }
@@ -934,3 +936,88 @@ add_action( 'wp_ajax_nopriv_gary_check_availability', 'gary_ajax_check_availabil
  * SECURITY: Limit login error messages
  */
 add_filter( 'login_errors', function() { return 'Login failed.'; });
+
+/**
+ * Render the Global Boutique Request Modal (v3000.37.0)
+ * Hooked to wp_footer to ensure it is always available for plaque triggers.
+ */
+function gary_global_request_modal() {
+    ?>
+    <div id="gw-request-modal" class="gw-modal" style="display:none; position:fixed; inset:0; z-index:100000; align-items:center; justify-content:center;">
+        <div class="gw-modal-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(5px);"></div>
+        <div class="gw-modal-content" style="position:relative; z-index:2; max-width:500px; width:90%; background:#fff; padding:40px; border:2px solid #C5A059; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+            <span class="gw-modal-close" style="position:absolute; top:20px; right:20px; font-size:30px; cursor:pointer; line-height:1; color:#C5A059;">&times;</span>
+            <h3 style="text-align:center; text-transform:uppercase; letter-spacing:3px; margin-bottom:10px; color:#C5A059; font-family:var(--font-primary); font-weight:700;">Request Details</h3>
+            <p id="gw-modal-service-name" style="text-align:center; font-size:0.9rem; opacity:0.7; margin-bottom:30px; font-family:var(--font-primary);"></p>
+            
+            <form id="gw-request-form">
+                <input type="hidden" name="action" value="gw_submit_request">
+                <input type="hidden" name="target_email" id="gw-modal-target-email" value="">
+                <input type="hidden" name="service_name" id="gw-modal-service-input" value="">
+                
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; margin-bottom:8px; opacity:0.6; font-family:var(--font-primary);">Your Name</label>
+                    <input type="text" name="user_name" required style="width:100%; padding:12px; border:1px solid #ddd; font-family:var(--font-primary);">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; margin-bottom:8px; opacity:0.6; font-family:var(--font-primary);">Email Address</label>
+                    <input type="email" name="user_email" required style="width:100%; padding:12px; border:1px solid #ddd; font-family:var(--font-primary);">
+                </div>
+                <div style="margin-bottom:25px;">
+                    <label style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; font-weight:700; margin-bottom:8px; opacity:0.6; font-family:var(--font-primary);">Message / Note</label>
+                    <textarea name="user_note" rows="4" style="width:100%; padding:12px; border:1px solid #ddd; font-family:var(--font-primary);"></textarea>
+                </div>
+                
+                <button type="submit" class="btn-black-gold" style="width:100%; border:none; padding:18px; cursor:pointer; background:#000; color:#fff; font-weight:700; text-transform:uppercase; letter-spacing:2px;">Send Request</button>
+                <div class="gw-form-status" style="margin-top:20px; text-align:center; font-weight:700; font-size:0.9rem; font-family:var(--font-primary);"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    (function($){
+        $(document).ready(function(){
+            $(document).on('click', '.gw-request-modal-trigger', function(e){
+                e.preventDefault();
+                var email = $(this).data('email') || 'photographer@garywallage.uk';
+                var service = $(this).data('service') || 'Wedding Photography';
+                
+                $('#gw-modal-target-email').val(email);
+                $('#gw-modal-service-input').val(service);
+                $('#gw-modal-service-name').text('For: ' + service);
+                
+                $('#gw-request-modal').fadeIn(300).css('display', 'flex');
+                $('body').css('overflow', 'hidden');
+            });
+
+            $(document).on('click', '.gw-modal-close, .gw-modal-overlay', function(){
+                $('#gw-request-modal').fadeOut(300);
+                $('body').css('overflow', 'auto');
+            });
+
+            $('#gw-request-form').on('submit', function(e){
+                e.preventDefault();
+                var $status = $(this).find('.gw-form-status').text('Sending Inquiry...').css('color', '#C5A059');
+                var $btn = $(this).find('button').prop('disabled', true).css('opacity', '0.5');
+                
+                $.post('<?php echo admin_url('admin-ajax.php'); ?>', $(this).serialize(), function(res){
+                    if(res.success){
+                        $status.text('Inquiry sent successfully!').css('color', '#2ecc71');
+                        setTimeout(function(){ 
+                            $('#gw-request-modal').fadeOut(300); 
+                            $('body').css('overflow', 'auto');
+                            $btn.prop('disabled', false).css('opacity', '1');
+                            $status.text('');
+                        }, 2500);
+                    } else {
+                        $status.text('Error: ' + (res.data || 'Submission failed')).css('color', '#e74c3c');
+                        $btn.prop('disabled', false).css('opacity', '1');
+                    }
+                });
+            });
+        });
+    })(jQuery);
+    </script>
+    <?php
+}
+add_action('wp_footer', 'gary_global_request_modal');
