@@ -1,4 +1,4 @@
-<footer id="colophon" class="site-footer" style="background:#1a1a1a; color:#fff; text-align:center; margin-top:100px;">
+<footer id="colophon" class="site-footer" style="background:#1a1a1a; color:#fff; text-align:center; margin-top:60px;">
     
     <div class="footer-grid">
         
@@ -89,8 +89,8 @@
     foreach ( $social_links as $s ) { if ( ! empty( $s['url'] ) ) { $has_social = true; break; } }
     if ( $has_social ) :
     ?>
-    <div class="footer-social" style="margin-top:30px; padding-bottom:20px; text-align:center;">
-        <p style="font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; opacity:0.5; margin-bottom:14px;">Follow the Story</p>
+    <div class="footer-social" style="margin-top:15px; padding-bottom:15px; text-align:center;">
+        <p style="font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; opacity:0.5; margin-bottom:10px;">Follow the Story</p>
         <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
             <?php foreach ( $social_links as $platform => $s ) :
                 if ( empty( $s['url'] ) ) continue; ?>
@@ -110,7 +110,7 @@
     <?php endif; ?>
 
     <!-- Bottom Copyright -->
-    <div class="footer-meta" style="border-top:1px solid #333; padding-top:30px; margin-top:30px; text-align:center;">
+    <div class="footer-meta" style="border-top:1px solid #333; padding-top:20px; margin-top:15px; text-align:center;">
         <p style="font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; opacity:0.6;">
             &copy; <?php echo date('Y'); ?> <?php echo esc_html( get_theme_mod( 'footer_copyright', 'Gary Wallage Digital Ecosystem | Wiltshire Historian' ) ); ?>
         </p>

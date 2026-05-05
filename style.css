@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.21.0
+ * Version: 3000.29.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  */
@@ -90,8 +90,8 @@ h3, h4, h5, h6 {
 }
 
 h1, h2, h3 { line-height: 1.2; margin-bottom: 20px; color: var(--brand-text); }
-h1.entry-title { color: var(--brand-accent); font-size: 3.5rem; text-align: center; margin-top: 60px; margin-bottom: 40px; }
-body:not(.home) h1.entry-title { margin-top: 180px !important; }
+h1.entry-title { color: var(--brand-accent); font-size: 4rem !important; text-align: center; margin-top: 100px !important; margin-bottom: 40px !important; line-height: 1.1; }
+body:not(.home) h1.entry-title { margin-top: 100px !important; }
 
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header { width: 100%; z-index: 1000; position: relative; background: var(--brand-white); border-bottom: none; }
@@ -146,6 +146,12 @@ body:not(.home) h1.entry-title { margin-top: 180px !important; }
     transition: 0.4s;
 }
 .btn-black:hover { background: var(--brand-gold-light); color: var(--brand-white); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+/* --- JETPACK SHARING CENTERING --- */
+.sharedaddy, .sharedaddy .sd-sharing-enabled { text-align: center !important; margin: 20px auto !important; width: 100% !important; }
+.sharedaddy .sd-content { display: block !important; margin: 0 auto !important; float: none !important; }
+.sharedaddy .sd-content ul { display: flex !important; justify-content: center !important; flex-wrap: wrap !important; list-style: none !important; padding: 0 !important; gap: 10px !important; }
+.sharedaddy .sd-content li { float: none !important; margin: 0 !important; }
 
 /* --- MOBILE HEADER OVERRIDE --- */
 @media (max-width: 1024px) {
@@ -246,8 +252,14 @@ body:not(.home) h1.entry-title { margin-top: 180px !important; }
 .gw-global-grid-wrapper { overflow: visible !important; }
 /* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
 .services-grid { 
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--grid-gap); 
-    row-gap: 60px; margin: 60px auto; width: var(--editorial-width) !important; max-width: 1250px; overflow: visible !important;
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: var(--grid-gap); 
+    row-gap: 60px; 
+    margin: 60px auto; 
+    width: var(--editorial-width) !important; 
+    max-width: 1400px; 
+    overflow: visible !important;
 }
 @media (max-width: 1024px) {
     .services-grid { width: 100% !important; grid-template-columns: 1fr !important; }
@@ -608,26 +620,30 @@ body #primary .gw-trio-bottom img,
     font-family: var(--font-primary); font-size: 0.7rem; text-transform: uppercase; 
     letter-spacing: 4px; color: var(--brand-gold-light); margin-bottom: 15px;
 }
-.investment-plaque .subtitle { 
-    display: block; font-size: 1.1rem; margin-bottom: 30px; opacity: 0.7; font-style: italic;
+.investment-plaque .package-name-sub {
+    font-family: 'Lato', sans-serif; font-size: 0.9rem; text-transform: uppercase;
+    letter-spacing: 2px; opacity: 0.9; font-weight: 700; margin-bottom: 25px; color: var(--brand-black);
 }
 .investment-plaque .price-val { 
-    font-family: var(--font-primary); font-size: 2.4rem; font-weight: 700; color: var(--brand-text); 
-    margin: 20px 0;
+    font-family: var(--font-primary) !important; font-size: 4.2rem !important; font-weight: 700 !important; color: var(--brand-black) !important; 
+    line-height: 1 !important; margin-bottom: 20px !important;
 }
 .investment-plaque .duration-val { 
-    font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-bottom: 40px;
+    font-size: 0.75rem !important; letter-spacing: 1px !important; text-transform: uppercase !important; opacity: 0.7 !important; margin-bottom: 20px !important;
 }
 
-.investment-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+.investment-buttons { display: flex !important; flex-direction: column !important; gap: 12px !important; margin-top: 10px !important; }
 .btn-black { 
-    background: var(--brand-black); color: var(--brand-white); padding: 18px; font-weight: 700; 
-    text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; transition: 0.3s;
+    background: #000 !important; color: #fff !important; padding: 18px !important; font-weight: 700 !important; 
+    text-transform: uppercase !important; letter-spacing: 2px !important; font-size: 0.85rem !important; transition: 0.3s !important;
 }
-.btn-black:hover { background: var(--brand-accent); transform: translateY(-2px); }
+.btn-gold { 
+    background: var(--brand-gold-light) !important; color: #fff !important; padding: 18px !important; font-weight: 700 !important; 
+    text-transform: uppercase !important; letter-spacing: 2px !important; font-size: 0.85rem !important; transition: 0.3s !important;
+}
 
 /* --- 11. COMPONENT CARDS (SUB-SERVICES) --- */
-.detailed-components-section { margin-top: 80px; padding-top: 60px; border-top: 1px solid rgba(0,0,0,0.05); }
+.detailed-components-section { margin-top: 10px !important; padding-top: 10px !important; border-top: none !important; }
 .component-grid { 
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; 
 }
@@ -637,13 +653,14 @@ body #primary .gw-trio-bottom img,
 }
 .component-card:hover { border-color: var(--brand-gold-light); box-shadow: var(--shadow-soft); }
 .coin-icon-wrap { 
-    flex: 0 0 90px; width: 90px; height: 90px; border-radius: 50%; 
+    flex: 0 0 90px; width: 90px; height: 90px; border-radius: 50% !important; 
     overflow: hidden; border: 3px solid var(--brand-gold-light); margin-right: 25px;
 }
 .coin-icon-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.component-info h4 { 
-    font-family: var(--font-script); font-weight: normal; 
-    margin: 0 0 8px 0; font-size: 1.8rem; color: var(--brand-accent); 
+.component-info h4, .service-card-title { 
+    font-family: var(--font-script) !important; font-weight: normal !important; 
+    margin: 0 0 8px 0 !important; font-size: 2.2rem !important; color: var(--brand-accent) !important; 
+    display: block !important; visibility: visible !important; opacity: 1 !important;
 }
 .component-info p { margin: 0; font-size: 0.85rem; opacity: 0.7; line-height: 1.5; }
 
@@ -1026,7 +1043,7 @@ body #primary .gw-trio-bottom img,
 }
 
 /* --- EDITORIAL TRIPLET SYSTEM --- */
-.gw-editorial-triplet-wrap { margin-top: 60px; margin-bottom: 80px; }
+.gw-editorial-triplet-wrap { margin-top: 20px !important; margin-bottom: 40px !important; }
 .gw-triplet-row { 
     display: grid; 
     grid-template-columns: 1fr 1fr;
@@ -1035,13 +1052,13 @@ body #primary .gw-trio-bottom img,
     border: 2px solid #C5A059 !important; /* Outer Border Strong */
     background: #fff;
     width: 100%;
-    margin-top: 40px;
+    margin-top: 10px !important;
 }
 
 
 
 .gw-triplet-item { 
-    padding: 50px 40px; 
+    padding: 30px 40px !important; 
     position: relative; 
 }
 

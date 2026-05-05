@@ -125,12 +125,13 @@ require_once get_template_directory() . '/inc/card-renderer.php';
 function gary_send_performance_headers() {
     if ( is_admin() ) return;
     $template_uri = get_template_directory_uri();
-    header( "Link: <{$template_uri}/style.css?ver=3000.17.0>; rel=preload; as=style", false );
+    $ver = wp_get_theme()->get('Version');
+    header( "Link: <{$template_uri}/style.css?ver={$ver}>; rel=preload; as=style", false );
 }
 add_action( 'send_headers', 'gary_send_performance_headers' );
 
 function gary_wedding_scripts() { 
-    $ver = '3000.17.0';
+    $ver = wp_get_theme()->get('Version');
     wp_enqueue_style( 'gary-wedding-v3-editorial', get_stylesheet_uri(), array(), $ver ); 
     
     // Enqueue the block script for the frontend (certain blocks might need JS logic)
@@ -140,7 +141,7 @@ add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );
 
 // THE FIX: Enqueue block scripts FOR THE EDITOR specifically
 function gary_wedding_editor_assets() {
-    $ver = '3000.17.0';
+    $ver = wp_get_theme()->get('Version');
     wp_enqueue_script( 'gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor', 'wp-server-side-render' ), $ver, true );
 }
 add_action( 'enqueue_block_editor_assets', 'gary_wedding_editor_assets' );
@@ -229,7 +230,7 @@ function gary_get_bookly_service_data( $service_id ) {
     global $wpdb;
     $table = $wpdb->prefix . 'bookly_services';
     if ( $wpdb->get_var("SHOW TABLES LIKE '$table'") != $table ) return false;
-    return $wpdb->get_row( $wpdb->prepare( "SELECT title, price, duration, info FROM $table WHERE id = %d", $service_id ), ARRAY_A );
+    return $wpdb->get_row( $wpdb->prepare( "SELECT title, price, duration, info, attachment_id FROM $table WHERE id = %d", $service_id ), ARRAY_A );
 }
 
 function gary_find_page_by_bookly_title( $title ) {
@@ -275,7 +276,9 @@ function gary_get_service_id_for_page( $page_id ) {
  * HELPER: Format seconds into human readable duration
  */
 function gary_format_duration( $seconds ) {
-    if ( empty($seconds) || !is_numeric($seconds) ) return '';
+    if ( empty($seconds) ) return '';
+    if ( !is_numeric($seconds) ) return trim($seconds);
+    
     $hours = round( (int)$seconds / 3600, 1 );
     if ($hours <= 0) return '';
     return $hours . ' Hours';
@@ -575,10 +578,16 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
                 $inc_total_val += $unit_p;
                 $inc_total_duration += $unit_d;
                 $p_id = gary_get_page_id_for_service($rel->sub_service_id);
+                $thumb = $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : '';
+                if ( !$thumb && !empty($sub_data['attachment_id']) ) {
+                    $thumb = wp_get_attachment_image_url( $sub_data['attachment_id'], 'medium' );
+                }
+                
                 $inclusions[] = array(
-                    'page_id' => $p_id, 'bookly_id' => $rel->sub_service_id, 'title' => $sub_data['title'],
+                    'page_id' => $p_id, 'bookly_id' => $rel->sub_service_id, 
+                    'title' => $sub_data['title'], 'clean_title' => gary_clean_service_name($sub_data['title']),
                     'price' => $unit_p, 'duration' => $unit_d, 'info' => $sub_data['info'],
-                    'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
+                    'thumbnail' => $thumb
                 );
             }
         }
@@ -602,10 +611,16 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
                 $inc_total_val += $unit_p;
                 $inc_total_duration += $unit_d;
                 $p_id = gary_get_page_id_for_service($db_inc->included_id);
+                $thumb = $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : '';
+                if ( !$thumb && !empty($sub_data['attachment_id']) ) {
+                    $thumb = wp_get_attachment_image_url( $sub_data['attachment_id'], 'medium' );
+                }
+
                 $inclusions[] = array(
-                    'page_id' => $p_id, 'bookly_id' => $db_inc->included_id, 'title' => $sub_data['title'],
-                    'price' => $unit_p, 'duration' => $unit_d, 'info' => $sub_data['info'],
-                    'thumb' => $p_id ? get_the_post_thumbnail_url($p_id, 'medium') : ''
+                    'page_id' => $p_id, 'bookly_id' => $db_inc->included_id, 
+                    'title' => $sub_data['title'], 'clean_title' => gary_clean_service_name($sub_data['title']),
+                    'price' => (float)$sub_data['price'], 'duration' => (int)$sub_data['duration'], 'info' => $sub_data['info'],
+                    'thumbnail' => $thumb
                 );
             }
         }

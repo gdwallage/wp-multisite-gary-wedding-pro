@@ -20,6 +20,15 @@
 		},
 		{
 			"path": "../../plugins/gw-bookly-addons"
+		},
+		{
+			"path": "../../plugins/force-regenerate-thumbnails"
+		},
+		{
+			"path": "../../plugins/gallery-master-sync"
+		},
+		{
+			"path": "../../plugins/image-regenerate-select-crop"
 		}
 	],
 	"settings": {}

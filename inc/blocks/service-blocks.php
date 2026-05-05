@@ -322,22 +322,49 @@ function gary_render_single_service_block( $attributes ) {
     if ( empty($card_data) || !is_array($card_data) ) return '';
 
     if ($layout === 'horizontal') : 
+        $thumb = $card_data['thumbnail'];
+        
+        // If no featured image on the page, try to find one linked to the Bookly service (if any)
+        // or fallback to the site logo.
+        if (!$thumb) {
+            $logo_id = get_theme_mod( 'custom_logo' );
+            $thumb = $logo_id ? wp_get_attachment_image_url( $logo_id, 'full' ) : '';
+        }
+        
         ob_start(); ?>
         <a href="<?php echo esc_url($card_data['permalink']); ?>" class="component-card style-bookly-service">
-            <div class="service-card-image" style="flex: 0 0 120px; padding: 10px; border: 2px solid var(--brand-gold-light); margin-right: 25px; border-radius: 0 !important;">
-                <?php if($card_data['thumbnail']): ?><img src="<?php echo esc_url($card_data['thumbnail']); ?>" style="border-radius: 0 !important;" /><?php endif; ?>
+            <div class="coin-icon-wrap" style="flex: 0 0 100px; width: 100px; height: 100px; border-radius: 0 !important;">
+                <?php if($thumb): ?>
+                    <img src="<?php echo esc_url($thumb); ?>" style="width: 100%; height: 100%; object-fit: cover;" />
+                <?php else: ?>
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-family: var(--font-primary); color: var(--brand-gold-light); font-weight: 700; background: #fbfbfb;">GW</div>
+                <?php endif; ?>
             </div>
             <div class="component-info">
-                <h2 class="service-card-title" style="font-size: 1.2rem; height: auto; text-align: left; justify-content: flex-start; margin-bottom: 5px !important;">
+                <h4 class="service-card-title">
                     <?php echo esc_html( $card_data['title'] ); ?>
-                </h2>
-                <?php if( $card_data['savings'] > 0 && !$card_data['is_free']): ?>
-                    <div class="service-card-ribbon" style="top: 15px; right: -45px; font-size: 0.6rem; width: 180px;">SAVING £<?php echo number_format($card_data['savings'], 0); ?></div>
-                <?php endif; ?>
+                </h4>
+                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-gold-light); font-weight: 700; margin-top: 5px;">
+                    <?php echo $card_data['is_free'] ? 'INCLUDED' : '£' . number_format($card_data['price'], 0) . ' INCLUDED'; ?>
+                </div>
             </div>
         </a>
         <?php return ob_get_clean();
+    elseif ($layout === 'plaque') :
+        if ( empty( $card_data['duration'] ) ) {
+            $manual_dur = get_post_meta( get_the_ID(), '_gary_service_duration', true );
+            if ( $manual_dur ) {
+                $card_data['duration'] = $manual_dur;
+            }
+        }
+        return gary_render_service_plaque_html( $card_data );
     else :
+        if ( empty( $card_data['duration'] ) ) {
+            $manual_dur = get_post_meta( get_the_ID(), '_gary_service_duration', true );
+            if ( $manual_dur ) {
+                $card_data['duration'] = $manual_dur;
+            }
+        }
         return gary_render_service_card_html( $card_data );
     endif;
 }

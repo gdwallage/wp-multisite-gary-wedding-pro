@@ -16,8 +16,22 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.1.0 - High Fidelity Sync) -->
-    <style id="gary-final-sync-reset">
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.33.0 - High Fidelity Sync) -->
+    <style id="gary-final-sync-reset-v3000-33-0">
+        /* Absolute Prominence & Tucking Overrides */
+        body:not(.home) .service-hero-header h1.entry-title { font-size: 4rem !important; margin-top: 0 !important; position: relative !important; top: -60px !important; }
+        .service-card-title, .condensed-info h3 { font-family: var(--font-script) !important; font-size: 1.8rem !important; visibility: visible !important; display: block !important; }
+        
+        /* Footer Tightening */
+        .footer-meta { margin-top: 15px !important; padding-top: 20px !important; }
+        .footer-social { margin-top: 15px !important; }
+        .site-footer { margin-top: 60px !important; }
+
+        /* Jetpack Sharing Centering */
+        .sharedaddy, .sharedaddy .sd-sharing-enabled { text-align: center !important; margin: 20px auto !important; width: 100% !important; }
+        .sharedaddy .sd-content { display: block !important; margin: 0 auto !important; float: none !important; }
+        .sharedaddy .sd-content ul { display: flex !important; justify-content: center !important; flex-wrap: wrap !important; list-style: none !important; padding: 0 !important; gap: 10px !important; }
+
         /* Ensuring Ribbons and Star Bullets are High Fidelity */
         .service-card-ribbon { z-index: 100 !important; }
         .gw-bullet-list.is-inclusions { margin-top: 15px !important; }

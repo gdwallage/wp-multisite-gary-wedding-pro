@@ -37,6 +37,7 @@
                         value: props.attributes.card_layout,
                         options: [
                             { label: 'Vertical Featured Card', value: 'vertical' },
+                            { label: 'Investment Plaque', value: 'plaque' },
                             { label: 'Horizontal Sub-Service', value: 'horizontal' }
                         ],
                         onChange: function(newVal) { props.setAttributes({ card_layout: newVal }); }
