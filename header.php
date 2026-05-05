@@ -16,10 +16,10 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.33.0 - High Fidelity Sync) -->
-    <style id="gary-final-sync-reset-v3000-33-0">
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.34.0 - High Fidelity Sync) -->
+    <style id="gary-final-sync-reset-v3000-34-0">
         /* Absolute Prominence & Tucking Overrides */
-        body:not(.home) .service-hero-header h1.entry-title { font-size: 4rem !important; margin-top: 0 !important; position: relative !important; top: -60px !important; }
+        body:not(.home) .service-hero-header h1.entry-title { font-size: 4rem !important; margin-top: 0 !important; position: relative !important; top: -30px !important; z-index: 100 !important; }
         .service-card-title, .condensed-info h3 { font-family: var(--font-script) !important; font-size: 1.8rem !important; visibility: visible !important; display: block !important; }
         
         /* Footer Tightening */
