@@ -28,10 +28,11 @@
             font-size: 3.2rem !important; 
             margin-top: 0 !important; 
             position: relative !important; 
-            top: 130px !important; /* Increased to 130px for perfect clearing of the tall focal logo */
+            top: 130px !important; /* Increased for logo clearance */
             z-index: 100 !important; 
             display: block !important;
             visibility: visible !important;
+            border: 5px solid red !important; /* DIAGNOSTIC: Confirming CSS injection */
         }
 
         /* Essential Fidelity Constraints */
