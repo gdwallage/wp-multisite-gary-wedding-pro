@@ -198,8 +198,6 @@ h1.entry-title {
 body:not(.home) h1.entry-title {
     margin-top: 90px !important;
 }
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
-
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header {
     width: 100%;
