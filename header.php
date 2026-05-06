@@ -16,8 +16,8 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.420.0 - Clean Consolidation) -->
-    <style id="gary-final-sync-reset-v3000-420-0">
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.422.0 - Menu Fidelity) -->
+    <style id="gary-final-sync-reset-v3000-422-0">
         /* 1. Global Page Title Consistency */
         html body:not(.home) .entry-title, 
         html body:not(.home) h1.entry-title, 
@@ -88,13 +88,17 @@
         /* 4. Branding & Tagline Centering */
         .focal-left { display: flex !important; align-items: center !important; justify-content: flex-start !important; }
         .branding-group { display: flex !important; flex-direction: column !important; align-items: center !important; text-align: center !important; width: 100% !important; }
-        .site-tagline-lato { text-align: center !important; width: 100% !important; margin: -5px auto 0 !important; display: block !important; }
+        .site-tagline-lato { text-align: center !important; width: 100% !important; margin: 5px auto 0 !important; display: block !important; font-size: 0.65rem !important; letter-spacing: 2px !important; text-transform: uppercase !important; opacity: 0.8 !important; }
+        
+        .menu-toggle { display: flex !important; align-items: center !important; gap: 20px !important; background: transparent !important; border: none !important; cursor: pointer !important; padding: 0 !important; }
+        .menu-text { font-family: var(--font-primary) !important; font-size: 0.75rem !important; letter-spacing: 2px !important; color: #C5A059 !important; font-weight: 700 !important; line-height: 1 !important; }
+        .hamburger-box { width: 28px !important; height: 19px !important; display: inline-block !important; position: relative !important; margin-right: 8px !important; }
         
         /* 5. Premium Menu Burger & Overlay (80% Modal) */
-        .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after { width: 28px !important; height: 3px !important; background-color: #C5A059 !important; border-radius: 2px !important; }
-        .hamburger-inner::before { top: -8px !important; }
-        .hamburger-inner::after { top: 8px !important; }
-        .hamburger-box { width: 28px !important; height: 19px !important; }
+        .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after { width: 28px !important; height: 3px !important; background-color: #C5A059 !important; border-radius: 2px !important; display: block !important; position: absolute !important; }
+        .hamburger-inner { top: 50% !important; margin-top: -1.5px !important; }
+        .hamburger-inner::before { top: -8px !important; content: "" !important; left: 0 !important; }
+        .hamburger-inner::after { top: 8px !important; content: "" !important; left: 0 !important; }
 
         .menu-overlay { position: fixed !important; inset: 0 !important; background: rgba(0, 0, 0, 0.75) !important; backdrop-filter: blur(8px) !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 99999 !important; }
         .menu-overlay-inner { width: 80% !important; height: 80% !important; max-width: 1000px !important; max-height: 85vh !important; background: #ffffff !important; border-radius: 20px !important; box-shadow: 0 40px 100px rgba(0,0,0,0.6) !important; padding: 80px 40px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; overflow-y: auto !important; }
