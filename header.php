@@ -16,8 +16,8 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.150.0 - Unified Sync) -->
-    <style id="gary-final-sync-reset-v3000-150-0">
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.190.0 - Aggressive Cache Purge) -->
+    <style id="gary-final-sync-reset-v3000-190-0">
         /* Absolute specificity override to defeat style.css legacy rules */
         html body:not(.home) .entry-title, 
         html body:not(.home) h1.entry-title, 
@@ -28,11 +28,14 @@
             font-size: 3.2rem !important; 
             margin-top: 0 !important; 
             position: relative !important; 
-            top: 30px !important; 
+            top: 130px !important; /* Increased to 130px for perfect clearing of the tall focal logo */
             z-index: 100 !important; 
             display: block !important;
             visibility: visible !important;
         }
+
+        /* Essential Fidelity Constraints */
+        .hero-peek-img { object-fit: contain !important; background: #000 !important; }
         
         .service-card-title, .condensed-info h3 { font-family: var(--font-script) !important; font-size: 1.8rem !important; visibility: visible !important; display: block !important; }
         
@@ -68,7 +71,7 @@
     })();
     </script>
     <?php wp_head(); ?>
-</head></head>
+</head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 

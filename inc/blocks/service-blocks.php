@@ -9,8 +9,7 @@ $block_modules = array(
     'rendering.php',
     'editor.php',
 );
-
-<<<<<<< HEAD
+function gary_register_service_blocks() {
     // 2. Singular Service Box
     register_block_type('gw/single-service', array(
         'render_callback' => 'gary_render_single_service_block',
@@ -682,8 +681,4 @@ function gary_render_triplet_item( $atts, $content ) {
     </div>
 
     <?php return ob_get_clean();
-=======
-foreach ($block_modules as $module) {
-    require_once plugin_dir_path(__FILE__) . $module;
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
 }

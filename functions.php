@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.16.0
+ * Version: 3000.190.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -131,16 +131,22 @@ function gary_send_performance_headers()
 {
     if (is_admin())
         return;
-    $template_uri = get_template_directory_uri();
+    $theme_dir = content_url('/themes/gary-wedding-pro');
     $ver = wp_get_theme()->get('Version');
-    header("Link: <{$template_uri}/style.css?ver={$ver}>; rel=preload; as=style", false);
+    header("Link: <{$theme_dir}/style.css?ver={$ver}>; rel=preload; as=style", false);
 }
 add_action('send_headers', 'gary_send_performance_headers');
 
 function gary_wedding_scripts()
 {
-    $ver = wp_get_theme()->get('Version');
-    wp_enqueue_style('gary-wedding-v3-editorial', get_stylesheet_uri(), array(), $ver);
+    $ver = '3000.190.0'; // Hardcoded version bump for aggressive cache busting
+    $theme_uri = get_stylesheet_directory_uri();
+    
+    wp_enqueue_style('gary-wedding-v3-editorial', $theme_uri . '/style.css', array(), $ver);
+
+    if (is_front_page()) {
+        wp_enqueue_script('gary-hero-slider', $theme_uri . '/js/hero-slider.js', array(), $ver, true);
+    }
 
     // Enqueue the block script for the frontend (certain blocks might need JS logic)
     wp_enqueue_script('gary-editorial-blocks-js', get_template_directory_uri() . '/inc/blocks/service-blocks.js', array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data', 'wp-i18n'), $ver, true);
@@ -469,6 +475,34 @@ function gary_get_grouped_bookly_services()
         'packages' => $packages,
         'individual' => $individual
     );
+}
+
+/**
+ * Sorts an array of services by interleaving prices (High, Low, 2nd High, 2nd Low...)
+ */
+function gary_interleave_by_price($items)
+{
+    if (empty($items)) return array();
+    
+    // Sort High to Low first
+    usort($items, function ($a, $b) {
+        return (float) $b['price'] <=> (float) $a['price'];
+    });
+
+    $count = count($items);
+    if ($count <= 2) return $items;
+
+    $result = array();
+    $left = 0;
+    $right = $count - 1;
+
+    while ($left <= $right) {
+        $result[] = $items[$left++];
+        if ($left <= $right) {
+            $result[] = $items[$right--];
+        }
+    }
+    return $result;
 }
 
 /**

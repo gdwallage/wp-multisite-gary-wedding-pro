@@ -44,12 +44,8 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
         'thumbnail'  => $thumbnail,
         'info'       => $b_data['info'],
         'is_free'    => (float)$b_data['price'] <= 0,
-<<<<<<< HEAD
-        'duration'   => (!empty($summary['total_duration'])) ? $summary['total_duration'] : ($b_data['duration'] ?: (($page_id ?: get_the_ID()) ? get_post_meta(($page_id ?: get_the_ID()), '_gary_service_duration', true) : ''))
-=======
-        'duration'   => $b_data['duration'],
+        'duration'   => (!empty($summary['total_duration'])) ? $summary['total_duration'] : ($b_data['duration'] ?: (($page_id ?: get_the_ID()) ? get_post_meta(($page_id ?: get_the_ID()), '_gary_service_duration', true) : '')),
         'icon'       => $page_id ? get_the_post_thumbnail_url($page_id, 'gw-service-icon') : ''
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
     );
 }
 

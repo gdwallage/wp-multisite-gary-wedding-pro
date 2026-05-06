@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.150.0
+ * Version: 3000.190.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  * Fixes: GLOBAL CACHE PURGE + ZERO-DEPENDENCY MENU.
@@ -179,11 +179,6 @@ h6 {
     letter-spacing: 2px !important;
 }
 
-<<<<<<< HEAD
-h1, h2, h3 { line-height: 1.2; margin-bottom: 20px; color: var(--brand-text); }
-h1.entry-title { color: var(--brand-accent); font-size: 4rem !important; text-align: center; margin-top: 100px !important; margin-bottom: 40px !important; line-height: 1.1; }
-body:not(.home) h1.entry-title { margin-top: 100px !important; }
-=======
 h1,
 h2,
 h3 {
@@ -323,7 +318,7 @@ body:not(.home) h1.entry-title {
     height: 14px;
     position: relative;
     flex-shrink: 0 !important;
-    margin-right: 10px; /* Extra breathing room */
+    margin-right: 35px !important; /* Increased to 35px to clear 'MENU' text completely */
 }
 
 .hamburger-inner,
@@ -758,34 +753,9 @@ body:not(.home) h1.entry-title {
 }
 
 /* Modal Positioning Fix */
-<<<<<<< HEAD
-.bookly-modal, .bookly-form-overlay { padding-top: 80px !important; }
-.bookly-modal-inner { margin-top: 0 !important; transform: translateY(0) !important; }
-
-/* --- 2. HERO PEEK CAROUSEL (base reset — full styles in front-page.php) --- */
-/* The peek carousel uses absolute positioning with JS-driven class switching.  */
-/* All detailed styles are co-located in front-page.php for maintainability.    */
-.hero-peek-carousel { position: relative; width: 100%; overflow: hidden; }
-.hero-peek-slide    { position: absolute; overflow: hidden; }
-.hero-peek-img      { display: block; width: 100%; height: 100%; object-fit: contain; }
-
-
-.gw-global-grid-wrapper { overflow: visible !important; }
-/* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
-.services-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-    gap: var(--grid-gap); 
-    row-gap: 60px; 
-    margin: 60px auto; 
-    width: var(--editorial-width) !important; 
-    max-width: 1400px; 
-    overflow: visible !important;
-=======
 .bookly-modal,
 .bookly-form-overlay {
     padding-top: 80px !important;
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
 }
 
 .bookly-modal-inner {
@@ -797,11 +767,12 @@ body:not(.home) h1.entry-title {
 .hero-peek-carousel {
     position: relative;
     width: 100%;
-    height: 65vh; 
-    min-height: 480px;
+    height: 60vh; /* Normalized for tighter framing */
+    min-height: 500px;
     background: var(--brand-black);
     overflow: hidden;
     perspective: 1200px;
+    margin-top: 180px !important; /* Force clearance for the tall focal logo with portrait */
 }
 
 .hero-peek-track {
@@ -892,7 +863,7 @@ body:not(.home) h1.entry-title {
 
 .hero-peek-title {
     font-family: var(--font-script) !important;
-    font-size: clamp(3rem, 6vw, 5.2rem) !important;
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem) !important; /* Reduced from 5.2rem to prevent overlap */
     color: var(--brand-accent) !important;
     margin: 0 0 10px 0 !important;
     text-shadow: 0 4px 20px rgba(0,0,0,0.9);
@@ -912,9 +883,9 @@ body:not(.home) h1.entry-title {
 
 .hero-peek-nav {
     position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 40px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
     display: flex;
     align-items: center;
     gap: 30px;
@@ -1735,61 +1706,14 @@ body #primary .gw-trio-bottom,
     position: sticky;
     top: 40px;
 }
-<<<<<<< HEAD
-.investment-plaque { 
-    background: var(--brand-white); border: 2px solid var(--brand-gold-light); 
-    padding: 50px 40px; text-align: center; box-shadow: var(--shadow-deep);
-    position: relative; overflow: hidden;
-}
-.investment-plaque h2 { 
-    font-family: var(--font-primary); font-size: 0.7rem; text-transform: uppercase; 
-    letter-spacing: 4px; color: var(--brand-gold-light); margin-bottom: 15px;
-}
-.investment-plaque .package-name-sub {
-    font-family: 'Lato', sans-serif; font-size: 0.9rem; text-transform: uppercase;
-    letter-spacing: 2px; opacity: 0.9; font-weight: 700; margin-bottom: 25px; color: var(--brand-black);
-}
-.investment-plaque .price-val { 
-    font-family: var(--font-primary) !important; font-size: 4.2rem !important; font-weight: 700 !important; color: var(--brand-black) !important; 
-    line-height: 1 !important; margin-bottom: 20px !important;
-}
-.investment-plaque .duration-val { 
-    font-size: 0.75rem !important; letter-spacing: 1px !important; text-transform: uppercase !important; opacity: 0.7 !important; margin-bottom: 20px !important;
-}
 
-.investment-buttons { display: flex !important; flex-direction: column !important; gap: 12px !important; margin-top: 10px !important; }
-.btn-black { 
-    background: #000 !important; color: #fff !important; padding: 18px !important; font-weight: 700 !important; 
-    text-transform: uppercase !important; letter-spacing: 2px !important; font-size: 0.85rem !important; transition: 0.3s !important;
+@media (max-width: 1024px) {
+    .investment-sidebar {
+        flex: none !important;
+        width: 100% !important;
+        margin-top: 40px !important;
+    }
 }
-.btn-gold { 
-    background: var(--brand-gold-light) !important; color: #fff !important; padding: 18px !important; font-weight: 700 !important; 
-    text-transform: uppercase !important; letter-spacing: 2px !important; font-size: 0.85rem !important; transition: 0.3s !important;
-}
-
-/* --- 11. COMPONENT CARDS (SUB-SERVICES) --- */
-.detailed-components-section { margin-top: 10px !important; padding-top: 10px !important; border-top: none !important; }
-.component-grid { 
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; 
-}
-.component-card { 
-    display: flex; align-items: center; background: var(--brand-white); 
-    border: 1px solid rgba(0,0,0,0.05); padding: 25px; transition: 0.3s;
-}
-.component-card:hover { border-color: var(--brand-gold-light); box-shadow: var(--shadow-soft); }
-.coin-icon-wrap { 
-    flex: 0 0 90px; width: 90px; height: 90px; border-radius: 50% !important; 
-    overflow: hidden; border: 3px solid var(--brand-gold-light); margin-right: 25px;
-}
-.coin-icon-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.component-info h4, .service-card-title { 
-    font-family: var(--font-script) !important; font-weight: normal !important; 
-    margin: 0 0 8px 0 !important; font-size: 2.2rem !important; color: var(--brand-accent) !important; 
-    display: block !important; visibility: visible !important; opacity: 1 !important;
-}
-.component-info p { margin: 0; font-size: 0.85rem; opacity: 0.7; line-height: 1.5; }
-=======
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
 
 @media (max-width: 1024px) {
     .investment-sidebar {
@@ -3060,18 +2984,6 @@ h1 {
 }
 
 /* --- EDITORIAL TRIPLET SYSTEM --- */
-<<<<<<< HEAD
-.gw-editorial-triplet-wrap { margin-top: 20px !important; margin-bottom: 40px !important; }
-.gw-triplet-row { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr;
-    gap: 0; 
-    align-items: stretch; 
-    border: 2px solid #C5A059 !important; /* Outer Border Strong */
-    background: #fff;
-    width: 100%;
-    margin-top: 10px !important;
-=======
 .gw-editorial-triplet-wrap {
     margin: 30px auto;
     width: 100%;
@@ -3087,16 +2999,11 @@ h1 {
     background: transparent !important;
     width: 100%;
     margin: 20px auto;
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
+}
 }
 
 
 
-<<<<<<< HEAD
-.gw-triplet-item { 
-    padding: 30px 40px !important; 
-    position: relative; 
-=======
 .gw-triplet-item {
     padding: 25px 30px;
     /* Reduced vertical padding */
@@ -3106,7 +3013,7 @@ h1 {
     position: relative;
     display: flex;
     flex-direction: column;
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
+}
 }
 
 .gw-triplet-item:hover {
@@ -3347,50 +3254,4 @@ h1 {
 #gw-lightbox-close:hover {
     color: var(--brand-gold);
 }
-
-/* --- HERO PEEK CAROUSEL (Centralized) --- */
-.hero-peek-carousel {
-    position: relative; width: 100%; background: #11110e; padding: 0;
-    overflow: hidden; user-select: none; margin-top: 0; z-index: 5;
-}
-.hero-peek-track {
-    position: relative; width: 100%; height: 72vh; min-height: 530px;
-    display: flex; align-items: stretch; justify-content: center; background: #11110e;
-}
-.hero-peek-slide {
-    position: absolute; top: 0; bottom: 0; overflow: hidden; border-radius: 3px; cursor: pointer;
-    transition: width 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.55s ease, transform 0.55s cubic-bezier(0.4,0,0.2,1);
-    will-change: transform, opacity, width;
-}
-.hero-peek-slide.active { width: 30%; left: 35%; transform: translate3d(0, 0, 0); opacity: 1; z-index: 10; box-shadow: 0 40px 100px rgba(0,0,0,0.9); cursor: default; }
-.hero-peek-slide.prev { width: 25%; left: 35%; transform: translate3d(-100%, 0, 0); opacity: 0.5; z-index: 5; }
-.hero-peek-slide.next { width: 25%; left: 35%; transform: translate3d(120%, 0, 0); opacity: 0.5; z-index: 5; }
-.hero-peek-slide.far-prev { width: 20%; left: 35%; transform: translate3d(-225%, 0, 0); opacity: 0.2; z-index: 2; }
-.hero-peek-slide.far-next { width: 20%; left: 35%; transform: translate3d(275%, 0, 0); opacity: 0.2; z-index: 2; }
-.hero-peek-slide.hidden { opacity: 0; pointer-events: none; width: 10%; left: 35%; transform: translate3d(150%, 0, 0) scale(0.8); }
-
-.hero-peek-img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
-.hero-peek-caption {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(17,17,14,0.95) 0%, rgba(17,17,14,0.6) 60%, transparent 100%);
-    padding: 50px 40px 65px; text-align: center; opacity: 0; transition: opacity 0.4s ease 0.2s; pointer-events: none;
-}
-.hero-peek-slide.active .hero-peek-caption { opacity: 1; pointer-events: auto; }
-.hero-peek-title { font-family: var(--font-script) !important; font-size: 2.8rem !important; color: #fff !important; margin: 0 0 8px !important; line-height: 1.1 !important; }
-.hero-peek-subtitle { font-family: var(--font-primary); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 3px; color: rgba(255,255,255,0.75); margin: 0 0 14px; }
-.hero-peek-cta { display: inline-block; font-family: var(--font-primary); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 4px; color: var(--brand-gold-light); border: 1px solid rgba(197,160,89,0.5); padding: 8px 20px; }
-
-.hero-peek-nav { position: absolute; bottom: 18px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 18px; z-index: 20; }
-.hero-peek-arrow { background: rgba(0,0,0,0.45); border: 1px solid rgba(197,160,89,0.5); color: var(--brand-gold-light); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.hero-peek-dots { display: flex; gap: 8px; align-items: center; }
-.hero-peek-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); border: none; cursor: pointer; font-size: 0; padding: 0; transition: background 0.3s, transform 0.3s; }
-.hero-peek-dot.active { background: var(--brand-gold-light); transform: scale(1.5); }
-
-@media (max-width: 900px) {
-    .hero-peek-track { height: 60vh !important; }
-    .hero-peek-slide.active { width: 100%; left: 0; }
-    .hero-peek-slide.prev, .hero-peek-slide.next, .hero-peek-slide.far-prev, .hero-peek-slide.far-next, .hero-peek-slide.hidden { display: none; }
-    .hero-peek-caption { padding: 40px 20px 100px !important; backdrop-filter: blur(5px); }
-    .hero-peek-title { font-size: 1.8rem !important; }
-    .hero-peek-nav { bottom: 0 !important; background: #11110e !important; padding: 15px 0 !important; border-top: 1px solid rgba(197,160,89,0.3); }
 }

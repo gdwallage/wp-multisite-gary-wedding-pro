@@ -76,24 +76,14 @@ $is_package = !empty( $summary['grid_items'] );
 
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
         
-<<<<<<< HEAD
-        <header class="service-hero-header" style="text-align:center; margin-bottom: 40px; margin-top: 0; padding-top: 20px;">
-=======
         <header class="service-hero-header" style="text-align:center; margin-bottom: 30px; margin-top: 0;">
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
             <h1 class="entry-title"><?php echo esc_html( gary_clean_service_name( get_the_title() ) ); ?></h1>
         </header>
 
-<<<<<<< HEAD
-        <div class="service-editorial-content" style="margin-bottom:100px;">
-            <!-- Main Body Content (Editorial) -->
-            <div class="experience-intro-wrap">
-=======
         <div class="service-hero-single-column">
             
             <!-- Left: Intro area (Editorial Blocks) -->
             <div class="experience-intro-wrap" style="flex:1;">
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
                 <div class="main-body-text" style="font-size:1.15rem; line-height:1.8; margin-bottom:40px;">
                     <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
                 </div>
@@ -111,11 +101,8 @@ $is_package = !empty( $summary['grid_items'] );
                     </ul>
                 <?php endif; ?>
             </div>
-<<<<<<< HEAD
-=======
 
             </div>
->>>>>>> 95a5d4a20ba5993cbe01c385ca98cc7a9a6bcdd7
         </div>
 
 
