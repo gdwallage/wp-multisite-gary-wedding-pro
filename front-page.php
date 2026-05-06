@@ -2,7 +2,7 @@
 /**
  * File: front-page.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.110.0
+ * Version: 3000.420.0
  * Description: Automated 3D Hero Slider synced with Primary Menu.
  */
 
@@ -84,15 +84,19 @@ $slide_count = count( $slides );
         <div class="hero-peek-track" id="heroPeekTrack">
             <?php foreach ( $slides as $idx => $s ) : 
                 $class = ($idx === 0) ? 'active' : (($idx === 1) ? 'next' : (($idx === $slide_count - 1) ? 'prev' : 'hidden'));
+                // Check if this slide is for the Home page (redundant to have CTA/H2 if we are already here)
+                $is_home_slide = ( untrailingslashit($s['url']) === untrailingslashit(home_url('/')) );
             ?>
-            <div class="hero-peek-slide <?php echo $class; ?>" data-index="<?php echo $idx; ?>" data-url="<?php echo esc_url( $s['url'] ); ?>">
-                <?php echo wp_get_attachment_image( $s['img_id'], 'gw-hero', false, array( 'class' => 'hero-peek-img' ) ); ?>
+            <div class="hero-peek-slide <?php echo $class; ?>" data-index="<?php echo $idx; ?>" <?php if (!$is_home_slide) echo 'data-url="' . esc_url( $s['url'] ) . '"'; ?>>
+                <?php echo wp_get_attachment_image( $s['img_id'], 'full', false, array( 'class' => 'hero-peek-img' ) ); ?>
                 <div class="hero-peek-caption">
                     <h1 class="hero-peek-title"><?php echo esc_html( $s['title'] ); ?></h1>
-                    <?php if ( $s['subtitle'] ) : ?>
+                    <?php if ( $s['subtitle'] && !$is_home_slide ) : ?>
                         <p class="hero-peek-subtitle"><?php echo esc_html( $s['subtitle'] ); ?></p>
                     <?php endif; ?>
-                    <span class="hero-peek-cta">Explore <span aria-hidden="true">→</span></span>
+                    <?php if ( !$is_home_slide ) : ?>
+                        <span class="hero-peek-cta">Explore <span aria-hidden="true">→</span></span>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -103,7 +107,7 @@ $slide_count = count( $slides );
             <button id="heroPeekPrev" class="hero-peek-arrow">&#8592;</button>
             <div class="hero-peek-dots">
                 <?php for($i=0; $i<$slide_count; $i++): ?>
-                    <button class="hero-peek-dot <?php echo $i===0?'active':''; ?>" data-index="<?php echo $i; ?>"><?php echo $i+1; ?></button>
+                    <button class="hero-peek-dot <?php echo $i===0?'active':''; ?>" aria-label="Slide <?php echo $i+1; ?>" data-index="<?php echo $i; ?>"></button>
                 <?php endfor; ?>
             </div>
             <button id="heroPeekNext" class="hero-peek-arrow">&#8594;</button>

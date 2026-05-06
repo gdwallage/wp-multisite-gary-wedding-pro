@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.190.0
+ * Version: 3000.420.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  * Fixes: GLOBAL CACHE PURGE + ZERO-DEPENDENCY MENU.
@@ -761,98 +761,76 @@ body:not(.home) h1.entry-title {
     transform: translateY(0) !important;
 }
 
-/* --- 2. HERO PEEK CAROUSEL (PEEK THEME ENGINE) --- */
+/* --- 2. HERO SLIDER (FLEX ROW — ZERO CROP) --- */
 .hero-peek-carousel {
     position: relative;
     width: 100%;
-    height: 60vh; /* Normalized for tighter framing */
-    min-height: 500px;
-    background: var(--brand-black);
+    height: 75vh;
+    min-height: 520px;
+    background: transparent;
     overflow: hidden;
-    perspective: 1200px;
-    margin-top: 180px !important; /* Force clearance for the tall focal logo with portrait */
+    margin-top: 0 !important; /* Flush with top, behind focal logo */
 }
 
 .hero-peek-track {
-    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
     width: 100%;
     height: 100%;
-    transform-style: preserve-3d;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    gap: 0;
+    padding: 0 50vw;
 }
 
+.hero-peek-track::-webkit-scrollbar {
+    display: none;
+}
+
+/* Slides shrink-wrap to image width */
 .hero-peek-slide {
-    position: absolute;
-    width: 70%;
+    flex: 0 0 auto;
+    width: auto;
     height: 85%;
-    top: 7.5%;
-    left: 15%; /* Centered active position */
-    opacity: 0;
-    transition: all 0.85s cubic-bezier(0.23, 1, 0.32, 1);
-    z-index: 1;
-    transform: translateZ(-400px);
-    overflow: hidden;
-    box-shadow: var(--shadow-deep);
+    scroll-snap-align: center;
+    position: relative;
+    opacity: 0.6;
+    transition: opacity 0.5s;
+    background: transparent;
 }
 
 .hero-peek-slide.active {
     opacity: 1;
-    z-index: 30;
-    left: 15%;
-    transform: translateZ(0) scale(1);
-    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
-    border: 1px solid rgba(197,160,89,0.2);
 }
 
-.hero-peek-slide.next {
-    opacity: 0.35;
-    z-index: 10;
-    left: 55%; /* Peek from right */
-    transform: translateZ(-250px) scale(0.85);
-    cursor: pointer;
-}
-
-.hero-peek-slide.prev {
-    opacity: 0.35;
-    z-index: 10;
-    left: -25%; /* Peek from left */
-    transform: translateZ(-250px) scale(0.85);
-    cursor: pointer;
-}
-
-.hero-peek-slide.far-next {
-    opacity: 0;
-    left: 80%;
-    transform: translateZ(-500px);
-}
-
-.hero-peek-slide.far-prev {
-    opacity: 0;
-    left: -50%;
-    transform: translateZ(-500px);
-}
-
+/* THE CARDINAL RULE: ZERO CROPPING */
 .hero-peek-img {
-    width: 100%;
+    display: block;
+    width: auto;
     height: 100%;
-    object-fit: contain !important; /* Editorial standard: No cropping */
-    background: var(--brand-black);
+    object-fit: contain !important;
+    background: transparent;
+    margin: 0 auto;
 }
 
+/* Caption overlaid at the bottom of the active slide */
 .hero-peek-caption {
     position: absolute;
-    inset: 0;
+    inset: auto 0 0 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
-    background: rgba(0,0,0,0.1); /* Subtle darkening for legibility */
-    color: #fff;
-    z-index: 40;
+    padding: 20px;
+    background: transparent;
+    color: #ffffff;
+    z-index: 20;
     text-align: center;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.5s ease 0.3s;
+    transition: opacity 0.3s;
 }
 
 .active .hero-peek-caption {
@@ -861,8 +839,8 @@ body:not(.home) h1.entry-title {
 
 .hero-peek-title {
     font-family: var(--font-script) !important;
-    font-size: clamp(2.2rem, 4.5vw, 3.8rem) !important; /* Reduced from 5.2rem to prevent overlap */
-    color: var(--brand-accent) !important;
+    font-size: clamp(2rem, 4vw, 3.5rem) !important;
+    color: #ffffff !important;
     margin: 0 0 10px 0 !important;
     text-shadow: 0 4px 20px rgba(0,0,0,0.9);
     line-height: 1.1;
@@ -870,90 +848,118 @@ body:not(.home) h1.entry-title {
 
 .hero-peek-subtitle {
     font-family: var(--font-primary) !important;
-    font-size: clamp(0.8rem, 1.5vw, 1rem) !important;
+    font-size: clamp(0.75rem, 1.3vw, 0.95rem) !important;
     color: #ffffff !important;
     text-transform: uppercase !important;
-    letter-spacing: 5px !important;
+    letter-spacing: 4px !important;
     font-weight: 700 !important;
     margin: 0 !important;
     text-shadow: 0 2px 10px rgba(0,0,0,0.9);
 }
 
+.hero-peek-cta {
+    display: inline-block;
+    margin-top: 18px;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--brand-gold-light);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--brand-gold-light);
+    padding: 12px 30px;
+    border-radius: 4px;
+    backdrop-filter: blur(5px);
+    pointer-events: all;
+    transition: 0.3s;
+}
+
+.hero-peek-cta:hover {
+    background: var(--brand-gold-light);
+    color: #fff;
+}
+
+/* Navigation: arrows + dots, always centred at the bottom */
 .hero-peek-nav {
     position: absolute;
-    bottom: 40px;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: 30px;
-    z-index: 20;
+    gap: 24px;
+    z-index: 100;
 }
 
 .hero-peek-arrow {
-    background: none;
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.35);
     color: #fff;
-    width: 50px;
-    height: 50px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s;
+    flex-shrink: 0;
 }
 
 .hero-peek-arrow:hover {
     border-color: var(--brand-gold-light);
     color: var(--brand-gold-light);
+    background: rgba(0,0,0,0.6);
 }
 
 .hero-peek-dots {
     display: flex;
-    gap: 12px;
+    gap: 10px;
+    align-items: center;
 }
 
 .hero-peek-dot {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.4);
     border: none;
     cursor: pointer;
     padding: 0;
+    transition: all 0.3s;
+    flex-shrink: 0;
 }
 
 .hero-peek-dot.active {
     background: var(--brand-gold-light);
-    transform: scale(1.3);
+    transform: scale(1.35);
 }
 
+/* Mobile adjustments */
 @media (max-width: 768px) {
     .hero-peek-carousel {
-        height: 45vh;
+        height: 55vh;
         min-height: 320px;
-        perspective: 1000px;
-    }
-    .hero-peek-slide {
-        width: 90%;
-        height: 70%;
-    }
-    .hero-peek-slide.next {
-        transform: translateX(75%) translateZ(-200px) rotateY(-20deg);
-        opacity: 0.1;
-    }
-    .hero-peek-slide.prev {
-        transform: translateX(-75%) translateZ(-200px) rotateY(20deg);
-        opacity: 0.1;
-    }
-    .hero-peek-title {
-        font-size: 2.8rem !important;
-    }
-    .hero-peek-subtitle {
-        font-size: 0.75rem !important;
-        letter-spacing: 2px !important;
+        margin-top: 20px !important;
     }
     .hero-peek-caption {
-        padding: 20px;
-        bottom: -10px;
+        padding: 40px 20px 80px;
+    }
+    .hero-peek-title {
+        font-size: 1.8rem !important;
+    }
+    .hero-peek-subtitle {
+        font-size: 0.7rem !important;
+        letter-spacing: 2px !important;
+    }
+    .hero-peek-nav {
+        bottom: 16px;
+        gap: 16px;
+    }
+    .hero-peek-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
     }
 }
 
@@ -2662,16 +2668,16 @@ body #primary .gw-trio-bottom,
         box-sizing: border-box !important;
     }
 
-    /* 3. Hero Carousel Refinement */
-    .hero-peek-track {
-        height: 65vh !important;
-        min-height: 480px !important;
+    /* 3. Hero Slider Refinement (tablet) */
+    .hero-peek-carousel {
+        height: 55vh !important;
+        min-height: 380px !important;
+        margin-top: 20px !important;
     }
 
     .hero-peek-caption {
-        padding: 30px 20px 100px !important;
-        /* Huge bottom padding to clear the nav */
-        background: linear-gradient(to top, rgba(17, 17, 14, 0.9) 0%, rgba(17, 17, 14, 0.4) 100%) !important;
+        padding: 40px 20px 90px !important;
+        background: linear-gradient(to top, rgba(17, 17, 14, 0.85) 0%, rgba(17, 17, 14, 0.0) 100%) !important;
         backdrop-filter: none !important;
         display: flex !important;
         flex-direction: column;
@@ -2824,6 +2830,8 @@ h1 {
 
     /* Hide arrows on tiny screens, rely on swipe */
 }
+
+} /* END @media (max-width: 1024px) */
 
 
 /* --- 14. ACTION STEP BLOCKS (The Journey Refactored) --- */
@@ -2998,7 +3006,6 @@ h1 {
     width: 100%;
     margin: 20px auto;
 }
-}
 
 
 
@@ -3011,7 +3018,6 @@ h1 {
     position: relative;
     display: flex;
     flex-direction: column;
-}
 }
 
 .gw-triplet-item:hover {
@@ -3251,5 +3257,4 @@ h1 {
 
 #gw-lightbox-close:hover {
     color: var(--brand-gold);
-}
 }

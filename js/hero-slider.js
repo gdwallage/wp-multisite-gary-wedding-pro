@@ -1,10 +1,10 @@
 /**
  * File: js/hero-slider.js
- * Description: High-performance peek carousel logic for the Gary Wallage Wedding Pro theme.
- * Version: 3000.110.0
+ * Description: Absolute-positioning carousel logic (Infinite Loop)
+ * Version: 3000.250.0
  */
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Gary Wallage 3D Slider Engine v3000.110.0 Loaded');
+    console.log('Gary Wallage Absolute Slider Engine Loaded');
     const carousel = document.getElementById('heroPeekCarousel');
     if (!carousel) return;
 
@@ -49,23 +49,23 @@ document.addEventListener('DOMContentLoaded', function () {
         clearInterval(timer);
     }
 
-    if (prevBtn) prevBtn.addEventListener('click', function () { prev(); startAutoplay(); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { next(); startAutoplay(); });
+    if (prevBtn) prevBtn.addEventListener('click', function (e) { e.preventDefault(); prev(); startAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener('click', function (e) { e.preventDefault(); next(); startAutoplay(); });
 
     dots.forEach(function (dot, i) {
-        dot.addEventListener('click', function () { update(i); startAutoplay(); });
+        dot.addEventListener('click', function (e) { e.preventDefault(); update(i); startAutoplay(); });
     });
 
     slides.forEach(function (slide, i) {
         slide.addEventListener('click', function (e) {
-            if (slide.classList.contains('prev') || slide.classList.contains('next') ||
-                slide.classList.contains('far-prev') || slide.classList.contains('far-next')) {
+            if (slide.classList.contains('prev') || slide.classList.contains('next')) {
                 e.preventDefault();
                 update(i);
                 startAutoplay();
             } else if (slide.classList.contains('active')) {
+                // If they click the active one, maybe follow a link if we had one
                 const url = slide.dataset.url;
-                if (url) window.location.href = url;
+                if (url && e.target.closest('.hero-peek-cta')) window.location.href = url;
             }
         });
     });
@@ -77,16 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     carousel.addEventListener('mouseenter', stopAutoplay);
     carousel.addEventListener('mouseleave', startAutoplay);
-
-    let touchStartX = 0;
-    carousel.addEventListener('touchstart', function (e) { touchStartX = e.touches[0].clientX; }, { passive: true });
-    carousel.addEventListener('touchend', function (e) {
-        const diff = touchStartX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) {
-            if (diff > 0) next(); else prev();
-            startAutoplay();
-        }
-    });
 
     update(0);
     if (total > 1) startAutoplay();

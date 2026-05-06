@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.190.0
+ * Version: 3000.420.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -139,7 +139,7 @@ add_action('send_headers', 'gary_send_performance_headers');
 
 function gary_wedding_scripts()
 {
-    $ver = '3000.190.0'; // Hardcoded version bump for aggressive cache busting
+    $ver = '3000.420.0';
     $theme_uri = get_stylesheet_directory_uri();
     
     wp_enqueue_style('gary-wedding-v3-editorial', $theme_uri . '/style.css', array(), $ver);
@@ -686,7 +686,7 @@ function gary_get_sub_service_summary($id, $is_post_id = true)
         }
     }
 
-    // 2. CUSTOM EDITORIAL INCLUSIONS (GW Addons)
+
     $table_inc = $wpdb->prefix . 'gw_bookly_service_inclusions';
     if ($bookly_id && $wpdb->get_var("SHOW TABLES LIKE '$table_inc'") == $table_inc) {
         $db_inclusions = $wpdb->get_results($wpdb->prepare("SELECT included_id FROM $table_inc WHERE parent_id = %d ORDER BY position ASC", $bookly_id));
@@ -965,7 +965,6 @@ function gary_ajax_check_availability()
     $idx_c = $w;
 
     foreach ($staff_members as $staff_id) {
-        // A. Is the staff member working on this day?
         $schedule_table = $wpdb->prefix . 'bookly_staff_schedule';
 
         // Defensive query: Try all common index standards to find a working schedule
