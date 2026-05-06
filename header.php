@@ -26,13 +26,12 @@
         html body:not(.home) .post-title,
         html body:not(.home) h1:first-of-type { 
             font-size: 3.2rem !important; 
-            margin-top: 0 !important; 
+            margin-top: 130px !important; /* Use margin-top to push subsequent content (tagline) down */
             position: relative !important; 
-            top: 130px !important; /* Increased for logo clearance */
+            top: 0 !important; 
             z-index: 100 !important; 
             display: block !important;
             visibility: visible !important;
-            border: 5px solid red !important; /* DIAGNOSTIC: Confirming CSS injection */
         }
 
         /* Essential Fidelity Constraints */
