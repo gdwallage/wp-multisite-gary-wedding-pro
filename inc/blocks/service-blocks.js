@@ -782,6 +782,55 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
+    // 20. Elegant Theme Button
+    registerBlockType('gw/elegant-button', {
+        title: 'Elegant Theme Button', icon: 'button', category: 'gary-editorial-native',
+        attributes: {
+            text: { type: 'string', default: 'Experience the Story' },
+            url: { type: 'string', default: '#' },
+            align: { type: 'string', default: 'center' },
+            size: { type: 'string', default: 'normal' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Button Settings' },
+                    el(TextControl, { label: 'Button Text', value: atts.text, onChange: function(v) { props.setAttributes({ text: v }); } }),
+                    el(TextControl, { label: 'Target URL', value: atts.url, onChange: function(v) { props.setAttributes({ url: v }); } }),
+                    el(SelectControl, {
+                        label: 'Alignment', value: atts.align,
+                        options: [{label:'Left', value:'left'}, {label:'Center', value:'center'}, {label:'Right', value:'right'}],
+                        onChange: function(v) { props.setAttributes({ align: v }); }
+                    }),
+                    el(SelectControl, {
+                        label: 'Size', value: atts.size,
+                        options: [{label:'Normal', value:'normal'}, {label:'Large (Hero Style)', value:'large'}],
+                        onChange: function(v) { props.setAttributes({ size: v }); }
+                    })
+                )
+            );
+            return el('div', { className: `gw-elegant-btn-edit-wrap is-align-${atts.align}` },
+                inspector,
+                el('div', { 
+                    className: 'btn-elegant-preview',
+                    style: { 
+                        display: 'inline-block', 
+                        background: '#000', 
+                        color: '#C5A059', 
+                        border: '1px solid #C5A059', 
+                        padding: atts.size === 'large' ? '22px 65px' : '16px 45px', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '3px', 
+                        fontSize: atts.size === 'large' ? '0.85rem' : '0.75rem', 
+                        fontWeight: '700',
+                        textAlign: 'center'
+                    }
+                }, atts.text)
+            );
+        },
+        save: function() { return null; }
+    });
+
     console.info('GW Editorial: Blocks Successfully Registered.');
 
 })(window.wp);

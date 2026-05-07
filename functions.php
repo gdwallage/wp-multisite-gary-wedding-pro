@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.442.0
+ * Version: 3000.452.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */
@@ -131,7 +131,7 @@ function gary_send_performance_headers()
 {
     if (is_admin())
         return;
-    $theme_dir = content_url('/themes/gary-wedding-pro');
+    $theme_dir = get_template_directory_uri();
     $ver = wp_get_theme()->get('Version');
     header("Link: <{$theme_dir}/style.css?ver={$ver}>; rel=preload; as=style", false);
 }
@@ -139,7 +139,7 @@ add_action('send_headers', 'gary_send_performance_headers');
 
 function gary_wedding_scripts()
 {
-    $ver = '3000.420.0';
+    $ver = wp_get_theme()->get('Version');
     $theme_uri = get_stylesheet_directory_uri();
     
     wp_enqueue_style('gary-wedding-v3-editorial', $theme_uri . '/style.css', array(), $ver);

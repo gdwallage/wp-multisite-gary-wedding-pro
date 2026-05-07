@@ -222,8 +222,30 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_dual_column_block',
         'category' => 'gary-editorial-native',
     ));
+    // 20. Elegant Theme Button
+    register_block_type('gw/elegant-button', array(
+        'render_callback' => 'gary_render_elegant_button_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'text'  => array('type' => 'string', 'default' => 'Experience the Story'),
+            'url'   => array('type' => 'string', 'default' => '#'),
+            'align' => array('type' => 'string', 'default' => 'center'),
+            'size'  => array('type' => 'string', 'default' => 'normal')
+        )
+    ));
 }
 add_action('init', 'gary_register_service_blocks');
+
+function gary_render_elegant_button_block( $atts ) {
+    $text  = !empty($atts['text']) ? $atts['text'] : 'Experience the Story';
+    $url   = !empty($atts['url']) ? $atts['url'] : '#';
+    $align = !empty($atts['align']) ? $atts['align'] : 'center';
+    $size  = !empty($atts['size']) ? $atts['size'] : 'normal';
+    
+    $class = "gw-elegant-btn-wrap is-align-{$align} is-size-{$size}";
+    
+    return "<div class='{$class}'><a href='" . esc_url($url) . "' class='btn-elegant'>{$text}</a></div>";
+}
 
 // Category Registration
 function gary_register_block_categories( $categories, $post ) {

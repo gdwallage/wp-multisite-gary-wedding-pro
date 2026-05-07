@@ -18,8 +18,8 @@
 
     <?php wp_head(); ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.442.0 - Ultra-High Density) -->
-    <style id="gary-final-sync-reset-v3000-442-0">
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.452.0 - Version Sync) -->
+    <style id="gary-final-sync-reset-v3000-452-0">
         /* 0. Global Precision Normalization */
         *, *::before, *::after { box-sizing: border-box !important; }
         html, body { background-color: #ffffff !important; background: #ffffff !important; padding: 0 !important; overflow-x: hidden !important; }
@@ -145,7 +145,7 @@
         #primary .container,
         #primary .site-main,
         #primary .entry-content,
-        #primary .wp-block-group,
+        #primary .wp-block-group:not(.trust-bar-fix),
         #primary .services-intro,
         #primary .service-hero-single-column,
         #primary article,
@@ -162,27 +162,31 @@
             display: block !important;
         }
 
-        /* 5.6.1 Ultra-High Density Services Grid (5-Wide Squeeze) */
+        /* 5.6.1 Boutique Centered Services Gallery (Flex-Centering Engine) */
         .services-grid {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
             justify-content: center !important;
             gap: 20px !important;
             row-gap: 50px !important;
             width: 100% !important;
-            margin: 40px 0 !important;
+            margin: 40px auto !important;
             overflow: visible !important;
         }
         .service-card-link {
+            flex: 0 1 285px !important; /* Forces 5-wide on 1536px, centers remainder */
             min-width: 250px !important;
-            max-width: none !important;
-            width: 100% !important;
+            max-width: 100% !important;
             display: flex !important;
             flex-direction: column !important;
             text-decoration: none !important;
             transition: transform 0.3s ease !important;
         }
         .service-card-link:hover { transform: translateY(-10px) !important; }
+        
+        @media (max-width: 1400px) { .service-card-link { flex: 0 1 300px !important; } }
+        @media (max-width: 850px) { .service-card-link { flex: 0 1 45% !important; } }
+        @media (max-width: 550px) { .service-card-link { flex: 0 1 100% !important; } }
 
         /* 5.7 Boutique About Me Grid (Locked 40/5/55 Split) */
         .about-grid { 
@@ -227,34 +231,105 @@
             width: 90% !important;
         }
 
-        /* 7. Trust Bar (Strict 100% Column Fill) */
-        .gw-trust-bar,
-        .wp-block-group.trust-bar-fix { 
+        /* 7. Trust Bar (Nuclear Specifier: Horizontal Row) */
+        html body #primary .wp-block-group.trust-bar-fix,
+        html body #primary .wp-block-group:has(.is-layout-flex),
+        html body #primary .is-layout-flex.wp-block-group { 
+            display: flex !important; 
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            align-items: center !important;
             width: 100% !important; 
             min-width: 100% !important;
-            display: block !important;
-            background: #11110e !important; 
-            color: #C5A059 !important; 
-            padding: 30px 20px !important; 
-            text-align: center !important; 
-            margin-left: 0 !important;
-            margin-right: 0 !important;
+            background: #000000 !important; 
+            color: #ffffff !important; 
+            padding: 25px 40px !important; 
             margin-top: 40px !important;
             margin-bottom: 40px !important;
             border-top: 1px solid rgba(197, 160, 89, 0.2) !important;
             border-bottom: 1px solid rgba(197, 160, 89, 0.2) !important;
             clear: both !important;
+            gap: 40px !important;
         }
-        .gw-trust-bar p, .wp-block-group.trust-bar-fix p { 
+        
+        html body #primary .trust-bar-fix p, 
+        html body #primary .trust-bar-fix li,
+        html body #primary .wp-block-group:has(.is-layout-flex) p { 
             margin: 0 !important; 
-            font-size: 0.9rem !important; 
-            letter-spacing: 3px !important; 
+            font-size: 0.85rem !important; 
+            letter-spacing: 2px !important; 
             text-transform: uppercase !important; 
             font-weight: 700 !important;
-            width: 100% !important;
-            line-height: 1.6 !important;
-            display: block !important;
+            width: auto !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+            color: #C5A059 !important;
         }
+
+        @media (max-width: 900px) {
+            html body #primary .trust-bar-fix,
+            html body #primary .wp-block-group:has(.is-layout-flex) { 
+                flex-direction: column !important; 
+                gap: 15px !important; 
+                align-items: center !important; 
+                text-align: center !important;
+            }
+        }
+
+        /* 8. Check Your Date Block (Atomic Compression) */
+        .gw-process-block.gw-atomic-check-wrap { 
+            padding: 30px 0 !important; 
+            margin: 20px auto !important; 
+            background: transparent !important;
+        }
+        .gw-process-col.is-atomic-check { 
+            padding: 20px 30px !important; 
+            margin: 0 auto !important; 
+            max-width: 800px !important;
+            background: #ffffff !important;
+            border: 1px solid #f0f0f0 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important;
+        }
+        .gw-process-col h4 { margin-top: 0 !important; margin-bottom: 10px !important; font-size: 1.6rem !important; }
+        .gw-process-col p { margin-top: 0 !important; margin-bottom: 15px !important; font-size: 0.9rem !important; }
+        .gw-availability-box-inner { margin-top: 10px !important; }
+        
+        .gw-calendar-icon, .is-atomic-check i.fas.fa-calendar-alt { display: none !important; visibility: hidden !important; }
+        
+        /* 9. Elegant Button Block */
+        .gw-elegant-btn-wrap { display: flex !important; width: 100% !important; margin: 30px 0 !important; }
+        .gw-elegant-btn-wrap.is-align-center { justify-content: center !important; }
+        .gw-elegant-btn-wrap.is-align-left { justify-content: flex-start !important; }
+        .gw-elegant-btn-wrap.is-align-right { justify-content: flex-end !important; }
+        
+        .btn-elegant { 
+            display: inline-block !important; 
+            background: #000000 !important; 
+            color: #C5A059 !important; 
+            border: 1px solid #C5A059 !important; 
+            padding: 16px 45px !important; 
+            font-family: var(--font-primary) !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 3px !important;
+            text-transform: uppercase !important;
+            text-decoration: none !important;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+            border-radius: 2px !important;
+            cursor: pointer !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        .btn-elegant:hover { 
+            background: #C5A059 !important; 
+            color: #000000 !important; 
+            transform: translateY(-2px) !important;
+            box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2) !important;
+        }
+        .is-size-large .btn-elegant { padding: 22px 65px !important; font-size: 0.85rem !important; }
+        
         .gw-list-box.is-style-included, .gw-editorial-gold-box.detailed-components-section { border: none !important; }
         .footer-meta, .footer-social { margin-top: 15px !important; }
         .site-footer { margin-top: 60px !important; }
@@ -266,26 +341,29 @@
         /* Ensuring Ribbons and Star Bullets are High Fidelity */
         .service-card-ribbon { z-index: 100 !important; }
         .gw-bullet-list.is-inclusions { margin-top: 15px !important; }
-        
-        /* Grid Dynamicism Overrides */
-        .services-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; max-width: none !important; }
     </style>
     <script>
     (function() {
-        // Observer to ensure dynamic elements (Ribbons, etc.) are stable
-        const ensureFidelity = () => {
+        const fix = () => {
+            document.querySelectorAll('.wp-block-group').forEach(el => {
+                if (el.textContent.includes('EXPERIENCE')) {
+                    el.classList.add('trust-bar-fix');
+                    el.style.setProperty('display', 'flex', 'important');
+                    el.style.setProperty('flex-direction', 'row', 'important');
+                }
+                if (el.textContent.includes('Check Your Date!')) {
+                    el.classList.add('check-date-box-fix');
+                    el.style.setProperty('padding', '30px', 'important');
+                }
+            });
             document.querySelectorAll('.service-card-ribbon').forEach(el => {
                 el.style.setProperty('display', 'block', 'important');
             });
-            // Auto-tag Trust Bar if it's a standard group
-            document.querySelectorAll('.wp-block-group').forEach(el => {
-                if (el.textContent.includes('YEARS EXPERIENCE')) {
-                    el.classList.add('trust-bar-fix');
-                }
-            });
         };
-        document.addEventListener('DOMContentLoaded', ensureFidelity);
-        const observer = new MutationObserver(ensureFidelity);
+        fix();
+        document.addEventListener('DOMContentLoaded', fix);
+        window.addEventListener('load', fix);
+        const observer = new MutationObserver(fix);
         observer.observe(document.documentElement, { childList: true, subtree: true });
     })();
     </script>
