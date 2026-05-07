@@ -74,7 +74,7 @@ $is_package = !empty( $summary['grid_items'] );
         <div class="service-bg-layer" style="background-image: url('<?php echo esc_url($bg_img_url); ?>');"></div>
     <?php endif; ?>
 
-    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div class="container">
         
         <header class="service-hero-header" style="text-align:center; margin-bottom: 30px; margin-top: 0;">
             <h1 class="entry-title"><?php echo esc_html( gary_clean_service_name( get_the_title() ) ); ?></h1>

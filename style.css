@@ -1,5 +1,5 @@
 /* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.422.0
+ * Version: 3000.438.0
  * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
  * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
  * Fixes: GLOBAL CACHE PURGE + ZERO-DEPENDENCY MENU.
@@ -85,7 +85,7 @@ main .gw-z-image img {
     /* 1. LAYOUT & CONTAINERS */
     --editorial-width: 80%;
     /* Primary constraint */
-    --site-max-width: 1500px;
+    --site-max-width: none;
     --grid-gap: 40px;
 
     /* 2. COLORS (BRAND DNA) */
@@ -976,7 +976,7 @@ body:not(.home) h1.entry-title {
     row-gap: 60px;
     margin: 20px auto;
     width: var(--editorial-width) !important;
-    max-width: 1600px;
+    max-width: none !important;
     overflow: visible !important;
 }
 
@@ -1245,10 +1245,7 @@ main#primary .gw-z-pattern,
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    margin: 40px auto !important;
-    position: relative !important;
-    width: var(--editorial-width) !important;
-    max-width: var(--site-max-width) !important;
+    max-width: none !important;
     box-sizing: border-box !important;
 }
 
@@ -1402,7 +1399,7 @@ body #primary .gw-trio-bottom,
     display: grid;
     grid-template-columns: 1fr 1.5fr 1fr;
     width: var(--editorial-width);
-    max-width: var(--site-max-width);
+    max-width: none !important;
     margin: 0 auto;
     gap: 40px; /* Reduced gap */
     align-items: start;

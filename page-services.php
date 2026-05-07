@@ -15,7 +15,7 @@ get_header(); ?>
     <h1 class="entry-title"><?php the_title(); ?></h1>
     
     <?php if ( get_the_content() ) : ?>
-        <div class="services-intro" style="max-width:850px; margin:0 auto 30px; opacity:0.8; text-align:center; font-size:1.15rem; line-height:1.8;">
+        <div class="services-intro">
             <?php the_content(); ?>
         </div>
     <?php endif; ?>

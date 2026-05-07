@@ -440,8 +440,8 @@ function gary_render_cta_plaque_block( $atts ) {
 
 function gary_render_trust_bar_block( $atts ) {
     return '
-    <div class="gw-trust-bar">
-        <div class="container">
+    <div class="gw-trust-bar alignfull">
+        <div class="trust-bar-content">
             <p>' . esc_html($atts['signals']) . '</p>
         </div>
     </div>';

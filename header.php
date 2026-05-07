@@ -16,8 +16,18 @@
         <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231a1a1a'/%3E%3Ccircle cx='50' cy='50' r='32' fill='none' stroke='%23C5A059' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23C5A059'/%3E%3C/svg%3E">
     <?php endif; ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.422.0 - Menu Fidelity) -->
-    <style id="gary-final-sync-reset-v3000-422-0">
+    <?php wp_head(); ?>
+
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.438.0 - Structural Restoration) -->
+    <style id="gary-final-sync-reset-v3000-438-0">
+        /* 0. Global Precision Normalization */
+        *, *::before, *::after { box-sizing: border-box !important; }
+        html, body { background-color: #ffffff !important; background: #ffffff !important; padding: 0 !important; overflow-x: hidden !important; }
+        /* Respect WordPress Admin Bar offset */
+        .admin-bar html { margin-top: 32px !important; }
+        @media screen and (max-width: 782px) { .admin-bar html { margin-top: 46px !important; } }
+        :root { --brand-bg: #ffffff !important; --site-max-width: none !important; }
+        
         /* 1. Global Page Title Consistency */
         html body:not(.home) .entry-title, 
         html body:not(.home) h1.entry-title, 
@@ -85,10 +95,11 @@
         .hero-peek-cta { display: inline-block !important; background: transparent !important; color: #C5A059 !important; border: 1px solid #C5A059 !important; padding: 10px 28px !important; text-transform: uppercase !important; letter-spacing: 2px !important; border-radius: 4px !important; margin-top: 15px !important; cursor: pointer !important; font-size: 0.75rem !important; transition: all 0.3s !important; }
         .hero-peek-cta:hover { background: rgba(197, 160, 89, 0.2) !important; }
 
-        /* 4. Branding & Tagline Centering */
+        /* 4. Branding & Tagline (Flush-Left Alignment) */
         .focal-left { display: flex !important; align-items: center !important; justify-content: flex-start !important; }
-        .branding-group { display: flex !important; flex-direction: column !important; align-items: center !important; text-align: center !important; width: 100% !important; }
-        .site-tagline-lato { text-align: center !important; width: 100% !important; margin: 5px auto 0 !important; display: block !important; font-size: 0.65rem !important; letter-spacing: 2px !important; text-transform: uppercase !important; opacity: 0.8 !important; }
+        .branding-group { display: flex !important; flex-direction: column !important; align-items: flex-start !important; text-align: left !important; width: auto !important; }
+        .site-title-blacksword { text-align: left !important; margin-left: 0 !important; width: 100% !important; }
+        .site-tagline-lato { text-align: left !important; width: 100% !important; margin: 5px 0 0 !important; display: block !important; font-size: 0.65rem !important; letter-spacing: 2px !important; text-transform: uppercase !important; opacity: 0.8 !important; }
         
         .menu-toggle { display: flex !important; align-items: center !important; gap: 20px !important; background: transparent !important; border: none !important; cursor: pointer !important; padding: 0 !important; }
         .menu-text { font-family: var(--font-primary) !important; font-size: 0.75rem !important; letter-spacing: 2px !important; color: #C5A059 !important; font-weight: 700 !important; line-height: 1 !important; }
@@ -101,25 +112,150 @@
         .hamburger-inner::after { top: 8px !important; content: "" !important; left: 0 !important; }
 
         .menu-overlay { position: fixed !important; inset: 0 !important; background: rgba(0, 0, 0, 0.75) !important; backdrop-filter: blur(8px) !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 99999 !important; }
-        .menu-overlay-inner { width: 80% !important; height: 80% !important; max-width: 1000px !important; max-height: 85vh !important; background: #ffffff !important; border-radius: 20px !important; box-shadow: 0 40px 100px rgba(0,0,0,0.6) !important; padding: 80px 40px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; overflow-y: auto !important; }
-        .menu-close { top: 30px !important; right: 30px !important; font-size: 40px !important; color: #C5A059 !important; }
+        .menu-overlay-inner { width: 80% !important; height: auto !important; max-width: 800px !important; max-height: 90vh !important; background: #ffffff !important; border-radius: 20px !important; box-shadow: 0 40px 100px rgba(0,0,0,0.6) !important; padding: 60px 40px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; overflow-y: auto !important; }
+        .menu-close { top: 30px !important; right: 30px !important; font-size: 32px !important; color: #C5A059 !important; }
         .nav-menu-overlay { width: 100% !important; text-align: center !important; list-style: none !important; padding: 0 !important; }
-        .nav-menu-overlay li a { font-size: 1.8rem !important; color: #1a1a1a !important; padding: 15px !important; display: block !important; }
-        .nav-menu-overlay li a:hover { color: #C5A059 !important; }
-
-        /* 6. Layout & Fidelity Fixes */
-        @media (max-width: 768px) {
-            .hero-peek-carousel { height: 55vh !important; margin-top: 0 !important; }
-            .hero-peek-slide { width: 86% !important; }
-            .hero-peek-slide.active { left: 7% !important; }
-            .hero-peek-slide.next { left: 95% !important; }
-            .hero-peek-slide.prev { left: -81% !important; }
-            .menu-overlay-inner { width: 90% !important; height: 90% !important; padding: 40px 20px !important; }
+        .nav-menu-overlay li a { font-size: 1.4rem !important; color: #1a1a1a !important; padding: 10px !important; display: block !important; font-family: var(--font-primary) !important; text-transform: uppercase !important; letter-spacing: 2px !important; text-decoration: none !important; }
+        
+        /* 5.5 Universal 10-80-10 Editorial Mandate (Non-Recursive) */
+        /* Only apply 80% to the absolute outermost layout container */
+        #primary, 
+        .site-main, 
+        .header-focal-container,
+        .page-header { 
+            width: 80% !important; 
+            max-width: none !important; 
+            margin-left: auto !important; 
+            margin-right: auto !important; 
+            padding-left: 0 !important; 
+            padding-right: 0 !important; 
+            display: block !important;
+            clear: both !important;
         }
+
+        /* Exception: Footer Grid (Needs 80% Width + Grid Display) */
+        .site-footer .footer-grid {
+            width: 80% !important;
+            max-width: none !important;
+            margin: 0 auto !important;
+            display: grid !important;
+        }
+
+        /* 5.6 Recursive Reset (Ensures internal containers fill the 80% column) */
+        #primary .container,
+        #primary .site-main,
+        #primary .entry-content,
+        #primary .wp-block-group,
+        #primary .services-intro,
+        #primary .service-hero-single-column,
+        #primary article,
+        #primary .page-content,
+        .site-main .container,
+        .container .container,
+        .entry-content .container {
+            width: 100% !important;
+            max-width: none !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            display: block !important;
+        }
+
+        /* 5.7 Boutique About Me Grid (Locked 40/5/55 Split) */
+        .about-grid { 
+            display: flex !important; 
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            gap: 5% !important; 
+            align-items: flex-start !important;
+            width: 100% !important;
+            margin-top: 60px !important;
+        }
+        .about-image { flex: 0 0 40% !important; width: 40% !important; }
+        .about-content { flex: 0 0 55% !important; width: 55% !important; }
+        @media (max-width: 900px) {
+            .about-grid { flex-direction: column !important; gap: 40px !important; }
+            .about-image, .about-content { flex: 1 1 100% !important; width: 100% !important; }
+        }
+        
+        /* Exception: Full-Width Elements */
+        .hero-peek-carousel, 
+        .hero-peek-track,
+        .site-footer,
+        .site-header { 
+            width: 100% !important; 
+            max-width: none !important; 
+        }
+
+        .header-focal-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+        
+        .focal-center { padding: 0 40px !important; }
+        .focal-side { flex: 1 !important; }
+        .site-header { background: #fff !important; }
+
+        /* 5.8 Content Impediment Removal */
+        .services-intro { 
+            max-width: 1200px !important; 
+            margin: 0 auto 50px !important; 
+            width: 90% !important;
+        }
+
+        /* 7. Trust Bar (Strict 100% Column Fill) */
+        .gw-trust-bar,
+        .wp-block-group.trust-bar-fix { 
+            width: 100% !important; 
+            min-width: 100% !important;
+            display: block !important;
+            background: #11110e !important; 
+            color: #C5A059 !important; 
+            padding: 30px 20px !important; 
+            text-align: center !important; 
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-top: 40px !important;
+            margin-bottom: 40px !important;
+            border-top: 1px solid rgba(197, 160, 89, 0.2) !important;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.2) !important;
+            clear: both !important;
+        }
+        .gw-trust-bar p, .wp-block-group.trust-bar-fix p { 
+            margin: 0 !important; 
+            font-size: 0.9rem !important; 
+            letter-spacing: 3px !important; 
+            text-transform: uppercase !important; 
+            font-weight: 700 !important;
+            width: 100% !important;
+            line-height: 1.6 !important;
+            display: block !important;
+        }
+        .service-card-link { 
+            flex: 1 1 320px !important; /* Larger cards to fill space */
+            max-width: calc(20% - 28px) !important; /* Strictly 5 wide max */
+            min-width: 300px !important; 
+            display: block !important; 
+            text-decoration: none !important;
+        }
+        @media (max-width: 1400px) {
+            .service-card-link { max-width: calc(25% - 24px) !important; } /* 4 wide */
+        }
+        @media (max-width: 1100px) {
+            .service-card-link { max-width: calc(33.333% - 20px) !important; } /* 3 wide */
+        }
+        @media (max-width: 850px) {
+            .service-card-link { max-width: calc(50% - 15px) !important; } /* 2 wide */
+        }
+        @media (max-width: 550px) {
+            .service-card-link { max-width: 100% !important; flex: 1 1 100% !important; } /* 1 wide */
+        }
+        
         .gw-list-box.is-style-included, .gw-editorial-gold-box.detailed-components-section { border: none !important; }
         .footer-meta, .footer-social { margin-top: 15px !important; }
         .site-footer { margin-top: 60px !important; }
-        .services-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; max-width: 1600px !important; }
 
         /* Jetpack Sharing Centering */
         .sharedaddy, .sharedaddy .sd-sharing-enabled { text-align: center !important; margin: 20px auto !important; width: 100% !important; }
@@ -130,7 +266,7 @@
         .gw-bullet-list.is-inclusions { margin-top: 15px !important; }
         
         /* Grid Dynamicism Overrides */
-        .services-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; max-width: 1600px !important; }
+        .services-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; max-width: none !important; }
     </style>
     <script>
     (function() {
@@ -139,13 +275,18 @@
             document.querySelectorAll('.service-card-ribbon').forEach(el => {
                 el.style.setProperty('display', 'block', 'important');
             });
+            // Auto-tag Trust Bar if it's a standard group
+            document.querySelectorAll('.wp-block-group').forEach(el => {
+                if (el.textContent.includes('YEARS EXPERIENCE')) {
+                    el.classList.add('trust-bar-fix');
+                }
+            });
         };
         document.addEventListener('DOMContentLoaded', ensureFidelity);
         const observer = new MutationObserver(ensureFidelity);
         observer.observe(document.documentElement, { childList: true, subtree: true });
     })();
     </script>
-    <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
