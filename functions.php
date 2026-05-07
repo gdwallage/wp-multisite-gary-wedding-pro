@@ -2,7 +2,7 @@
 /**
  * File: functions.php
  * Theme: Gary Wallage Wedding Pro
- * Version: 3000.438.0
+ * Version: 3000.442.0
  * Fixes: GLOBAL DE-CAPPING + SIZE NORMALIZATION.
  * Integration: GW Bookly Addons Official Table Support.
  */

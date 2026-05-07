@@ -18,8 +18,8 @@
 
     <?php wp_head(); ?>
 
-    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.438.0 - Structural Restoration) -->
-    <style id="gary-final-sync-reset-v3000-438-0">
+    <!-- BOUTIQUE EDITORIAL VISUAL GUARD (v3000.442.0 - Ultra-High Density) -->
+    <style id="gary-final-sync-reset-v3000-442-0">
         /* 0. Global Precision Normalization */
         *, *::before, *::after { box-sizing: border-box !important; }
         html, body { background-color: #ffffff !important; background: #ffffff !important; padding: 0 !important; overflow-x: hidden !important; }
@@ -162,6 +162,28 @@
             display: block !important;
         }
 
+        /* 5.6.1 Ultra-High Density Services Grid (5-Wide Squeeze) */
+        .services-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            justify-content: center !important;
+            gap: 20px !important;
+            row-gap: 50px !important;
+            width: 100% !important;
+            margin: 40px 0 !important;
+            overflow: visible !important;
+        }
+        .service-card-link {
+            min-width: 250px !important;
+            max-width: none !important;
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            text-decoration: none !important;
+            transition: transform 0.3s ease !important;
+        }
+        .service-card-link:hover { transform: translateY(-10px) !important; }
+
         /* 5.7 Boutique About Me Grid (Locked 40/5/55 Split) */
         .about-grid { 
             display: flex !important; 
@@ -233,26 +255,6 @@
             line-height: 1.6 !important;
             display: block !important;
         }
-        .service-card-link { 
-            flex: 1 1 320px !important; /* Larger cards to fill space */
-            max-width: calc(20% - 28px) !important; /* Strictly 5 wide max */
-            min-width: 300px !important; 
-            display: block !important; 
-            text-decoration: none !important;
-        }
-        @media (max-width: 1400px) {
-            .service-card-link { max-width: calc(25% - 24px) !important; } /* 4 wide */
-        }
-        @media (max-width: 1100px) {
-            .service-card-link { max-width: calc(33.333% - 20px) !important; } /* 3 wide */
-        }
-        @media (max-width: 850px) {
-            .service-card-link { max-width: calc(50% - 15px) !important; } /* 2 wide */
-        }
-        @media (max-width: 550px) {
-            .service-card-link { max-width: 100% !important; flex: 1 1 100% !important; } /* 1 wide */
-        }
-        
         .gw-list-box.is-style-included, .gw-editorial-gold-box.detailed-components-section { border: none !important; }
         .footer-meta, .footer-social { margin-top: 15px !important; }
         .site-footer { margin-top: 60px !important; }
