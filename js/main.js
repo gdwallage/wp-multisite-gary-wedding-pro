@@ -1,93 +1,78 @@
 /**
  * File: js/main.js
  * Theme: Gary Wallage Wedding Pro
- * Description: Core theme logic for menus, modals, and fidelity.
- * Version: 3000.150.0
+ * BOUTIQUE MENU MANDATE (ULTRA-AGGRESIVE FIX)
  */
-(function($) {
+(function ($) {
     'use strict';
 
-    const initComponents = () => {
-        const toggle = document.querySelector('.menu-toggle');
-        const close = document.querySelector('.menu-close');
-        const overlay = document.getElementById('primary-menu');
-        
-        if (toggle && overlay) {
-            const openMenu = () => { 
-                overlay.setAttribute('aria-hidden', 'false'); 
-                document.body.style.overflow = 'hidden'; 
-            };
-            const closeMenu = () => { 
-                overlay.setAttribute('aria-hidden', 'true'); 
-                document.body.style.overflow = ''; 
-            };
-            toggle.onclick = (e) => { e.preventDefault(); openMenu(); };
-            if (close) close.onclick = (e) => { e.preventDefault(); closeMenu(); };
-        }
+    $(document).ready(function() {
+        console.log('Gary Wedding: Script Loaded (v3001.51)');
 
-        // INQUIRY MODAL LOGIC
-        const modal = document.getElementById('gw-request-modal');
-        const modalForm = document.getElementById('gw-request-form');
-        if (modal) {
-            document.querySelectorAll('.gw-request-modal-trigger').forEach(btn => {
-                btn.onclick = (e) => {
-                    e.preventDefault();
-                    const service = btn.dataset.service || 'General Inquiry';
-                    const modalServiceName = modal.querySelector('.modal-service-name');
-                    const modalServiceInput = document.getElementById('modal-service-name-input');
-                    
-                    if (modalServiceName) modalServiceName.innerText = service;
-                    if (modalServiceInput) modalServiceInput.value = service;
-                    
-                    modal.style.display = 'flex';
-                };
-            });
+        // Global delegation to bypass any propagation issues
+        $(document).on('click', '.menu-toggle', function (e) {
+            e.preventDefault();
+            console.log('Gary Wedding: Menu Toggle Clicked');
             
-            const modalClose = modal.querySelector('.gw-modal-close');
-            if (modalClose) modalClose.onclick = () => { modal.style.display = 'none'; };
+            const overlay = $('#primary-menu');
+            const toggle = $(this);
             
-            if (modalForm) {
-                modalForm.onsubmit = (e) => {
-                    e.preventDefault();
-                    const status = modalForm.querySelector('.gw-form-status');
-                    if (status) status.innerText = 'Sending...';
-                    
-                    const data = new FormData(modalForm);
-                    data.append('action', 'gw_submit_request');
-                    
-                    fetch('/wp-admin/admin-ajax.php', { method: 'POST', body: data })
-                        .then(r => r.json())
-                        .then(res => {
-                            if (res.success) {
-                                if (status) status.innerText = 'Sent successfully!';
-                                setTimeout(() => { 
-                                    modal.style.display = 'none'; 
-                                    modalForm.reset(); 
-                                    if (status) status.innerText = ''; 
-                                }, 2000);
-                            } else {
-                                if (status) status.innerText = 'Error: ' + res.data;
-                            }
-                        });
-                };
+            if (!overlay.length) {
+                console.error('Gary Wedding: #primary-menu NOT FOUND in DOM');
+                return;
             }
-        }
-    };
 
-    const ensureFidelity = () => {
-        // Force display of important boutique elements
-        document.querySelectorAll('.service-card-ribbon').forEach(el => {
-            el.style.setProperty('display', 'block', 'important');
+            const isExpanded = toggle.attr('aria-expanded') === 'true';
+
+            if (isExpanded) {
+                console.log('Gary Wedding: Closing Menu');
+                overlay.attr('aria-hidden', 'true').attr('style', 'display: none !important; opacity: 0; visibility: hidden;');
+                toggle.attr('aria-expanded', 'false');
+                $('body').removeClass('menu-open').css('overflow', '');
+            } else {
+                console.log('Gary Wedding: Opening Menu');
+                // FORCE DISPLAY
+                overlay.attr('aria-hidden', 'false').attr('style', 'display: flex !important; opacity: 1 !important; visibility: visible !important; z-index: 100000 !important;');
+                toggle.attr('aria-expanded', 'true');
+                $('body').addClass('menu-open').css('overflow', 'hidden');
+                
+                // Force child animation
+                overlay.find('.menu-overlay-inner').css({
+                    'opacity': '1',
+                    'transform': 'scale(1) translateY(0)',
+                    'display': 'flex'
+                });
+            }
         });
-    };
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initComponents();
-        ensureFidelity();
+        $(document).on('click', '.menu-close, .menu-overlay', function (e) {
+            // Only close if clicking the background or the X
+            if ($(e.target).closest('.menu-overlay-inner').length && !$(e.target).closest('.menu-close').length) {
+                return;
+            }
+            
+            console.log('Gary Wedding: Closing via Overlay/Close Button');
+            const overlay = $('#primary-menu');
+            const toggle = $('.menu-toggle');
+
+            overlay.attr('aria-hidden', 'true').attr('style', 'display: none !important;');
+            toggle.attr('aria-expanded', 'false');
+            $('body').removeClass('menu-open').css('overflow', '');
+        });
+
+        // INQUIRY MODAL
+        $(document).on('click', '.gw-request-modal-trigger', function (e) {
+            e.preventDefault();
+            const modal = $('#gw-request-modal');
+            const service = $(this).data('service') || 'Inquiry';
+            
+            $('#gw-modal-target-email').val($(this).data('email') || '');
+            $('#modal-service-name-input').val(service);
+            $('.modal-service-name').text(service);
+
+            modal.fadeIn(300).css('display', 'flex');
+            $('body').css('overflow', 'hidden');
+        });
     });
-
-    // Observer for dynamic content
-    const observer = new MutationObserver(ensureFidelity);
-    observer.observe(document.documentElement, { childList: true, subtree: true });
 
 })(jQuery);

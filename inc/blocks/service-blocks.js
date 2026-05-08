@@ -13,8 +13,20 @@
 
     const Fragment = wp.element.Fragment;
     console.info('GW Editorial: Initializing Native Blocks v3000.79.0...');
+
+    // 1. Boutique Service Grid
+    registerBlockType('gw/service-grid', {
+        title: 'Boutique Service Grid', icon: 'grid-view', category: 'gary-editorial-native',
+        attributes: { grid_layout: { type: 'string', default: '3-cols' } },
+        edit: function(props) {
+            return el('div', { className: 'gw-service-grid-edit' },
+                el(InnerBlocks, { allowedBlocks: ['gw/single-service'] })
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
  
-    // 19. Tessellated Menu Wall (PRIORITY)
+    // 2. Tessellated Menu Wall (PRIORITY)
     registerBlockType('gw/tessellated-menu', {
         title: 'Visual Navigation Wall', icon: 'grid-view', category: 'gary-editorial-native',
         attributes: {
@@ -602,7 +614,7 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
-    // 14. Polaroid Frame
+    // 14. Polaroid Frame (Was Pattern)
     registerBlockType('gw/polaroid-frame', {
         title: 'Fine-Art Polaroid', icon: 'format-image', category: 'gary-editorial-native',
         edit: function() {
@@ -613,10 +625,32 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
+    // 15. Full-Width CTA
+    registerBlockType('gw/cta-fullwidth', {
+        title: 'Full-Width Action CTA', icon: 'megaphone', category: 'gary-editorial-native',
+        attributes: { image_url: { type: 'string', default: '' }, image_id: { type: 'number', default: 0 } },
+        edit: function(props) {
+            const atts = props.attributes;
+            const mediaUploader = el(MediaUpload, {
+                onSelect: (m) => props.setAttributes({ image_url: m.url, image_id: m.id }),
+                allowedTypes: ['image'], value: atts.image_id,
+                render: obj => el(Button, { isPrimary: true, onClick: obj.open, style: { width: '100%', minHeight: '150px', background: '#f5f5f5', border: '2px dashed #ccc' } },
+                    atts.image_url ? el('img', { src: atts.image_url, style: { maxWidth: '100%' } }) : 'Upload Background Image')
+            });
+            return el('div', { className: 'gw-cta-fullwidth-edit' },
+                mediaUploader,
+                el('div', { style: { padding: '40px', background: 'rgba(0,0,0,0.1)', marginTop: '10px' } },
+                    el(InnerBlocks, { template: [['core/heading', { textAlign: 'center', level: 2, content: 'Ready to tell your story?' }]] })
+                )
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
 
 
     // 16-18. List Boxes
-    ['included', 'perfect-for'].forEach(type => {
+    ['included', 'perfect-for', 'highlights'].forEach(type => {
         registerBlockType(`gw/list-${type}`, {
             title: `Box: ${type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}`,
             icon: 'editor-ul',
@@ -782,54 +816,7 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
-    // 20. Elegant Theme Button
-    registerBlockType('gw/elegant-button', {
-        title: 'Elegant Theme Button', icon: 'button', category: 'gary-editorial-native',
-        attributes: {
-            text: { type: 'string', default: 'Experience the Story' },
-            url: { type: 'string', default: '#' },
-            align: { type: 'string', default: 'center' },
-            size: { type: 'string', default: 'normal' }
-        },
-        edit: function(props) {
-            const atts = props.attributes;
-            const inspector = el(InspectorControls, null,
-                el(PanelBody, { title: 'Button Settings' },
-                    el(TextControl, { label: 'Button Text', value: atts.text, onChange: function(v) { props.setAttributes({ text: v }); } }),
-                    el(TextControl, { label: 'Target URL', value: atts.url, onChange: function(v) { props.setAttributes({ url: v }); } }),
-                    el(SelectControl, {
-                        label: 'Alignment', value: atts.align,
-                        options: [{label:'Left', value:'left'}, {label:'Center', value:'center'}, {label:'Right', value:'right'}],
-                        onChange: function(v) { props.setAttributes({ align: v }); }
-                    }),
-                    el(SelectControl, {
-                        label: 'Size', value: atts.size,
-                        options: [{label:'Normal', value:'normal'}, {label:'Large (Hero Style)', value:'large'}],
-                        onChange: function(v) { props.setAttributes({ size: v }); }
-                    })
-                )
-            );
-            return el('div', { className: `gw-elegant-btn-edit-wrap is-align-${atts.align}` },
-                inspector,
-                el('div', { 
-                    className: 'btn-elegant-preview',
-                    style: { 
-                        display: 'inline-block', 
-                        background: '#000', 
-                        color: '#C5A059', 
-                        border: '1px solid #C5A059', 
-                        padding: atts.size === 'large' ? '22px 65px' : '16px 45px', 
-                        textTransform: 'uppercase', 
-                        letterSpacing: '3px', 
-                        fontSize: atts.size === 'large' ? '0.85rem' : '0.75rem', 
-                        fontWeight: '700',
-                        textAlign: 'center'
-                    }
-                }, atts.text)
-            );
-        },
-        save: function() { return null; }
-    });
+
 
     console.info('GW Editorial: Blocks Successfully Registered.');
 

@@ -9,7 +9,18 @@ $block_modules = array(
     'rendering.php',
     'editor.php',
 );
+if ( ! function_exists( 'gary_register_service_blocks' ) ) {
 function gary_register_service_blocks() {
+    // wp_die('DEBUG: Registering Blocks'); // Uncomment to test inclusion
+    // 1. Boutique Service Grid
+    register_block_type('gw/service-grid', array(
+        'render_callback' => 'gary_render_service_grid_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'grid_layout' => array('type' => 'string', 'default' => '3-cols')
+        )
+    ));
+
     // 2. Singular Service Box
     register_block_type('gw/single-service', array(
         'render_callback' => 'gary_render_single_service_block',
@@ -69,10 +80,13 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_cta_plaque_block',
         'category' => 'gary-editorial-native',
         'attributes' => array(
-            'title'    => array( 'type' => 'string', 'default' => 'Ready to Secure Your Date?' ),
-            'content'  => array( 'type' => 'string', 'default' => 'I take on a limited number of weddings each year.' ),
-            'btn_text' => array( 'type' => 'string', 'default' => 'Inquire Now' ),
-            'btn_url'  => array( 'type' => 'string', 'default' => '/contact/' )
+            'subtitle'    => array( 'type' => 'string', 'default' => '' ),
+            'title'       => array( 'type' => 'string', 'default' => 'Ready to Secure Your Date?' ),
+            'content'     => array( 'type' => 'string', 'default' => 'I take on a limited number of weddings each year.' ),
+            'btn_text'    => array( 'type' => 'string', 'default' => 'Inquire Now' ),
+            'btn_text_2'  => array( 'type' => 'string', 'default' => 'Book Consultation' ),
+            'contact_email' => array( 'type' => 'string', 'default' => '' ),
+            'btn_url'     => array( 'type' => 'string', 'default' => '/booking/' )
         )
     ));
 
@@ -111,11 +125,13 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_action_step_block',
         'category' => 'gary-editorial-native',
         'attributes' => array(
-            'step_type'   => array('type' => 'string', 'default' => 'link'), // 'link' or 'availability'
-            'title'       => array('type' => 'string', 'default' => 'Consultation'),
-            'description' => array('type' => 'string', 'default' => ''),
-            'target_page' => array('type' => 'number', 'default' => 0),
-            'step_num'    => array('type' => 'string', 'default' => '01')
+            'step_type'     => array('type' => 'string', 'default' => 'link'), // 'link' or 'availability'
+            'title'         => array('type' => 'string', 'default' => 'Consultation'),
+            'description'   => array('type' => 'string', 'default' => ''),
+            'target_page'   => array('type' => 'number', 'default' => 0),
+            'step_num'      => array('type' => 'string', 'default' => '01'),
+            'msg_available' => array('type' => 'string', 'default' => ''),
+            'msg_tentative' => array('type' => 'string', 'default' => '')
         )
     ));
 
@@ -127,7 +143,10 @@ function gary_register_service_blocks() {
             'title'          => array('type' => 'string', 'default' => 'Check Your Date!'),
             'description'    => array('type' => 'string', 'default' => 'Select your wedding date to see if I am available for your celebration.'),
             'duration'       => array('type' => 'string', 'default' => 'Full Day'),
-            'target_page_id' => array('type' => 'number', 'default' => 0)
+            'service_id'     => array('type' => 'string', 'default' => ''),
+            'target_page_id' => array('type' => 'number', 'default' => 0),
+            'msg_available'  => array('type' => 'string', 'default' => "Excellent... Now let's book your FREE wedding consultation to discuss this in detail."),
+            'msg_tentative'  => array('type' => 'string', 'default' => "I may be free! I have restricted hours on this day, but I may be able to rearrange plans for your wedding. Please book a FREE consultation to discuss.")
         )
     ));
 
@@ -217,42 +236,55 @@ function gary_register_service_blocks() {
         'attributes' => array( 'type' => array('type' => 'string', 'default' => 'perfect-for') )
     ));
 
+    // 19. Visual Navigation Wall (Tessellated)
+    register_block_type('gw/tessellated-menu', array(
+        'render_callback' => 'gary_render_tessellated_menu',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'menu_slug' => array('type' => 'string', 'default' => 'primary'),
+            'height'    => array('type' => 'string', 'default' => '600px')
+        )
+    ));
+
     // 19. Dual Column Container
     register_block_type('gw/editorial-dual-column', array(
         'render_callback' => 'gary_render_dual_column_block',
         'category' => 'gary-editorial-native',
     ));
-    // 20. Elegant Theme Button
-    register_block_type('gw/elegant-button', array(
-        'render_callback' => 'gary_render_elegant_button_block',
-        'category' => 'gary-editorial-native',
-        'attributes' => array(
-            'text'  => array('type' => 'string', 'default' => 'Experience the Story'),
-            'url'   => array('type' => 'string', 'default' => '#'),
-            'align' => array('type' => 'string', 'default' => 'center'),
-            'size'  => array('type' => 'string', 'default' => 'normal')
-        )
-    ));
+}
 }
 add_action('init', 'gary_register_service_blocks');
 
-function gary_render_elegant_button_block( $atts ) {
-    $text  = !empty($atts['text']) ? $atts['text'] : 'Experience the Story';
-    $url   = !empty($atts['url']) ? $atts['url'] : '#';
-    $align = !empty($atts['align']) ? $atts['align'] : 'center';
-    $size  = !empty($atts['size']) ? $atts['size'] : 'normal';
-    
-    $class = "gw-elegant-btn-wrap is-align-{$align} is-size-{$size}";
-    
-    return "<div class='{$class}'><a href='" . esc_url($url) . "' class='btn-elegant'>{$text}</a></div>";
+function gary_render_tessellated_menu( $atts ) {
+    $slug = !empty($atts['menu_slug']) ? $atts['menu_slug'] : 'primary';
+    $items = wp_get_nav_menu_items( $slug );
+    if ( ! $items ) return '';
+
+    ob_start(); ?>
+    <div class="gw-tessellated-wall alignfull">
+        <div class="gw-tessellation-grid">
+            <?php foreach ( $items as $idx => $item ) : 
+                $img_url = get_the_post_thumbnail_url( $item->object_id, 'large' ) ?: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1000';
+            ?>
+                <a href="<?php echo esc_url($item->url); ?>" class="gw-wall-tile">
+                    <div class="tile-image" style="background-image: url('<?php echo esc_url($img_url); ?>');"></div>
+                    <div class="tile-overlay"><div class="tile-content"><h3 class="tile-title"><?php echo esc_html($item->title); ?></h3></div></div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php return ob_get_clean();
 }
 
 // Category Registration
+if ( ! function_exists( 'gary_register_block_categories' ) ) {
 function gary_register_block_categories( $categories, $post ) {
     return array_merge( array( array( 'slug' => 'gary-editorial-native', 'title' => __( 'Gary Wallage Wedding', 'garywedding' ), 'icon' => 'star-filled' ) ), $categories );
 }
+}
 add_filter( 'block_categories_all', 'gary_register_block_categories', 10, 2 );
 
+if ( ! function_exists( 'gary_localize_block_data' ) ) {
 function gary_localize_block_data() {
     global $wpdb;
     $options = array( array( 'label' => '-- Select Service --', 'value' => '' ) );
@@ -286,10 +318,11 @@ function gary_localize_block_data() {
     
     wp_localize_script( 'gary-editorial-blocks-js', 'garyPageOptions', $page_options );
 }
+}
 add_action( 'enqueue_block_editor_assets', 'gary_localize_block_data', 20 );
 
 
-if ( ! function_exists( 'gary_wedding_editor_grid_fix' ) ) :
+if ( ! function_exists( 'gary_wedding_editor_grid_fix' ) ) {
 function gary_wedding_editor_grid_fix() {
     echo '<style id="gary-editor-grid-fix">
         /* Unbox wrappers */
@@ -317,8 +350,8 @@ function gary_wedding_editor_grid_fix() {
         .editor-styles-wrapper .service-card { border: var(--gold-frame-border) solid var(--brand-gold-light) !important; background: var(--brand-white) !important; height: 100% !important; }
     </style>';
 }
+}
 add_action( 'admin_head', 'gary_wedding_editor_grid_fix' );
-endif;
 
 // -----------------------------------------------------------------------------------
 // RENDER CALLBACKS
@@ -353,23 +386,25 @@ function gary_render_single_service_block( $attributes ) {
         }
         
         ob_start(); ?>
-        <a href="<?php echo esc_url($card_data['permalink']); ?>" class="component-card style-bookly-service">
-            <div class="coin-icon-wrap" style="flex: 0 0 100px; width: 100px; height: 100px; border-radius: 0 !important;">
-                <?php if($thumb): ?>
-                    <img src="<?php echo esc_url($thumb); ?>" style="width: 100%; height: 100%; object-fit: cover;" />
-                <?php else: ?>
-                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-family: var(--font-primary); color: var(--brand-gold-light); font-weight: 700; background: #fbfbfb;">GW</div>
-                <?php endif; ?>
-            </div>
-            <div class="component-info">
-                <h4 class="service-card-title">
-                    <?php echo esc_html( $card_data['title'] ); ?>
-                </h4>
-                <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-gold-light); font-weight: 700; margin-top: 5px;">
-                    <?php echo $card_data['is_free'] ? 'INCLUDED' : '£' . number_format($card_data['price'], 0) . ' INCLUDED'; ?>
+        <div class="container">
+            <a href="<?php echo esc_url($card_data['permalink']); ?>" class="component-card style-bookly-service">
+                <div class="coin-icon-wrap" style="flex: 0 0 100px; width: 100px; height: 100px; border-radius: 0 !important;">
+                    <?php if($thumb): ?>
+                        <img src="<?php echo esc_url($thumb); ?>" style="width: 100%; height: 100%; object-fit: cover;" />
+                    <?php else: ?>
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-family: var(--font-primary); color: var(--brand-gold-light); font-weight: 700; background: #fbfbfb;">GW</div>
+                    <?php endif; ?>
                 </div>
-            </div>
-        </a>
+                <div class="component-info">
+                    <h4 class="service-card-title">
+                        <?php echo esc_html( $card_data['title'] ); ?>
+                    </h4>
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-gold-light); font-weight: 700; margin-top: 5px;">
+                        <?php echo $card_data['is_free'] ? 'INCLUDED' : '£' . number_format($card_data['price'], 0) . ' INCLUDED'; ?>
+                    </div>
+                </div>
+            </a>
+        </div>
         <?php return ob_get_clean();
     elseif ($layout === 'plaque') :
         if ( empty( $card_data['duration'] ) ) {
@@ -378,7 +413,7 @@ function gary_render_single_service_block( $attributes ) {
                 $card_data['duration'] = $manual_dur;
             }
         }
-        return gary_render_service_plaque_html( $card_data );
+        return '<div class="container">' . gary_render_service_plaque_html( $card_data ) . '</div>';
     else :
         if ( empty( $card_data['duration'] ) ) {
             $manual_dur = get_post_meta( get_the_ID(), '_gary_service_duration', true );
@@ -386,7 +421,7 @@ function gary_render_single_service_block( $attributes ) {
                 $card_data['duration'] = $manual_dur;
             }
         }
-        return gary_render_service_card_html( $card_data );
+        return '<div class="container">' . gary_render_service_card_html( $card_data ) . '</div>';
     endif;
 }
 
@@ -615,10 +650,12 @@ function gary_render_dual_column_block( $atts, $content ) {
     </div>';
 }
 
+if ( ! function_exists( 'gary_register_custom_block_styles' ) ) {
 function gary_register_custom_block_styles() {
     register_block_style( 'core/list', array( 'name' => 'gw-highlights', 'label' => __( 'Highlights (Gold Ticks)', 'garywedding' ) ));
     register_block_style( 'core/list', array( 'name' => 'gw-included', 'label' => __( 'What\'s Included (Plus)', 'garywedding' ) ));
     register_block_style( 'core/list', array( 'name' => 'gw-perfect-for', 'label' => __( 'Perfect For (Diamonds)', 'garywedding' ) ));
+}
 }
 add_action( 'init', 'gary_register_custom_block_styles' );
 function gary_render_check_date_atomic( $atts ) {

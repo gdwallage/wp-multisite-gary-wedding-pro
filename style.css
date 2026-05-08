@@ -1,58 +1,55 @@
-/* Theme Name: Gary Wallage Wedding Pro
- * Version: 3000.452.0
- * Restored: Hero Slider, About portrait frames, 80% Wide editorial layout, Footer, FAQ, Global page hero.
- * Added: Official GW Bookly Addon integration & Bi-directional service mapping.
- * Fixes: GLOBAL CACHE PURGE + ZERO-DEPENDENCY MENU.
- * Added: Persona & Universal Device Mandate (v3000.101.0).
- */
+/* 
+ * BOUTIQUE EDITORIAL MANDATE (NON-NEGOTIABLE ARCHITECTURE)
+ * 1. LAYOUT: Strict 10-80-10 Percentage column (10% White Space | 80% Site Content | 10% White Space).
+ * 2. PALETTE: Pure White (#ffffff) Margins and Backgrounds for a high-fidelity editorial frame.
+ * 3. IMAGERY: The "Never-Crop" Cardinal Rule. Preserve all artistic aspect ratios.
+ * 4. HEADERS: Central Focal Logo overlap (25% top offset / 150% relative height) 'Bring to Front' priority.
  */
 
-/* --- 0. BOUTIQUE EDITORIAL VISUAL GUARD (CORE FIDELITY) --- */
-body { padding-top: 15px !important; background-color: var(--brand-bg) !important; }
+:root {
+    --editorial-width: 80%;
+    --site-max-width: none;
+    --brand-bg: #ffffff;
+    --brand-gold-light: #C5A059;
+    --brand-black: #11110e;
+    --font-primary: 'Lato', sans-serif;
+    --font-script: 'Blacksword', cursive;
+}
 
-/* THE CARDINAL RULE: NEVER CROP ANY PHOTOS */
-img, 
-.hero-peek-img, 
+body { padding-top: 15px !important; background-color: var(--brand-bg) !important; margin: 0; overflow-x: hidden; width: 100%; }
+*, *::before, *::after { box-sizing: border-box !important; }
+
+/* 10-80-10 EDITORIAL MANDATE (STRICT PERCENTAGE) */
+.container, 
+#primary, 
+.site-main, 
+.page-header,
+.header-focal-container { 
+    width: 80% !important; 
+    max-width: none !important; /* Fully dynamic 80% span */
+    margin-left: 10% !important; 
+    margin-right: 10% !important; 
+    clear: both;
+}
+
+/* FULL-WIDTH EXCEPTIONS */
+.site-header, 
+.hero-peek-carousel, 
+.site-footer { 
+    width: 100% !important; 
+    max-width: none !important; 
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* SCOPED IMAGE FIDELITY (THE NEVER-CROP RULE) */
 .service-card-image img, 
 .gw-z-image img, 
 .gw-trio-gallery img { 
     object-fit: contain !important; 
     max-width: 100% !important; 
     height: auto !important; 
-    background: transparent !important; 
 } 
-
-.service-card-ribbon, 
-.investment-savings-ribbon { 
-    display: block !important; 
-    position: absolute !important; 
-    top: 30px !important; 
-    right: -55px !important; 
-    width: 220px !important;
-    background: #630000 !important; 
-    color: #C5A059 !important; 
-    transform: rotate(45deg) !important; 
-    transform-origin: center !important;
-    text-align: center !important;
-    font-size: 0.78rem !important;
-    font-weight: 700 !important;
-    padding: 8px 0 !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4) !important;
-    z-index: 100 !important;
-    white-space: nowrap !important;
-}
-
-/* Enforced Z-Pattern Sizing (45vh Cardinal Scale) */
-body #primary .gw-z-image img, 
-main .gw-z-image img { 
-    max-height: 45vh !important; 
-    min-height: 400px !important; 
-    width: auto !important; 
-    border: 15px solid #fff !important;
-    box-shadow: var(--shadow-deep) !important;
-}
-
-/* --- END VISUAL GUARD --- */
 
 
 @font-face {
@@ -89,7 +86,7 @@ main .gw-z-image img {
     --grid-gap: 40px;
 
     /* 2. COLORS (BRAND DNA) */
-    --brand-bg: #F9F9F7;
+    --brand-bg: #ffffff; /* PURE WHITE MANDATE */
     --brand-black: #11110e;
     /* Gold-tinted Boutique Black */
     --brand-text: var(--brand-black);
@@ -142,6 +139,11 @@ img {
     max-width: var(--site-max-width) !important;
     margin: 0 auto !important;
     clear: both;
+}
+
+.site-main.home {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 /* Enforce Script Weights (H1 and Site Title) */
@@ -208,13 +210,13 @@ body:not(.home) h1.entry-title {
 }
 
 .header-focal-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: var(--site-max-width);
-    margin: 0 auto;
-    padding: 60px 40px 0; /* Increased to 60px to provide the 20px white space + 40px padding */
-    min-height: auto;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 10px 0 !important; /* Compressed for 50% logo overlap */
+    min-height: 60px !important; /* Total height = 60 + 10 + 10 = 80px */
+    position: relative;
+    z-index: 3000;
 }
 
 /* Accessibility: Ensure menu text and buttons have sufficient contrast */
@@ -253,7 +255,7 @@ body:not(.home) h1.entry-title {
     display: flex;
     align-items: center;
     margin-top: 0;
-    padding-bottom: 16px;
+    padding-bottom: 0; /* Removed bottom padding to fix menu alignment */
 }
 
 .focal-left {
@@ -265,13 +267,23 @@ body:not(.home) h1.entry-title {
 }
 
 .focal-center {
-    flex: 0 0 auto;
-    text-align: center;
-    padding: 0 40px;
-    position: relative;
-    top: 0px;
-    z-index: 1100;
-    margin-bottom: -100px;
+    position: absolute !important;
+    left: 50% !important;
+    top: 20px !important; /* Proportional Offset: 25% of header height */
+    transform: translateX(-50%) !important;
+    z-index: 4000 !important; /* 'Bring to Front' absolute priority */
+    text-align: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.focal-center .custom-logo-link img {
+    height: 120px !important; /* Proportional 120px height */
+    width: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.35)); /* Enhanced elevation */
+    transition: transform 0.3s ease;
 }
 
 .site-title-blacksword {
@@ -289,16 +301,6 @@ body:not(.home) h1.entry-title {
     margin-top: 8px;
 }
 
-.focal-center .custom-logo-link img {
-    max-width: 420px; /* Increased from 380px as requested */
-    max-height: 280px;
-    width: auto;
-    height: auto;
-    transition: 0.3s;
-    display: block;
-    margin: 0 auto;
-    padding-top: 0; /* Safety: Ensure no accidental top shift */
-}
 
 .menu-toggle {
     display: flex;
@@ -308,7 +310,7 @@ body:not(.home) h1.entry-title {
     cursor: pointer;
     padding: 0;
     z-index: 1001;
-    gap: 30px; /* Increased from 12px to prevent lines running into text */
+    gap: 10px !important; /* Tightened for boutique precision */
 }
 
 .hamburger-box {
@@ -316,7 +318,7 @@ body:not(.home) h1.entry-title {
     height: 14px;
     position: relative;
     flex-shrink: 0 !important;
-    margin-right: 35px !important; /* Increased to 35px to clear 'MENU' text completely */
+    margin-right: 0 !important; /* Removed redundant margin (now handled by gap) */
 }
 
 .hamburger-inner,
@@ -360,7 +362,14 @@ body:not(.home) h1.entry-title {
     top: 0;
 }
 
-/* Menu overlay: 80% wide / 80% tall floating panel — never fullscreen */
+/* 
+ * BOUTIQUE MENU MANDATE (NON-NEGOTIABLE):
+ * 1. NATURE: Floating 80% wide / 80% tall modal panel (Never Fullscreen).
+ * 2. STYLE: Pure White panel with gold border and deep soft shadows.
+ * 3. TYPOGRAPHY: Large (2rem) high-contrast LATO with 5px editorial spacing.
+ * 4. DISMISSAL: Permanent 'X' Box anchored to the top-right of the floating panel.
+ */
+
 .menu-overlay {
     position: fixed;
     inset: 0;
@@ -383,20 +392,20 @@ body:not(.home) h1.entry-title {
 
 /* The inner panel — the actual 80×80 floating box */
 .menu-overlay-inner {
-    position: relative;
-    width: 80%;
-    max-width: 900px;
-    max-height: 80vh;
-    overflow-y: auto;
-    background: rgba(249, 249, 247, 0.98);
-    border: 1px solid rgba(197, 160, 89, 0.35);
-    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.45);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 40px;
-    box-sizing: border-box;
+    position: relative !important;
+    width: 80% !important;
+    max-width: 900px !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    background: var(--brand-bg) !important; /* Pure White Locked */
+    border: 1px solid var(--brand-gold-light) !important;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.45) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 60px 40px !important;
+    box-sizing: border-box !important;
     transform: scale(0.92) translateY(20px);
     transition: transform 0.45s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.45s ease;
     opacity: 0;
@@ -442,6 +451,7 @@ body:not(.home) h1.entry-title {
     letter-spacing: 5px;
     color: var(--brand-text);
     transition: 0.4s;
+    border: 1px solid red; /* DEBUG */
 }
 
 .nav-menu-overlay li a:hover {
@@ -761,206 +771,144 @@ body:not(.home) h1.entry-title {
     transform: translateY(0) !important;
 }
 
-/* --- 2. HERO SLIDER (FLEX ROW — ZERO CROP) --- */
-.hero-peek-carousel {
-    position: relative;
-    width: 100%;
-    height: 75vh;
-    min-height: 520px;
-    background: transparent;
-    overflow: hidden;
-    margin-top: 0 !important; /* Flush with top, behind focal logo */
+/* --- 2. HERO SLIDER MODULE (ISO-SCOPED) --- */
+.hero-peek-carousel { 
+    position: relative; 
+    width: 100%; 
+    height: 65vh; /* Proportional balance for 'Great Wedding...' visibility */
+    min-height: 400px; 
+    overflow: hidden; 
+    background: var(--brand-white);
+    margin-top: 0 !important; 
+    border: none !important;
 }
+.hero-peek-track { 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    overflow: visible; 
+}
+.hero-peek-track::-webkit-scrollbar { display: none; }
 
-.hero-peek-track {
+.hero-peek-slide { 
+    position: absolute; 
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(0.7);
+    width: 75vw; 
+    height: 100%; 
+    opacity: 0; 
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 10;
     display: flex;
-    flex-wrap: nowrap;
+    justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    gap: 0;
-    padding: 0 50vw;
-}
-
-.hero-peek-track::-webkit-scrollbar {
-    display: none;
-}
-
-/* Slides shrink-wrap to image width */
-.hero-peek-slide {
-    flex: 0 0 auto;
-    width: auto;
-    height: 85%;
-    scroll-snap-align: center;
-    position: relative;
-    opacity: 0.6;
-    transition: opacity 0.5s;
     background: transparent;
 }
 
-.hero-peek-slide.active {
-    opacity: 1;
+.hero-peek-slide.active { 
+    opacity: 1; 
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+    z-index: 50;
 }
 
-/* THE CARDINAL RULE: ZERO CROPPING */
-.hero-peek-img {
-    display: block;
-    width: auto;
-    height: 100%;
-    object-fit: contain !important;
-    background: transparent;
-    margin: 0 auto;
+.hero-peek-slide.prev {
+    opacity: 0.6; /* Tier 1 Peek */
+    visibility: visible;
+    transform: translateX(-110%) scale(0.85); /* 60% Peek, 40% Overlap */
+    z-index: 20;
 }
 
-/* Caption overlaid at the bottom of the active slide */
-.hero-peek-caption {
-    position: absolute;
-    inset: auto 0 0 0;
+.hero-peek-slide.next {
+    opacity: 0.6; /* Tier 1 Peek */
+    visibility: visible;
+    transform: translateX(10%) scale(0.85); /* 60% Peek, 40% Overlap */
+    z-index: 20;
+}
+
+.hero-peek-slide.far-prev {
+    opacity: 0.3; /* Tier 2 Peek */
+    visibility: visible;
+    transform: translateX(-170%) scale(0.7); /* 60% of S2 Peek, 40% behind S1 */
+    z-index: 15;
+}
+
+.hero-peek-slide.far-next {
+    opacity: 0.3; /* Tier 2 Peek */
+    visibility: visible;
+    transform: translateX(70%) scale(0.7); /* 60% of S2 Peek, 40% behind S1 */
+    z-index: 15;
+}
+
+.hero-peek-img { 
+    display: block !important; 
+    width: auto !important; 
+    max-width: 100% !important; 
+    height: auto !important; 
+    max-height: 100% !important; 
+    object-fit: contain !important; 
+    margin: 0 auto !important; 
+    border: none !important; 
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.hero-peek-caption-stable { 
+    position: absolute; 
+    bottom: 60px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    width: 1100px; /* Expanded cinematic width */
+    max-width: 95vw; /* Responsive safety */
+    min-height: 280px; 
+    padding: 50px 80px; 
+    background: rgba(0, 0, 0, 0.65); 
+    backdrop-filter: blur(12px); 
+    border-radius: 12px; 
+    text-align: center; 
+    opacity: 1 !important; 
+    transition: opacity 0.4s; 
+    z-index: 100;
+    border: none !important;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    padding: 20px;
-    background: transparent;
-    color: #ffffff;
-    z-index: 20;
-    text-align: center;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.active .hero-peek-caption {
-    opacity: 1;
-}
-
-.hero-peek-title {
-    font-family: var(--font-script) !important;
-    font-size: clamp(2rem, 4vw, 3.5rem) !important;
-    color: #ffffff !important;
-    margin: 0 0 10px 0 !important;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.9);
-    line-height: 1.1;
-}
-
-.hero-peek-subtitle {
-    font-family: var(--font-primary) !important;
-    font-size: clamp(0.75rem, 1.3vw, 0.95rem) !important;
-    color: #ffffff !important;
-    text-transform: uppercase !important;
-    letter-spacing: 4px !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.9);
-}
-
-.hero-peek-cta {
-    display: inline-block;
-    margin-top: 18px;
-    font-size: 0.8rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--brand-gold-light);
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid var(--brand-gold-light);
-    padding: 12px 30px;
-    border-radius: 4px;
-    backdrop-filter: blur(5px);
-    pointer-events: all;
-    transition: 0.3s;
-}
-
-.hero-peek-cta:hover {
-    background: var(--brand-gold-light);
-    color: #fff;
-}
-
-/* Navigation: arrows + dots, always centred at the bottom */
-.hero-peek-nav {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
     align-items: center;
-    gap: 24px;
-    z-index: 100;
+    box-sizing: border-box;
 }
 
-.hero-peek-arrow {
-    background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.35);
-    color: #fff;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    flex-shrink: 0;
+.hero-peek-title { 
+    font-family: var(--font-script) !important; 
+    color: var(--brand-gold-light) !important; 
+    font-size: 3.5rem !important; 
+    margin: 0 0 15px 0 !important; 
+    line-height: 1.1 !important;
+    /* Removed white-space: nowrap to allow for wider cinematic titles */
 }
 
-.hero-peek-arrow:hover {
-    border-color: var(--brand-gold-light);
-    color: var(--brand-gold-light);
-    background: rgba(0,0,0,0.6);
+.hero-peek-subtitle { 
+    color: #fff; 
+    text-transform: uppercase; 
+    letter-spacing: 4px; 
+    font-size: 0.85rem !important; /* Rigid font size */
+    margin: 0 0 25px 0 !important; 
+    opacity: 0.85;
+    max-width: 100%;
 }
 
-.hero-peek-dots {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.hero-peek-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    transition: all 0.3s;
-    flex-shrink: 0;
-}
-
-.hero-peek-dot.active {
-    background: var(--brand-gold-light);
-    transform: scale(1.35);
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-    .hero-peek-carousel {
-        height: 55vh;
-        min-height: 320px;
-        margin-top: 20px !important;
-    }
-    .hero-peek-caption {
-        padding: 40px 20px 80px;
-    }
-    .hero-peek-title {
-        font-size: 1.8rem !important;
-    }
-    .hero-peek-subtitle {
-        font-size: 0.7rem !important;
-        letter-spacing: 2px !important;
-    }
-    .hero-peek-nav {
-        bottom: 16px;
-        gap: 16px;
-    }
-    .hero-peek-arrow {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
-    }
+.hero-peek-cta { 
+    display: inline-block; 
+    border: 1px solid var(--brand-gold-light); 
+    color: var(--brand-gold-light); 
+    padding: 12px 35px; 
+    text-decoration: none; 
+    text-transform: uppercase; 
+    font-size: 0.75rem !important; 
+    letter-spacing: 2px;
+    font-weight: 700;
+    transition: all 0.3s ease;
 }
 
 
@@ -968,31 +916,19 @@ body:not(.home) h1.entry-title {
     overflow: visible !important;
 }
 
-/* --- 3. SERVICES GRID & HIGH-FIDELITY CARDS --- */
+/* --- 3. SERVICES GRID MODULE (GRID-SCOPED) --- */
 .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--grid-gap);
-    row-gap: 60px;
-    margin: 20px auto;
-    width: var(--editorial-width) !important;
-    max-width: none !important;
-    overflow: visible !important;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+    gap: 20px;
+    row-gap: 50px;
+    margin: 40px auto;
+    width: 100% !important;
 }
 
-@media (max-width: 800px) { /* Reduced from 1024px to keep row layout on tablets */
-    .services-grid {
-        width: 100% !important;
-        grid-template-columns: 1fr !important;
-    }
-}
-
-.investment-plaque {
-    background: #fff;
-    border: 2px solid var(--brand-gold-light);
-    padding: 30px 25px;
-    box-shadow: var(--shadow-deep);
-}
+.service-card { width: 100% !important; background: #fff; border: 8px solid var(--brand-gold-light); }
+.service-card-image { width: 100% !important; aspect-ratio: 1/1 !important; border: none !important; }
+.service-card-image img { object-fit: contain !important; width: 100% !important; height: 100% !important; }
 
 .investment-sidebar {
     position: -webkit-sticky;
@@ -1065,41 +1001,27 @@ body:not(.home) h1.entry-title {
 
 /* THE MEDALLION FORMAT (High Fidelity) */
 .service-card-image {
-    max-width: 100%;
-    margin-bottom: 20px;
+    width: 100%;
+    margin: 0 auto 25px;
     position: relative;
-    border-radius: 50%;
+    border-radius: 0 !important; /* Reset to square container to fill card width */
     overflow: hidden;
-    aspect-ratio: 1/1;
-    border: 1px solid var(--brand-gold-light);
-    box-shadow: var(--shadow-deep);
-}
-
-.service-card-image img {
-    width: 100%;
-    height: auto;
-    max-height: 400px; /* Force cards to stay reasonably compact */
-    object-fit: cover;
-    display: block;
-}
-
-/* HIGH SPECIFICITY RESET: Kills circles on Home Page and Blocks */
-#primary .services-grid .service-card-image,
-#primary .services-grid .service-card-image img {
-    border-radius: 0 !important;
     aspect-ratio: 1/1 !important;
-    height: auto !important;
-    width: 100% !important;
-    object-fit: cover !important;
+    border: none !important; /* Kill the double border */
+    box-shadow: none !important;
+    background: transparent;
 }
 
 .service-card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
     display: block;
-    border-radius: 0 !important;
 }
+
+/* REMOVED: High Specificity Reset that was destroying the circles */
+
+/* Redundant block removed */
 
 .service-card-content {
     padding: 0 30px;
@@ -1386,12 +1308,19 @@ body #primary .gw-trio-bottom,
     }
 }
 
-/* --- 6. FOOTER (BOUTIQUE EDITORIAL) --- */
+/* 
+ * BOUTIQUE FOOTER MANDATE (NON-NEGOTIABLE):
+ * 1. STRUCTURE: Strict 3-column grid with vertical dividers separating Legal, Branding, and Contact.
+ * 2. SPACING: Ultra-compact vertical flow. No excessive margins above 'Follow the Story'.
+ * 3. SOCIAL: Official SVG icons only, colored in Boutique Gold with high-contrast hover effects.
+ * 4. WHATSAPP: Permanent green CTA button anchored in the right column.
+ */
+
 .site-footer {
     background: #1a1a1a;
     color: var(--brand-white);
     padding: 30px 0 20px; /* Squeezed vertically */
-    margin-top: 60px; /* Squeezed vertically */
+    margin-top: 40px !important; /* Half of previous height for tighter transition */
     font-size: 0.9rem;
 }
 
@@ -1431,6 +1360,7 @@ body #primary .gw-trio-bottom,
     line-height: 1.7;
     opacity: 0.6;
     letter-spacing: 0.5px;
+    margin-bottom: 0 !important; /* Removed space below tagline */
 }
 
 /* Footer Legal & Nav Lists */
@@ -1530,10 +1460,10 @@ body #primary .gw-trio-bottom,
 }
 
 .footer-social {
-    margin-top: 40px;
-    text-align: center; /* Enforce center alignment */
-    border-top: 1px solid rgba(0,0,0,0.05);
-    padding-top: 40px;
+    margin-top: 0 !important;
+    text-align: center !important;
+    border-top: none !important;
+    padding-top: 10px !important; /* Minimal breathing room */
 }
 
 .footer-social-label {
@@ -1557,18 +1487,25 @@ body #primary .gw-trio-bottom,
     justify-content: center;
     width: 40px;
     height: 40px;
-    border: 1px solid rgba(201, 168, 76, 0.3);
+    border: 1px solid rgba(197, 160, 89, 0.4);
     border-radius: 50%;
     color: var(--brand-gold-light);
     text-decoration: none;
-    font-size: 0.8rem;
-    font-weight: 700;
-    transition: background 0.3s, border-color 0.3s;
+    transition: all 0.3s ease;
+}
+
+.footer-social-link svg {
+    fill: var(--brand-gold-light);
+    transition: fill 0.3s ease;
 }
 
 .footer-social-link:hover {
-    background: rgba(201, 168, 76, 0.15);
+    background: var(--brand-gold-light);
     border-color: var(--brand-gold-light);
+}
+
+.footer-social-link:hover svg {
+    fill: var(--brand-black); /* High contrast on hover */
 }
 
 /* Footer Meta */

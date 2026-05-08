@@ -92,3 +92,28 @@ add_filter( 'bookly_cart_info_prepare', function( $cart_info, $item ) {
     }
     return $cart_info;
 }, 10, 2 );
+
+/**
+ * Credit Consumption Logic: Deduct balance when zero-price redemption order is completed.
+ */
+add_action( 'woocommerce_order_status_completed', function( $order_id ) {
+    global $wpdb;
+    $order = wc_get_order( $order_id );
+    
+    // Only process zero-price redemptions (to avoid double-deduction or non-credit orders)
+    if ( (float) $order->get_total() > 0 ) return;
+
+    $user_id = $order->get_user_id();
+    $table_credits = $wpdb->prefix . 'gw_bookly_customer_credits';
+
+    foreach ( $order->get_items() as $item ) {
+        $bookly_id = $item->get_meta( 'Service ID' );
+        if ( ! $bookly_id ) continue;
+
+        // Decrease balance by 1 for the first available credit
+        $credit_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_credits WHERE customer_id = %d AND service_id = %d AND balance > 0 LIMIT 1", $user_id, $bookly_id ) );
+        if ( $credit_id ) {
+            $wpdb->query( $wpdb->prepare( "UPDATE $table_credits SET balance = balance - 1 WHERE id = %d", $credit_id ) );
+        }
+    }
+}, 20 ); // Run after the granting logic

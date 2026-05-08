@@ -25,14 +25,47 @@ document.addEventListener('DOMContentLoaded', function () {
         return 'hidden';
     }
 
+    const stage = document.getElementById('heroCaptionStage');
+    const stageTitle = stage ? stage.querySelector('.hero-peek-title') : null;
+    const stageSubtitle = stage ? stage.querySelector('.hero-peek-subtitle') : null;
+    const stageCTA = stage ? stage.querySelector('.hero-peek-cta') : null;
+
     function update(idx) {
         current = (idx + total) % total;
+        
+        // 1. Update Slide Classes for Rotation
         slides.forEach(function (slide, i) {
             let rel = i - current;
             if (rel > total / 2) rel -= total;
             if (rel < -total / 2) rel += total;
             slide.className = 'hero-peek-slide ' + getClass(rel);
         });
+
+        // 2. Update Stable Caption Content (Direct DOM Sync)
+        const stageEl = document.getElementById('heroCaptionStage');
+        if (stageEl && slides[current]) {
+            const activeSlide = slides[current];
+            const title = activeSlide.getAttribute('data-title') || '';
+            const subtitle = activeSlide.getAttribute('data-subtitle') || '';
+            const cta = activeSlide.getAttribute('data-cta') || '';
+            const url = activeSlide.getAttribute('data-url') || '#';
+
+            const titleEl = stageEl.querySelector('.hero-peek-title');
+            const subtitleEl = stageEl.querySelector('.hero-peek-subtitle');
+            const ctaEl = stageEl.querySelector('.hero-peek-cta');
+
+            if (titleEl) titleEl.textContent = title;
+            if (subtitleEl) {
+                subtitleEl.textContent = subtitle;
+                subtitleEl.style.display = subtitle ? 'block' : 'none';
+            }
+            if (ctaEl) {
+                ctaEl.href = url;
+                ctaEl.style.display = cta ? 'inline-block' : 'none';
+            }
+            stageEl.style.opacity = '1';
+        }
+
         dots.forEach(function (dot, i) {
             dot.classList.toggle('active', i === current);
         });
@@ -63,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 update(i);
                 startAutoplay();
             } else if (slide.classList.contains('active')) {
-                // If they click the active one, maybe follow a link if we had one
                 const url = slide.dataset.url;
                 if (url && e.target.closest('.hero-peek-cta')) window.location.href = url;
             }
