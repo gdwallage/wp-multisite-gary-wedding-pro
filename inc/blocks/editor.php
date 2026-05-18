@@ -18,6 +18,19 @@ function gary_wedding_editor_grid_fix() {
             margin-right: auto !important;
         }
 
+        /* Viewport Breakout in Block Editor */
+        .editor-styles-wrapper .alignfull,
+        .editor-styles-wrapper .gw-trust-bar,
+        .editor-styles-wrapper .hero-peek-carousel {
+            position: relative !important;
+            width: 100vw !important;
+            left: 50% !important;
+            right: 50% !important;
+            margin-left: -50vw !important;
+            margin-right: -50vw !important;
+            box-sizing: border-box !important;
+        }
+
         /* Hero Placeholder */
         .editor-post-title__block::before {
             content: "FRONT PAGE HERO SLIDER (ACTIVE)";

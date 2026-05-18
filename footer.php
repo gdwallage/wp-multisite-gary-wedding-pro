@@ -129,22 +129,30 @@
         <div class="gw-modal-content">
             <button class="gw-modal-close" aria-label="Close Modal">&times;</button>
             <div class="gw-modal-header">
+                <div class="modal-subtitle">Boutique Service Inquiry</div>
                 <h3 class="modal-service-name">Request Details</h3>
-                <p>Let's discuss how I can preserve your legacy.</p>
+                <div class="modal-divider-gold"></div>
             </div>
             <form id="gw-request-form">
+                <input type="hidden" name="action" value="gw_submit_request">
                 <input type="hidden" name="target_email" id="modal-target-email">
                 <input type="hidden" name="service_name" id="modal-service-name-input">
+                
                 <div class="gw-form-row">
-                    <input type="text" name="user_name" placeholder="Your Name" required>
+                    <label>Your Name</label>
+                    <input type="text" name="user_name" placeholder="Enter your name" required>
                 </div>
                 <div class="gw-form-row">
-                    <input type="email" name="user_email" placeholder="Email Address" required>
+                    <label>Email Address</label>
+                    <input type="email" name="user_email" placeholder="Enter your email" required>
                 </div>
                 <div class="gw-form-row">
-                    <textarea name="user_note" placeholder="Tell me about your day..." rows="4" required></textarea>
+                    <label>Tell me about your day...</label>
+                    <textarea name="user_note" rows="4" placeholder="How can I preserve your story?" required></textarea>
                 </div>
-                <div class="gw-form-status" style="margin-bottom:15px; font-size:0.85rem; min-height:1.2em;"></div>
+
+                <div class="gw-form-status"></div>
+                
                 <button type="submit" class="btn-black-gold">Send Inquiry</button>
             </form>
         </div>

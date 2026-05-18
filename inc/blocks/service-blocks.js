@@ -14,17 +14,7 @@
     const Fragment = wp.element.Fragment;
     console.info('GW Editorial: Initializing Native Blocks v3000.79.0...');
 
-    // 1. Boutique Service Grid
-    registerBlockType('gw/service-grid', {
-        title: 'Boutique Service Grid', icon: 'grid-view', category: 'gary-editorial-native',
-        attributes: { grid_layout: { type: 'string', default: '3-cols' } },
-        edit: function(props) {
-            return el('div', { className: 'gw-service-grid-edit' },
-                el(InnerBlocks, { allowedBlocks: ['gw/single-service'] })
-            );
-        },
-        save: function() { return el(InnerBlocks.Content, null); }
-    });
+
  
     // 2. Tessellated Menu Wall (PRIORITY)
     registerBlockType('gw/tessellated-menu', {
@@ -816,7 +806,79 @@
         save: function() { return el(InnerBlocks.Content, null); }
     });
 
+    // 20. Boutique Scrollytelling Container (Parent)
+    registerBlockType('gw/scrollytelling-container', {
+        title: 'Boutique Scrollytelling',
+        icon: 'format-gallery',
+        category: 'gary-editorial-native',
+        edit: function() {
+            return el('div', { className: 'gw-scrollytelling-container-edit', style: { padding: '30px', border: '2px dashed #C5A059', background: '#fafafa' } },
+                el('h3', { style: { textAlign: 'center', color: '#C5A059', textTransform: 'uppercase', fontSize: '0.85rem', letterSpacing: '2px', marginBottom: '20px' } }, 'Boutique Scrollytelling Section'),
+                el(InnerBlocks, {
+                    allowedBlocks: ['gw/scrollytelling-slide'],
+                    template: [
+                        ['gw/scrollytelling-slide', { title: 'The Anticipation' }],
+                        ['gw/scrollytelling-slide', { title: 'The Commitment' }],
+                        ['gw/scrollytelling-slide', { title: 'The Celebration' }]
+                    ],
+                    templateLock: false
+                })
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
 
+    // 21. Boutique Scrollytelling Slide (Child)
+    registerBlockType('gw/scrollytelling-slide', {
+        title: 'Scrollytelling Slide',
+        icon: 'format-image',
+        category: 'gary-editorial-native',
+        parent: ['gw/scrollytelling-container'],
+        attributes: {
+            image_url: { type: 'string', default: '' },
+            image_id: { type: 'number', default: 0 },
+            title: { type: 'string', default: '' },
+            content: { type: 'string', default: '' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            
+            const mediaUploader = el(MediaUpload, {
+                onSelect: function(media) { props.setAttributes({ image_url: media.url, image_id: media.id }); },
+                allowedTypes: ['image'],
+                value: atts.image_id,
+                render: function(obj) {
+                    return el(Button, { isSecondary: true, onClick: obj.open, style: { width: '100%', height: '120px', background: '#f5f5f5', border: '1px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' } },
+                        atts.image_url ? el('img', { src: atts.image_url, style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Select Slide Background Image'
+                    );
+                }
+            });
+
+            return el('div', { className: 'gw-scrollytelling-slide-edit', style: { display: 'grid', gridTemplateColumns: '150px 1fr', gap: '20px', padding: '20px', background: '#fff', border: '1px solid #eee', marginBottom: '15px' } },
+                el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+                    el('span', { style: { fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', color: '#999' } }, 'Slide Background'),
+                    mediaUploader
+                ),
+                el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+                    el(RichText, {
+                        tagName: 'h4',
+                        value: atts.title,
+                        placeholder: 'Slide Title (e.g. The Anticipation)',
+                        onChange: function(v) { props.setAttributes({ title: v }); },
+                        style: { margin: 0, fontSize: '1.2rem', fontFamily: 'Georgia, serif' }
+                    }),
+                    el(RichText, {
+                        tagName: 'p',
+                        value: atts.content,
+                        placeholder: 'Write the scrolling story paragraph here...',
+                        onChange: function(v) { props.setAttributes({ content: v }); },
+                        style: { margin: 0, fontSize: '0.9rem', color: '#555' }
+                    })
+                )
+            );
+        },
+        save: function() { return null; }
+    });
 
     console.info('GW Editorial: Blocks Successfully Registered.');
 

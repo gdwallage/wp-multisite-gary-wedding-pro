@@ -31,3 +31,27 @@ add_action( 'wp_ajax_nopriv_gw_submit_request', 'gw_handle_enquiry' );
  * NOTE: The gary_check_availability logic has been moved to the GW Bookly Addons plugin 
  * to ensure database consistency across multisite nodes.
  */
+
+/**
+ * REST API Bridge for public availability check to bypass Authentik SSO admin-ajax proxy blocks.
+ */
+add_action( 'rest_api_init', function () {
+    register_rest_route( 'gw/v1', '/check-availability', array(
+        'methods'             => 'GET',
+        'callback'            => 'gw_rest_check_availability',
+        'permission_callback' => '__return_true',
+    ) );
+} );
+
+function gw_rest_check_availability( WP_REST_Request $request ) {
+    if ( class_exists( 'GW_BooklyAddons\Lib\Ajax' ) ) {
+        $_GET['service_id'] = $request->get_param( 'service_id' );
+        $_GET['duration'] = $request->get_param( 'duration' );
+        $_GET['check_date'] = $request->get_param( 'check_date' );
+        
+        GW_BooklyAddons\Lib\Ajax::checkAvailability();
+        exit;
+    }
+    
+    wp_send_json_error( array( 'message' => 'Availability service unavailable.' ) );
+}

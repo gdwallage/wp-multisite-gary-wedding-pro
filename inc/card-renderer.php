@@ -111,6 +111,7 @@ function gary_render_service_card_html( $data ) {
     <?php
     return ob_get_clean();
 }
+
 function gary_render_service_plaque_html( $data ) {
     $item = wp_parse_args( $data, array(
         'title' => '', 'price' => 0, 'savings' => 0, 'inclusions' => array(),

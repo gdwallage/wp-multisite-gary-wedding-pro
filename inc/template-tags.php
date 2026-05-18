@@ -208,3 +208,101 @@ function gary_get_sub_service_summary( $id, $is_post_id = true ) {
         'total_duration' => $inc_total_duration,
     );
 }
+
+/**
+ * Service Grouping: Fetches and categorizes Bookly services for the services page.
+ */
+function gary_get_grouped_bookly_services() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'bookly_services';
+    
+    // Check if table exists
+    if ( $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) != $table ) {
+        return array( 'packages' => array(), 'individual' => array() );
+    }
+
+    // Fetch all services
+    $results = $wpdb->get_results( "SELECT id FROM $table ORDER BY title ASC", ARRAY_A );
+    
+    $grouped = array(
+        'packages' => array(),
+        'individual' => array()
+    );
+
+    if ( empty( $results ) ) return $grouped;
+
+    foreach ( $results as $row ) {
+        // Use the unified data lookup from card-renderer.php
+        if ( function_exists( 'gary_get_service_data_unified' ) ) {
+            $data = gary_get_service_data_unified( $row['id'], 'bookly' );
+        } else {
+            // Minimal fallback if card-renderer isn't loaded yet
+            $b_data = gary_get_bookly_service_data( $row['id'] );
+            if ( !$b_data ) continue;
+            $data = array(
+                'title'      => gary_clean_service_name($b_data['title']),
+                'price'      => $b_data['price'],
+                'savings'    => 0,
+                'inclusions' => array(),
+                'permalink'  => '/booking/',
+                'thumbnail'  => '',
+                'info'       => $b_data['info'],
+                'duration'   => $b_data['duration']
+            );
+        }
+
+        if ( !$data ) continue;
+
+        // Structure for page-services.php consumption
+        $item = array(
+            'id'                 => $row['id'],
+            'clean_title'        => $data['title'],
+            'price'              => $data['price'],
+            'savings'            => $data['savings'],
+            'sub_service_titles' => $data['inclusions'],
+            'permalink'          => $data['permalink'],
+            'thumbnail'          => $data['thumbnail'],
+            'info'               => $data['info'],
+            'duration'           => $data['duration']
+        );
+
+        // Distinction: Packages have inclusions (sub-services or custom inclusions)
+        if ( ! empty( $item['sub_service_titles'] ) ) {
+            $grouped['packages'][] = $item;
+        } else {
+            $grouped['individual'][] = $item;
+        }
+    }
+
+    return $grouped;
+}
+
+/**
+ * Design Utility: Sorts services by price and interleaves them (High, Low, High, Low...)
+ */
+function gary_interleave_by_price( $services ) {
+    if ( empty( $services ) ) return array();
+
+    // Sort by price DESC
+    usort( $services, function( $a, $b ) {
+        return (float)$b['price'] <=> (float)$a['price'];
+    });
+
+    $count = count( $services );
+    if ( $count <= 2 ) return $services;
+
+    $half = ceil( $count / 2 );
+    $high_pile = array_slice( $services, 0, $half );
+    $low_pile  = array_slice( $services, $half );
+    
+    // Reverse low pile so we take the absolute lowest first
+    $low_pile = array_reverse( $low_pile );
+
+    $interleaved = array();
+    for ( $i = 0; $i < $half; $i++ ) {
+        if ( isset( $high_pile[$i] ) ) $interleaved[] = $high_pile[$i];
+        if ( isset( $low_pile[$i] ) )  $interleaved[] = $low_pile[$i];
+    }
+
+    return $interleaved;
+}

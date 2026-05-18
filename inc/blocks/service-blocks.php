@@ -9,6 +9,8 @@ $block_modules = array(
     'rendering.php',
     'editor.php',
 );
+
+require_once dirname( __FILE__ ) . '/editor.php';
 if ( ! function_exists( 'gary_register_service_blocks' ) ) {
 function gary_register_service_blocks() {
     // wp_die('DEBUG: Registering Blocks'); // Uncomment to test inclusion
@@ -251,6 +253,24 @@ function gary_register_service_blocks() {
         'render_callback' => 'gary_render_dual_column_block',
         'category' => 'gary-editorial-native',
     ));
+
+    // 20. Boutique Scrollytelling Container (Parent)
+    register_block_type('gw/scrollytelling-container', array(
+        'render_callback' => 'gary_render_scrollytelling_container',
+        'category' => 'gary-editorial-native',
+    ));
+
+    // 21. Boutique Scrollytelling Slide (Child)
+    register_block_type('gw/scrollytelling-slide', array(
+        'render_callback' => 'gary_render_scrollytelling_slide',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'image_url' => array('type' => 'string', 'default' => ''),
+            'image_id'  => array('type' => 'number', 'default' => 0),
+            'title'     => array('type' => 'string', 'default' => ''),
+            'content'   => array('type' => 'string', 'default' => ''),
+        )
+    ));
 }
 }
 add_action('init', 'gary_register_service_blocks');
@@ -333,8 +353,8 @@ function gary_wedding_editor_grid_fix() {
         @media (min-width: 1024px) {
             .editor-styles-wrapper .services-grid {
                 display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 20px !important;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+                gap: 40px !important;
                 width: 100% !important;
             }
         }
@@ -667,38 +687,33 @@ function gary_render_check_date_atomic( $atts ) {
 
     ob_start(); ?>
     <div class="gw-process-block container gw-atomic-check-wrap">
-        <div class="gw-process-col is-atomic-check condensed-check" style="max-width: 500px; margin: 0 auto; border: 2px solid var(--brand-gold-light); padding: 50px 30px; text-align:center;">
-            <h4 style="margin-top: 0;"><?php echo esc_html($title); ?></h4>
-            <p style="margin-bottom: 25px; opacity:0.8; font-size: 0.9rem;"><?php echo esc_html($desc); ?></p>
+        <div class="gw-process-col is-atomic-check condensed-check">
+            <h4><?php echo esc_html($title); ?></h4>
+            <p><?php echo esc_html($desc); ?></p>
             
-            <div class="gw-availability-box-inner" style="display: inline-block; width: 100%; max-width: 320px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 25px;">
-                <div class="gw-duration-badge" style="text-transform:uppercase; letter-spacing:2px; font-size:0.7rem; font-weight:700; color:var(--brand-accent); margin-bottom:15px;">
-                    Duration: <?php echo esc_html($duration); ?>
-                </div>
-
-                <div class="gw-input-with-icon" style="position: relative; margin-bottom: 20px;">
-                    <input type="date" id="gw-atomic-check-date" class="gw-date-picker-input" style="padding:12px 12px 12px 40px; border:1px solid #ddd; font-family:inherit; font-size:1.1rem; width:100%; text-align:center; box-sizing:border-box;" />
-                    <span class="gw-calendar-icon" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/></svg>
-                    </span>
+            <div class="gw-availability-box-inner">
+                <!-- Column 1: Date Input -->
+                <div class="col-input">
+                    <input type="date" id="gw-atomic-check-date" class="gw-date-picker-input" />
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                <!-- Column 2: Check / Book Action -->
+                <div class="col-btn">
                     <button type="button" 
                             class="btn-black-gold gw-check-availability-btn-atomic" 
                             data-duration="<?php echo esc_attr($duration); ?>"
-                            style="cursor:pointer; width: 100%;">Check Availability</button>
+                            style="cursor:pointer;">Check Availability</button>
                     
                     <a href="<?php echo esc_url($link); ?>" 
                        id="gw-atomic-booking-cta" 
-                       class="btn-black-gold" 
-                       style="display: none; background: #000; color: #fff; width: 100%; text-decoration:none; align-items:center; justify-content:center;">
+                       class="btn-black-gold">
                        Book Now
                     </a>
                 </div>
-
-                <div id="gw-atomic-availability-result" class="gw-avail-result" style="margin-top:20px; font-size:1rem; font-weight:700;"></div>
             </div>
+
+            <!-- Availability Result Message -->
+            <div id="gw-atomic-availability-result" class="gw-avail-result" style="margin-top:20px; font-size:1rem; font-weight:700;"></div>
         </div>
     </div>
     <?php return ob_get_clean();
@@ -740,4 +755,86 @@ function gary_render_triplet_item( $atts, $content ) {
     </div>
 
     <?php return ob_get_clean();
+}
+
+function gary_render_scrollytelling_container( $attributes, $content ) {
+    global $gw_scrollytelling_slides;
+
+    // If children have not registered yet, try rendering them to trigger registration
+    if ( !is_array($gw_scrollytelling_slides) || empty($gw_scrollytelling_slides) ) {
+        $gw_scrollytelling_slides = array();
+        $text_content_html = do_blocks( $content );
+    } else {
+        // Children already ran and registered themselves!
+        $text_content_html = $content;
+    }
+
+    $bg_html = '';
+    if ( is_array($gw_scrollytelling_slides) && !empty($gw_scrollytelling_slides) ) {
+        foreach ( $gw_scrollytelling_slides as $slide ) {
+            $active_class = ($slide['index'] === 1) ? 'is-active' : '';
+            $bg_html .= '<img src="' . esc_url($slide['image_url']) . '" class="scroll-bg-image ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '" alt="" width="1920" height="1080" loading="lazy" />';
+        }
+    }
+
+    // Reset register for subsequent blocks on the same page
+    $gw_scrollytelling_slides = array();
+
+    ob_start(); ?>
+    <div class="scrollytelling-wrapper alignfull">
+        <!-- 1. Sticky Background Container -->
+        <div class="sticky-background-container">
+            <?php echo $bg_html; ?>
+            <div class="image-overlay"></div>
+        </div>
+
+        <!-- 2. Scrolling Content Container -->
+        <div class="scrolling-text-container">
+            <?php echo $text_content_html; ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+function gary_render_scrollytelling_slide( $attributes, $content ) {
+    global $gw_scrollytelling_slides;
+    if ( !is_array($gw_scrollytelling_slides) ) {
+        $gw_scrollytelling_slides = array();
+    }
+
+    $index = count( $gw_scrollytelling_slides ) + 1;
+
+    $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
+    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
+    
+    // Fallback if no image enqueued
+    if ( !$img_url ) {
+        $logo_id = get_theme_mod( 'custom_logo' );
+        $img_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'large' ) : 'data:image/svg+xml;utf8,%3Csvg width="100%25" height="100%25" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23111"/%3E%3C/svg%3E';
+    }
+
+    $title = !empty($attributes['title']) ? $attributes['title'] : '';
+    $text  = !empty($attributes['content']) ? $attributes['content'] : '';
+
+    // Register slide in global queue for the parent container
+    $gw_scrollytelling_slides[] = array(
+        'index' => $index,
+        'image_url' => $img_url,
+    );
+
+    // Return the scroll-step text box
+    ob_start(); ?>
+    <div class="scroll-step" data-step="<?php echo esc_attr($index); ?>">
+        <div class="step-content-box">
+            <?php if ( $title ) : ?>
+                <h2><?php echo esc_html($title); ?></h2>
+            <?php endif; ?>
+            <?php if ( $text ) : ?>
+                <p><?php echo wp_kses_post($text); ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
 }

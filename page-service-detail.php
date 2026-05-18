@@ -100,9 +100,22 @@ $is_package = !empty( $summary['grid_items'] );
                         ?>
                     </ul>
                 <?php endif; ?>
+            <!-- Right: Investment Plaque (UNIFIED) -->
+            <div class="investment-sidebar">
+                <?php 
+                $plaque_data = array(
+                    'title'      => get_the_title(),
+                    'price'      => $bookly_data ? $bookly_data['price'] : $manual_price,
+                    'savings'    => $final_savings,
+                    'inclusions' => array_column($grid_items, 'title'),
+                    'is_free'    => $is_free,
+                    'duration'   => $display_duration,
+                    'permalink'  => get_permalink()
+                );
+                echo gary_render_service_plaque_html($plaque_data); 
+                ?>
             </div>
 
-            </div>
         </div>
 
 

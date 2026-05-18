@@ -11,7 +11,7 @@ function gary_wedding_scripts() {
     
     // Core JS
     wp_enqueue_script( 'jquery' );
-    wp_enqueue_script( 'gary-wedding-main', get_template_directory_uri() . '/js/main.js', array('jquery'), $ver, true );
+    wp_enqueue_script( 'gary-wedding-main', get_template_directory_uri() . '/js/main.js', array(), $ver, true );
 
     // Page-Specific
     if ( is_front_page() ) {

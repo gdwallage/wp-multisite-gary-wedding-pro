@@ -1,4 +1,14 @@
 /* 
+Theme Name: Gary Wallage Wedding Pro
+Theme URI: https://garywallage.com/
+Author: Gary Wallage
+Author URI: https://garywallage.com/
+Description: Boutique Editorial Photography Theme
+Version: 3001.84
+Text Domain: gary-wedding
+*/
+
+/* 
  * BOUTIQUE EDITORIAL MANDATE (NON-NEGOTIABLE ARCHITECTURE)
  * 1. LAYOUT: Strict 10-80-10 Percentage column (10% White Space | 80% Site Content | 10% White Space).
  * 2. PALETTE: Pure White (#ffffff) Margins and Backgrounds for a high-fidelity editorial frame.
@@ -11,12 +21,16 @@
     --site-max-width: none;
     --brand-bg: #ffffff;
     --brand-gold-light: #C5A059;
+    --brand-crimson: #630000;
+    --brand-white: #ffffff;
     --brand-black: #11110e;
     --font-primary: 'Lato', sans-serif;
     --font-script: 'Blacksword', cursive;
+    --shadow-soft: 0 5px 15px rgba(0,0,0,0.05);
+    --shadow-deep: 0 15px 35px rgba(0,0,0,0.1);
 }
 
-body { padding-top: 15px !important; background-color: var(--brand-bg) !important; margin: 0; overflow-x: hidden; width: 100%; }
+body { padding-top: 15px !important; background-color: var(--brand-bg) !important; margin: 0; overflow-x: clip; width: 100%; }
 *, *::before, *::after { box-sizing: border-box !important; }
 
 /* 10-80-10 EDITORIAL MANDATE (STRICT PERCENTAGE) */
@@ -30,6 +44,16 @@ body { padding-top: 15px !important; background-color: var(--brand-bg) !importan
     margin-left: 10% !important; 
     margin-right: 10% !important; 
     clear: both;
+}
+
+/* Prevent double-squeezing of nested containers (e.g., .container inside #primary) */
+#primary .container,
+.site-main .container,
+.container .container,
+#primary .site-main {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 /* FULL-WIDTH EXCEPTIONS */
@@ -115,7 +139,7 @@ html {
     color: var(--brand-text);
     font-family: var(--font-primary);
     margin: 0;
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
     max-width: 100vw;
 }
@@ -395,9 +419,10 @@ body:not(.home) h1.entry-title {
     position: relative !important;
     width: 80% !important;
     max-width: 900px !important;
+    min-height: 300px !important;
     max-height: 80vh !important;
     overflow-y: auto !important;
-    background: var(--brand-bg) !important; /* Pure White Locked */
+    background: #ffffff !important; /* Pure White Locked */
     border: 1px solid var(--brand-gold-light) !important;
     box-shadow: 0 40px 120px rgba(0, 0, 0, 0.45) !important;
     display: flex !important;
@@ -409,11 +434,14 @@ body:not(.home) h1.entry-title {
     transform: scale(0.92) translateY(20px);
     transition: transform 0.45s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.45s ease;
     opacity: 0;
+    visibility: hidden;
 }
 
 .menu-overlay[aria-hidden="false"] .menu-overlay-inner {
-    transform: scale(1) translateY(0);
-    opacity: 1;
+    transform: scale(1) translateY(0) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
 }
 
 .menu-close {
@@ -451,7 +479,6 @@ body:not(.home) h1.entry-title {
     letter-spacing: 5px;
     color: var(--brand-text);
     transition: 0.4s;
-    border: 1px solid red; /* DEBUG */
 }
 
 .nav-menu-overlay li a:hover {
@@ -773,14 +800,19 @@ body:not(.home) h1.entry-title {
 
 /* --- 2. HERO SLIDER MODULE (ISO-SCOPED) --- */
 .hero-peek-carousel { 
-    position: relative; 
-    width: 100%; 
+    position: relative !important; 
+    width: 100vw !important; 
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
     height: 65vh; /* Proportional balance for 'Great Wedding...' visibility */
     min-height: 400px; 
     overflow: hidden; 
     background: var(--brand-white);
     margin-top: 0 !important; 
     border: none !important;
+    box-sizing: border-box !important;
 }
 .hero-peek-track { 
     position: relative; 
@@ -913,22 +945,36 @@ body:not(.home) h1.entry-title {
 
 
 .gw-global-grid-wrapper {
+    width: 100%;
+    margin: 0 auto;
     overflow: visible !important;
 }
 
 /* --- 3. SERVICES GRID MODULE (GRID-SCOPED) --- */
 .services-grid {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
-    gap: 20px;
-    row-gap: 50px;
-    margin: 40px auto;
-    width: 100% !important;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 40px;
+    row-gap: 60px;
+    width: 100%;
+    padding: 0;
 }
 
-.service-card { width: 100% !important; background: #fff; border: 8px solid var(--brand-gold-light); }
-.service-card-image { width: 100% !important; aspect-ratio: 1/1 !important; border: none !important; }
-.service-card-image img { object-fit: contain !important; width: 100% !important; height: 100% !important; }
+/* Unbox Gutenberg Wrapper so cards fill grid cells correctly */
+.wp-block-gw-single-service { display: contents !important; }
+.wp-block-gw-single-service > div { display: contents !important; }
+
+/* Confine the Gutenberg block wrapper to ensure visual parity with the services template */
+.wp-block-gw-service-grid {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+.service-card-link { display: block !important; width: 100% !important; text-decoration: none !important; height: 100%; }
+.service-card { width: 100% !important; background: #fff; border: 8px solid var(--brand-gold-light); display: flex; flex-direction: column; }
+.service-card-image { width: 100% !important; aspect-ratio: 1/1 !important; border: none !important; background: #f9f9f9; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.service-card-image img { object-fit: contain !important; max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; }
 
 .investment-sidebar {
     position: -webkit-sticky;
@@ -979,19 +1025,31 @@ body:not(.home) h1.entry-title {
     position: absolute;
     top: 20px;
     right: -35px;
-    background: var(--brand-accent);
-    color: #fff;
+    background: #630000 !important; /* Force Brand Crimson */
+    color: #fff !important;
     padding: 5px 40px;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    transform: rotate(45deg) !important; /* Force diagonal placement */
-    z-index: 10;
+    transform: rotate(45deg) !important;
+    z-index: 100;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .investment-plaque .investment-savings-ribbon {
-    z-index: 10 !important;
+    background: #630000 !important; /* Force Brand Crimson */
+    color: #fff !important;
+    z-index: 100 !important;
+    position: absolute;
+    top: 20px;
+    right: -65px;
+    width: 250px;
+    padding: 10px 0;
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    transform: rotate(45deg);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .service-card-ribbon span {
@@ -1994,7 +2052,9 @@ body #primary .gw-trio-bottom,
     width: 100vw !important;
     position: relative !important;
     left: 50% !important;
+    right: 50% !important;
     margin-left: -50vw !important;
+    margin-right: -50vw !important;
     box-sizing: border-box !important;
     display: block !important;
     z-index: 5;
@@ -2560,7 +2620,7 @@ body #primary .gw-trio-bottom,
     /* 1. Global Overflow & Stability */
     html,
     body {
-        overflow-x: hidden !important;
+        overflow-x: clip !important;
         position: relative;
         width: 100%;
         -webkit-overflow-scrolling: touch;
@@ -2904,23 +2964,157 @@ h1 {
     }
 }
 
-/* Atomic Availability Block */
+/* Constrain Individual Service Cards Outside Grid */
+.service-card-link {
+    max-width: 420px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+/* But inside grid, let them fill the grid column */
+.services-grid .service-card-link {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Atomic Availability Block (Horizontal Style) */
 .gw-process-col.is-atomic-check {
-    background: var(--brand-white);
-    padding: 60px 40px;
+    max-width: 800px !important; /* COMPACT & CENTERED */
+    width: 100% !important;
+    margin: 30px auto !important;
+    border: 2px solid var(--brand-gold-light) !important;
+    padding: 30px 40px !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    background: #fff !important;
     border-radius: 4px;
+}
+
+.gw-process-col.is-atomic-check h4 {
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
+    font-family: var(--font-primary, Georgia, serif) !important;
+    font-size: 1.4rem !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--brand-black);
+}
+
+.gw-process-col.is-atomic-check p {
+    margin-bottom: 20px !important;
+    opacity: 0.8 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    color: #555 !important;
+}
+
+/* Two-Column Spacing centered */
+.gw-availability-box-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px !important;
+    align-items: center !important;
+    justify-content: center !important; /* CENTER BOTH FIELDS */
+    border-top: 1px solid rgba(197, 160, 89, 0.15) !important;
+    padding-top: 25px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.gw-availability-box-inner .col-input {
+    flex: 0 1 320px !important; /* MAX 320px */
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.gw-availability-box-inner .col-input input.gw-date-picker-input {
+    width: 100% !important;
+    background: #fafafa !important;
+    color: #111 !important;
+    border: 1px solid #ddd !important;
+    padding: 12px !important; /* REMOVED 40px LEFT SHIFT (NO EXTRA CALENDAR GAP) */
+    font-family: inherit !important;
+    font-size: 0.95rem !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    border-radius: 2px !important;
+    transition: all 0.3s ease !important;
+}
+
+.gw-availability-box-inner .col-input input.gw-date-picker-input:focus {
+    background: #fff !important;
+    border-color: var(--brand-gold, #B08D55) !important;
+    outline: none !important;
+    box-shadow: 0 0 5px rgba(197, 160, 89, 0.3) !important;
+}
+
+.gw-availability-box-inner .col-btn {
+    flex: 0 1 320px !important; /* MAX 320px */
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.gw-availability-box-inner .col-btn button,
+.gw-availability-box-inner .col-btn a {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    box-sizing: border-box !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    background: var(--brand-gold-light, #C5A059) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.2) !important;
+}
+
+.gw-availability-box-inner .col-btn button:hover,
+.gw-availability-box-inner .col-btn a:hover {
+    background: #000 !important;
+    color: #fff !important;
+    box-shadow: none !important;
+}
+
+/* Remove envelope icon from check date button */
+.gw-availability-box-inner .col-btn button::after,
+.gw-availability-box-inner .col-btn a::after {
+    content: none !important;
 }
 
 #gw-atomic-booking-cta.btn-black-gold {
     display: none;
-    /* Controlled by JS */
     background: #000 !important;
     color: #fff !important;
+    text-decoration: none !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 #gw-atomic-booking-cta.btn-black-gold:hover {
     background: var(--brand-gold) !important;
     color: #000 !important;
+}
+
+/* Mobile Responsiveness for Horizontal Date Checker */
+@media (max-width: 768px) {
+    .gw-process-col.is-atomic-check {
+        padding: 30px 20px !important;
+    }
+    .gw-availability-box-inner {
+        flex-direction: column !important;
+        gap: 20px !important;
+        align-items: center !important;
+    }
+    .gw-availability-box-inner .col-input,
+    .gw-availability-box-inner .col-btn {
+        flex: 0 0 100% !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
 }
 
 /* --- EDITORIAL TRIPLET SYSTEM --- */
@@ -3152,6 +3346,85 @@ h1 {
 }
 
 /* --- 15. LIGHTBOX SYSTEM --- */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(17, 17, 14, 0.98); /* Deep Gold-tinted Black Overlay */
+    z-index: 1000000 !important; /* Ultra high priority */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.menu-overlay.active {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.menu-overlay-inner {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    padding: 60px 40px;
+    z-index: 1000001 !important;
+    transform: scale(0.95) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.menu-overlay.active .menu-overlay-inner {
+    transform: scale(1) translateY(0);
+}
+
+.menu-close {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: var(--brand-gold-light);
+    font-size: 3.5rem;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 1000002 !important;
+    transition: color 0.3s ease;
+}
+
+.menu-close:hover {
+    color: #fff;
+}
+
+.nav-menu-overlay {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.nav-menu-overlay li a {
+    font-family: var(--font-primary);
+    font-size: 2.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    color: #ffffff !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-menu-overlay li a:hover {
+    color: var(--brand-gold-light) !important;
+    letter-spacing: 10px;
+}
+
 #gw-lightbox {
     position: fixed;
     top: 0;
@@ -3159,7 +3432,7 @@ h1 {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.9);
-    z-index: 9999;
+    z-index: 1000005;
     display: none;
     align-items: center;
     justify-content: center;
@@ -3192,3 +3465,161 @@ h1 {
 #gw-lightbox-close:hover {
     color: var(--brand-gold);
 }
+
+/* --- 25. BOUTIQUE SCROLLYTELLING MODULE --- */
+/* Enable 100vw edge-to-edge breakout for ALL full-width layout blocks */
+.alignfull {
+    position: relative !important;
+    width: 100vw !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    box-sizing: border-box !important;
+}
+
+/* Ensure sticky parent containers do not truncate sticky positioning */
+.site-main,
+article,
+.entry-content,
+.home-intro,
+.site-content {
+    overflow: visible !important;
+}
+
+.scrollytelling-wrapper {
+    position: relative !important;
+    background-color: var(--brand-black, #111) !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+/* The sticky container pinned to the screen */
+.sticky-background-container {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+    background-color: #000;
+}
+
+/* Stacked background images */
+.scroll-bg-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    object-fit: cover !important;
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
+}
+
+/* Fade active background image */
+.scroll-bg-image.is-active {
+    opacity: 1;
+    z-index: 2;
+}
+
+/* Showcase Mode: No dark overlays or filters on the photos */
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: none !important;
+    z-index: 3;
+}
+
+/* Symmetrical Breakout for the Front-Page Gutenberg Trust Bar Group Block */
+.wp-block-group[style*="background-color:#1a1a1a"],
+.wp-block-group[style*="background-color: #1a1a1a"] {
+    position: relative !important;
+    width: 100vw !important;
+    left: 50% !important;
+    right: 50% !important;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    box-sizing: border-box !important;
+    max-width: 100vw !important;
+}
+
+/* Scrolling text container */
+.scrolling-text-container {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    margin-top: -100vh; /* Pull content over sticky background */
+    padding-bottom: 25vh;
+}
+
+/* Scrolling slides */
+.scroll-step {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 5%;
+    box-sizing: border-box;
+    pointer-events: none; /* Let clicks pass through to background if needed */
+}
+
+/* Premium Gold Frame Text Box */
+.step-content-box {
+    background: rgba(17, 17, 17, 0.85) !important;
+    border: 2px solid var(--brand-gold-light, #C5A059) !important;
+    color: #ffffff !important;
+    padding: 3rem !important;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events: auto; /* Re-enable pointer events for text container */
+    transition: all 0.5s ease;
+}
+
+.step-content-box h2 {
+    color: #ffffff !important;
+    font-family: var(--font-primary, Georgia, serif) !important;
+    font-size: 2.2rem !important;
+    margin-bottom: 1.5rem !important;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+.step-content-box p {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-family: 'Lato', sans-serif !important;
+    font-size: 0.95rem !important;
+    line-height: 1.8 !important;
+    margin-bottom: 0 !important;
+    letter-spacing: 1px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .step-content-box {
+        padding: 2rem 1.5rem !important;
+        margin: 0 10px;
+    }
+    .step-content-box h2 {
+        font-size: 1.6rem !important;
+        letter-spacing: 2px;
+    }
+    .step-content-box p {
+        font-size: 0.85rem !important;
+        line-height: 1.7 !important;
+    }
+}
+
+
