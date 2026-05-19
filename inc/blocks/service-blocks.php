@@ -269,6 +269,34 @@ function gary_register_service_blocks() {
             'image_id'  => array('type' => 'number', 'default' => 0),
             'title'     => array('type' => 'string', 'default' => ''),
             'content'   => array('type' => 'string', 'default' => ''),
+            'text_align'=> array('type' => 'string', 'default' => 'center'),
+            'img_align' => array('type' => 'string', 'default' => 'center'),
+        )
+    ));
+
+    // 22. Two-Column Scrollytelling Container (Parent)
+    register_block_type('gw/scrollytelling-twocol-container', array(
+        'render_callback' => 'gary_render_scrollytelling_twocol_container',
+        'category' => 'gary-editorial-native',
+    ));
+
+    // 23. Two-Column Scrollytelling Slide (Child)
+    register_block_type('gw/scrollytelling-twocol-slide', array(
+        'render_callback' => 'gary_render_scrollytelling_twocol_slide',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'left_image_url'   => array('type' => 'string', 'default' => ''),
+            'left_image_id'    => array('type' => 'number', 'default' => 0),
+            'left_title'       => array('type' => 'string', 'default' => ''),
+            'left_content'     => array('type' => 'string', 'default' => ''),
+            'left_text_align'  => array('type' => 'string', 'default' => 'center'),
+            'left_img_align'   => array('type' => 'string', 'default' => 'center'),
+            'right_image_url'  => array('type' => 'string', 'default' => ''),
+            'right_image_id'   => array('type' => 'number', 'default' => 0),
+            'right_title'      => array('type' => 'string', 'default' => ''),
+            'right_content'    => array('type' => 'string', 'default' => ''),
+            'right_text_align' => array('type' => 'string', 'default' => 'center'),
+            'right_img_align'  => array('type' => 'string', 'default' => 'center'),
         )
     ));
 }
@@ -505,14 +533,52 @@ function gary_render_chapter_break_block( $atts ) {
 }
 
 function gary_render_cta_plaque_block( $atts ) {
-    return '
-    <div class="gw-cta-plaque container">
-        <h3>' . esc_html($atts['title']) . '</h3>
-        <p>' . esc_html($atts['content']) . '</p>
-        <div class="gw-cta-btn-wrap">
-            <a href="' . esc_url($atts['btn_url']) . '" class="btn-black-gold">' . esc_html($atts['btn_text']) . '</a>
+    $item = wp_parse_args( $atts, array(
+        'subtitle'      => '',
+        'title'         => 'Ready to Secure Your Date?',
+        'content'       => 'I take on a limited number of weddings each year.',
+        'btn_text'      => 'Inquire Now',
+        'btn_text_2'    => 'Book Consultation',
+        'contact_email' => '',
+        'btn_url'       => '/booking/',
+    ));
+
+    ob_start(); ?>
+    <div class="investment-sidebar plaque-rendering-context" style="max-width: 500px; margin: 40px auto;">
+        <div class="investment-plaque" style="position: relative; overflow: hidden; border: 2px solid var(--brand-gold-light); padding: 40px; background: #fff; box-shadow: var(--shadow-soft); text-align: center;">
+            <?php if ( ! empty( $item['subtitle'] ) ) : ?>
+                <span class="subtitle" style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; margin-bottom: 8px; font-weight: 700; font-family: 'Lato', sans-serif;">
+                    <?php echo esc_html( $item['subtitle'] ); ?>
+                </span>
+            <?php endif; ?>
+
+            <h3 class="plaque-title" style="font-family: var(--font-secondary, 'Lora', serif); font-size: 1.8rem; font-weight: 700; color: var(--brand-black, #111); margin-top: 0; margin-bottom: 15px; line-height: 1.2;">
+                <?php echo esc_html( $item['title'] ); ?>
+            </h3>
+
+            <?php if ( ! empty( $item['content'] ) ) : ?>
+                <div class="cta-plaque-body" style="font-family: 'Lato', sans-serif; font-size: 0.9rem; line-height: 1.6; color: #555; margin-bottom: 25px;">
+                    <?php echo wp_kses_post( $item['content'] ); ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="investment-buttons" style="display: flex; flex-direction: column; gap: 12px;">
+                <?php if ( ! empty( $item['btn_text'] ) ) : ?>
+                    <a href="javascript:void(0)" class="btn-black gw-request-modal-trigger" data-service="<?php echo esc_attr( $item['title'] ); ?>" style="display: block; text-decoration: none; text-align: center; padding: 16px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 700; background: #000; color: #fff; border: none; cursor: pointer; transition: 0.3s;">
+                        <?php echo esc_html( $item['btn_text'] ); ?>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ( ! empty( $item['btn_text_2'] ) ) : ?>
+                    <a href="<?php echo esc_url( $item['btn_url'] ); ?>" class="btn-black-gold" style="display: block; text-decoration: none; text-align: center; padding: 16px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 700; background: var(--brand-gold-light); color: #fff; border: none; cursor: pointer; transition: 0.3s;">
+                        <?php echo esc_html( $item['btn_text_2'] ); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>';
+    </div>
+    <?php
+    return ob_get_clean();
 }
 
 function gary_render_trust_bar_block( $atts ) {
@@ -773,7 +839,10 @@ function gary_render_scrollytelling_container( $attributes, $content ) {
     if ( is_array($gw_scrollytelling_slides) && !empty($gw_scrollytelling_slides) ) {
         foreach ( $gw_scrollytelling_slides as $slide ) {
             $active_class = ($slide['index'] === 1) ? 'is-active' : '';
-            $bg_html .= '<img src="' . esc_url($slide['image_url']) . '" class="scroll-bg-image ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '" alt="" width="1920" height="1080" loading="lazy" />';
+            $img_align = !empty($slide['img_align']) ? $slide['img_align'] : 'center';
+            $bg_html .= '<div class="scroll-bg-wrapper ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '">';
+            $bg_html .= '<img src="' . esc_url($slide['image_url']) . '" class="scroll-bg-image skip-lazy no-lazy align-img-' . esc_attr($img_align) . '" alt="" width="1920" height="1080" loading="eager" data-no-lazy="1" />';
+            $bg_html .= '</div>';
         }
     }
 
@@ -816,16 +885,19 @@ function gary_render_scrollytelling_slide( $attributes, $content ) {
 
     $title = !empty($attributes['title']) ? $attributes['title'] : '';
     $text  = !empty($attributes['content']) ? $attributes['content'] : '';
+    $align = !empty($attributes['text_align']) ? $attributes['text_align'] : 'center';
+    $img_align = !empty($attributes['img_align']) ? $attributes['img_align'] : 'center';
 
     // Register slide in global queue for the parent container
     $gw_scrollytelling_slides[] = array(
         'index' => $index,
         'image_url' => $img_url,
+        'img_align' => $img_align,
     );
 
     // Return the scroll-step text box
     ob_start(); ?>
-    <div class="scroll-step" data-step="<?php echo esc_attr($index); ?>">
+    <div class="scroll-step align-box-<?php echo esc_attr($align); ?>" data-step="<?php echo esc_attr($index); ?>">
         <div class="step-content-box">
             <?php if ( $title ) : ?>
                 <h2><?php echo esc_html($title); ?></h2>
@@ -833,6 +905,137 @@ function gary_render_scrollytelling_slide( $attributes, $content ) {
             <?php if ( $text ) : ?>
                 <p><?php echo wp_kses_post($text); ?></p>
             <?php endif; ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+function gary_render_scrollytelling_twocol_container( $attributes, $content ) {
+    global $gw_scrollytelling_twocol_slides;
+
+    // If children have not registered yet, try rendering them to trigger registration
+    if ( !is_array($gw_scrollytelling_twocol_slides) || empty($gw_scrollytelling_twocol_slides) ) {
+        $gw_scrollytelling_twocol_slides = array();
+        $text_content_html = do_blocks( $content );
+    } else {
+        // Children already ran and registered themselves!
+        $text_content_html = $content;
+    }
+
+    $bg_html = '';
+    if ( is_array($gw_scrollytelling_twocol_slides) && !empty($gw_scrollytelling_twocol_slides) ) {
+        $left_bg_html = '';
+        $right_bg_html = '';
+        foreach ( $gw_scrollytelling_twocol_slides as $slide ) {
+            $active_class = ($slide['index'] === 1) ? 'is-active' : '';
+            
+            // Left Column BG
+            $left_img_align = !empty($slide['left_img_align']) ? $slide['left_img_align'] : 'center';
+            $left_bg_html .= '<div class="scroll-bg-wrapper ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '">';
+            $left_bg_html .= '<img src="' . esc_url($slide['left_image_url']) . '" class="scroll-bg-image skip-lazy no-lazy align-img-' . esc_attr($left_img_align) . '" alt="" width="960" height="1080" loading="eager" data-no-lazy="1" />';
+            $left_bg_html .= '</div>';
+            
+            // Right Column BG
+            $right_img_align = !empty($slide['right_img_align']) ? $slide['right_img_align'] : 'center';
+            $right_bg_html .= '<div class="scroll-bg-wrapper ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '">';
+            $right_bg_html .= '<img src="' . esc_url($slide['right_image_url']) . '" class="scroll-bg-image skip-lazy no-lazy align-img-' . esc_attr($right_img_align) . '" alt="" width="960" height="1080" loading="eager" data-no-lazy="1" />';
+            $right_bg_html .= '</div>';
+        }
+        
+        $bg_html .= '<div class="twocol-bg-grid">';
+        $bg_html .= '<div class="twocol-bg-column left-bg-column">' . $left_bg_html . '</div>';
+        $bg_html .= '<div class="twocol-bg-column right-bg-column">' . $right_bg_html . '</div>';
+        $bg_html .= '</div>';
+    }
+
+    // Reset register for subsequent blocks on the same page
+    $gw_scrollytelling_twocol_slides = array();
+
+    ob_start(); ?>
+    <div class="scrollytelling-wrapper twocol-scrolly alignfull">
+        <!-- 1. Sticky Background Container -->
+        <div class="sticky-background-container">
+            <?php echo $bg_html; ?>
+            <div class="image-overlay"></div>
+        </div>
+
+        <!-- 2. Scrolling Content Container -->
+        <div class="scrolling-text-container">
+            <?php echo $text_content_html; ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+function gary_render_scrollytelling_twocol_slide( $attributes, $content ) {
+    global $gw_scrollytelling_twocol_slides;
+    if ( !is_array($gw_scrollytelling_twocol_slides) ) {
+        $gw_scrollytelling_twocol_slides = array();
+    }
+
+    $index = count( $gw_scrollytelling_twocol_slides ) + 1;
+
+    $logo_id = get_theme_mod( 'custom_logo' );
+    $logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'large' ) : 'data:image/svg+xml;utf8,%3Csvg width="100%25" height="100%25" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23111"/%3E%3C/svg%3E';
+
+    $left_img_id = !empty($attributes['left_image_id']) ? $attributes['left_image_id'] : 0;
+    $left_img_url = $left_img_id ? wp_get_attachment_image_url($left_img_id, 'full') : (!empty($attributes['left_image_url']) ? $attributes['left_image_url'] : $logo_url);
+
+    $right_img_id = !empty($attributes['right_image_id']) ? $attributes['right_image_id'] : 0;
+    $right_img_url = $right_img_id ? wp_get_attachment_image_url($right_img_id, 'full') : (!empty($attributes['right_image_url']) ? $attributes['right_image_url'] : $logo_url);
+
+    $left_title = !empty($attributes['left_title']) ? $attributes['left_title'] : '';
+    $left_text  = !empty($attributes['left_content']) ? $attributes['left_content'] : '';
+    $left_align = !empty($attributes['left_text_align']) ? $attributes['left_text_align'] : 'center';
+    $left_img_align = !empty($attributes['left_img_align']) ? $attributes['left_img_align'] : 'center';
+
+    $right_title = !empty($attributes['right_title']) ? $attributes['right_title'] : '';
+    $right_text  = !empty($attributes['right_content']) ? $attributes['right_content'] : '';
+    $right_align = !empty($attributes['right_text_align']) ? $attributes['right_text_align'] : 'center';
+    $right_img_align = !empty($attributes['right_img_align']) ? $attributes['right_img_align'] : 'center';
+
+    // Register slide in global queue for the parent container
+    $gw_scrollytelling_twocol_slides[] = array(
+        'index' => $index,
+        'left_image_url' => $left_img_url,
+        'left_img_align' => $left_img_align,
+        'right_image_url' => $right_img_url,
+        'right_img_align' => $right_img_align,
+    );
+
+    // Return the scroll-step text box with side-by-side content
+    ob_start(); ?>
+    <div class="scroll-step twocol-step" data-step="<?php echo esc_attr($index); ?>">
+        <div class="twocol-step-grid">
+            <!-- Left Column Content -->
+            <div class="twocol-step-column left-step-column align-box-<?php echo esc_attr($left_align); ?>">
+                <?php if ( $left_align !== 'none' && ($left_title || $left_text) ) : ?>
+                    <div class="step-content-box size-half">
+                        <?php if ( $left_title ) : ?>
+                            <h2><?php echo esc_html($left_title); ?></h2>
+                        <?php endif; ?>
+                        <?php if ( $left_text ) : ?>
+                            <p><?php echo wp_kses_post($left_text); ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Right Column Content -->
+            <div class="twocol-step-column right-step-column align-box-<?php echo esc_attr($right_align); ?>">
+                <?php if ( $right_align !== 'none' && ($right_title || $right_text) ) : ?>
+                    <div class="step-content-box size-half">
+                        <?php if ( $right_title ) : ?>
+                            <h2><?php echo esc_html($right_title); ?></h2>
+                        <?php endif; ?>
+                        <?php if ( $right_text ) : ?>
+                            <p><?php echo wp_kses_post($right_text); ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
     <?php

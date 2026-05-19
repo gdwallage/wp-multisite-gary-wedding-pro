@@ -2,7 +2,7 @@
 /** 
  * File: header.php 
  * Theme: Gary Wallage Wedding Pro
- * Version: 3001.59 (Safety Restoration)
+ * Version: 3001.84 (CTA Plaque Booking & Inquiry Modal Action Fix)
  */ 
 ?>
 <!DOCTYPE html>
@@ -10,12 +10,31 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-version" content="3001.59">
+    <meta name="theme-version" content="3001.84">
 
     <?php wp_head(); ?>
 
     <style id="emergency-menu-fix">
         /* EMERGENCY OVERRIDE FOR CACHED CSS */
+        body { padding-top: 95px !important; }
+        .site-header {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 5000 !important;
+            background: #ffffff !important;
+            box-shadow: none !important;
+        }
+        /* Admin Bar Correction */
+        body.admin-bar .site-header {
+            top: 32px !important;
+        }
+        @media (max-width: 782px) {
+            body.admin-bar .site-header {
+                top: 46px !important;
+            }
+        }
         .menu-overlay.active {
             display: flex !important;
             visibility: visible !important;
@@ -29,18 +48,18 @@
         /* Fix the white-text-on-white-box styling collision */
         .menu-overlay-inner .nav-menu-overlay li a {
             color: #111111 !important;
-            font-size: 2rem !important;
+            font-size: clamp(0.9rem, 2.5vh, 1.5rem) !important;
             text-transform: uppercase !important;
-            letter-spacing: 5px !important;
+            letter-spacing: 3px !important;
         }
         .menu-overlay-inner .nav-menu-overlay li a:hover {
             color: var(--brand-gold-light) !important;
-            letter-spacing: 8px !important;
+            letter-spacing: 5px !important;
         }
     </style>
 </head>
 <body <?php body_class(); ?>>
-    <!-- VERSION 3001.59 -->
+    <!-- VERSION 3001.84 -->
 <?php wp_body_open(); ?>
 
 <header class="site-header">

@@ -10,8 +10,6 @@ get_header(); ?>
 
 <main id="primary" class="site-main home">
 
-    <?php get_template_part( 'template-parts/content', 'hero-slider' ); ?>
-
     <section class="home-intro container">
         <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
     </section>

@@ -6,7 +6,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
-    console.log('Gary Wedding Script: Initializing v3001.76 (Vanilla JS Edition)');
+    console.log('Gary Wedding Script: Initializing v3001.77 (Vanilla JS Edition)');
 
     // Bookly Pre-fill Date from URL Query Parameter
     const urlParams = new URLSearchParams(window.location.search);
@@ -275,11 +275,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Boutique Scrollytelling IntersectionObserver
     const steps = document.querySelectorAll('.scroll-step');
-    const images = document.querySelectorAll('.scroll-bg-image');
+    const wrappers = document.querySelectorAll('.scroll-bg-wrapper');
 
-    if (steps.length > 0 && images.length > 0) {
+    if (steps.length > 0 && wrappers.length > 0) {
         console.log('Gary Wedding Scrollytelling: Initializing IntersectionObserver...');
 
         const observerOptions = {
@@ -294,11 +293,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const stepNum = entry.target.getAttribute('data-step');
                     console.log('Gary Wedding Scrollytelling: Slide ' + stepNum + ' In View');
 
-                    images.forEach(img => img.classList.remove('is-active'));
-                    const targetImg = document.querySelector('.scroll-bg-image[data-step="' + stepNum + '"]');
-                    if (targetImg) {
-                        targetImg.classList.add('is-active');
-                    }
+                    wrappers.forEach(w => w.classList.remove('is-active'));
+                    const targetWrappers = document.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
+                    targetWrappers.forEach(targetWrapper => {
+                        targetWrapper.classList.add('is-active');
+                    });
                 }
             });
         }, observerOptions);

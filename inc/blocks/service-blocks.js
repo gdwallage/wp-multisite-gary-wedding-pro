@@ -838,7 +838,9 @@
             image_url: { type: 'string', default: '' },
             image_id: { type: 'number', default: 0 },
             title: { type: 'string', default: '' },
-            content: { type: 'string', default: '' }
+            content: { type: 'string', default: '' },
+            text_align: { type: 'string', default: 'center' },
+            img_align: { type: 'string', default: 'center' }
         },
         edit: function(props) {
             const atts = props.attributes;
@@ -854,7 +856,33 @@
                 }
             });
 
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Slide Settings', initialOpen: true },
+                    el(SelectControl, {
+                        label: 'Text Box Alignment',
+                        value: atts.text_align,
+                        options: [
+                            { label: 'Left', value: 'left' },
+                            { label: 'Center', value: 'center' },
+                            { label: 'Right', value: 'right' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ text_align: v }); }
+                    }),
+                    el(SelectControl, {
+                        label: 'Image Alignment',
+                        value: atts.img_align,
+                        options: [
+                            { label: 'Left (10% Margin)', value: 'left' },
+                            { label: 'Center', value: 'center' },
+                            { label: 'Right (10% Margin)', value: 'right' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ img_align: v }); }
+                    })
+                )
+            );
+
             return el('div', { className: 'gw-scrollytelling-slide-edit', style: { display: 'grid', gridTemplateColumns: '150px 1fr', gap: '20px', padding: '20px', background: '#fff', border: '1px solid #eee', marginBottom: '15px' } },
+                inspector,
                 el('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
                     el('span', { style: { fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase', color: '#999' } }, 'Slide Background'),
                     mediaUploader
@@ -874,6 +902,172 @@
                         onChange: function(v) { props.setAttributes({ content: v }); },
                         style: { margin: 0, fontSize: '0.9rem', color: '#555' }
                     })
+                )
+            );
+        },
+        save: function() { return null; }
+    });
+
+    // 22. Boutique Two-Column Scrollytelling Container (Parent)
+    registerBlockType('gw/scrollytelling-twocol-container', {
+        title: 'Boutique Two-Column Scrollytelling',
+        icon: 'format-gallery',
+        category: 'gary-editorial-native',
+        edit: function() {
+            return el('div', { className: 'gw-scrollytelling-twocol-container-edit', style: { padding: '30px', border: '2px dashed #C5A059', background: '#fafafa' } },
+                el('h3', { style: { textAlign: 'center', color: '#C5A059', textTransform: 'uppercase', fontSize: '0.85rem', letterSpacing: '2px', marginBottom: '20px' } }, 'Boutique Two-Column Scrollytelling Section'),
+                el(InnerBlocks, {
+                    allowedBlocks: ['gw/scrollytelling-twocol-slide'],
+                    template: [
+                        ['gw/scrollytelling-twocol-slide', { left_title: 'The Anticipation (Left)', right_title: 'The Anticipation (Right)' }],
+                        ['gw/scrollytelling-twocol-slide', { left_title: 'The Commitment (Left)', right_title: 'The Commitment (Right)' }]
+                    ],
+                    templateLock: false
+                })
+            );
+        },
+        save: function() { return el(InnerBlocks.Content, null); }
+    });
+
+    // 23. Boutique Two-Column Scrollytelling Slide (Child)
+    registerBlockType('gw/scrollytelling-twocol-slide', {
+        title: 'Two-Column Scrollytelling Slide',
+        icon: 'format-image',
+        category: 'gary-editorial-native',
+        parent: ['gw/scrollytelling-twocol-container'],
+        attributes: {
+            left_image_url: { type: 'string', default: '' },
+            left_image_id: { type: 'number', default: 0 },
+            left_title: { type: 'string', default: '' },
+            left_content: { type: 'string', default: '' },
+            left_text_align: { type: 'string', default: 'center' },
+            left_img_align: { type: 'string', default: 'center' },
+            right_image_url: { type: 'string', default: '' },
+            right_image_id: { type: 'number', default: 0 },
+            right_title: { type: 'string', default: '' },
+            right_content: { type: 'string', default: '' },
+            right_text_align: { type: 'string', default: 'center' },
+            right_img_align: { type: 'string', default: 'center' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+
+            const mediaUploaderLeft = el(MediaUpload, {
+                onSelect: function(media) { props.setAttributes({ left_image_url: media.url, left_image_id: media.id }); },
+                allowedTypes: ['image'],
+                value: atts.left_image_id,
+                render: function(obj) {
+                    return el(Button, { isSecondary: true, onClick: obj.open, style: { width: '100%', height: '80px', marginBottom: '10px', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' } },
+                        atts.left_image_url ? el('img', { src: atts.left_image_url, style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Left Background Image'
+                    );
+                }
+            });
+
+            const mediaUploaderRight = el(MediaUpload, {
+                onSelect: function(media) { props.setAttributes({ right_image_url: media.url, right_image_id: media.id }); },
+                allowedTypes: ['image'],
+                value: atts.right_image_id,
+                render: function(obj) {
+                    return el(Button, { isSecondary: true, onClick: obj.open, style: { width: '100%', height: '80px', marginBottom: '10px', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' } },
+                        atts.right_image_url ? el('img', { src: atts.right_image_url, style: { width: '100%', height: '100%', objectFit: 'cover' } }) : 'Right Background Image'
+                    );
+                }
+            });
+
+            const inspector = el(InspectorControls, null,
+                el(PanelBody, { title: 'Left Slide Settings', initialOpen: true },
+                    el(SelectControl, {
+                        label: 'Left Text Box Alignment',
+                        value: atts.left_text_align,
+                        options: [
+                            { label: 'Left', value: 'left' },
+                            { label: 'Center', value: 'center' },
+                            { label: 'Right', value: 'right' },
+                            { label: 'No Text', value: 'none' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ left_text_align: v }); }
+                    }),
+                    el(SelectControl, {
+                        label: 'Left Image Alignment',
+                        value: atts.left_img_align,
+                        options: [
+                            { label: 'Left (10% Margin)', value: 'left' },
+                            { label: 'Center', value: 'center' },
+                            { label: 'Right (10% Margin)', value: 'right' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ left_img_align: v }); }
+                    })
+                ),
+                el(PanelBody, { title: 'Right Slide Settings', initialOpen: false },
+                    el(SelectControl, {
+                        label: 'Right Text Box Alignment',
+                        value: atts.right_text_align,
+                        options: [
+                            { label: 'Left', value: 'left' },
+                            { label: 'Center', value: 'center' },
+                            { label: 'Right', value: 'right' },
+                            { label: 'No Text', value: 'none' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ right_text_align: v }); }
+                    }),
+                    el(SelectControl, {
+                        label: 'Right Image Alignment',
+                        value: atts.right_img_align,
+                        options: [
+                            { label: 'Left (10% Margin)', value: 'left' },
+                            { label: 'Center', value: 'center' },
+                            { label: 'Right (10% Margin)', value: 'right' }
+                        ],
+                        onChange: function(v) { props.setAttributes({ right_img_align: v }); }
+                    })
+                )
+            );
+
+            return el('div', { className: 'gw-scrollytelling-twocol-slide-edit', style: { border: '1px solid #ccc', padding: '15px', marginBottom: '15px', background: '#fff' } },
+                inspector,
+                el('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' } },
+                    // Left Column Editor
+                    el('div', { style: { padding: '15px', border: '1px solid #eee', background: '#fafafa' } },
+                        el('h4', { style: { margin: '0 0 10px 0', textTransform: 'uppercase', fontSize: '0.8rem', color: '#C5A059' } }, 'Left Column'),
+                        mediaUploaderLeft,
+                        atts.left_text_align !== 'none' && el('div', null,
+                            el(RichText, {
+                                tagName: 'h5',
+                                value: atts.left_title,
+                                placeholder: 'Title',
+                                onChange: function(v) { props.setAttributes({ left_title: v }); },
+                                style: { margin: '0 0 5px 0', fontSize: '1rem', fontFamily: 'Georgia, serif' }
+                            }),
+                            el(RichText, {
+                                tagName: 'p',
+                                value: atts.left_content,
+                                placeholder: 'Content',
+                                onChange: function(v) { props.setAttributes({ left_content: v }); },
+                                style: { margin: 0, fontSize: '0.8rem', color: '#555' }
+                            })
+                        )
+                    ),
+                    // Right Column Editor
+                    el('div', { style: { padding: '15px', border: '1px solid #eee', background: '#fafafa' } },
+                        el('h4', { style: { margin: '0 0 10px 0', textTransform: 'uppercase', fontSize: '0.8rem', color: '#C5A059' } }, 'Right Column'),
+                        mediaUploaderRight,
+                        atts.right_text_align !== 'none' && el('div', null,
+                            el(RichText, {
+                                tagName: 'h5',
+                                value: atts.right_title,
+                                placeholder: 'Title',
+                                onChange: function(v) { props.setAttributes({ right_title: v }); },
+                                style: { margin: '0 0 5px 0', fontSize: '1rem', fontFamily: 'Georgia, serif' }
+                            }),
+                            el(RichText, {
+                                tagName: 'p',
+                                value: atts.right_content,
+                                placeholder: 'Content',
+                                onChange: function(v) { props.setAttributes({ right_content: v }); },
+                                style: { margin: 0, fontSize: '0.8rem', color: '#555' }
+                            })
+                        )
+                    )
                 )
             );
         },

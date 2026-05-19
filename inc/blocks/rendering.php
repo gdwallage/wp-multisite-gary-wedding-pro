@@ -68,23 +68,52 @@ function gary_render_chapter_break_block( $atts ) {
 }
 
 function gary_render_cta_plaque_block( $atts ) {
-    $title    = !empty($atts['title']) ? $atts['title'] : 'Ready to tell your story?';
-    $content  = !empty($atts['content']) ? $atts['content'] : 'I take on a limited number of weddings each year...';
-    $btn1     = !empty($atts['btn_text']) ? $atts['btn_text'] : 'Inquire Now';
+    $item = wp_parse_args( $atts, array(
+        'subtitle'      => '',
+        'title'         => 'Ready to Secure Your Date?',
+        'content'       => 'I take on a limited number of weddings each year.',
+        'btn_text'      => 'Inquire Now',
+        'btn_text_2'    => 'Book Consultation',
+        'contact_email' => '',
+        'btn_url'       => '/booking/',
+    ));
 
     ob_start(); ?>
-    <div class="gw-cta-plaque-rebuilt container">
-        <div class="investment-plaque">
-            <h3 class="plaque-title"><?php echo esc_html($title); ?></h3>
-            <div class="cta-plaque-body"><?php echo esc_html($content); ?></div>
-            <div class="investment-buttons">
-                <a href="javascript:void(0)" class="btn-black-gold gw-request-modal-trigger" data-service="<?php echo esc_attr($title); ?>">
-                    <?php echo esc_html($btn1); ?> &rarr;
-                </a>
+    <div class="investment-sidebar plaque-rendering-context" style="max-width: 500px; margin: 40px auto;">
+        <div class="investment-plaque" style="position: relative; overflow: hidden; border: 2px solid var(--brand-gold-light); padding: 40px; background: #fff; box-shadow: var(--shadow-soft); text-align: center;">
+            <?php if ( ! empty( $item['subtitle'] ) ) : ?>
+                <span class="subtitle" style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; margin-bottom: 8px; font-weight: 700; font-family: 'Lato', sans-serif;">
+                    <?php echo esc_html( $item['subtitle'] ); ?>
+                </span>
+            <?php endif; ?>
+
+            <h3 class="plaque-title" style="font-family: var(--font-secondary, 'Lora', serif); font-size: 1.8rem; font-weight: 700; color: var(--brand-black, #111); margin-top: 0; margin-bottom: 15px; line-height: 1.2;">
+                <?php echo esc_html( $item['title'] ); ?>
+            </h3>
+
+            <?php if ( ! empty( $item['content'] ) ) : ?>
+                <div class="cta-plaque-body" style="font-family: 'Lato', sans-serif; font-size: 0.9rem; line-height: 1.6; color: #555; margin-bottom: 25px;">
+                    <?php echo wp_kses_post( $item['content'] ); ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="investment-buttons" style="display: flex; flex-direction: column; gap: 12px;">
+                <?php if ( ! empty( $item['btn_text'] ) ) : ?>
+                    <a href="javascript:void(0)" class="btn-black gw-request-modal-trigger" data-service="<?php echo esc_attr( $item['title'] ); ?>" style="display: block; text-decoration: none; text-align: center; padding: 16px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 700; background: #000; color: #fff; border: none; cursor: pointer; transition: 0.3s;">
+                        <?php echo esc_html( $item['btn_text'] ); ?>
+                    </a>
+                <?php endif; ?>
+
+                <?php if ( ! empty( $item['btn_text_2'] ) ) : ?>
+                    <a href="<?php echo esc_url( $item['btn_url'] ); ?>" class="btn-black-gold" style="display: block; text-decoration: none; text-align: center; padding: 16px; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; font-weight: 700; background: var(--brand-gold-light); color: #fff; border: none; cursor: pointer; transition: 0.3s;">
+                        <?php echo esc_html( $item['btn_text_2'] ); ?>
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
-    <?php return ob_get_clean();
+    <?php
+    return ob_get_clean();
 }
 
 function gary_render_tessellated_menu( $atts ) {

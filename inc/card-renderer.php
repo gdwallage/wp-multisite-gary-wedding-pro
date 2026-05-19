@@ -45,7 +45,8 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
         'info'       => $b_data['info'],
         'is_free'    => (float)$b_data['price'] <= 0,
         'duration'   => (!empty($summary['total_duration'])) ? $summary['total_duration'] : ($b_data['duration'] ?: (($page_id ?: get_the_ID()) ? get_post_meta(($page_id ?: get_the_ID()), '_gary_service_duration', true) : '')),
-        'icon'       => $page_id ? get_the_post_thumbnail_url($page_id, 'gw-service-icon') : ''
+        'icon'       => $page_id ? get_the_post_thumbnail_url($page_id, 'gw-service-icon') : '',
+        'page_id'    => $page_id
     );
 }
 
@@ -83,13 +84,15 @@ function gary_render_service_card_html( $data ) {
             </div>
 
             <div class="service-card-content">
-                <h2 class="service-card-title"><?php echo esc_html($item['title']); ?></h2>
-                
-                <div class="service-card-price <?php echo $item['is_free'] ? 'is-free' : ''; ?>">
-                    <span><?php echo esc_html($display_price); ?></span>
-                    <?php if( !$item['is_free'] && $display_duration ): ?>
-                        <small class="duration-label"><?php echo esc_html($display_duration); ?></small>
-                    <?php endif; ?>
+                <div class="service-card-header">
+                    <h2 class="service-card-title"><?php echo esc_html($item['title']); ?></h2>
+                    
+                    <div class="service-card-price <?php echo $item['is_free'] ? 'is-free' : ''; ?>">
+                        <span><?php echo esc_html($display_price); ?></span>
+                        <?php if( !$item['is_free'] && $display_duration ): ?>
+                            <small class="duration-label"><?php echo esc_html($display_duration); ?></small>
+                        <?php endif; ?>
+                    </div>
                 </div>
 
                 <?php if ( ! empty( $item['inclusions'] ) ) : ?>
@@ -115,7 +118,8 @@ function gary_render_service_card_html( $data ) {
 function gary_render_service_plaque_html( $data ) {
     $item = wp_parse_args( $data, array(
         'title' => '', 'price' => 0, 'savings' => 0, 'inclusions' => array(),
-        'permalink' => '#', 'thumbnail' => '', 'is_free' => false, 'duration' => 0,
+        'permalink' => '#', 'thumbnail' => '', 'is_free' => false, 'duration' => 0, 'info' => '',
+        'page_id' => 0
     ));
 
     // FINAL SAFETY: If duration is empty in the data payload, try to grab it from the current page
@@ -148,35 +152,41 @@ function gary_render_service_plaque_html( $data ) {
     $refined_title = trim($refined_title);
 
     ob_start(); ?>
-    <div class="investment-sidebar plaque-rendering-context" style="max-width: 420px; margin: 40px auto;">
-        <div class="investment-plaque" style="position: relative; overflow: hidden; border: 2px solid var(--brand-gold-light); padding: 40px; background: #fff; box-shadow: var(--shadow-deep); text-align:center;">
+    <div class="investment-sidebar plaque-rendering-context" style="max-width: 380px; margin: 30px auto;">
+        <div class="investment-plaque" style="position: relative; overflow: hidden; border: 2px solid var(--brand-gold-light); padding: 30px; background: #fff; box-shadow: var(--shadow-soft); text-align:center;">
             <?php if ( (float)$item['savings'] > 0 && !$item['is_free'] ) : ?>
-                <div class="investment-savings-ribbon" style="top: 30px; right: -65px; width: 250px;">SAVE £<?php echo number_format($item['savings'], 0); ?></div>
+                <div class="investment-savings-ribbon" style="top: 25px; right: -75px; width: 230px; font-size: 0.65rem;">SAVE £<?php echo number_format($item['savings'], 0); ?></div>
             <?php endif; ?>
             
-            <div class="price-wrap" style="padding-bottom: 20px; margin-bottom: 10px;">
-                <div class="price-label" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:2px; opacity:0.6; margin-bottom:15px; font-weight:700;">
+            <div class="price-wrap" style="padding-bottom: 15px; margin-bottom: 5px;">
+                <div class="price-label" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:1.5px; opacity:0.6; margin-bottom:10px; font-weight:700;">
                     <?php echo esc_html($label); ?>
                 </div>
                 
-                <div class="price-val" style="font-size:4.2rem; font-family:var(--font-primary); font-weight:700; color:var(--brand-black); line-height:1; margin-bottom: 15px;">
+                <div class="price-val" style="font-size:3rem; font-family:var(--font-primary); font-weight:700; color:var(--brand-black); line-height:1; margin-bottom: 10px;">
                     <?php echo esc_html($display_price); ?>
                 </div>
 
-                <div class="package-name-sub" style="font-family:'Lato', sans-serif; font-size:0.9rem; text-transform:uppercase; letter-spacing:2px; opacity:0.9; font-weight:700; margin-bottom: 25px;">
+                <div class="package-name-sub" style="font-family:'Lato', sans-serif; font-size:0.85rem; text-transform:uppercase; letter-spacing:1.5px; opacity:0.9; font-weight:700; margin-bottom: 15px;">
                     <?php echo esc_html( $refined_title ); ?>
                 </div>
+
+                <?php if ( !empty($item['info']) ) : ?>
+                    <div class="service-plaque-description" style="font-family:'Lato', sans-serif; font-size:0.85rem; line-height:1.6; color:#555; text-align:left; margin: 15px 0; border-top: 1px solid #eee; padding-top: 15px;">
+                        <?php echo wp_kses_post( $item['info'] ); ?>
+                    </div>
+                <?php endif; ?>
                 
                 <?php if ( (float)$item['savings'] > 0 && !$item['is_free'] ) : ?>
-                    <div class="investment-summary-box" style="background:#fbfbfb; border:1px solid #f0f0f0; padding:20px; margin:20px 0; text-align:left;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; opacity:0.8;">
+                    <div class="investment-summary-box" style="background:#fbfbfb; border:1px solid #f0f0f0; padding:15px; margin:15px 0; text-align:left;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; opacity:0.8;">
                             <span>Bought Separately:</span>
                             <?php 
                             $total_val = (float)$item['price'] + (float)$item['savings'];
                             ?>
                             <span style="font-weight:700;">£<?php echo number_format($total_val, 2); ?></span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--brand-crimson);">
+                        <div style="display:flex; justify-content:space-between; font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; color:var(--brand-crimson);">
                             <span>You Save:</span>
                             <span style="font-weight:700;">&mdash; £<?php echo number_format($item['savings'], 2); ?></span>
                         </div>
@@ -184,8 +194,8 @@ function gary_render_service_plaque_html( $data ) {
                 <?php endif; ?>
 
                 <?php if($duration_str): ?>
-                    <div class="duration-val" style="margin: 20px 0 20px 0; font-size:0.75rem; letter-spacing:1px; font-weight:700; opacity:0.7; text-transform:uppercase; display:flex; align-items:center; justify-content:center; color:var(--brand-black) !important;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#C5A059" viewBox="0 0 16 16" style="margin-right:10px; display:inline-block;">
+                    <div class="duration-val" style="margin: 15px 0; font-size:0.7rem; letter-spacing:1px; font-weight:700; opacity:0.7; text-transform:uppercase; display:flex; align-items:center; justify-content:center; color:var(--brand-black) !important;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#C5A059" viewBox="0 0 16 16" style="margin-right:8px; display:inline-block;">
                             <path d="M8 3.5a.5.5 0 0 0-1 0V8a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 7.71V3.5z"/>
                             <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
                         </svg>
@@ -194,9 +204,25 @@ function gary_render_service_plaque_html( $data ) {
                 <?php endif; ?>
             </div>
 
-            <div class="investment-buttons" style="display:flex; flex-direction:column; gap:12px; margin-top: 0;">
-                <a href="#request" class="btn-black gw-request-modal-trigger" style="background:#000; color:#fff; text-decoration:none; text-align:center; padding:18px; text-transform:uppercase; letter-spacing:2px; font-size:0.85rem; font-weight:700;">Request Details</a>
-                <a href="/booking/" class="btn-gold" style="background:var(--brand-gold-light); color:#fff; text-decoration:none; text-align:center; padding:18px; text-transform:uppercase; letter-spacing:2px; font-size:0.85rem; font-weight:700;">Book Consultation</a>
+            <div class="investment-buttons" style="display:flex; flex-direction:column; gap:10px; margin-top: 5px;">
+                <?php 
+                $current_post_id = get_the_ID();
+                $is_on_own_page = false;
+                if ( is_singular() ) {
+                    if ( !empty($item['page_id']) && (int)$current_post_id === (int)$item['page_id'] ) {
+                        $is_on_own_page = true;
+                    }
+                    if ( is_page_template( 'page-service-detail.php' ) ) {
+                        $is_on_own_page = true;
+                    }
+                }
+                
+                if ( $is_on_own_page ) : ?>
+                    <a href="javascript:void(0)" class="btn-black gw-request-modal-trigger" data-service="<?php echo esc_attr($item['title']); ?>" style="display:block; text-decoration:none; text-align:center; padding:14px; text-transform:uppercase; letter-spacing:1.5px; font-size:0.75rem; font-weight:700; background:#000; color:#fff; border:none; cursor:pointer;">Request Details</a>
+                    <a href="/booking/" class="btn-black-gold" style="display:block; text-decoration:none; text-align:center; padding:14px; text-transform:uppercase; letter-spacing:1.5px; font-size:0.75rem; font-weight:700; background:var(--brand-gold-light); color:#fff; border:none; cursor:pointer;">Book Consultation</a>
+                <?php else : ?>
+                    <a href="<?php echo esc_url($item['permalink']); ?>" class="btn-black-gold" style="display:block; text-decoration:none; text-align:center; padding:14px; text-transform:uppercase; letter-spacing:1.5px; font-size:0.75rem; font-weight:700; border:2px solid #000; background:#000; color:#fff;">Read More</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
