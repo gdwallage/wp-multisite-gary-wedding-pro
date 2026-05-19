@@ -4,7 +4,7 @@
  */
 
 function gary_wedding_scripts() {
-    $ver = defined('GARY_THEME_VERSION') ? GARY_THEME_VERSION . '.3001.51' : wp_get_theme()->get('Version');
+    $ver = defined('GARY_THEME_VERSION') ? GARY_THEME_VERSION . '.3002.09' : wp_get_theme()->get('Version');
     
     // Core CSS
     wp_enqueue_style( 'gary-wedding-v3-editorial', get_template_directory_uri() . '/style.css', array(), $ver );
@@ -15,7 +15,7 @@ function gary_wedding_scripts() {
 
     // Page-Specific
     if ( is_front_page() ) {
-        wp_enqueue_script( 'gw-hero-slider', get_template_directory_uri() . '/js/hero-slider.js', array('jquery'), $ver, true );
+        wp_enqueue_script( 'gw-hero-slider', get_template_directory_uri() . '/js/hero-slider.js', array(), $ver, true );
     }
 }
 add_action( 'wp_enqueue_scripts', 'gary_wedding_scripts' );

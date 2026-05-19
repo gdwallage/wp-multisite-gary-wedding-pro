@@ -2,7 +2,7 @@
 /** 
  * File: header.php 
  * Theme: Gary Wallage Wedding Pro
- * Version: 3001.84 (CTA Plaque Booking & Inquiry Modal Action Fix)
+ * Version: 3002.09 (Responsive Mobile Stacking & Scrollytelling Offset Fix)
  */ 
 ?>
 <!DOCTYPE html>
@@ -10,29 +10,41 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-version" content="3001.84">
+    <meta name="theme-version" content="3002.09">
 
     <?php wp_head(); ?>
 
     <style id="emergency-menu-fix">
         /* EMERGENCY OVERRIDE FOR CACHED CSS */
-        body { padding-top: 95px !important; }
-        .site-header {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            z-index: 5000 !important;
-            background: #ffffff !important;
-            box-shadow: none !important;
-        }
-        /* Admin Bar Correction */
-        body.admin-bar .site-header {
-            top: 32px !important;
-        }
-        @media (max-width: 782px) {
+        @media (min-width: 1025px) {
+            body { padding-top: 95px !important; }
+            .site-header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                z-index: 5000 !important;
+                background: #ffffff !important;
+                box-shadow: none !important;
+            }
+            /* Admin Bar Correction */
             body.admin-bar .site-header {
-                top: 46px !important;
+                top: 32px !important;
+            }
+        }
+        @media (max-width: 1024px) {
+            body { padding-top: 0 !important; }
+            .site-header {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                z-index: 5000 !important;
+                background: var(--brand-bg, #F9F9F7) !important;
+                box-shadow: none !important;
+            }
+            body.admin-bar .site-header {
+                top: 0 !important;
             }
         }
         .menu-overlay.active {
@@ -59,7 +71,7 @@
     </style>
 </head>
 <body <?php body_class(); ?>>
-    <!-- VERSION 3001.84 -->
+    <!-- VERSION 3002.09 -->
 <?php wp_body_open(); ?>
 
 <header class="site-header">

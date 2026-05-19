@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3002.08
+Version: 3002.09
 Text Domain: gary-wedding
 */
 
@@ -503,35 +503,88 @@ body:not(.home) h1.entry-title {
 
 /* --- MOBILE HEADER OVERRIDE --- */
 @media (max-width: 1024px) {
+    .site-header {
+        position: relative !important;
+        background: var(--brand-bg, #F9F9F7) !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+        width: 100% !important;
+    }
+
     .header-focal-container {
         height: auto !important;
         flex-direction: column !important;
-        padding: 30px 20px 0 !important;
+        padding: 30px 20px 20px !important;
         min-height: auto !important;
         align-items: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     /* Admin Bar Correction */
     .admin-bar .site-header {
         margin-top: 0 !important;
+        top: 0 !important;
     }
 
     .focal-side {
         width: 100% !important;
         justify-content: center !important;
         text-align: center !important;
-        margin: 2px 0 !important;
+        margin: 5px 0 !important;
         flex: none !important;
     }
 
-    .nav-toggle-container {
+    .focal-left {
         order: 1 !important;
-        margin-bottom: 20px !important;
+        display: flex !important;
+    }
+
+    .branding-group {
+        text-align: center !important;
+        width: 100% !important;
+    }
+
+    .focal-center {
+        order: 0 !important;
+        padding: 0 !important;
+        margin: 0 auto 15px auto !important;
+        width: 120px !important;
+        height: 120px !important;
+        border-radius: 50% !important;
+        background: var(--brand-white) !important;
+        border: 2px solid var(--brand-gold-light) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        z-index: 1000 !important;
+        position: relative !important;
+        top: 0 !important;
+        left: auto !important;
+        transform: none !important;
+    }
+
+    .focal-center .custom-logo-link img {
+        max-width: 100px !important;
+        max-height: 100px !important;
+        width: auto !important;
+        height: auto !important;
+        border-radius: 50% !important;
+        filter: none !important;
+    }
+
+    .nav-toggle-container {
+        order: 2 !important;
+        margin-top: 15px !important;
+        margin-bottom: 10px !important;
         display: flex !important;
         justify-content: center !important;
         width: 100% !important;
         visibility: visible !important;
         opacity: 1 !important;
+        flex: none !important;
     }
 
     .menu-toggle {
@@ -547,27 +600,6 @@ body:not(.home) h1.entry-title {
         min-height: 54px !important;
         align-items: center;
         justify-content: center;
-    }
-
-    .branding-group {
-        order: 0 !important;
-    }
-
-    .focal-center {
-        order: 2 !important;
-        padding: 0 !important;
-        margin-bottom: 0px !important;
-        padding-bottom: 20px !important;
-        z-index: 1000 !important;
-        position: relative !important;
-        top: 0 !important;
-    }
-
-    .focal-center .custom-logo-link img {
-        max-width: 200px !important;
-        max-height: 130px !important;
-        width: auto !important;
-        height: auto !important;
     }
 
     .site-title-blacksword {
@@ -2896,13 +2928,59 @@ body #primary .gw-trio-bottom,
         margin-top: 20px !important;
     }
 
-    .hero-peek-caption {
+    .hero-peek-caption-stable {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: auto !important;
         padding: 40px 20px 90px !important;
         background: linear-gradient(to top, rgba(17, 17, 14, 0.85) 0%, rgba(17, 17, 14, 0.0) 100%) !important;
         backdrop-filter: none !important;
+        border-radius: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: none !important;
         display: flex !important;
-        flex-direction: column;
-        justify-content: flex-end;
+        flex-direction: column !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+    }
+
+    /* Scrollytelling Mobile Offsets (Relative Header Compatibility) */
+    .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
+    .twocol-scrolly .sticky-background-container {
+        top: 0 !important;
+        height: 100vh !important;
+    }
+
+    .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
+    .twocol-scrolly .scrolling-text-container {
+        margin-top: -100vh !important;
+    }
+
+    /* Admin Bar Correction on Mobile for Scrollytelling */
+    body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
+    body.admin-bar .twocol-scrolly .sticky-background-container {
+        top: 46px !important;
+        height: calc(100vh - 46px) !important;
+    }
+
+    body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
+    body.admin-bar .twocol-scrolly .scrolling-text-container {
+        margin-top: calc(-100vh + 46px) !important;
+    }
+
+    @media (min-width: 783px) {
+        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
+        body.admin-bar .twocol-scrolly .sticky-background-container {
+            top: 32px !important;
+            height: calc(100vh - 32px) !important;
+        }
+
+        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
+        body.admin-bar .twocol-scrolly .scrolling-text-container {
+            margin-top: calc(-100vh + 32px) !important;
+        }
     }
 
     .hero-peek-title {
