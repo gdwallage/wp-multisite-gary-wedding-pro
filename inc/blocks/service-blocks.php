@@ -944,7 +944,7 @@ function gary_render_scrollytelling_twocol_container( $attributes, $content ) {
         }
         
         $bg_html .= '<div class="twocol-bg-grid">';
-        $bg_html .= '<div class="twocol-bg-column left-bg-column">' . $left_bg_html . '</div>';
+        $bg_html .= '<div class="twocol-bg-column left-bg-column is-column-active">' . $left_bg_html . '</div>';
         $bg_html .= '<div class="twocol-bg-column right-bg-column">' . $right_bg_html . '</div>';
         $bg_html .= '</div>';
     }

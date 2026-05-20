@@ -2,7 +2,7 @@
 /** 
  * File: header.php 
  * Theme: Gary Wallage Wedding Pro
- * Version: 3002.09 (Responsive Mobile Stacking & Scrollytelling Offset Fix)
+ * Version: 3002.16 (Prevent step 1 background fade-in and resolve mobile column race condition)
  */ 
 ?>
 <!DOCTYPE html>
@@ -10,7 +10,7 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-version" content="3002.09">
+    <meta name="theme-version" content="3002.16">
 
     <?php wp_head(); ?>
 
@@ -33,18 +33,24 @@
             }
         }
         @media (max-width: 1024px) {
-            body { padding-top: 0 !important; }
+            body { padding-top: 70px !important; }
             .site-header {
-                position: relative !important;
+                position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
                 width: 100% !important;
                 z-index: 5000 !important;
                 background: var(--brand-bg, #F9F9F7) !important;
-                box-shadow: none !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+                height: 70px !important;
             }
             body.admin-bar .site-header {
-                top: 0 !important;
+                top: 46px !important;
+            }
+            @media (min-width: 783px) {
+                body.admin-bar .site-header {
+                    top: 32px !important;
+                }
             }
         }
         .menu-overlay.active {
@@ -71,7 +77,7 @@
     </style>
 </head>
 <body <?php body_class(); ?>>
-    <!-- VERSION 3002.09 -->
+    <!-- VERSION 3002.16 -->
 <?php wp_body_open(); ?>
 
 <header class="site-header">

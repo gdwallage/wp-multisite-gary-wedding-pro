@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const observerOptions = {
             root: null,
             rootMargin: '0px',
-            threshold: 0.5
+            threshold: window.innerWidth <= 1024 ? 0.15 : 0.5
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -293,17 +293,78 @@ document.addEventListener('DOMContentLoaded', function() {
                     const stepNum = entry.target.getAttribute('data-step');
                     console.log('Gary Wedding Scrollytelling: Slide ' + stepNum + ' In View');
 
-                    wrappers.forEach(w => w.classList.remove('is-active'));
-                    const targetWrappers = document.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
-                    targetWrappers.forEach(targetWrapper => {
-                        targetWrapper.classList.add('is-active');
-                    });
+                    const wrapper = entry.target.closest('.scrollytelling-wrapper');
+                    if (wrapper) {
+                        const stepWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
+                        stepWrappers.forEach(w => w.classList.remove('is-active'));
+                        const targetWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
+                        targetWrappers.forEach(targetWrapper => {
+                            targetWrapper.classList.add('is-active');
+                        });
+                    }
                 }
             });
         }, observerOptions);
 
         steps.forEach(step => {
             observer.observe(step);
+        });
+    }
+
+    // Two-Column Scrollytelling Sequential Stacking Observer
+    const columns = document.querySelectorAll('.twocol-step-column');
+    if (columns.length > 0) {
+        console.log('Gary Wedding Scrollytelling: Initializing Two-Column IntersectionObserver...');
+
+        const colObserverOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: window.innerWidth <= 1024 ? 0.15 : 0.5
+        };
+
+        const colObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const col = entry.target;
+                    const isLeft = col.classList.contains('left-step-column');
+                    const step = col.closest('.twocol-step');
+                    if (step) {
+                        const stepNum = step.getAttribute('data-step');
+                        const wrapper = col.closest('.twocol-scrolly');
+                        if (wrapper) {
+                            const bgGrid = wrapper.querySelector('.twocol-bg-grid');
+                            if (bgGrid) {
+                                const leftBg = bgGrid.querySelector('.left-bg-column');
+                                const rightBg = bgGrid.querySelector('.right-bg-column');
+                                if (leftBg && rightBg) {
+                                    // 1. Sync step active state immediately inside this section to prevent race conditions
+                                    const stepWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
+                                    stepWrappers.forEach(w => w.classList.remove('is-active'));
+                                    const targetWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
+                                    targetWrappers.forEach(targetWrapper => {
+                                        targetWrapper.classList.add('is-active');
+                                    });
+
+                                    // 2. Set active column visibility
+                                    if (isLeft) {
+                                        console.log('Gary Wedding Scrollytelling: Left Column In View for Step ' + stepNum);
+                                        leftBg.classList.add('is-column-active');
+                                        rightBg.classList.remove('is-column-active');
+                                    } else {
+                                        console.log('Gary Wedding Scrollytelling: Right Column In View for Step ' + stepNum);
+                                        rightBg.classList.add('is-column-active');
+                                        leftBg.classList.remove('is-column-active');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }, colObserverOptions);
+
+        columns.forEach(col => {
+            colObserver.observe(col);
         });
     }
 });

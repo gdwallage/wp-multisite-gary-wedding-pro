@@ -4,7 +4,7 @@
  */
 
 function gary_wedding_scripts() {
-    $ver = defined('GARY_THEME_VERSION') ? GARY_THEME_VERSION . '.3002.09' : wp_get_theme()->get('Version');
+    $ver = defined('GARY_THEME_VERSION') ? GARY_THEME_VERSION . '.3002.16' : wp_get_theme()->get('Version');
     
     // Core CSS
     wp_enqueue_style( 'gary-wedding-v3-editorial', get_template_directory_uri() . '/style.css', array(), $ver );

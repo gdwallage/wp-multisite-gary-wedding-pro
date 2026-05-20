@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3002.09
+Version: 3002.16
 Text Domain: gary-wedding
 */
 
@@ -504,41 +504,58 @@ body:not(.home) h1.entry-title {
 /* --- MOBILE HEADER OVERRIDE --- */
 @media (max-width: 1024px) {
     .site-header {
-        position: relative !important;
-        background: var(--brand-bg, #F9F9F7) !important;
-        border-bottom: none !important;
-        box-shadow: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
         width: 100% !important;
+        z-index: 5000 !important;
+        background: var(--brand-bg, #F9F9F7) !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+        height: 70px !important;
     }
 
-    .header-focal-container {
-        height: auto !important;
-        flex-direction: column !important;
-        padding: 30px 20px 20px !important;
-        min-height: auto !important;
-        align-items: center !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
+    body {
+        padding-top: 70px !important;
     }
 
     /* Admin Bar Correction */
     .admin-bar .site-header {
         margin-top: 0 !important;
-        top: 0 !important;
+        top: 46px !important;
+    }
+
+    @media (min-width: 783px) {
+        .admin-bar .site-header {
+            top: 32px !important;
+        }
+    }
+
+    .header-focal-container {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 10px 5% !important; /* 5% padding on left and right */
+        height: 70px !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
     }
 
     .focal-side {
-        width: 100% !important;
-        justify-content: center !important;
-        text-align: center !important;
-        margin: 5px 0 !important;
+        width: auto !important;
+        margin: 0 !important;
         flex: none !important;
     }
 
     .focal-left {
-        order: 1 !important;
+        order: 2 !important; /* Branding in the center */
+        flex: 1 !important;
         display: flex !important;
+        justify-content: center !important;
+        text-align: center !important;
+        padding: 0 10px !important;
     }
 
     .branding-group {
@@ -547,18 +564,18 @@ body:not(.home) h1.entry-title {
     }
 
     .focal-center {
-        order: 0 !important;
+        order: 1 !important; /* Logo on the left */
         padding: 0 !important;
-        margin: 0 auto 15px auto !important;
-        width: 120px !important;
-        height: 120px !important;
+        margin: 0 !important;
+        width: 50px !important;
+        height: 50px !important;
         border-radius: 50% !important;
         background: var(--brand-white) !important;
         border: 2px solid var(--brand-gold-light) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1) !important;
         z-index: 1000 !important;
         position: relative !important;
         top: 0 !important;
@@ -567,8 +584,8 @@ body:not(.home) h1.entry-title {
     }
 
     .focal-center .custom-logo-link img {
-        max-width: 100px !important;
-        max-height: 100px !important;
+        max-width: 44px !important;
+        max-height: 44px !important;
         width: auto !important;
         height: auto !important;
         border-radius: 50% !important;
@@ -576,12 +593,11 @@ body:not(.home) h1.entry-title {
     }
 
     .nav-toggle-container {
-        order: 2 !important;
-        margin-top: 15px !important;
-        margin-bottom: 10px !important;
+        order: 3 !important; /* Menu on the right */
+        margin: 0 !important;
         display: flex !important;
-        justify-content: center !important;
-        width: 100% !important;
+        justify-content: flex-end !important;
+        width: auto !important;
         visibility: visible !important;
         opacity: 1 !important;
         flex: none !important;
@@ -591,24 +607,25 @@ body:not(.home) h1.entry-title {
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
-        padding: 14px 24px !important;
-        font-size: 0.9rem !important;
+        padding: 6px 14px !important;
+        font-size: 0.8rem !important;
         border: 2px solid var(--brand-gold-light) !important;
         background: var(--brand-white) !important;
         color: var(--brand-black) !important;
         z-index: 1200 !important;
-        min-height: 54px !important;
+        min-height: 34px !important;
         align-items: center;
         justify-content: center;
     }
 
     .site-title-blacksword {
-        font-size: 1.6rem !important;
+        font-size: clamp(1.1rem, 4vw, 1.4rem) !important;
+        margin: 0 !important;
+        line-height: 1.2 !important;
     }
 
     .site-tagline-lato {
-        font-size: 0.65rem !important;
-        letter-spacing: 1px !important;
+        display: none !important;
     }
 
     /* Mobile H1 Adjustment (Closer to Logo) */
@@ -2171,17 +2188,7 @@ body #primary .gw-trio-bottom,
         padding: 0 5%;
     }
 
-    .header-focal-container {
-        height: auto;
-        flex-direction: column;
-        padding: 30px 20px;
-    }
 
-    .focal-center {
-        order: -1;
-        padding-bottom: 20px;
-        top: 0;
-    }
 
     .services-grid,
     .component-grid,
@@ -3866,6 +3873,19 @@ body.admin-bar .sticky-background-container {
     z-index: 2;
 }
 
+/* Step 1 background wrappers should never fade in on load, but simply scroll in with the page */
+.scroll-bg-wrapper[data-step="1"] {
+    opacity: 1 !important;
+    z-index: 2;
+    transition: none !important;
+}
+
+.scroll-bg-wrapper[data-step="1"]:not(.is-active) {
+    opacity: 0 !important;
+    z-index: 1;
+    transition: opacity 1.0s ease-in-out !important;
+}
+
 /* Base image inside the wrapper targeting 100% height with gold border exactly at image edge */
 .scroll-bg-image {
     position: absolute !important;
@@ -3965,16 +3985,7 @@ body.admin-bar .scrolling-text-container {
 }
 
 /* Mobile responsive override for full-height contained image - force center on mobile */
-@media (max-width: 768px) {
-    .scroll-bg-image {
-        bottom: 0 !important;
-        max-width: 100% !important;
-        height: 100% !important;
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) !important;
-    }
-}
+
 
 .scroll-step.align-box-left { justify-content: flex-start; }
 .scroll-step.align-box-right { justify-content: flex-end; }
@@ -4136,49 +4147,118 @@ body.admin-bar .scrolling-text-container {
     letter-spacing: 0.5px !important;
 }
 
-/* Adjust layout when admin bar is present */
-body.admin-bar .twocol-scrolly .sticky-background-container {
-    top: 127px !important;
-    height: calc(100vh - 127px) !important;
-}
-
-body.admin-bar .twocol-scrolly .scrolling-text-container {
-    margin-top: calc(-100vh + 127px) !important;
-}
-
-@media (max-width: 782px) {
-    body.admin-bar .twocol-scrolly .sticky-background-container {
-        top: 141px !important;
-        height: calc(100vh - 141px) !important;
-    }
-    body.admin-bar .twocol-scrolly .scrolling-text-container {
-        margin-top: calc(-100vh + 141px) !important;
-    }
-}
-
-/* Mobile responsive layout: Stack columns instead of side-by-side */
-@media (max-width: 768px) {
+/* Mobile responsive layout: Stack columns instead of side-by-side & Crop background images */
+@media (max-width: 1024px) {
+    /* 1. Single Scrollytelling & Background Cropping */
     .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
     .twocol-scrolly .sticky-background-container {
         width: 100vw !important;
         left: 0 !important;
         margin-left: 0 !important;
+        top: 70px !important; /* Position exactly below sticky compact mobile header */
+        height: calc(100vh - 70px) !important; /* Bottom exactly at screen bottom */
     }
+
     .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
     .twocol-scrolly .scrolling-text-container {
         width: 100vw !important;
         margin-left: 0 !important;
+        margin-top: calc(-100vh + 70px) !important;
     }
+
+    /* Admin Bar Correction on Mobile for Scrollytelling */
+    body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
+    body.admin-bar .twocol-scrolly .sticky-background-container {
+        top: calc(70px + 46px) !important;
+        height: calc(100vh - 70px - 46px) !important;
+    }
+
+    body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
+    body.admin-bar .twocol-scrolly .scrolling-text-container {
+        margin-top: calc(-100vh + 70px + 46px) !important;
+    }
+
+    @media (min-width: 783px) {
+        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
+        body.admin-bar .twocol-scrolly .sticky-background-container {
+            top: calc(70px + 32px) !important;
+            height: calc(100vh - 70px - 32px) !important;
+        }
+
+        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
+        body.admin-bar .twocol-scrolly .scrolling-text-container {
+            margin-top: calc(-100vh + 70px + 32px) !important;
+        }
+    }
+
+    /* Allow scrollytelling background images to crop on mobile, taking full height */
+    .scroll-bg-image,
+    .scroll-bg-image.align-img-center,
+    .scroll-bg-image.align-img-left,
+    .scroll-bg-image.align-img-right,
+    .twocol-scrolly .twocol-bg-column .scroll-bg-image,
+    .twocol-scrolly .twocol-bg-column .scroll-bg-image.align-img-center,
+    .twocol-scrolly .twocol-bg-column .scroll-bg-image.align-img-left,
+    .twocol-scrolly .twocol-bg-column .scroll-bg-image.align-img-right {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        max-height: none !important;
+        object-fit: cover !important;
+        left: 50% !important;
+        top: 50% !important;
+        bottom: auto !important; /* Prevent bottom: 0 stretching */
+        transform: translate(-50%, -50%) !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: none !important;
+    }
+
+    /* 2. Two-Column Scrollytelling Sequential Stacking */
     .twocol-scrolly .twocol-bg-grid {
-        grid-template-columns: 1fr !important;
-        grid-template-rows: 1fr 1fr !important;
-        column-gap: 0 !important;
-        row-gap: 10px;
+        display: block !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
     }
+
+    .twocol-scrolly .twocol-bg-column {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        opacity: 0 !important;
+        z-index: 1 !important;
+        transition: opacity 0.8s ease-in-out !important;
+    }
+
+    /* Left column active by default in CSS, no JS dependency on initial load */
+    .twocol-scrolly .twocol-bg-column:first-child {
+        opacity: 1 !important;
+        z-index: 2 !important;
+    }
+
+    /* Active column overlaps default left column using z-index: 3 */
+    .twocol-scrolly .twocol-bg-column.is-column-active {
+        opacity: 1 !important;
+        z-index: 3 !important;
+    }
+
     .twocol-scrolly .twocol-step-grid {
-        grid-template-columns: 1fr !important;
-        grid-template-rows: 1fr 1fr !important;
-        column-gap: 0 !important;
+        display: block !important;
+    }
+
+    .twocol-scrolly .twocol-step-column {
+        min-height: 100vh !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        padding: 20px !important;
+        box-sizing: border-box !important;
     }
 }
 
