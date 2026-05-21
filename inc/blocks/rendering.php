@@ -87,7 +87,7 @@ function gary_render_cta_plaque_block( $atts ) {
                 </span>
             <?php endif; ?>
 
-            <h3 class="plaque-title" style="font-family: var(--font-secondary, 'Lora', serif); font-size: 1.8rem; font-weight: 700; color: var(--brand-black, #111); margin-top: 0; margin-bottom: 15px; line-height: 1.2;">
+            <h3 class="plaque-title" style="font-family: var(--font-primary); font-size: 1.8rem; font-weight: normal; color: var(--brand-accent); margin-top: 0; margin-bottom: 15px; line-height: 1.2;">
                 <?php echo esc_html( $item['title'] ); ?>
             </h3>
 

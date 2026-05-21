@@ -2,7 +2,7 @@
 /** 
  * File: header.php 
  * Theme: Gary Wallage Wedding Pro
- * Version: 3002.16 (Prevent step 1 background fade-in and resolve mobile column race condition)
+ * Version: 3003.09 (Remove Bookly custom prefill and query redirects)
  */ 
 ?>
 <!DOCTYPE html>
@@ -10,7 +10,7 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-version" content="3002.16">
+    <meta name="theme-version" content="3003.09">
 
     <?php wp_head(); ?>
 
@@ -77,7 +77,7 @@
     </style>
 </head>
 <body <?php body_class(); ?>>
-    <!-- VERSION 3002.16 -->
+    <!-- VERSION 3003.09 -->
 <?php wp_body_open(); ?>
 
 <header class="site-header">

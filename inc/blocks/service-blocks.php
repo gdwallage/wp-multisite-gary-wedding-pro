@@ -496,7 +496,7 @@ function gary_render_trio_gallery_block( $attributes ) {
     ob_start(); ?>
     <div class="gw-trio-gallery-wrapper container">
         <?php if ( !empty($attributes['trio_title']) ) : ?>
-            <h2 class="trio-gallery-heading" style="text-align:center; font-family:var(--font-script); font-size:3rem; color:var(--brand-accent); margin-bottom:40px; font-weight:normal;">
+            <h2 class="trio-gallery-heading" style="text-align:center; font-family:var(--font-primary); font-size:3rem; color:var(--brand-accent); margin-bottom:40px; font-weight:normal;">
                 <?php echo esc_html( $attributes['trio_title'] ); ?>
             </h2>
         <?php endif; ?>
@@ -552,7 +552,7 @@ function gary_render_cta_plaque_block( $atts ) {
                 </span>
             <?php endif; ?>
 
-            <h3 class="plaque-title" style="font-family: var(--font-secondary, 'Lora', serif); font-size: 1.8rem; font-weight: 700; color: var(--brand-black, #111); margin-top: 0; margin-bottom: 15px; line-height: 1.2;">
+            <h3 class="plaque-title" style="font-family: var(--font-primary); font-size: 1.8rem; font-weight: normal; color: var(--brand-accent); margin-top: 0; margin-bottom: 15px; line-height: 1.2;">
                 <?php echo esc_html( $item['title'] ); ?>
             </h3>
 

@@ -76,32 +76,24 @@ $is_package = !empty( $summary['grid_items'] );
 
     <div class="container">
         
-        <header class="service-hero-header" style="text-align:center; margin-bottom: 30px; margin-top: 0;">
-            <h1 class="entry-title"><?php echo esc_html( gary_clean_service_name( get_the_title() ) ); ?></h1>
-        </header>
+        <!-- Strictly using Entry Title - No redundant wrapper -->
+        <h1 class="entry-title"><?php echo esc_html( gary_clean_service_name( get_the_title() ) ); ?></h1>
 
-        <div class="service-hero-single-column">
-            
-            <!-- Left: Intro area (Editorial Blocks) -->
-            <div class="experience-intro-wrap" style="flex:1;">
-                <div class="main-body-text" style="font-size:1.15rem; line-height:1.8; margin-bottom:40px;">
-                    <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
-                </div>
+        <div class="services-intro">
+            <?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?>
+        </div>
 
-                <?php if ( !empty($highlights) ) : ?>
-                    <h3 style="font-family:'Lato', sans-serif; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">The finer details of your day:</h3>
-                    <ul class="highlights-list">
-                        <?php 
-                        $lines = explode("\n", $highlights);
-                        foreach($lines as $line) {
-                            if (trim($line)) echo '<li>' . esc_html(trim($line)) . '</li>';
-                        }
-                        ?>
-                    </ul>
-                <?php endif; ?>
-            </div> <!-- CLOSE experience-intro-wrap -->
-
-        </div> <!-- CLOSE service-hero-single-column -->
+        <?php if ( !empty($highlights) ) : ?>
+            <h3 style="font-family:'Lato', sans-serif; font-size:1.1rem; text-transform:uppercase; letter-spacing:1px;">The finer details of your day:</h3>
+            <ul class="highlights-list">
+                <?php 
+                $lines = explode("\n", $highlights);
+                foreach($lines as $line) {
+                    if (trim($line)) echo '<li>' . esc_html(trim($line)) . '</li>';
+                }
+                ?>
+            </ul>
+        <?php endif; ?>
 
 
         <!-- Bottom Section Placeholder (Sub-services now immediately follow main split) -->

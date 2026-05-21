@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3002.16
+Version: 3003.22
 Text Domain: gary-wedding
 */
 
@@ -125,6 +125,16 @@ body { padding-top: 95px !important; background-color: var(--brand-bg) !importan
     --font-primary: 'Lato', sans-serif;
     --font-script: 'Blacksword', cursive;
 
+    /* Typography Scale (Paragraph base-up) */
+    --font-size-base: 1rem; /* 16px base paragraph size */
+    --font-size-h3: calc(var(--font-size-base) + 2px); /* 18px */
+    --font-size-h2: calc(var(--font-size-h3) + 2px); /* 20px */
+    --font-size-h1: calc(var(--font-size-h2) + 12px); /* 32px */
+    --font-size-h4: var(--font-size-base); /* 16px */
+    --font-size-h5: calc(var(--font-size-base) - 2px); /* 14px */
+    --font-size-h6: calc(var(--font-size-base) - 4px); /* 12px */
+    --margin-bottom-standard: 18px; /* Universal margin between all blocks */
+
     /* 4. VISUAL EFFECTS */
     --gold-frame-border: 8px;
     --gold-gradient: linear-gradient(135deg, var(--brand-accent) 0%, var(--brand-gold-light) 50%, var(--brand-accent) 100%);
@@ -170,10 +180,8 @@ img {
     padding-top: 0 !important;
 }
 
-/* Enforce Script Weights (H1 and Site Title) */
+/* Enforce Script Weights (Site Title and Signatures) */
 .site-title-blacksword,
-.entry-title,
-h1,
 .hero-title,
 .footer-branding h3,
 .about-sig span {
@@ -184,45 +192,95 @@ h1,
     color: var(--brand-black);
 }
 
-/* H2 - Gold Lato AllCaps */
-h2 {
-    font-family: var(--font-primary) !important;
-    color: var(--brand-gold-text) !important;
-    /* Fixed for contrast */
+/* --- GLOBAL TYPOGRAPHY SPACING & LINE-HEIGHTS --- */
+h1,
+.entry-title {
+    font-family: var(--font-script) !important;
+    font-weight: normal !important;
+    color: var(--brand-accent) !important;
+    font-size: var(--font-size-h1) !important;
+    margin-top: 0 !important;
+    margin-bottom: var(--margin-bottom-standard) !important;
+    line-height: 1.1 !important;
     text-transform: none !important;
-    letter-spacing: 3px !important;
-    font-weight: 700 !important;
+    letter-spacing: normal !important;
 }
 
-/* H3+ - Boutique Black Lato */
-h3,
-h4,
-h5,
-h6 {
-    color: var(--brand-black) !important;
+h2 {
     font-family: var(--font-primary) !important;
+    font-weight: normal !important;
+    color: var(--brand-accent) !important;
+    font-size: var(--font-size-h2) !important;
+    margin-top: 0 !important;
+    margin-bottom: var(--margin-bottom-standard) !important;
+    line-height: 1.2 !important;
+    text-transform: none !important;
+    letter-spacing: 3px !important;
+}
+
+h3 {
+    font-family: var(--font-primary) !important;
+    font-weight: normal !important;
+    color: var(--brand-accent) !important;
+    font-size: var(--font-size-h3) !important;
+    margin-top: 0 !important;
+    margin-bottom: var(--margin-bottom-standard) !important;
+    line-height: 1.2 !important;
     text-transform: none !important;
     letter-spacing: 2px !important;
 }
 
-h1,
-h2,
-h3 {
-    line-height: 1.1;
-    margin-bottom: 4px;
-    color: var(--brand-text);
+h4 {
+    font-family: var(--font-primary) !important;
+    font-weight: normal !important;
+    color: var(--brand-accent) !important;
+    font-size: var(--font-size-h4) !important;
+    margin-top: 0 !important;
+    margin-bottom: var(--margin-bottom-standard) !important;
+    line-height: 1.3 !important;
+    text-transform: none !important;
+    letter-spacing: 2px !important;
 }
 
+h5 {
+    font-family: var(--font-primary) !important;
+    font-weight: normal !important;
+    color: var(--brand-accent) !important;
+    font-size: var(--font-size-h5) !important;
+    margin-top: 0 !important;
+    margin-bottom: var(--margin-bottom-standard) !important;
+    line-height: 1.3 !important;
+    text-transform: none !important;
+    letter-spacing: 2px !important;
+}
+
+h6 {
+    font-family: var(--font-primary) !important;
+    font-weight: normal !important;
+    color: var(--brand-accent) !important;
+    font-size: var(--font-size-h6) !important;
+    margin-top: 0 !important;
+    margin-bottom: var(--margin-bottom-standard) !important;
+    line-height: 1.3 !important;
+    text-transform: none !important;
+    letter-spacing: 2px !important;
+}
+
+p {
+    font-size: var(--font-size-base);
+    margin-top: 0;
+    margin-bottom: var(--margin-bottom-standard) !important;
+    line-height: 1.5;
+}
+
+
 h1.entry-title {
-    color: var(--brand-accent);
-    font-size: 3.5rem;
     text-align: center;
     margin-top: 40px !important;
-    margin-bottom: 10px;
 }
 
 body:not(.home) h1.entry-title {
-    margin-top: 90px !important;
+    margin-top: 68px !important;
 }
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header {
@@ -631,7 +689,7 @@ body:not(.home) h1.entry-title {
     /* Mobile H1 Adjustment (Closer to Logo) */
     body:not(.home) h1.entry-title,
     body:not(.home) .page-content h1:first-of-type {
-        margin-top: 40px !important;
+        margin-top: 20px !important;
         margin-bottom: 30px !important;
     }
 
@@ -736,10 +794,10 @@ body:not(.home) h1.entry-title {
 }
 
 .tile-title {
-    font-family: var(--font-script);
+    font-family: var(--font-primary) !important;
     font-size: 2.8rem;
     margin: 0 0 15px 0;
-    font-weight: normal;
+    font-weight: normal !important;
     line-height: 1.2;
 }
 
@@ -1077,9 +1135,11 @@ body:not(.home) h1.entry-title {
     position: absolute;
     top: 20px;
     right: -35px;
+    width: 150px;
+    text-align: center;
     background: #630000 !important; /* Force Brand Crimson */
     color: #fff !important;
-    padding: 5px 40px;
+    padding: 5px 0;
     font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -1141,8 +1201,8 @@ body:not(.home) h1.entry-title {
 .service-card-title {
     font-family: var(--font-script) !important;
     font-weight: normal !important;
-    font-size: 1.4rem;
-    color: var(--brand-gold-text);
+    font-size: var(--font-size-h2) !important;
+    color: var(--brand-accent) !important;
     margin: 0 0 15px 0 !important;
     white-space: normal;
     display: flex;
@@ -1276,40 +1336,54 @@ main#primary .gw-z-pattern,
 .gw-z-pattern {
     display: flex !important;
     flex-direction: row !important;
-    align-items: center !important;
-    max-width: none !important;
+    align-items: stretch !important; /* Children stretch to same height */
+    width: 100% !important;          /* Explicitly fill the editorial column */
+    max-width: 100% !important;
     box-sizing: border-box !important;
+    gap: 40px !important;
+    padding: 40px 0 !important;
 }
 
+/* Image wrapper — shrinks to actual img width so text column sits immediately adjacent.
+   flex: 0 0 auto means the div is sized by its content (the img), not a fixed %. */
 body #primary .gw-z-image,
 .gw-z-image {
-    flex: 0 0 32% !important;
-    max-width: 32% !important;
+    flex: 0 0 auto !important;   /* Shrink-wrap the actual image width */
+    max-width: 50% !important;   /* Cap: image can't dominate more than half the row */
+    min-width: 0 !important;
+    border: none !important;
+    padding: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    display: block !important;   /* Simple block — no flex needed when div = img size */
 }
 
+/* Gold frame — natural sizing, no letterboxing */
 .gw-z-image img {
-    border: 15px solid var(--brand-white) !important;
-    box-shadow: var(--shadow-deep) !important;
-    width: 100% !important;
+    border: 2px solid var(--brand-gold-light) !important;
+    box-shadow: none !important;
+    width: auto !important;
+    max-width: 100% !important;
     height: auto !important;
-    max-height: 45vh !important; /* Adjusted for better proportion */
-    object-fit: contain !important; /* CARDINAL RULE: NEVER CROP */
-    border-radius: 0 !important;
+    max-height: 50vh !important;
     display: block !important;
     background: var(--brand-bg);
+    box-sizing: border-box !important;
 }
 
 body #primary .gw-z-content,
 main#primary .gw-z-content,
 .gw-z-content {
     flex: 1 !important;
+    min-width: 0 !important;
     background: var(--brand-white) !important;
-    padding: 20px 28px !important;
-    box-shadow: var(--shadow-deep) !important;
-    margin-left: -5% !important;
+    padding: 30px 40px !important;
+    box-shadow: none !important;
+    margin-left: 0 !important;
     z-index: 10 !important;
     position: relative !important;
-    border: 2px solid var(--brand-gold-light) !important;
+    border: none !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -1319,13 +1393,18 @@ body #primary .gw-z-pattern.is-right {
     flex-direction: row-reverse !important;
 }
 
+/* is-right: no extra alignment needed — div shrinks to img width,
+   so the img naturally sits at the right edge via row-reverse */
+
 body #primary .gw-z-pattern.is-right .gw-z-content,
 .gw-z-pattern.is-right .gw-z-content {
     margin-left: 0 !important;
-    margin-right: -5% !important;
+    margin-right: 0 !important;
 }
 
 /* --- 6. GALLERY WALL TRIO (EDITORIAL GRID - ID NUKE) --- */
+body #primary .gw-trio-gallery-wrapper,
+main#primary .gw-trio-gallery-wrapper,
 .gw-trio-gallery-wrapper {
     width: 100vw !important;
     max-width: 100vw !important;
@@ -1394,34 +1473,39 @@ body #primary .gw-trio-bottom,
 }
 
 @media (max-width: 1024px) {
+    /* Stack Z-pattern vertically; container class handles 80% width already */
     body #primary .gw-z-pattern {
         flex-direction: column !important;
-        margin: 40px auto !important;
-        width: 100% !important;
-    }
-
-    body #primary .gw-z-image,
-    body #primary .gw-z-content {
-        flex: none !important;
-        width: 100% !important;
-        margin: 0 !important;
-    }
-
-    body #primary .gw-z-content {
-        padding: 40px !important;
-        margin-top: -20px !important;
-        width: 93% !important;
-        border-width: 2px !important;
-    }
-
-    body #primary .gw-trio-gallery {
-        flex-direction: column !important;
+        margin-top: 40px !important;
+        margin-bottom: 40px !important;
         gap: 20px !important;
     }
-}
-@media (max-width: 1024px) {
-    .gw-trio-gallery {
-        flex-wrap: wrap !important; /* Allow wrapping but not forced column yet */
+
+    /* is-right: also column on tablet/mobile — image always above text */
+    body #primary .gw-z-pattern.is-right {
+        flex-direction: column !important;
+    }
+
+    /* Override desktop flex size — must beat body #primary .gw-z-image specificity */
+    body #primary .gw-z-pattern .gw-z-image {
+        flex: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        order: -1 !important; /* Image always first regardless of is-right */
+    }
+
+    body #primary .gw-z-pattern .gw-z-image img {
+        max-height: 55vh !important;
+        width: 100% !important;
+    }
+
+    body #primary .gw-z-pattern .gw-z-content {
+        flex: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 24px 10px !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 }
 
@@ -1474,7 +1558,7 @@ body #primary .gw-trio-bottom,
 
 .footer-branding p {
     font-size: 0.8rem;
-    line-height: 1.7;
+    line-height: 1.5; /* Cap at 1.5 per user spacing rules */
     opacity: 0.6;
     letter-spacing: 0.5px;
     margin-bottom: 0 !important; /* Removed space below tagline */
@@ -1541,7 +1625,7 @@ body #primary .gw-trio-bottom,
 .contact-row {
     display: block;
     color: rgba(255, 255, 255, 0.7);
-    line-height: 1.6;
+    line-height: 1.5; /* Cap at 1.5 per user spacing rules */
 }
 
 .contact-row a {
@@ -2016,7 +2100,8 @@ body #primary .gw-trio-bottom,
     margin: 0 !important;
 }
 
-.page-template-page-service-detail .container,
+.page-template-page-service-detail .components-grid .container,
+.page-template-page-service-detail .featured-shortcode-grid .container,
 .components-grid .container,
 .featured-shortcode-grid .container {
     width: 100% !important;
@@ -2102,10 +2187,10 @@ body #primary .gw-trio-bottom,
 .page-template-page-service-detail .service-card-title,
 .components-grid .service-card-title,
 .featured-shortcode-grid .service-card-title {
-    font-family: var(--font-secondary, 'Lora', serif) !important;
-    font-weight: 700 !important;
-    font-size: 1.05rem !important; /* Elegant, small title */
-    color: var(--brand-black, #111111) !important;
+    font-family: var(--font-script) !important;
+    font-weight: normal !important;
+    font-size: var(--font-size-h2) !important;
+    color: var(--brand-accent) !important;
     margin: 0 !important;
     height: auto !important; /* Remove large vertical text container height */
     line-height: 1.25 !important;
@@ -2357,7 +2442,7 @@ body #primary .gw-trio-bottom,
 
 .gw-usp-col p {
     font-size: 0.9rem;
-    line-height: 1.6;
+    line-height: 1.5; /* Cap at 1.5 per user spacing rules */
     opacity: 0.7;
     margin: 0;
 }
@@ -2416,12 +2501,12 @@ body #primary .gw-trio-bottom,
 
 /* Editorial Titles */
 .gw-block-main-title {
-    font-family: var(--font-script);
-    font-size: 3.5rem;
-    color: var(--brand-accent);
+    font-family: var(--font-primary) !important;
+    font-size: 2.2rem !important; /* Elegant section title sizing */
+    color: var(--brand-accent) !important;
     text-align: center;
     margin-bottom: 40px;
-    font-weight: normal;
+    font-weight: normal !important;
 }
 
 /* --- COMPONENT: BOUTIQUE GOLD BOX --- */
@@ -2670,7 +2755,7 @@ body #primary .gw-trio-bottom,
 
 .gw-list-box p {
     font-size: 1.05rem;
-    line-height: 1.8;
+    line-height: 1.5; /* Cap at 1.5 per user spacing rules */
     opacity: 0.8;
     margin-bottom: 25px;
 }
@@ -2728,7 +2813,7 @@ body #primary .gw-trio-bottom,
     position: relative;
     padding-left: 35px;
     margin-bottom: 15px;
-    line-height: 1.6;
+    line-height: 1.5; /* Cap at 1.5 per user spacing rules */
     text-align: left;
 }
 
@@ -2892,14 +2977,39 @@ body #primary .gw-trio-bottom,
         -webkit-overflow-scrolling: touch;
     }
 
+    /* CORE RULE: 5-90-5 on Mobile (10-80-10 on Desktop) */
     .container,
+    #primary,
+    .site-main,
+    .page-header,
+    .header-focal-container,
     .gw-global-grid-wrapper,
     .home-intro.container {
+        width: 90% !important;
+        max-width: 90% !important;
+        margin: 0 auto !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Prevent double-squeezing on mobile: nested containers must be 100% of the 90% parent */
+    #primary .container,
+    .site-main .container,
+    .container .container,
+    #primary .site-main {
         width: 100% !important;
         max-width: 100% !important;
-        padding-left: 20px !important;
-        padding-right: 20px !important;
-        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Z-pattern must NOT inherit any side padding — its children fill 100% of the block */
+    .gw-z-pattern.container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     /* 2. Grid Stacking Fixes */
@@ -2912,8 +3022,7 @@ body #primary .gw-trio-bottom,
     .gw-process-row,
     .gw-editorial-split,
     .gw-editorial-grid,
-    .condensed-service-grid,
-    .gw-z-pattern {
+    .condensed-service-grid {
         grid-template-columns: 1fr !important;
         gap: 30px !important;
         display: grid !important;
@@ -2921,6 +3030,23 @@ body #primary .gw-trio-bottom,
         max-width: 100% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
+    }
+
+    /* Z-Pattern mobile: flex column, image-first, properly centered */
+    .gw-z-pattern {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 80% !important;
+        max-width: 80% !important;
+        margin: 0 auto !important; /* Perfect centering */
+        gap: 0 !important;
+    }
+
+    /* Force image to come before text regardless of is-right / is-left */
+    .gw-z-pattern .gw-z-image {
+        order: -1 !important;
+        justify-content: center !important; /* Center the image instead of sticking to left/right */
+        width: 100% !important;
     }
 
     .service-card {
@@ -2970,6 +3096,19 @@ body #primary .gw-trio-bottom,
     body.admin-bar .twocol-scrolly .sticky-background-container {
         top: 46px !important;
         height: calc(100vh - 46px) !important;
+    }
+
+    /* 6. Pricing Mobile Adjustments */
+    .service-card-price {
+        padding: 15px 10px !important;
+    }
+    
+    .service-card-price span {
+        font-size: 1rem !important; /* Scale down heavily from 1.4rem on mobile */
+    }
+
+    .service-card-price.is-free span {
+        font-size: 0.9rem !important;
     }
 
     body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
@@ -3046,14 +3185,11 @@ body #primary .gw-trio-bottom,
     right: -45px !important;
     top: 20px !important;
     width: 180px !important;
+    text-align: center !important;
+    padding: 5px 0 !important;
 }
 
 /* 5. Typography Scaling */
-.entry-title,
-h1 {
-    font-size: 2.2rem !important;
-    line-height: 1.2 !important;
-}
 
 .section-divider-title {
     font-size: 1.6rem !important;
@@ -3063,50 +3199,86 @@ h1 {
 
 .services-intro {
     font-size: 1rem !important;
-    line-height: 1.6 !important;
-    margin-bottom: 40px !important;
+    line-height: 1.5 !important; /* Cap at 1.5 per user spacing rules */
+    margin-bottom: var(--margin-bottom-standard) !important;
 }
 
-/* 6. Z-Pattern Mobile Stack */
-.gw-z-pattern {
+/* 6. Z-Pattern mobile stack — applies globally below 1024px via earlier media query,
+   and as base style for all sizes (mobile-first). Container class handles 80% width. */
+body #primary .gw-z-pattern {
     flex-direction: column !important;
     display: flex !important;
-    margin: 40px auto !important;
-    width: 100% !important;
+    gap: 20px !important;
 }
 
-.gw-z-image,
-.gw-z-content {
+/* CRITICAL: is-right has specificity 31 (row-reverse), this must also be 31+ to win */
+body #primary .gw-z-pattern.is-right {
+    flex-direction: column !important; /* Force column on mobile — image always above text */
+}
+
+/* Image always appears first regardless of is-right/is-left */
+body #primary .gw-z-pattern .gw-z-image {
+    order: -1 !important;
     flex: none !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin: 0 !important;
+    border: none !important;  /* Border lives on the img element */
+    padding: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
 }
 
-.gw-z-image img {
-    max-height: 50vh !important;
+/* Gold border directly on image — natural sizing, no letterbox white bars */
+body #primary .gw-z-pattern .gw-z-image img {
+    border: 2px solid var(--brand-gold-light) !important;
+    max-height: 55vh !important;
+    width: auto !important;       /* Natural width — no letterboxing */
+    max-width: 100% !important;   /* Don't overflow container */
+    height: auto !important;
+    display: block !important;
+    box-shadow: none !important;
+    display: block !important;
+}
+
+body #primary .gw-z-pattern .gw-z-content {
+    flex: none !important;
     width: 100% !important;
-    object-fit: cover !important;
-    border-radius: 2px !important;
-}
-
-.gw-z-content {
-    padding: 30px !important;
-    margin-top: -20px !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 20px 0 !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /* 7. Trio Gallery Mobile Stack - Moved to 768px for better tablet experience */
 /* Removed from 1024px block */
 
-/* --- TABLET REFINEMENT (768px - 1024px) --- */
+/* --- TABLET REFINEMENT (769px - 1024px): side-by-side, container handles 80% */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .gw-z-pattern {
-        gap: 40px !important;
+    /* Restore side-by-side row on tablet */
+    body #primary .gw-z-pattern {
         flex-direction: row !important;
+        gap: 30px !important;
+        align-items: center !important;
     }
 
-    .gw-z-image {
+    /* Restore row-reverse for is-right on tablet */
+    body #primary .gw-z-pattern.is-right {
+        flex-direction: row-reverse !important;
+    }
+
+    /* Restore 45% image on tablet */
+    body #primary .gw-z-pattern .gw-z-image {
+        order: unset !important;
         flex: 0 0 45% !important;
         max-width: 45% !important;
+    }
+
+    body #primary .gw-z-pattern.is-right .gw-z-image {
+        order: unset !important;
     }
 
     .gw-z-content {
@@ -3198,7 +3370,7 @@ h1 {
 
 .gw-process-col p {
     font-size: 0.9rem;
-    line-height: 1.6;
+    line-height: 1.5; /* Cap at 1.5 per user spacing rules */
     opacity: 0.7;
     margin-bottom: 0;
     flex-grow: 1;
@@ -3255,32 +3427,67 @@ h1 {
 }
 
 @media (max-width: 768px) {
+    /* Prevent container overrides from breaking the layout width */
+    body #primary .gw-trio-gallery-wrapper,
+    main#primary .gw-trio-gallery-wrapper,
     .gw-trio-gallery-wrapper {
-        width: 100vw !important;
-        max-width: 100vw !important;
-        margin-left: -50vw !important;
-        margin-right: -50vw !important;
-        padding: 0 15px !important;
-    }
-
-    .gw-trio-gallery {
-        flex-direction: column !important;
-        height: auto !important;
-    }
-
-    .gw-trio-main,
-    .gw-trio-side {
-        flex: none !important;
         width: 100% !important;
+        max-width: 100% !important;
+        position: relative !important;
+        left: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Force row layout and lock height to prevent vertical stack and text overrun */
+    body #primary .gw-trio-gallery,
+    main#primary .gw-trio-gallery,
+    .gw-trio-gallery {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: stretch !important;
+        gap: 10px !important; /* Elegant tighter gap on mobile */
+        width: 100% !important;
+        height: 35vh !important;
+        min-height: 250px !important;
+    }
+
+    body #primary .gw-trio-main,
+    .gw-trio-main {
+        flex: 0 0 48% !important;
+        width: 48% !important;
+        max-width: 48% !important;
+        display: block !important;
+    }
+
+    body #primary .gw-trio-side,
+    .gw-trio-side {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important; /* Elegant tighter gap on mobile */
+        width: auto !important;
+        min-width: 0 !important;
     }
     
-    .gw-trio-main img {
-        height: 350px !important;
+    body #primary .gw-trio-top,
+    body #primary .gw-trio-bottom,
+    .gw-trio-top,
+    .gw-trio-bottom {
+        flex: 1 !important;
+        overflow: hidden !important;
+        display: block !important;
     }
     
+    .gw-trio-main img,
     .gw-trio-top img,
     .gw-trio-bottom img {
-        height: 200px !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
     }
 
     .gw-process-row {
@@ -3334,7 +3541,7 @@ h1 {
     margin-bottom: 20px !important;
     opacity: 0.8 !important;
     font-size: 0.9rem !important;
-    line-height: 1.6 !important;
+    line-height: 1.5 !important; /* Cap at 1.5 per user spacing rules */
     color: #555 !important;
 }
 
@@ -3430,20 +3637,28 @@ h1 {
 }
 
 /* Mobile Responsiveness for Horizontal Date Checker */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .gw-process-col.is-atomic-check {
         padding: 30px 20px !important;
     }
     .gw-availability-box-inner {
+        display: flex !important;
         flex-direction: column !important;
-        gap: 20px !important;
+        gap: 15px !important; /* Fix big gap */
         align-items: center !important;
+        margin-top: 25px !important; /* Prevent blending into text above */
+        padding-top: 25px !important;
     }
     .gw-availability-box-inner .col-input,
     .gw-availability-box-inner .col-btn {
-        flex: 0 0 100% !important;
+        flex: none !important;
         width: 100% !important;
         text-align: center !important;
+    }
+    .gw-availability-box-inner .col-btn button,
+    .gw-availability-box-inner .col-btn a {
+        margin-bottom: 0 !important;
+        margin-top: 5px !important;
     }
 }
 
@@ -3455,7 +3670,7 @@ h1 {
 
 .gw-triplet-row {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr) !important; /* Strict 3 columns as requested */
     gap: 30px;
     /* Restored gap for separation */
     align-items: stretch;
@@ -3511,7 +3726,7 @@ h1 {
 
 .triplet-body-text {
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.5; /* Cap at 1.5 per user spacing rules */
     opacity: 0.8;
     margin-bottom: 15px;
 }
@@ -3586,19 +3801,14 @@ h1 {
 .archive-header {
     text-align: center !important;
     margin-top: 0 !important;
-    margin-bottom: 40px !important;
+    margin-bottom: 10px !important;
     width: 100% !important;
 }
 
-.entry-title {
-    font-size: 3.5rem !important;
+.entry-header .entry-title,
+.service-hero-header .entry-title,
+.archive-header .entry-title {
     margin: 0 !important;
-    line-height: 1.1 !important;
-    color: var(--brand-accent) !important;
-    font-family: var(--font-script) !important;
-    font-weight: normal !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
 }
 
 @media (max-width: 1024px) {
@@ -3660,8 +3870,9 @@ h1 {
 
 @media (max-width: 1024px) {
     .gw-triplet-row {
-        display: flex !important;
-        flex-direction: column !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important; /* MUST stay 3 columns on mobile */
+        gap: 10px !important; /* Tighter gap for small screens */
         border: none !important;
         background: transparent !important;
     }
@@ -3669,8 +3880,8 @@ h1 {
     .gw-triplet-item {
         width: 100% !important;
         border: 2px solid var(--brand-gold-light) !important;
-        margin-bottom: 20px !important;
-        padding: 40px 25px !important;
+        margin-bottom: 0 !important;
+        padding: 15px 5px !important; /* Smaller padding to fit 3 items */
         grid-column: auto !important;
     }
 }
@@ -3962,6 +4173,11 @@ body.admin-bar .sticky-background-container {
     display: flow-root !important; /* Prevent child margins from spilling out */
 }
 
+/* Hide auto-injected empty paragraphs from wpautop to prevent container spacing shift */
+.scrolling-text-container > p {
+    display: none !important;
+}
+
 /* Adjust negative pull margin for admin bar */
 body.admin-bar .scrolling-text-container {
     margin-top: calc(-100vh + 127px) !important;
@@ -4008,19 +4224,20 @@ body.admin-bar .scrolling-text-container {
 
 .step-content-box h2 {
     color: #ffffff !important;
-    font-family: var(--font-primary, Georgia, serif) !important;
+    font-family: var(--font-primary) !important;
     font-size: 2.2rem !important;
+    margin-top: 0 !important; /* Reset global h2 margin-top override */
     margin-bottom: 1.5rem !important;
     text-transform: uppercase;
     letter-spacing: 3px;
-    font-weight: 700;
+    font-weight: normal;
 }
 
 .step-content-box p {
     color: rgba(255, 255, 255, 0.9) !important;
     font-family: 'Lato', sans-serif !important;
     font-size: 0.95rem !important;
-    line-height: 1.8 !important;
+    line-height: 1.5 !important; /* Cap at 1.5 per user spacing rules */
     margin-bottom: 0 !important;
     letter-spacing: 1px;
 }
@@ -4037,7 +4254,7 @@ body.admin-bar .scrolling-text-container {
     }
     .step-content-box p {
         font-size: 0.85rem !important;
-        line-height: 1.7 !important;
+        line-height: 1.5 !important; /* Cap at 1.5 per user spacing rules */
     }
 }
 
@@ -4153,8 +4370,8 @@ body.admin-bar .scrolling-text-container {
     .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
     .twocol-scrolly .sticky-background-container {
         width: 100vw !important;
-        left: 0 !important;
-        margin-left: 0 !important;
+        left: 50% !important;
+        margin-left: -50vw !important;
         top: 70px !important; /* Position exactly below sticky compact mobile header */
         height: calc(100vh - 70px) !important; /* Bottom exactly at screen bottom */
     }
@@ -4162,7 +4379,8 @@ body.admin-bar .scrolling-text-container {
     .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
     .twocol-scrolly .scrolling-text-container {
         width: 100vw !important;
-        margin-left: 0 !important;
+        left: 50% !important;
+        margin-left: -50vw !important;
         margin-top: calc(-100vh + 70px) !important;
     }
 
@@ -4230,9 +4448,9 @@ body.admin-bar .scrolling-text-container {
         left: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        opacity: 0 !important;
+        opacity: 1 !important; /* Always visible on mobile, inner wrappers will crossfade */
         z-index: 1 !important;
-        transition: opacity 0.8s ease-in-out !important;
+        transition: none !important;
     }
 
     /* Left column active by default in CSS, no JS dependency on initial load */

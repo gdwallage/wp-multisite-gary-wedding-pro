@@ -6,67 +6,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
-    console.log('Gary Wedding Script: Initializing v3001.77 (Vanilla JS Edition)');
-
-    // Bookly Pre-fill Date from URL Query Parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const checkDate = urlParams.get('check_date');
-
-    if (checkDate && document.body.classList.contains('page-template-page-service-detail')) {
-        console.log('Gary Wedding Pre-fill: Found check_date in URL: ' + checkDate);
-        
-        const targetSelectors = [
-            'input.bookly-js-date-from',
-            'input.bookly-date-from',
-            'input[name="date_from"]',
-            '.bookly-date-from',
-            '.bookly-js-date',
-            'input[id^="bookly-date"]'
-        ];
-
-        const prefillBookly = () => {
-            for (let selector of targetSelectors) {
-                const els = document.querySelectorAll(selector);
-                for (let el of els) {
-                    if (el && el.value !== checkDate) {
-                        console.log('Gary Wedding Pre-fill: Pre-filling Bookly field', el, 'with', checkDate);
-                        el.value = checkDate;
-                        // Trigger standard events so datepicker libraries and Bookly core synchronize
-                        el.dispatchEvent(new Event('change', { bubbles: true }));
-                        el.dispatchEvent(new Event('input', { bubbles: true }));
-                        
-                        // If jQuery is active, attempt to update the datepicker widget
-                        if (window.jQuery && jQuery(el).datepicker) {
-                            try {
-                                jQuery(el).datepicker('setDate', checkDate);
-                                jQuery(el).change();
-                            } catch (e) {
-                                console.error('Failed jQuery datepicker init:', e);
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        // Run immediately
-        prefillBookly();
-
-        // Use MutationObserver to watch for dynamic AJAX loading of Bookly forms
-        const observer = new MutationObserver(() => {
-            prefillBookly();
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-        // Disconnect observer after 10 seconds to optimize page performance
-        setTimeout(() => {
-            observer.disconnect();
-        }, 10000);
-    }
+    console.log('Gary Wedding Script: Initializing v3001.78 (Vanilla JS Edition)');
 
     const menuToggle = document.querySelector('.menu-toggle');
     const menuOverlay = document.getElementById('primary-menu');
@@ -129,8 +69,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const isAtomic = btn.classList.contains('gw-check-availability-btn-atomic');
         const stepId = isAtomic ? 'atomic' : btn.getAttribute('data-step-id');
-        const dateInput = document.getElementById(isAtomic ? 'gw-atomic-check-date' : 'gw-check-date-' + stepId);
-        const resultDiv = document.getElementById(isAtomic ? 'gw-atomic-availability-result' : 'gw-availability-result-' + stepId);
+        
+        // Find elements relatively first to support duplicate blocks (e.g. desktop and mobile headers/sections)
+        const wrapper = btn.closest('.gw-process-block, .gw-editorial-gold-box, .gw-availability-check');
+        let dateInput = wrapper ? wrapper.querySelector('.gw-date-picker-input') : null;
+        let resultDiv = wrapper ? wrapper.querySelector('.gw-avail-result') : null;
+
+        // Fallback to global IDs if relative lookup fails
+        if (!dateInput) {
+            dateInput = document.getElementById(isAtomic ? 'gw-atomic-check-date' : 'gw-check-date-' + stepId);
+        }
+        if (!resultDiv) {
+            resultDiv = document.getElementById(isAtomic ? 'gw-atomic-availability-result' : 'gw-availability-result-' + stepId);
+        }
 
         if (!dateInput || !resultDiv) return;
 
@@ -177,13 +128,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultDiv.textContent = data.data.message;
                 resultDiv.classList.add('is-available');
                 if (isAtomic) {
-                    const bookingCta = document.getElementById('gw-atomic-booking-cta');
+                    let bookingCta = wrapper ? wrapper.querySelector('#gw-atomic-booking-cta') : null;
+                    if (!bookingCta) {
+                        bookingCta = document.getElementById('gw-atomic-booking-cta');
+                    }
                     if (bookingCta) {
-                        const originalUrl = bookingCta.getAttribute('href') || '#';
-                        let cleanUrl = originalUrl.split('?')[0];
-                        let params = new URLSearchParams(originalUrl.indexOf('?') !== -1 ? originalUrl.split('?')[1] : '');
-                        params.set('check_date', dateInput.value);
-                        bookingCta.setAttribute('href', cleanUrl + '?' + params.toString());
                         bookingCta.style.display = 'flex';
                     }
                     btn.style.display = 'none';
@@ -207,12 +156,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const dateInput = e.target.closest('.gw-date-picker-input');
         if (!dateInput) return;
 
-        const isAtomic = dateInput.id === 'gw-atomic-check-date';
-        const stepId = isAtomic ? 'atomic' : dateInput.id.replace('gw-check-date-', '');
+        const wrapper = dateInput.closest('.gw-process-block, .gw-editorial-gold-box, .gw-availability-check');
+        const isAtomic = dateInput.id === 'gw-atomic-check-date' || (wrapper && wrapper.classList.contains('is-atomic-check'));
         
-        // Find corresponding elements
-        const btn = document.querySelector(isAtomic ? '.gw-check-availability-btn-atomic' : '.gw-check-availability-btn[data-step-id="' + stepId + '"]');
-        const resultDiv = document.getElementById(isAtomic ? 'gw-atomic-availability-result' : 'gw-availability-result-' + stepId);
+        // Find corresponding elements relatively first
+        let btn = wrapper ? wrapper.querySelector('.gw-check-availability-btn, .gw-check-availability-btn-atomic') : null;
+        let resultDiv = wrapper ? wrapper.querySelector('.gw-avail-result') : null;
+        
+        // Fallbacks if relative lookup fails
+        if (!btn) {
+            const stepId = isAtomic ? 'atomic' : dateInput.id.replace('gw-check-date-', '');
+            btn = document.querySelector(isAtomic ? '.gw-check-availability-btn-atomic' : '.gw-check-availability-btn[data-step-id="' + stepId + '"]');
+        }
+        if (!resultDiv) {
+            const stepId = isAtomic ? 'atomic' : dateInput.id.replace('gw-check-date-', '');
+            resultDiv = document.getElementById(isAtomic ? 'gw-atomic-availability-result' : 'gw-availability-result-' + stepId);
+        }
         
         if (resultDiv) {
             resultDiv.textContent = '';
@@ -221,7 +180,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isAtomic) {
             if (btn) btn.style.display = '';
-            const bookingCta = document.getElementById('gw-atomic-booking-cta');
+            let bookingCta = wrapper ? wrapper.querySelector('#gw-atomic-booking-cta') : null;
+            if (!bookingCta) {
+                bookingCta = document.getElementById('gw-atomic-booking-cta');
+            }
             if (bookingCta) bookingCta.style.display = 'none';
         }
     });
@@ -295,6 +257,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     const wrapper = entry.target.closest('.scrollytelling-wrapper');
                     if (wrapper) {
+                        // Skip if this is a two-column scrolly on mobile (handled by the column observer)
+                        if (wrapper.classList.contains('twocol-scrolly') && window.innerWidth <= 1024) {
+                            return;
+                        }
+
                         const stepWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
                         stepWrappers.forEach(w => w.classList.remove('is-active'));
                         const targetWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
@@ -318,8 +285,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const colObserverOptions = {
             root: null,
-            rootMargin: '0px',
-            threshold: window.innerWidth <= 1024 ? 0.15 : 0.5
+            rootMargin: window.innerWidth <= 1024 ? '-40% 0px -40% 0px' : '0px', // Create a trigger zone in the center of the screen on mobile
+            threshold: 0 // trigger immediately when entering the center zone
         };
 
         const colObserver = new IntersectionObserver((entries) => {
@@ -337,13 +304,22 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const leftBg = bgGrid.querySelector('.left-bg-column');
                                 const rightBg = bgGrid.querySelector('.right-bg-column');
                                 if (leftBg && rightBg) {
-                                    // 1. Sync step active state immediately inside this section to prevent race conditions
+                                    // 1. Sync step active state
                                     const stepWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
                                     stepWrappers.forEach(w => w.classList.remove('is-active'));
-                                    const targetWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
-                                    targetWrappers.forEach(targetWrapper => {
-                                        targetWrapper.classList.add('is-active');
-                                    });
+                                    
+                                    if (window.innerWidth <= 1024) {
+                                        // On mobile, only activate the specific column's wrapper to prevent ghosting
+                                        const targetBg = isLeft ? leftBg : rightBg;
+                                        const targetWrapper = targetBg.querySelector('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
+                                        if (targetWrapper) targetWrapper.classList.add('is-active');
+                                    } else {
+                                        // On desktop, activate both sides simultaneously
+                                        const targetWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
+                                        targetWrappers.forEach(targetWrapper => {
+                                            targetWrapper.classList.add('is-active');
+                                        });
+                                    }
 
                                     // 2. Set active column visibility
                                     if (isLeft) {

@@ -85,7 +85,7 @@ function gary_render_service_card_html( $data ) {
 
             <div class="service-card-content">
                 <div class="service-card-header">
-                    <h2 class="service-card-title"><?php echo esc_html($item['title']); ?></h2>
+                    <h4 class="service-card-title"><?php echo esc_html($item['title']); ?></h4>
                     
                     <div class="service-card-price <?php echo $item['is_free'] ? 'is-free' : ''; ?>">
                         <span><?php echo esc_html($display_price); ?></span>
