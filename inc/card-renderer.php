@@ -152,7 +152,7 @@ function gary_render_service_plaque_html( $data ) {
     $refined_title = trim($refined_title);
 
     ob_start(); ?>
-    <div class="investment-sidebar plaque-rendering-context" style="max-width: 380px; margin: 30px auto;">
+    <div class="investment-sidebar plaque-rendering-context" style="max-width: 380px;">
         <div class="investment-plaque" style="position: relative; overflow: hidden; border: 2px solid var(--brand-gold-light); padding: 30px; background: #fff; box-shadow: var(--shadow-soft); text-align:center;">
             <?php if ( (float)$item['savings'] > 0 && !$item['is_free'] ) : ?>
                 <div class="investment-savings-ribbon" style="top: 25px; right: -75px; width: 230px; font-size: 0.65rem;">SAVE £<?php echo number_format($item['savings'], 0); ?></div>

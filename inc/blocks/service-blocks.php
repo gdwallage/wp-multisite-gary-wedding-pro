@@ -544,7 +544,7 @@ function gary_render_cta_plaque_block( $atts ) {
     ));
 
     ob_start(); ?>
-    <div class="investment-sidebar plaque-rendering-context" style="max-width: 500px; margin: 40px auto;">
+    <div class="investment-sidebar plaque-rendering-context" style="max-width: 500px;">
         <div class="investment-plaque" style="position: relative; overflow: hidden; border: 2px solid var(--brand-gold-light); padding: 40px; background: #fff; box-shadow: var(--shadow-soft); text-align: center;">
             <?php if ( ! empty( $item['subtitle'] ) ) : ?>
                 <span class="subtitle" style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; margin-bottom: 8px; font-weight: 700; font-family: 'Lato', sans-serif;">
