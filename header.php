@@ -17,7 +17,7 @@
     <style id="emergency-menu-fix">
         /* EMERGENCY OVERRIDE FOR CACHED CSS */
         @media (min-width: 1025px) {
-            body { padding-top: 95px !important; }
+            body { padding-top: 82px !important; }
             .site-header {
                 position: fixed !important;
                 top: 0 !important;
@@ -26,6 +26,7 @@
                 z-index: 5000 !important;
                 background: #ffffff !important;
                 box-shadow: none !important;
+                border-bottom: 2px solid var(--brand-gold-light) !important;
             }
             /* Admin Bar Correction */
             body.admin-bar .site-header {
@@ -33,7 +34,7 @@
             }
         }
         @media (max-width: 1024px) {
-            body { padding-top: 70px !important; }
+            body { padding-top: 72px !important; }
             .site-header {
                 position: fixed !important;
                 top: 0 !important;
@@ -41,8 +42,9 @@
                 width: 100% !important;
                 z-index: 5000 !important;
                 background: var(--brand-bg, #F9F9F7) !important;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+                box-shadow: none !important;
                 height: 70px !important;
+                border-bottom: 2px solid var(--brand-gold-light) !important;
             }
             body.admin-bar .site-header {
                 top: 46px !important;
