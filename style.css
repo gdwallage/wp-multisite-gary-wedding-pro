@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3003.24
+Version: 3003.26
 Text Domain: gary-wedding
 */
 
@@ -276,11 +276,11 @@ p {
 
 h1.entry-title {
     text-align: center;
-    margin-top: 40px !important;
+    margin-top: 0 !important;
 }
 
 body:not(.home) h1.entry-title {
-    margin-top: 68px !important;
+    margin-top: 0 !important;
 }
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header {
@@ -690,8 +690,8 @@ body:not(.home) h1.entry-title {
     /* Mobile H1 Adjustment (Closer to Logo) */
     body:not(.home) h1.entry-title,
     body:not(.home) .page-content h1:first-of-type {
-        margin-top: 20px !important;
-        margin-bottom: 30px !important;
+        margin-top: 0 !important;
+        margin-bottom: var(--margin-bottom-standard) !important;
     }
 
     /* Mobile overlay: narrower panel */

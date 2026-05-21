@@ -10,7 +10,7 @@ get_header(); ?>
 <main id="primary" class="site-main page-template-page-experience">
     
     <!-- Hero / Title Section -->
-    <header class="experience-header" style="text-align:center; padding: 40px 20px 0;">
+    <header class="experience-header" style="text-align:center; padding: 0 20px 0;">
         <h1 class="entry-title"><?php the_title(); ?></h1>
     </header>
 

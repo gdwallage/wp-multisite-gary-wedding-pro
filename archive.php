@@ -6,7 +6,7 @@
 get_header();
 ?>
 
-<main id="primary" class="site-main container-editorial" style="padding: 60px 20px;">
+<main id="primary" class="site-main container-editorial" style="padding: 0 20px 60px;">
 
     <?php if ( have_posts() ) : ?>
 
