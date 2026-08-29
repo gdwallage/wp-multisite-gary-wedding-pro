@@ -27,6 +27,7 @@ function gary_register_service_blocks() {
         'gw/list-included'            => 'gary_render_styled_list_box',
         'gw/list-perfect-for'         => 'gary_render_styled_list_box',
         'gw/editorial-dual-column'    => 'gary_render_dual_column_block',
+        'gw/column-window-photo'      => 'gary_render_column_window_photo_block',
     );
 
     foreach ( $blocks as $name => $callback ) {

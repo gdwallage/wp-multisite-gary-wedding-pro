@@ -32,16 +32,27 @@ add_action( 'wp_ajax_nopriv_gw_submit_request', 'gw_handle_enquiry' );
  * to ensure database consistency across multisite nodes.
  */
 
-/**
- * REST API Bridge for public availability check to bypass Authentik SSO admin-ajax proxy blocks.
- */
 add_action( 'rest_api_init', function () {
     register_rest_route( 'gw/v1', '/check-availability', array(
         'methods'             => 'GET',
         'callback'            => 'gw_rest_check_availability',
         'permission_callback' => '__return_true',
     ) );
+    register_rest_route( 'gw/v1', '/frontend-debug', array(
+        'methods'             => 'POST',
+        'callback'            => 'gw_rest_frontend_debug',
+        'permission_callback' => '__return_true',
+    ) );
 } );
+
+function gw_rest_frontend_debug( WP_REST_Request $request ) {
+    $debug_data = $request->get_param( 'debug_data' );
+    if ( $debug_data ) {
+        error_log( 'GW FRONTEND AJAX DEBUG: ' . $debug_data );
+    }
+    return new WP_REST_Response( array( 'logged' => true ), 200 );
+}
+
 
 function gw_rest_check_availability( WP_REST_Request $request ) {
     if ( class_exists( 'GW_BooklyAddons\Lib\Ajax' ) ) {
@@ -55,3 +66,5 @@ function gw_rest_check_availability( WP_REST_Request $request ) {
     
     wp_send_json_error( array( 'message' => 'Availability service unavailable.' ) );
 }
+
+

@@ -12,12 +12,12 @@ get_header();
 
         <header class="page-header" style="text-align: center; margin-bottom: 80px;">
             <?php
-            the_archive_title( '<h1 class="blacksword-title" style="font-size: 3.5rem; color: var(--brand-accent);">', '</h1>' );
+            the_archive_title( '<h1 class="blacksword-title" style="font-size: clamp(1.8rem, 5vw, 3.5rem); color: var(--brand-accent);">', '</h1>' );
             the_archive_description( '<div class="archive-description lato-subtitle" style="max-width: 800px; margin: 20px auto; opacity: 0.8; letter-spacing: 1px; line-height: 1.6;">', '</div>' );
             ?>
         </header>
 
-        <div class="archive-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px;">
+        <div class="archive-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr)); gap: 40px;">
             <?php
             while ( have_posts() ) :
                 the_post();

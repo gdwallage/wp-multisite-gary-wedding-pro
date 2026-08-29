@@ -14,7 +14,7 @@ get_header(); ?>
         <h1 class="entry-title"><?php the_title(); ?></h1>
     </header>
 
-    <div class="experience-content-wrapper" style="max-width:1200px; margin: 40px auto 80px; padding: 0 40px;">
+    <div class="experience-content-wrapper" style="max-width:1200px; margin: 40px auto 80px; padding: 0 clamp(15px, 4vw, 40px);">
         <?php
         while ( have_posts() ) :
             the_post();

@@ -1074,6 +1074,78 @@
         save: function() { return null; }
     });
 
+    // 24. Column Parallax Window Photo
+    registerBlockType('gw/column-window-photo', {
+        title: 'Column Parallax Window',
+        icon: 'format-image',
+        category: 'gary-editorial-native',
+        attributes: {
+            image_id: { type: 'number', default: 0 },
+            image_url: { type: 'string', default: '' }
+        },
+        edit: function(props) {
+            const atts = props.attributes;
+            const mediaUploader = el(MediaUpload, {
+                onSelect: function(m) {
+                    props.setAttributes({ image_id: m.id, image_url: m.url });
+                },
+                allowedTypes: ['image'],
+                value: atts.image_id,
+                render: function(obj) {
+                    return el(Button, {
+                        onClick: obj.open,
+                        style: {
+                            width: '100%',
+                            height: '150px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: '#f5f5f5',
+                            border: '2px dashed #ccc',
+                            cursor: 'pointer',
+                            overflow: 'hidden',
+                            position: 'relative'
+                        }
+                    },
+                    atts.image_url ? el('img', {
+                        src: atts.image_url,
+                        style: {
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0
+                        }
+                    }) : 'Select Parallax Image'
+                    );
+                }
+            });
+            return el('div', {
+                style: {
+                    padding: '10px 0',
+                    borderBottom: '1px solid #eee'
+                }
+            },
+            el('div', {
+                style: {
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    color: '#C5A059',
+                    marginBottom: '5px',
+                    fontWeight: 'bold'
+                }
+            }, 'Column Parallax Window (Collapses if no space)'),
+            mediaUploader
+            );
+        },
+        save: function() {
+            return null; // Server-side rendered
+        }
+    });
+
     console.info('GW Editorial: Blocks Successfully Registered.');
 
 })(window.wp);
+

@@ -29,7 +29,7 @@ get_header(); ?>
 
     <!-- 1. PACKAGES SECTION -->
     <?php if ( ! empty( $packages ) ) : ?>
-        <h2 class="section-divider-title" style="text-align:center; margin: 60px 0 30px; font-size: 2.2rem;">Packages</h2>
+        <h2 class="section-divider-title" style="text-align:center; margin: 60px 0 30px; font-size: clamp(1.4rem, 4vw, 2.2rem);">Packages</h2>
         <div class="services-grid">
             <?php foreach ( $packages as $item ) : 
                 echo gary_render_service_card_html( array(
@@ -49,7 +49,7 @@ get_header(); ?>
 
     <!-- 2. INDIVIDUAL SERVICES SECTION -->
     <?php if ( ! empty( $individual ) ) : ?>
-        <h2 class="section-divider-title" style="text-align:center; margin: 80px 0 30px; font-size: 2.2rem;">Individual Services</h2>
+        <h2 class="section-divider-title" style="text-align:center; margin: 80px 0 30px; font-size: clamp(1.4rem, 4vw, 2.2rem);">Individual Services</h2>
         <div class="services-grid">
             <?php foreach ( $individual as $item ) : 
                 echo gary_render_service_card_html( array(

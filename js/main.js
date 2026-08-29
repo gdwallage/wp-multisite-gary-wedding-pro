@@ -8,6 +8,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('Gary Wedding Script: Initializing v3001.78 (Vanilla JS Edition)');
 
+    // ── Dynamic Header Height ────────────────────────────────────────────────
+    // Measure the REAL rendered header height (logo + tagline + border can vary)
+    // and inject it as --header-height on :root so all sticky/scroll calculations
+    // are pixel-perfect regardless of font scaling, admin bar, or content changes.
+    function setHeaderHeight() {
+        const header = document.querySelector('.site-header');
+        if (!header) return;
+        // .bottom = exact pixels from viewport top to header's bottom edge.
+        // This automatically includes admin bar height, font scaling, border — everything.
+        const rect = header.getBoundingClientRect();
+        const h = rect.bottom;
+        const headerActualHeight = rect.height;
+        
+        document.documentElement.style.setProperty('--header-height', h + 'px');
+        document.documentElement.style.setProperty('--header-actual-height', headerActualHeight + 'px');
+        console.log('Gary Wedding: --header-height set to ' + h + 'px, --header-actual-height set to ' + headerActualHeight + 'px');
+    }
+
+    // Set immediately, then update on resize/orientation change
+    setHeaderHeight();
+    window.addEventListener('resize', setHeaderHeight);
+    window.addEventListener('orientationchange', function() {
+        setTimeout(setHeaderHeight, 100); // small delay for orientation to settle
+    });
+    // Also re-measure after fonts/images may have loaded and shifted layout
+    window.addEventListener('load', setHeaderHeight);
+
+
     const menuToggle = document.querySelector('.menu-toggle');
     const menuOverlay = document.getElementById('primary-menu');
     const body = document.body;
@@ -237,110 +265,347 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    const steps = document.querySelectorAll('.scroll-step');
-    const wrappers = document.querySelectorAll('.scroll-bg-wrapper');
+    // Mark all scrollytelling wrappers as initialized so CSS enter-transitions activate
+    document.querySelectorAll('.scrollytelling-wrapper').forEach(w => {
+        w.classList.add('scrolly-initialized');
+    });
 
-    if (steps.length > 0 && wrappers.length > 0) {
-        console.log('Gary Wedding Scrollytelling: Initializing IntersectionObserver...');
+    // ── Scrollytelling Placement Detection ───────────────────────────
+    function detectScrollytellingPlacement() {
+        const wrappers = document.querySelectorAll('.scrollytelling-wrapper');
+        if (wrappers.length === 0) return;
 
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: window.innerWidth <= 1024 ? 0.15 : 0.5
-        };
+        function isVisibleContent(el) {
+            if (!el) return false;
+            const ignoredTags = ['SCRIPT', 'STYLE', 'TEMPLATE', 'LINK', 'NOSCRIPT', 'IFRAME'];
+            if (ignoredTags.includes(el.tagName)) return false;
+            
+            if (el.id === 'wpadminbar' || 
+                el.classList.contains('site-header') || 
+                el.classList.contains('menu-overlay') || 
+                el.classList.contains('site-footer') ||
+                el.tagName === 'HEADER' || 
+                el.tagName === 'FOOTER') {
+                return false;
+            }
+            
+            const style = window.getComputedStyle(el);
+            if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
+            
+            const rect = el.getBoundingClientRect();
+            if (rect.height === 0) return false;
+            
+            if (el.tagName === 'P' && el.innerHTML.replace(/&nbsp;|\s|<br\s*\/?>/g, '') === '') return false;
+            
+            return true;
+        }
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const stepNum = entry.target.getAttribute('data-step');
-                    console.log('Gary Wedding Scrollytelling: Slide ' + stepNum + ' In View');
+        function hasContentAbove(wrapper) {
+            let element = wrapper.closest('.wp-block-gw-scrollytelling-container, .wp-block-gw-scrollytelling-twocol-container') || wrapper;
+            let current = element;
+            while (current && current.tagName !== 'BODY') {
+                let prev = current.previousElementSibling;
+                while (prev) {
+                    if (isVisibleContent(prev)) return true;
+                    prev = prev.previousElementSibling;
+                }
+                current = current.parentElement;
+            }
+            return false;
+        }
 
-                    const wrapper = entry.target.closest('.scrollytelling-wrapper');
-                    if (wrapper) {
-                        // Skip if this is a two-column scrolly on mobile (handled by the column observer)
-                        if (wrapper.classList.contains('twocol-scrolly') && window.innerWidth <= 1024) {
-                            return;
-                        }
+        function hasContentBelow(wrapper) {
+            let element = wrapper.closest('.wp-block-gw-scrollytelling-container, .wp-block-gw-scrollytelling-twocol-container') || wrapper;
+            let current = element;
+            while (current && current.tagName !== 'BODY') {
+                let next = current.nextElementSibling;
+                while (next) {
+                    if (isVisibleContent(next)) return true;
+                    next = next.nextElementSibling;
+                }
+                current = current.parentElement;
+            }
+            return false;
+        }
 
-                        const stepWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
-                        stepWrappers.forEach(w => w.classList.remove('is-active'));
-                        const targetWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
-                        targetWrappers.forEach(targetWrapper => {
-                            targetWrapper.classList.add('is-active');
-                        });
+        let anyAtTop = false;
+        let anyAtBottom = false;
+
+        wrappers.forEach(wrapper => {
+            const atTop = !hasContentAbove(wrapper);
+            const atBottom = !hasContentBelow(wrapper);
+
+            if (atTop) {
+                wrapper.classList.add('is-at-top');
+                anyAtTop = true;
+            } else {
+                wrapper.classList.remove('is-at-top');
+            }
+
+            if (atBottom) {
+                wrapper.classList.add('is-at-bottom');
+                anyAtBottom = true;
+            } else {
+                wrapper.classList.remove('is-at-bottom');
+            }
+        });
+
+        const body = document.body;
+        if (anyAtTop) {
+            body.classList.add('has-scrolly-at-top');
+        } else {
+            body.classList.remove('has-scrolly-at-top');
+        }
+
+        if (anyAtBottom) {
+            body.classList.add('has-scrolly-at-bottom');
+        } else {
+            body.classList.remove('has-scrolly-at-bottom');
+        }
+    }
+
+    // Run placement detection immediately
+    detectScrollytellingPlacement();
+
+    // ── Scroll-Based Scrollytelling Active Step Logic ────────────────────────
+    function updateScrollytelling() {
+        const triggerLine = window.innerHeight * 0.5;
+        const isMobile = window.innerWidth <= 1024;
+
+        // 1. Single-Column Scrollytelling
+        const singleContainers = document.querySelectorAll('.scrollytelling-wrapper:not(.twocol-scrolly)');
+        singleContainers.forEach(wrapper => {
+            const steps = wrapper.querySelectorAll('.scroll-step');
+            if (steps.length === 0) return;
+
+            // Find active step based on trigger line
+            let activeStepNum = 1;
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                const rect = step.getBoundingClientRect();
+                if (rect.top <= triggerLine) {
+                    activeStepNum = parseInt(step.getAttribute('data-step'), 10);
+                }
+            }
+
+            // Update step content boxes
+            steps.forEach(step => {
+                const contentBox = step.querySelector('.step-content-box');
+                const stepNum = parseInt(step.getAttribute('data-step'), 10);
+                if (contentBox) {
+                    if (stepNum === activeStepNum) {
+                        contentBox.classList.add('is-active');
+                    } else {
+                        contentBox.classList.remove('is-active');
                     }
                 }
             });
-        }, observerOptions);
 
-        steps.forEach(step => {
-            observer.observe(step);
+            // Update background images
+            const bgWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
+            bgWrappers.forEach(bg => {
+                const stepNum = parseInt(bg.getAttribute('data-step'), 10);
+                if (stepNum === activeStepNum) {
+                    bg.classList.add('is-active');
+                } else {
+                    bg.classList.remove('is-active');
+                }
+            });
         });
-    }
 
-    // Two-Column Scrollytelling Sequential Stacking Observer
-    const columns = document.querySelectorAll('.twocol-step-column');
-    if (columns.length > 0) {
-        console.log('Gary Wedding Scrollytelling: Initializing Two-Column IntersectionObserver...');
+        // 2. Two-Column Scrollytelling
+        const twocolContainers = document.querySelectorAll('.scrollytelling-wrapper.twocol-scrolly');
+        twocolContainers.forEach(wrapper => {
+            const columns = wrapper.querySelectorAll('.twocol-step-column');
+            if (columns.length === 0) return;
 
-        const colObserverOptions = {
-            root: null,
-            rootMargin: window.innerWidth <= 1024 ? '-40% 0px -40% 0px' : '0px', // Create a trigger zone in the center of the screen on mobile
-            threshold: 0 // trigger immediately when entering the center zone
-        };
+            let activeStepNum = 1;
+            let activeIsLeft = true;
+            let activeCol = columns[0];
 
-        const colObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const col = entry.target;
-                    const isLeft = col.classList.contains('left-step-column');
-                    const step = col.closest('.twocol-step');
-                    if (step) {
-                        const stepNum = step.getAttribute('data-step');
-                        const wrapper = col.closest('.twocol-scrolly');
-                        if (wrapper) {
-                            const bgGrid = wrapper.querySelector('.twocol-bg-grid');
-                            if (bgGrid) {
-                                const leftBg = bgGrid.querySelector('.left-bg-column');
-                                const rightBg = bgGrid.querySelector('.right-bg-column');
-                                if (leftBg && rightBg) {
-                                    // 1. Sync step active state
-                                    const stepWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
-                                    stepWrappers.forEach(w => w.classList.remove('is-active'));
-                                    
-                                    if (window.innerWidth <= 1024) {
-                                        // On mobile, only activate the specific column's wrapper to prevent ghosting
-                                        const targetBg = isLeft ? leftBg : rightBg;
-                                        const targetWrapper = targetBg.querySelector('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
-                                        if (targetWrapper) targetWrapper.classList.add('is-active');
-                                    } else {
-                                        // On desktop, activate both sides simultaneously
-                                        const targetWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper[data-step="' + stepNum + '"]');
-                                        targetWrappers.forEach(targetWrapper => {
-                                            targetWrapper.classList.add('is-active');
-                                        });
-                                    }
+            if (isMobile) {
+                // Mobile: Find active column based on trigger line
+                for (let i = 0; i < columns.length; i++) {
+                    const col = columns[i];
+                    const rect = col.getBoundingClientRect();
+                    if (rect.top <= triggerLine) {
+                        activeCol = col;
+                    }
+                }
+                const activeStep = activeCol.closest('.twocol-step');
+                if (activeStep) {
+                    activeStepNum = parseInt(activeStep.getAttribute('data-step'), 10);
+                }
+                activeIsLeft = activeCol.classList.contains('left-step-column');
+            } else {
+                // Desktop: Find active step based on trigger line checking the step containers
+                const steps = wrapper.querySelectorAll('.twocol-step');
+                if (steps.length > 0) {
+                    for (let i = 0; i < steps.length; i++) {
+                        const step = steps[i];
+                        const rect = step.getBoundingClientRect();
+                        if (rect.top <= triggerLine) {
+                            activeStepNum = parseInt(step.getAttribute('data-step'), 10);
+                        }
+                    }
+                }
+            }
 
-                                    // 2. Set active column visibility
-                                    if (isLeft) {
-                                        console.log('Gary Wedding Scrollytelling: Left Column In View for Step ' + stepNum);
-                                        leftBg.classList.add('is-column-active');
-                                        rightBg.classList.remove('is-column-active');
-                                    } else {
-                                        console.log('Gary Wedding Scrollytelling: Right Column In View for Step ' + stepNum);
-                                        rightBg.classList.add('is-column-active');
-                                        leftBg.classList.remove('is-column-active');
-                                    }
-                                }
-                            }
+            // Update columns and content boxes
+            columns.forEach(col => {
+                const contentBox = col.querySelector('.step-content-box');
+                const colStep = col.closest('.twocol-step');
+                if (!colStep) return;
+                const colStepNum = parseInt(colStep.getAttribute('data-step'), 10);
+
+                if (contentBox) {
+                    if (isMobile) {
+                        // Mobile: only the single active column's content box is active
+                        if (col === activeCol) {
+                            contentBox.classList.add('is-active');
+                        } else {
+                            contentBox.classList.remove('is-active');
+                        }
+                    } else {
+                        // Desktop: both columns of the active step are active
+                        if (colStepNum === activeStepNum) {
+                            contentBox.classList.add('is-active');
+                        } else {
+                            contentBox.classList.remove('is-active');
                         }
                     }
                 }
             });
-        }, colObserverOptions);
 
-        columns.forEach(col => {
-            colObserver.observe(col);
+            // Update background columns and image wrappers
+            const leftBg = wrapper.querySelector('.twocol-bg-grid .left-bg-column');
+            const rightBg = wrapper.querySelector('.twocol-bg-grid .right-bg-column');
+
+            if (leftBg && rightBg) {
+                if (isMobile) {
+                    // Mobile: toggle which column panel is on top
+                    if (activeIsLeft) {
+                        leftBg.classList.add('is-column-active');
+                        rightBg.classList.remove('is-column-active');
+                    } else {
+                        rightBg.classList.add('is-column-active');
+                        leftBg.classList.remove('is-column-active');
+                    }
+
+                    // Mobile: activate the current step's image in the active column
+                    const activeBgColumn = activeIsLeft ? leftBg : rightBg;
+                    const activeBgWrappers = activeBgColumn.querySelectorAll('.scroll-bg-wrapper');
+                    activeBgWrappers.forEach(bg => {
+                        const stepNum = parseInt(bg.getAttribute('data-step'), 10);
+                        if (stepNum === activeStepNum) {
+                            bg.classList.add('is-active');
+                        } else {
+                            bg.classList.remove('is-active');
+                        }
+                    });
+                } else {
+                    // Desktop: both background columns are side-by-side. Just make sure the correct step image is active in both columns.
+                    const bgWrappers = wrapper.querySelectorAll('.scroll-bg-wrapper');
+                    bgWrappers.forEach(bg => {
+                        const stepNum = parseInt(bg.getAttribute('data-step'), 10);
+                        if (stepNum === activeStepNum) {
+                            bg.classList.add('is-active');
+                        } else {
+                            bg.classList.remove('is-active');
+                        }
+                    });
+                }
+            }
         });
     }
+
+    // ── Column Filler Photo Parallax ──────────────────────────────
+    function updateColumnFillers() {
+        const fillers = document.querySelectorAll('.gw-column-window-photo');
+        fillers.forEach(filler => {
+            const rect = filler.getBoundingClientRect();
+            // Store coordinates as CSS variables for viewport-fixed alignment
+            filler.style.setProperty('--col-left', rect.left + 'px');
+            filler.style.setProperty('--col-width', rect.width + 'px');
+        });
+    }
+
+    // Initialize states on load
+    updateScrollytelling();
+    updateColumnFillers();
+
+    function sendFrontendDebugInfo() {
+        const fillers = document.querySelectorAll('.gw-column-window-photo');
+        if (fillers.length === 0) return;
+
+        let debugText = 'URL: ' + window.location.href + ' | Screen: ' + window.innerWidth + 'x' + window.innerHeight + '\n';
+        fillers.forEach((filler, idx) => {
+            const img = filler.querySelector('.gw-column-window-parallax-img');
+            const col = filler.closest('.wp-block-column');
+            const row = filler.closest('.wp-block-columns');
+            const rowStyle = row ? window.getComputedStyle(row) : null;
+            const colStyle = col ? window.getComputedStyle(col) : null;
+            const fillerStyle = window.getComputedStyle(filler);
+            const imgStyle = img ? window.getComputedStyle(img) : null;
+
+            debugText += `Block #${idx + 1}:\n`;
+            if (row) {
+                debugText += `- Row: class="${row.className}" display="${rowStyle ? rowStyle.display : 'N/A'}" align="${rowStyle ? rowStyle.alignItems : 'N/A'}" height=${row.offsetHeight}px\n`;
+                const cols = row.querySelectorAll('.wp-block-column');
+                cols.forEach((c, cIdx) => {
+                    const cStyle = window.getComputedStyle(c);
+                    debugText += `  - Col #${cIdx + 1}: class="${c.className}" basis="${cStyle.flexBasis}" display="${cStyle.display}" height=${c.offsetHeight}px (scrollH=${c.scrollHeight}px)\n`;
+                });
+            }
+            if (col) {
+                debugText += `- Col Children Heights:\n`;
+                Array.from(col.children).forEach(child => {
+                    debugText += `  - <${child.tagName.toLowerCase()}> class="${child.className}" h=${child.offsetHeight}px (top=${child.offsetTop}px)\n`;
+                });
+            }
+            debugText += `- Container: height=${filler.offsetHeight}px display=${fillerStyle.display} position=${fillerStyle.position} bg=${fillerStyle.backgroundColor}\n`;
+            if (img) {
+                debugText += `- Img: src="${img.src}" natW=${img.naturalWidth} natH=${img.naturalHeight} w=${img.offsetWidth}px h=${img.offsetHeight}px op=${imgStyle ? imgStyle.opacity : 'N/A'} vis=${imgStyle ? imgStyle.visibility : 'N/A'} tf=${imgStyle ? imgStyle.transform : 'N/A'}\n`;
+            } else {
+                debugText += `- Img: NOT FOUND\n`;
+            }
+        });
+
+        fetch('/wp-json/gw/v1/frontend-debug', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                debug_data: debugText
+            })
+        }).catch(err => console.error('Debug send failed', err));
+    }
+
+    // Bind scroll, resize, and load events with requestAnimationFrame throttling
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+        if (!scrollTimeout) {
+            window.requestAnimationFrame(function() {
+                updateScrollytelling();
+                scrollTimeout = false;
+            });
+            scrollTimeout = true;
+        }
+    });
+    window.addEventListener('resize', function() {
+        updateScrollytelling();
+        updateColumnFillers();
+        detectScrollytellingPlacement();
+    });
+    window.addEventListener('load', function() {
+        updateScrollytelling();
+        updateColumnFillers();
+        detectScrollytellingPlacement();
+    });
+
+    // Send debug info 1 second after DOMContentLoaded
+    setTimeout(sendFrontendDebugInfo, 1000);
+
 });
+

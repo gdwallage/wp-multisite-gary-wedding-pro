@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3003.26
+Version: 3003.54
 Text Domain: gary-wedding
 */
 
@@ -28,9 +28,10 @@ Text Domain: gary-wedding
     --font-script: 'Blacksword', cursive;
     --shadow-soft: 0 5px 15px rgba(0,0,0,0.05);
     --shadow-deep: 0 15px 35px rgba(0,0,0,0.1);
+    --header-height: 82px; /* Desktop: 80px container + 2px gold border */
 }
 
-body { padding-top: 82px !important; background-color: var(--brand-bg) !important; margin: 0; overflow-x: clip; width: 100%; }
+body { padding-top: var(--header-actual-height, 82px) !important; background-color: var(--brand-bg) !important; margin: 0; overflow-x: clip; width: 100%; }
 *, *::before, *::after { box-sizing: border-box !important; }
 
 /* 10-80-10 EDITORIAL MANDATE (STRICT PERCENTAGE) */
@@ -200,6 +201,7 @@ h1,
     color: var(--brand-accent) !important;
     font-size: var(--font-size-h1) !important;
     margin-top: 0 !important;
+    padding-top: 6px !important;
     margin-bottom: var(--margin-bottom-standard) !important;
     line-height: 1.1 !important;
     text-transform: none !important;
@@ -277,10 +279,12 @@ p {
 h1.entry-title {
     text-align: center;
     margin-top: 0 !important;
+    padding-top: 6px !important;
 }
 
 body:not(.home) h1.entry-title {
     margin-top: 0 !important;
+    padding-top: 6px !important;
 }
 /* --- 1. HEADER & MENU (COMPACTED) --- */
 .site-header {
@@ -574,7 +578,7 @@ body:not(.home) h1.entry-title {
     }
 
     body {
-        padding-top: 72px !important;
+        padding-top: var(--header-actual-height, 72px) !important;
     }
 
     /* Admin Bar Correction */
@@ -691,6 +695,7 @@ body:not(.home) h1.entry-title {
     body:not(.home) h1.entry-title,
     body:not(.home) .page-content h1:first-of-type {
         margin-top: 0 !important;
+        padding-top: 6px !important;
         margin-bottom: var(--margin-bottom-standard) !important;
     }
 
@@ -858,8 +863,8 @@ body:not(.home) h1.entry-title {
 
 .dynamic-booking-wrapper .bookly-booking-button,
 .dynamic-booking-wrapper .bookly-appointment-booking-button,
-.dynamic-booking-wrapper div[class*="bookly-form"] button,
-.dynamic-booking-wrapper button,
+.dynamic-booking-wrapper div[class*="bookly-form"] button:not([class*="day"]):not([class*="calendar"]):not([class*="picker"]):not([class*="arrow"]):not([class*="month"]):not([class*="year"]),
+.dynamic-booking-wrapper button:not([class*="day"]):not([class*="calendar"]):not([class*="picker"]):not([class*="arrow"]):not([class*="month"]):not([class*="year"]),
 .dynamic-booking-wrapper input[type="submit"],
 .view-button,
 .bookly-form-button,
@@ -889,7 +894,7 @@ body:not(.home) h1.entry-title {
 
 /* NO HOVER COLOR SHIFT (Stay Gold) */
 .dynamic-booking-wrapper .bookly-booking-button:hover,
-.dynamic-booking-wrapper button:hover,
+.dynamic-booking-wrapper button:not([class*="day"]):not([class*="calendar"]):not([class*="picker"]):not([class*="arrow"]):not([class*="month"]):not([class*="year"]):hover,
 .bookly-appointment-booking-button:hover {
     background: var(--brand-gold-light) !important;
     color: #ffffff !important;
@@ -2947,7 +2952,7 @@ body #primary .gw-trio-bottom,
 
 /* --- BOOKLY BUTTON BRIDGE (3.8.7) --- */
 .dynamic-booking-wrapper .bookly-booking-button,
-.dynamic-booking-wrapper button,
+.dynamic-booking-wrapper button:not([class*="day"]):not([class*="calendar"]):not([class*="picker"]):not([class*="arrow"]):not([class*="month"]):not([class*="year"]),
 .dynamic-booking-wrapper input[type="submit"] {
     display: block !important;
     width: 100% !important;
@@ -2967,7 +2972,7 @@ body #primary .gw-trio-bottom,
 }
 
 .dynamic-booking-wrapper .bookly-booking-button:hover,
-.dynamic-booking-wrapper button:hover,
+.dynamic-booking-wrapper button:not([class*="day"]):not([class*="calendar"]):not([class*="picker"]):not([class*="arrow"]):not([class*="month"]):not([class*="year"]):hover,
 .dynamic-booking-wrapper input[type="submit"]:hover {
     background: var(--brand-gold-light) !important;
     transform: translateY(-3px) !important;
@@ -3088,24 +3093,7 @@ body #primary .gw-trio-bottom,
         align-items: center !important;
     }
 
-    /* Scrollytelling Mobile Offsets (Relative Header Compatibility) */
-    .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
-    .twocol-scrolly .sticky-background-container {
-        top: 0 !important;
-        height: 100vh !important;
-    }
-
-    .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
-    .twocol-scrolly .scrolling-text-container {
-        margin-top: -100vh !important;
-    }
-
-    /* Admin Bar Correction on Mobile for Scrollytelling */
-    body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
-    body.admin-bar .twocol-scrolly .sticky-background-container {
-        top: 46px !important;
-        height: calc(100vh - 46px) !important;
-    }
+    /* Scrollytelling Mobile Offsets — handled in the @media (max-width: 1024px) block below */
 
     /* 6. Pricing Mobile Adjustments */
     .service-card-price {
@@ -3120,23 +3108,7 @@ body #primary .gw-trio-bottom,
         font-size: 0.9rem !important;
     }
 
-    body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
-    body.admin-bar .twocol-scrolly .scrolling-text-container {
-        margin-top: calc(-100vh + 46px) !important;
-    }
-
-    @media (min-width: 783px) {
-        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
-        body.admin-bar .twocol-scrolly .sticky-background-container {
-            top: 32px !important;
-            height: calc(100vh - 32px) !important;
-        }
-
-        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
-        body.admin-bar .twocol-scrolly .scrolling-text-container {
-            margin-top: calc(-100vh + 32px) !important;
-        }
-    }
+    /* Duplicate removed — admin-bar scrollytelling corrections live in the @media (max-width: 1024px) block */
 
     .hero-peek-title {
         font-size: 1.8rem !important;
@@ -3810,6 +3782,7 @@ body #primary .gw-z-pattern .gw-z-content {
 .archive-header {
     text-align: center !important;
     margin-top: 0 !important;
+    padding-top: 0 !important;
     margin-bottom: 10px !important;
     width: 100% !important;
 }
@@ -3818,6 +3791,7 @@ body #primary .gw-z-pattern .gw-z-content {
 .service-hero-header .entry-title,
 .archive-header .entry-title {
     margin: 0 !important;
+    padding-top: 6px !important;
 }
 
 @media (max-width: 1024px) {
@@ -4029,12 +4003,19 @@ body #primary .gw-z-pattern .gw-z-content {
 }
 
 /* Ensure sticky parent containers do not truncate sticky positioning */
+.site,
+.site-content,
 .site-main,
 article,
 .entry-content,
-.home-intro,
-.site-content {
+.wp-block-post-content,
+.wp-block-group,
+.wp-block-columns,
+.wp-block-column,
+.wp-block-gw-scrollytelling-container,
+.wp-block-gw-scrollytelling-twocol-container {
     overflow: visible !important;
+    contain: none !important;
 }
 
 .scrollytelling-wrapper {
@@ -4048,29 +4029,67 @@ article,
     display: flow-root !important; /* Establishes BFC to prevent margin collapse gap */
 }
 
+/* Strip ALL Gutenberg outer-wrapper margins/padding so the scrollytelling block
+   sits flush with the header — Gutenberg wraps every block in wp-block-{name} div
+   and also applies .is-layout-flow gap rules that create unwanted top spacing. */
+.wp-block-gw-scrollytelling-container,
+.wp-block-gw-scrollytelling-twocol-container {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Kill any Gutenberg is-layout-flow vertical gap on the scrollytelling blocks */
+.wp-block-gw-scrollytelling-container.is-layout-flow > *,
+.wp-block-gw-scrollytelling-twocol-container.is-layout-flow > * {
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
+}
+
+/* Placement-specific layout adjustments for Single-Column Scrollytelling */
+body.has-scrolly-at-top .site-main,
+body.has-scrolly-at-top #primary,
+body.has-scrolly-at-top .entry-content,
+body.has-scrolly-at-top .services-intro,
+body.has-scrolly-at-top article,
+body.has-scrolly-at-top .container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+body.has-scrolly-at-top .scrollytelling-wrapper.is-at-top {
+    margin-top: -3px !important;
+}
+
+body.has-scrolly-at-bottom .site-main,
+body.has-scrolly-at-bottom #primary,
+body.has-scrolly-at-bottom .entry-content,
+body.has-scrolly-at-bottom .services-intro,
+body.has-scrolly-at-bottom article,
+body.has-scrolly-at-bottom .container {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+body.has-scrolly-at-bottom .site-footer {
+    margin-top: 0 !important;
+}
+body.has-scrolly-at-bottom .scrollytelling-wrapper.is-at-bottom {
+    margin-bottom: 0 !important;
+}
+
+/* Background container: position:sticky allows it to scroll on, stick, and scroll off.
+   Comprehensive ancestor overflow overrides ensure this sticks reliably across browsers. */
 .sticky-background-container {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 95px;
-    left: 5vw !important;
-    width: 90vw !important;
+    position: sticky !important;
+    top: calc(var(--header-height) - 3px) !important;
+    left: 5vw;
+    width: 90vw;
     z-index: 1;
     overflow: hidden;
-    background-color: #ffffff;
-    height: calc(100vh - 95px) !important;
-}
-
-/* Adjust sticky background container when admin bar is present */
-body.admin-bar .sticky-background-container {
-    top: 127px !important; /* 95px header + 32px admin bar */
-    height: calc(100vh - 127px) !important;
-}
-
-@media (max-width: 782px) {
-    body.admin-bar .sticky-background-container {
-        top: 141px !important; /* 95px header + 46px admin bar */
-        height: calc(100vh - 141px) !important;
-    }
+    background-color: transparent;
+    height: calc(100vh - var(--header-height) + 3px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Stacked background wrappers for simple opacity crossfade */
@@ -4083,8 +4102,10 @@ body.admin-bar .sticky-background-container {
     overflow: hidden !important;
     z-index: 1;
     opacity: 0 !important;
-    transition: opacity 1.0s ease-in-out;
+    transition: opacity 0.6s ease-in-out;
     background-color: transparent !important; /* Let page background show through */
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Slide active: fades in the wrapper */
@@ -4103,20 +4124,23 @@ body.admin-bar .sticky-background-container {
 .scroll-bg-wrapper[data-step="1"]:not(.is-active) {
     opacity: 0 !important;
     z-index: 1;
-    transition: opacity 1.0s ease-in-out !important;
+    transition: opacity 0.6s ease-in-out !important;
 }
 
-/* Base image inside the wrapper targeting 100% height with gold border exactly at image edge */
+/* Base image — full bleed background fill. Covers the container completely, top-to-bottom.
+   These are cinematic background images (not editorial content), so cover is intentional. */
 .scroll-bg-image {
     position: absolute !important;
     bottom: 0 !important;
     max-width: 100% !important;
-    max-height: 100% !important; /* Prevent global max-height: 70vh limits */
+    max-height: 100% !important;
     width: auto !important;
     height: auto !important;
     object-fit: contain !important;
     opacity: 1 !important; /* Always fully opaque inside the mask wrapper */
-    
+    margin: 0 !important;
+    padding: 0 !important;
+
     /* Fine Gold Frame Wrapping Image Edge */
     border: 3px solid var(--brand-gold-light, #C5A059) !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
@@ -4177,7 +4201,7 @@ body.admin-bar .sticky-background-container {
     z-index: 4;
     width: 90vw !important;
     margin-left: 5vw !important;
-    margin-top: calc(-100vh + 95px) !important; /* Pull content exactly over sticky background (accounting for header height) */
+    margin-top: calc(-100vh + var(--header-height) - 3px) !important; /* Pull content exactly over sticky background */
     padding-bottom: 25vh;
     display: flow-root !important; /* Prevent child margins from spilling out */
 }
@@ -4187,24 +4211,24 @@ body.admin-bar .sticky-background-container {
     display: none !important;
 }
 
-/* Adjust negative pull margin for admin bar */
+/* Admin-bar margin corrections — JS measurement already includes admin bar, so no addition needed */
 body.admin-bar .scrolling-text-container {
-    margin-top: calc(-100vh + 127px) !important;
+    margin-top: calc(-100vh + var(--header-height) - 3px) !important;
 }
 
 @media (max-width: 782px) {
     body.admin-bar .scrolling-text-container {
-        margin-top: calc(-100vh + 141px) !important;
+        margin-top: calc(-100vh + var(--header-height) - 3px) !important;
     }
 }
 
 /* Scrolling slides */
 .scroll-step {
-    min-height: 100vh;
+    min-height: calc(100vh - var(--header-height) + 3px) !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 5%;
+    padding: 2rem 5% !important;
     box-sizing: border-box;
     pointer-events: none; /* Let clicks pass through to background if needed */
 }
@@ -4216,27 +4240,28 @@ body.admin-bar .scrolling-text-container {
 .scroll-step.align-box-right { justify-content: flex-end; }
 .scroll-step.align-box-center { justify-content: center; }
 
-/* Premium Gold Frame Text Box */
+/* Premium Gold Frame Text Box — 15% smaller dimensions, smooth GPU transitions */
 .step-content-box {
     background: rgba(17, 17, 17, 0.55) !important; /* Increased transparency to let photos show through beautifully */
     border: 2px solid var(--brand-gold-light, #C5A059) !important;
     color: #ffffff !important;
-    padding: 3rem !important;
-    max-width: 450px;
+    padding: 2.5rem !important;
+    max-width: 380px;
     text-align: center;
     box-shadow: 0 20px 40px rgba(0,0,0,0.5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     pointer-events: auto; /* Re-enable pointer events for text container */
-    transition: all 0.5s ease;
+    will-change: opacity, transform;
+    transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .step-content-box h2 {
     color: #ffffff !important;
     font-family: var(--font-primary) !important;
-    font-size: 2.2rem !important;
+    font-size: 1.85rem !important; /* -15% from 2.2rem */
     margin-top: 0 !important; /* Reset global h2 margin-top override */
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 1.25rem !important; /* -15% from 1.5rem */
     text-transform: uppercase;
     letter-spacing: 3px;
     font-weight: normal;
@@ -4245,7 +4270,7 @@ body.admin-bar .scrolling-text-container {
 .step-content-box p {
     color: rgba(255, 255, 255, 0.9) !important;
     font-family: 'Lato', sans-serif !important;
-    font-size: 0.95rem !important;
+    font-size: 0.8rem !important; /* -15% from 0.95rem */
     line-height: 1.5 !important; /* Cap at 1.5 per user spacing rules */
     margin-bottom: 0 !important;
     letter-spacing: 1px;
@@ -4254,17 +4279,28 @@ body.admin-bar .scrolling-text-container {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .step-content-box {
-        padding: 2rem 1.5rem !important;
+        padding: 1.7rem 1.25rem !important; /* -15% from 2rem 1.5rem */
         margin: 0 10px;
     }
     .step-content-box h2 {
-        font-size: 1.6rem !important;
+        font-size: 1.35rem !important; /* -15% from 1.6rem */
         letter-spacing: 2px;
     }
     .step-content-box p {
-        font-size: 0.85rem !important;
+        font-size: 0.72rem !important; /* -15% from 0.85rem */
         line-height: 1.5 !important; /* Cap at 1.5 per user spacing rules */
     }
+}
+
+/* Initial state: invisible and shifted down slightly — transitions in when JS adds .is-active */
+.scrolly-initialized .step-content-box {
+    opacity: 0;
+    transform: translateY(18px);
+}
+
+.scrolly-initialized .step-content-box.is-active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Two-Column Scrollytelling CSS Layout */
@@ -4285,10 +4321,10 @@ body.admin-bar .scrolling-text-container {
 
 .twocol-bg-column .scroll-bg-wrapper {
     position: absolute;
-    top: 0;
+    top: 0 !important;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100% !important;
 }
 
 .twocol-bg-column .scroll-bg-image {
@@ -4297,13 +4333,14 @@ body.admin-bar .scrolling-text-container {
     max-width: 100% !important;
     max-height: 100% !important;
     object-fit: contain !important; /* Respect Never-Crop */
-    background-color: #ffffff; /* White background around contained images */
     position: absolute !important;
     top: 50% !important; /* Align to the middle height */
     bottom: auto !important;
     border: 3px solid var(--brand-gold-light, #C5A059) !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
     box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Image positioning snug inside the column with vertical centering */
@@ -4324,7 +4361,7 @@ body.admin-bar .scrolling-text-container {
 
 /* Step Layout for Two Columns */
 .twocol-step {
-    min-height: 100vh;
+    min-height: calc(100vh - var(--header-height) + 3px) !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4353,36 +4390,39 @@ body.admin-bar .scrolling-text-container {
 .twocol-step-column.align-box-right { justify-content: flex-end !important; }
 .twocol-step-column.align-box-center { justify-content: center !important; }
 
-/* Styling for the half-sized text box */
+/* Styling for the half-sized text box — 15% smaller */
 .twocol-step-column .step-content-box {
-    max-width: 300px !important;
+    max-width: 255px !important; /* -15% from 300px */
     width: 85% !important;
-    padding: 1.8rem 1.2rem !important; /* Half size padding */
+    padding: 1.5rem 1rem !important; /* -15% from 1.8rem 1.2rem */
     box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
 }
 
 .twocol-step-column .step-content-box h2 {
-    font-size: 1.3rem !important;
-    margin-bottom: 0.8rem !important;
+    font-size: 1.1rem !important; /* -15% from 1.3rem */
+    margin-bottom: 0.65rem !important; /* -15% from 0.8rem */
     letter-spacing: 2px !important;
 }
 
 .twocol-step-column .step-content-box p {
-    font-size: 0.8rem !important;
+    font-size: 0.68rem !important; /* -15% from 0.8rem */
     line-height: 1.5 !important;
     letter-spacing: 0.5px !important;
 }
 
-/* Mobile responsive layout: Stack columns instead of side-by-side & Crop background images */
+/* Mobile responsive layout: Stack columns side-by-side → full-width & cover-fill images */
 @media (max-width: 1024px) {
-    /* 1. Single Scrollytelling & Background Cropping */
+    /* --header-height is set dynamically by JS (getBoundingClientRect().bottom) on all screen sizes.
+       No CSS fallback needed here — JS runs before first paint on DOMContentLoaded. */
+
+    /* Mobile/tablet: full-bleed (left:0, 100vw) — left/right crop is acceptable */
     .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
     .twocol-scrolly .sticky-background-container {
+        position: sticky !important;
+        left: 0 !important;
         width: 100vw !important;
-        left: 50% !important;
-        margin-left: -50vw !important;
-        top: 70px !important; /* Position exactly below sticky compact mobile header */
-        height: calc(100vh - 70px) !important; /* Bottom exactly at screen bottom */
+        top: calc(var(--header-height) - 3px) !important;
+        height: calc(100vh - var(--header-height) + 3px) !important;
     }
 
     .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
@@ -4390,35 +4430,23 @@ body.admin-bar .scrolling-text-container {
         width: 100vw !important;
         left: 50% !important;
         margin-left: -50vw !important;
-        margin-top: calc(-100vh + 70px) !important;
+        margin-top: calc(-100vh + var(--header-height) - 3px) !important;
     }
 
-    /* Admin Bar Correction on Mobile for Scrollytelling */
+    /* Admin bar: JS measurement already includes admin bar offset, no extra offset needed */
     body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
     body.admin-bar .twocol-scrolly .sticky-background-container {
-        top: calc(70px + 46px) !important;
-        height: calc(100vh - 70px - 46px) !important;
+        position: sticky !important;
+        top: calc(var(--header-height) - 3px) !important;
+        height: calc(100vh - var(--header-height) + 3px) !important;
     }
 
     body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
     body.admin-bar .twocol-scrolly .scrolling-text-container {
-        margin-top: calc(-100vh + 70px + 46px) !important;
+        margin-top: calc(-100vh + var(--header-height) - 3px) !important;
     }
 
-    @media (min-width: 783px) {
-        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .sticky-background-container,
-        body.admin-bar .twocol-scrolly .sticky-background-container {
-            top: calc(70px + 32px) !important;
-            height: calc(100vh - 70px - 32px) !important;
-        }
-
-        body.admin-bar .scrollytelling-wrapper:not(.twocol-scrolly) .scrolling-text-container,
-        body.admin-bar .twocol-scrolly .scrolling-text-container {
-            margin-top: calc(-100vh + 70px + 32px) !important;
-        }
-    }
-
-    /* Allow scrollytelling background images to crop on mobile, taking full height */
+    /* Scrollytelling background images on mobile: full-bleed cover fill, no border */
     .scroll-bg-image,
     .scroll-bg-image.align-img-center,
     .scroll-bg-image.align-img-left,
@@ -4432,13 +4460,17 @@ body.admin-bar .scrolling-text-container {
         max-width: none !important;
         max-height: none !important;
         object-fit: cover !important;
-        left: 50% !important;
-        top: 50% !important;
-        bottom: auto !important; /* Prevent bottom: 0 stretching */
-        transform: translate(-50%, -50%) !important;
+        object-position: center center !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        transform: none !important;
         border: none !important;
         box-shadow: none !important;
         background: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     /* 2. Two-Column Scrollytelling Sequential Stacking */
@@ -4479,7 +4511,7 @@ body.admin-bar .scrolling-text-container {
     }
 
     .twocol-scrolly .twocol-step-column {
-        min-height: 100vh !important;
+        min-height: calc(100vh - var(--header-height) + 3px) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -4488,5 +4520,153 @@ body.admin-bar .scrolling-text-container {
         box-sizing: border-box !important;
     }
 }
+
+/* ── COLUMN PARALLAX WINDOW PHOTO ───────────────────────── */
+
+/* Force parent columns to be flexbox containers when they contain our block */
+.wp-block-columns:has(.gw-column-window-photo) {
+    align-items: stretch !important;
+}
+
+.wp-block-column:has(.gw-column-window-photo) {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-self: stretch !important;
+    height: auto !important; /* Override desktop height: 100% !important to allow stretching */
+}
+
+/* Control margins of elements within this flex column to prevent margin inflation */
+.wp-block-column:has(.gw-column-window-photo) > *:not(.gw-column-window-photo) {
+    margin-top: 0 !important;
+    margin-bottom: 1.25rem !important;
+}
+
+.gw-column-window-photo {
+    flex-grow: 1 !important;
+    flex-shrink: 1 !important;
+    flex-basis: 0 !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin-top: auto !important; /* Push block to the bottom of the stretched column */
+    margin-bottom: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+    background-color: #fafafa !important;
+    
+    /* Hardware-accelerated clip-path window (completely wobble-free) */
+    -webkit-clip-path: inset(0px) !important;
+    clip-path: inset(0px) !important;
+    background-size: 0px 0px !important; /* Prevent parent rendering image to optimize resources */
+}
+
+/* Pseudo-element with position: fixed spans viewport, clipped by parent's clip-path */
+.gw-column-window-photo::before {
+    content: "" !important;
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: var(--col-left, 0) !important;
+    width: var(--col-width, 100%) !important;
+    height: 100% !important;
+    background-image: inherit !important; /* Inherit dynamic image URL from parent style */
+    background-repeat: no-repeat !important;
+    background-size: auto 100% !important;
+    background-position: center center !important;
+    will-change: transform !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+}
+
+/* Fallback to standard scroll layout on touch devices and small screens where fixed viewport elements are buggy */
+@media (max-width: 1024px) {
+    .gw-column-window-photo {
+        -webkit-clip-path: none !important;
+        clip-path: none !important;
+        background-size: cover !important;
+        background-attachment: scroll !important;
+    }
+    .gw-column-window-photo::before {
+        display: none !important;
+    }
+}
+
+.gw-column-window-parallax-img {
+    display: none !important; /* Hide image tag as we render via CSS background-image for smooth parallax */
+}
+
+/* Maintain block size inside editor wrapper so user can customize it, and use scroll attachment */
+.editor-styles-wrapper .gw-column-window-photo {
+    flex-grow: 0 !important;
+    flex-basis: 150px !important;
+    height: 150px !important;
+    min-height: 150px !important;
+    -webkit-clip-path: none !important;
+    clip-path: none !important;
+    background-size: cover !important;
+    background-attachment: scroll !important;
+}
+.editor-styles-wrapper .gw-column-window-photo::before {
+    display: none !important;
+}
+
+/* --- MOBILE RESPONSIVENESS FIXES (v4.6.0) --- */
+
+/* Page Hero Banner: reduce oversized title + padding on mobile */
+@media (max-width: 1024px) {
+    .page-hero-banner-title {
+        font-size: clamp(1.5rem, 5vw, 3.5rem) !important;
+        padding: 15px clamp(15px, 4vw, 60px) !important;
+    }
+}
+
+/* About Grid: reduce 80px gap + 100px bottom margin on mobile */
+@media (max-width: 1024px) {
+    .about-grid {
+        gap: 30px !important;
+        margin-bottom: 40px !important;
+    }
+}
+
+/* --- THIRD-PARTY PLUGIN OVERRIDES (Bookly) --- */
+/* These live in the theme CSS to survive plugin updates */
+
+/* Bookly Pro: Customer Profile table — prevent overflow on mobile */
+@media (max-width: 768px) {
+    .bookly-customer-appointment-list {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    .bookly-appointments-table {
+        max-width: 100% !important;
+        font-size: 0.85rem !important;
+    }
+    .bookly-appointments-table th {
+        white-space: normal !important;
+        font-size: 0.8rem !important;
+    }
+    .bookly-appointments-table .bookly-btn-default {
+        min-width: auto !important;
+        font-size: 0.8rem !important;
+        padding: 6px 10px !important;
+    }
+}
+
+/* Bookly: Modal dialog — fix width gap between 400–768px */
+@media (max-width: 768px) {
+    .bookly-modal .bookly-modal-dialog {
+        width: 90% !important;
+        max-width: 90% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        left: 5% !important;
+        right: 5% !important;
+    }
+}
+
+
 
 

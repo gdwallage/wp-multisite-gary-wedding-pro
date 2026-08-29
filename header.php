@@ -2,7 +2,7 @@
 /** 
  * File: header.php 
  * Theme: Gary Wallage Wedding Pro
- * Version: 3003.09 (Remove Bookly custom prefill and query redirects)
+ * Version: 3003.54 (Bypass Authentik AJAX blocks & resolve column height matching collapse & parallax true lock native CSS & column constrain & height constrain & Bookly calendar mobile fix & reverted scrollytelling containment & fixed scrollytelling background height and header offsets with step min-height sizing & restored contain fit)
  */ 
 ?>
 <!DOCTYPE html>
@@ -10,14 +10,14 @@
 <head>
     <meta charset="<?php bloginfo( 'charset' ); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-version" content="3003.09">
+    <meta name="theme-version" content="3003.54">
 
     <?php wp_head(); ?>
 
     <style id="emergency-menu-fix">
         /* EMERGENCY OVERRIDE FOR CACHED CSS */
         @media (min-width: 1025px) {
-            body { padding-top: 82px !important; }
+            body { padding-top: var(--header-actual-height, 82px) !important; }
             .site-header {
                 position: fixed !important;
                 top: 0 !important;
@@ -34,7 +34,7 @@
             }
         }
         @media (max-width: 1024px) {
-            body { padding-top: 72px !important; }
+            body { padding-top: var(--header-actual-height, 72px) !important; }
             .site-header {
                 position: fixed !important;
                 top: 0 !important;
@@ -79,7 +79,7 @@
     </style>
 </head>
 <body <?php body_class(); ?>>
-    <!-- VERSION 3003.09 -->
+    <!-- VERSION 3003.47 -->
 <?php wp_body_open(); ?>
 
 <header class="site-header">

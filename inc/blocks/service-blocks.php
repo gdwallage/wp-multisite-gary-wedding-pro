@@ -299,6 +299,16 @@ function gary_register_service_blocks() {
             'right_img_align'  => array('type' => 'string', 'default' => 'center'),
         )
     ));
+
+    // 24. Column Parallax Window Photo
+    register_block_type('gw/column-window-photo', array(
+        'render_callback' => 'gary_render_column_window_photo_block',
+        'category' => 'gary-editorial-native',
+        'attributes' => array(
+            'image_id'  => array('type' => 'number', 'default' => 0),
+            'image_url' => array('type' => 'string', 'default' => ''),
+        )
+    ));
 }
 }
 add_action('init', 'gary_register_service_blocks');
@@ -896,9 +906,10 @@ function gary_render_scrollytelling_slide( $attributes, $content ) {
     );
 
     // Return the scroll-step text box
+    $active_class = ($index === 1) ? 'is-active' : '';
     ob_start(); ?>
     <div class="scroll-step align-box-<?php echo esc_attr($align); ?>" data-step="<?php echo esc_attr($index); ?>">
-        <div class="step-content-box">
+        <div class="step-content-box <?php echo esc_attr($active_class); ?>">
             <?php if ( $title ) : ?>
                 <h2><?php echo esc_html($title); ?></h2>
             <?php endif; ?>
@@ -1006,13 +1017,14 @@ function gary_render_scrollytelling_twocol_slide( $attributes, $content ) {
     );
 
     // Return the scroll-step text box with side-by-side content
+    $active_class = ($index === 1) ? 'is-active' : '';
     ob_start(); ?>
     <div class="scroll-step twocol-step" data-step="<?php echo esc_attr($index); ?>">
         <div class="twocol-step-grid">
             <!-- Left Column Content -->
             <div class="twocol-step-column left-step-column align-box-<?php echo esc_attr($left_align); ?>">
                 <?php if ( $left_align !== 'none' && ($left_title || $left_text) ) : ?>
-                    <div class="step-content-box size-half">
+                    <div class="step-content-box size-half <?php echo esc_attr($active_class); ?>">
                         <?php if ( $left_title ) : ?>
                             <h2><?php echo esc_html($left_title); ?></h2>
                         <?php endif; ?>
@@ -1026,7 +1038,7 @@ function gary_render_scrollytelling_twocol_slide( $attributes, $content ) {
             <!-- Right Column Content -->
             <div class="twocol-step-column right-step-column align-box-<?php echo esc_attr($right_align); ?>">
                 <?php if ( $right_align !== 'none' && ($right_title || $right_text) ) : ?>
-                    <div class="step-content-box size-half">
+                    <div class="step-content-box size-half <?php echo esc_attr($active_class); ?>">
                         <?php if ( $right_title ) : ?>
                             <h2><?php echo esc_html($right_title); ?></h2>
                         <?php endif; ?>
@@ -1041,3 +1053,42 @@ function gary_render_scrollytelling_twocol_slide( $attributes, $content ) {
     <?php
     return ob_get_clean();
 }
+
+function gary_render_column_window_photo_block( $attributes ) {
+    $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
+    $img_url = '';
+    if ( $img_id ) {
+        $img_url = wp_get_attachment_image_url($img_id, 'full');
+    }
+    if ( !$img_url && !empty($attributes['image_url']) ) {
+        $img_url = $attributes['image_url'];
+    }
+    
+    // Debug logging to help identify why the image isn't showing up
+    error_log('Gary Column Window block render attributes: ' . json_encode($attributes));
+    error_log('Gary Column Window block resolved URL: ' . $img_url);
+    error_log('Gary Column Window block Request URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'N/A'));
+    
+    if ( !$img_url ) {
+        error_log('Gary Column Window block: No image URL resolved. Returning empty string.');
+        return '';
+    }
+
+    ob_start(); ?>
+    <div class="gw-column-window-photo" style="background-image: url('<?php echo esc_url($img_url); ?>');">
+        <img src="<?php echo esc_url($img_url); ?>" class="gw-column-window-parallax-img skip-lazy no-lazy" alt="" loading="eager" data-no-lazy="1" />
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+add_action( 'wp_ajax_gw_frontend_debug', 'gary_handle_frontend_debug' );
+add_action( 'wp_ajax_nopriv_gw_frontend_debug', 'gary_handle_frontend_debug' );
+function gary_handle_frontend_debug() {
+    if ( isset( $_POST['debug_data'] ) ) {
+        error_log( 'GW FRONTEND AJAX DEBUG: ' . $_POST['debug_data'] );
+    }
+    wp_send_json_success( array( 'logged' => true ) );
+}
+
+

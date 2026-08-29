@@ -118,6 +118,26 @@ function gary_enforce_booking_visibility() {
     // Target all buttons and links within the wrapper
     const items = wrapper.querySelectorAll('button, a, .bookly-booking-button, .bookly-appointment-booking-button, .bookly-form-button, span');
     items.forEach(item => {
+        // Skip calendar dates, day headers, month navigation, and date pickers
+        if (
+            item.closest('[class*="day"]') ||
+            item.closest('[class*="calendar"]') ||
+            item.closest('[class*="picker"]') ||
+            item.closest('[class*="arrow"]') ||
+            item.closest('[class*="month"]') ||
+            item.closest('[class*="year"]') ||
+            item.matches('[class*="day"]') ||
+            item.matches('[class*="calendar"]') ||
+            item.matches('[class*="picker"]') ||
+            item.matches('[class*="arrow"]') ||
+            item.matches('[class*="month"]') ||
+            item.matches('[class*="year"]') ||
+            (item.tagName === 'BUTTON' && /^\d{1,2}$/.test(item.textContent.trim())) ||
+            (item.tagName === 'SPAN' && item.textContent.trim().length <= 3)
+        ) {
+            return;
+        }
+
         // Absolute Background Lock
         item.style.setProperty('background', '#C5A059', 'important');
         item.style.setProperty('background-color', '#C5A059', 'important');
@@ -143,6 +163,7 @@ function gary_enforce_booking_visibility() {
         item.style.setProperty('justify-content', 'center', 'important');
     });
 }
+
 
 // Pulse enforcement every 300ms for 3 seconds to catch Bookly's async injection
 let gary_pulse_count = 0;

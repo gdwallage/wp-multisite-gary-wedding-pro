@@ -15,10 +15,10 @@ get_header(); ?>
                 </div>
             <?php endif; ?>
 
-            <div class="container" style="max-width:800px; margin-top: -60px; background:#fff; padding:60px; position:relative; box-shadow:0 20px 40px rgba(0,0,0,0.05);">
+            <div class="container" style="max-width:800px; margin-top: -60px; background:#fff; padding:clamp(20px, 5vw, 60px); position:relative; box-shadow:0 20px 40px rgba(0,0,0,0.05);">
                 <header class="entry-header" style="text-align:center; margin-bottom:50px;">
                     <span style="text-transform:uppercase; letter-spacing:4px; font-size:0.7rem; color:var(--wedding-accent);">Visual Legacy Chapter</span>
-                    <h1 class="entry-title" style="margin:15px 0; font-size:3.5rem;"><?php the_title(); ?></h1>
+                    <h1 class="entry-title" style="margin:15px 0; font-size:clamp(1.8rem, 5vw, 3.5rem);"><?php the_title(); ?></h1>
                     <div class="technical-meta" style="font-style:italic; font-size:0.85rem; color:#999;">
                         Technical Notes: Crafted with <?php echo get_post_meta(get_the_ID(), 'camera_gear', true) ?: 'Canon 5D Mark IV & EF Glass'; ?>
                     </div>

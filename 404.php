@@ -10,7 +10,7 @@ get_header();
 
     <section class="error-404 not-found">
         <header class="page-header">
-            <h1 class="blacksword-title" style="font-size: 4rem; color: var(--brand-accent);">Lost in the Moment?</h1>
+            <h1 class="blacksword-title" style="font-size: clamp(2rem, 6vw, 4rem); color: var(--brand-accent);">Lost in the Moment?</h1>
             <h2 class="lato-subtitle" style="letter-spacing: 4px; margin-bottom: 30px;">PAGE NOT FOUND</h2>
         </header>
 
