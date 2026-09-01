@@ -28,11 +28,18 @@ function gary_get_service_data_unified( $id, $source = 'page' ) {
     // Fetch Savings & Inclusions summary (v3000.1.0 Unified Engine)
     $summary = $page_id ? gary_get_sub_service_summary( $page_id, true ) : gary_get_sub_service_summary( $bookly_id, false );
 
-    $thumbnail = $page_id ? get_the_post_thumbnail_url($page_id, 'gw-card-thumb') : '';
+    $thumbnail = '';
+    if ( $page_id && has_post_thumbnail( $page_id ) ) {
+        $thumbnail = get_the_post_thumbnail_url( $page_id, 'gw-card-thumb' )
+                  ?: get_the_post_thumbnail_url( $page_id, 'large' )
+                  ?: get_the_post_thumbnail_url( $page_id, 'full' );
+    }
 
     // Fallback: If no WP Page thumbnail, try to use the Bookly native attachment_id
     if ( !$thumbnail && !empty($b_data['attachment_id']) ) {
-        $thumbnail = wp_get_attachment_image_url( $b_data['attachment_id'], 'large' );
+        $thumbnail = wp_get_attachment_image_url( $b_data['attachment_id'], 'gw-card-thumb' )
+                  ?: wp_get_attachment_image_url( $b_data['attachment_id'], 'large' )
+                  ?: wp_get_attachment_image_url( $b_data['attachment_id'], 'full' );
     }
 
     return array(

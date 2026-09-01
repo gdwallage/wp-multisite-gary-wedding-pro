@@ -63,12 +63,22 @@ $is_package = !empty( $summary['grid_items'] );
 <main id="primary" class="site-main page-template-service-detail">
 
     <?php 
-    $bg_img_url = $bg_img;
-    if ( is_numeric($bg_img) ) {
-        $bg_img_url = wp_get_attachment_image_url($bg_img, 'gw-hero');
-    } elseif ( $bg_img ) {
-        $attachment_id = attachment_url_to_postid($bg_img);
-        if ( $attachment_id ) $bg_img_url = wp_get_attachment_image_url($attachment_id, 'gw-hero');
+    $bg_img_url = '';
+    if ( $bg_img ) {
+        if ( is_numeric($bg_img) ) {
+            $bg_img_url = wp_get_attachment_image_url($bg_img, 'gw-hero') ?: wp_get_attachment_image_url($bg_img, 'full');
+        } else {
+            $attachment_id = attachment_url_to_postid($bg_img);
+            if ( $attachment_id ) {
+                $bg_img_url = wp_get_attachment_image_url($attachment_id, 'gw-hero') ?: wp_get_attachment_image_url($attachment_id, 'full');
+            } else {
+                $bg_img_url = $bg_img;
+            }
+        }
+    }
+    // Seamless fallback to standard WordPress Featured Image
+    if ( ! $bg_img_url && has_post_thumbnail( $post_id ) ) {
+        $bg_img_url = get_the_post_thumbnail_url( $post_id, 'gw-hero' ) ?: get_the_post_thumbnail_url( $post_id, 'full' );
     }
     if ( $bg_img_url ) : ?>
         <div class="service-bg-layer" style="background-image: url('<?php echo esc_url($bg_img_url); ?>');"></div>

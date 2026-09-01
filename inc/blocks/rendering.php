@@ -26,6 +26,9 @@ function gary_render_z_pattern_block( $attributes, $content ) {
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'left';
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
     $img_html = $img_id ? wp_get_attachment_image( $img_id, $size ) : '';
+    if ( empty( $img_html ) && ! empty( $attributes['image_url'] ) ) {
+        $img_html = '<img src="' . esc_url( $attributes['image_url'] ) . '" class="attachment-large size-large" style="width:100%; height:auto; object-fit:cover; border-radius:6px;" alt="Photography" />';
+    }
     
     ob_start(); ?>
     <div class="gw-z-pattern container is-<?php echo esc_attr($pos); ?>">
@@ -36,16 +39,31 @@ function gary_render_z_pattern_block( $attributes, $content ) {
 }
 
 function gary_render_trio_gallery_block( $attributes ) {
+    $img1_html = !empty($attributes['img1_id']) ? wp_get_attachment_image($attributes['img1_id'], 'large') : '';
+    if ( empty($img1_html) && !empty($attributes['img1_url']) ) {
+        $img1_html = '<img src="' . esc_url($attributes['img1_url']) . '" class="attachment-large" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" alt="Gallery 1" />';
+    }
+
+    $img2_html = !empty($attributes['img2_id']) ? wp_get_attachment_image($attributes['img2_id'], 'medium') : '';
+    if ( empty($img2_html) && !empty($attributes['img2_url']) ) {
+        $img2_html = '<img src="' . esc_url($attributes['img2_url']) . '" class="attachment-medium" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" alt="Gallery 2" />';
+    }
+
+    $img3_html = !empty($attributes['img3_id']) ? wp_get_attachment_image($attributes['img3_id'], 'medium') : '';
+    if ( empty($img3_html) && !empty($attributes['img3_url']) ) {
+        $img3_html = '<img src="' . esc_url($attributes['img3_url']) . '" class="attachment-medium" style="width:100%; height:100%; object-fit:cover; border-radius:6px;" alt="Gallery 3" />';
+    }
+
     ob_start(); ?>
     <div class="gw-trio-gallery-wrapper container">
         <?php if ( !empty($attributes['trio_title']) ) : ?>
             <h2 class="trio-gallery-heading"><?php echo esc_html( $attributes['trio_title'] ); ?></h2>
         <?php endif; ?>
         <div class="gw-trio-gallery">
-            <div class="gw-trio-main"><?php if(!empty($attributes['img1_id'])) echo wp_get_attachment_image($attributes['img1_id'], 'large'); ?></div>
+            <div class="gw-trio-main"><?php echo $img1_html; ?></div>
             <div class="gw-trio-side">
-                <div class="gw-trio-top"><?php if(!empty($attributes['img2_id'])) echo wp_get_attachment_image($attributes['img2_id'], 'medium'); ?></div>
-                <div class="gw-trio-bottom"><?php if(!empty($attributes['img3_id'])) echo wp_get_attachment_image($attributes['img3_id'], 'medium'); ?></div>
+                <div class="gw-trio-top"><?php echo $img2_html; ?></div>
+                <div class="gw-trio-bottom"><?php echo $img3_html; ?></div>
             </div>
         </div>
     </div>
@@ -55,9 +73,13 @@ function gary_render_trio_gallery_block( $attributes ) {
 function gary_render_split_block( $attributes, $content ) {
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'right';
+    $img_html = $img_id ? wp_get_attachment_image( $img_id, 'large' ) : '';
+    if ( empty( $img_html ) && ! empty( $attributes['image_url'] ) ) {
+        $img_html = '<img src="' . esc_url( $attributes['image_url'] ) . '" class="attachment-large" style="width:100%; height:auto; object-fit:cover; border-radius:6px;" alt="Split Media" />';
+    }
     ob_start(); ?>
     <div class="gw-editorial-split container is-<?php echo esc_attr($pos); ?>">
-        <div class="gw-split-media"><?php if($img_id) echo wp_get_attachment_image($img_id, 'large'); ?></div>
+        <div class="gw-split-media"><?php echo $img_html; ?></div>
         <div class="gw-split-content"><?php echo $content; ?></div>
     </div>
     <?php return ob_get_clean();
