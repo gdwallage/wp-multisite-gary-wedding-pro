@@ -52,12 +52,12 @@
         <div class="footer-col-right">
             <div class="footer-contact">
                 <span class="contact-row">
-                    63 Twineham Road, Swindon, SN25 2AG
+                    63 Twinehame Road<br>Swindon SN25 2AG
                 </span>
 
                 <span class="contact-row" style="margin-top:10px;">
-                    <a href="mailto:gary@garywallage.uk">
-                        gary@garywallage.uk
+                    <a href="mailto:photographer@garywallage.uk">
+                        photographer@garywallage.uk
                     </a>
                 </span>
 
