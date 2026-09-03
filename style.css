@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3003.57
+Version: 3003.58
 Text Domain: gary-wedding
 */
 
@@ -4148,11 +4148,11 @@ body.has-scrolly-at-bottom .scrollytelling-wrapper.is-at-bottom {
     transition: opacity 0.6s ease-in-out !important;
 }
 
-/* Base image — full bleed background fill. Covers the container completely, top-to-bottom.
-   These are cinematic background images (not editorial content), so cover is intentional. */
+/* Base image — full bleed background fill. Aligned to the top under the header/hero. */
 .scroll-bg-image {
     position: absolute !important;
-    bottom: 0 !important;
+    top: 0 !important;
+    bottom: auto !important;
     max-width: 100% !important;
     max-height: 100% !important;
     width: auto !important;
