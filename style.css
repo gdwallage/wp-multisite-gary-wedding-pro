@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3003.59
+Version: 3003.61
 Text Domain: gary-wedding
 */
 
@@ -945,7 +945,7 @@ body:not(.home) h1.entry-title {
     max-height: 560px;
     min-height: 380px; 
     overflow: hidden; 
-    background: var(--brand-white);
+    background: var(--brand-bg, #11110E) !important; /* Fill carousel stage with genre theme background instead of white */
     margin-top: 0 !important; 
     margin-bottom: 0 !important;
     border: none !important;
@@ -964,7 +964,8 @@ body:not(.home) h1.entry-title {
     top: 0;
     left: 50%;
     transform: translateX(-50%) scale(0.7);
-    width: 75vw; 
+    width: 52vw; /* Compact width to allow all 5 slides to sit closely together and overlap on viewport */
+    max-width: 820px;
     height: 100%; 
     opacity: 0; 
     visibility: hidden;
@@ -983,32 +984,34 @@ body:not(.home) h1.entry-title {
     z-index: 50;
 }
 
+/* Tier 1 Flanking Slides — snug overlap with center active slide */
 .hero-peek-slide.prev {
-    opacity: 0.6; /* Tier 1 Peek */
+    opacity: 0.75;
     visibility: visible;
-    transform: translateX(-110%) scale(0.85); /* 60% Peek, 40% Overlap */
-    z-index: 20;
+    transform: translateX(-88%) scale(0.86);
+    z-index: 30;
 }
 
 .hero-peek-slide.next {
-    opacity: 0.6; /* Tier 1 Peek */
+    opacity: 0.75;
     visibility: visible;
-    transform: translateX(10%) scale(0.85); /* 60% Peek, 40% Overlap */
+    transform: translateX(-12%) scale(0.86);
+    z-index: 30;
+}
+
+/* Tier 2 Flanking Slides — snug overlap with Tier 1 so all 5 slides fit seamlessly across the stage */
+.hero-peek-slide.far-prev {
+    opacity: 0.5;
+    visibility: visible;
+    transform: translateX(-124%) scale(0.72);
     z-index: 20;
 }
 
-.hero-peek-slide.far-prev {
-    opacity: 0.3; /* Tier 2 Peek */
-    visibility: visible;
-    transform: translateX(-170%) scale(0.7); /* 60% of S2 Peek, 40% behind S1 */
-    z-index: 15;
-}
-
 .hero-peek-slide.far-next {
-    opacity: 0.3; /* Tier 2 Peek */
+    opacity: 0.5;
     visibility: visible;
-    transform: translateX(70%) scale(0.7); /* 60% of S2 Peek, 40% behind S1 */
-    z-index: 15;
+    transform: translateX(24%) scale(0.72);
+    z-index: 20;
 }
 
 .hero-peek-img { 
