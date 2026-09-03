@@ -172,10 +172,6 @@ $gw_genres = array(
     <div class="menu-overlay-inner">
         <button class="menu-close">&times;</button>
         <nav class="overlay-nav">
-            <!-- MENU CONTENT TEST: Version 3001.58 -->
-            <ul class="nav-menu-overlay">
-                <li class="menu-item"><a href="/" style="color: #fff !important; font-size: 2.5rem;">HOME (Safety Link)</a></li>
-            </ul>
             <?php
             if ( has_nav_menu( 'primary' ) ) {
                 wp_nav_menu( array(

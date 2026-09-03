@@ -22,6 +22,7 @@ require_once get_template_directory() . '/inc/shortcodes.php';
 require_once get_template_directory() . '/inc/blocks/service-blocks.php';
 require_once get_template_directory() . '/inc/card-renderer.php';
 require_once get_template_directory() . '/inc/woocommerce-integration.php';
+require_once get_template_directory() . '/inc/hero-carousel.php';
 
 /**
  * LEGACY / THEME-SPECIFIC OVERRIDES

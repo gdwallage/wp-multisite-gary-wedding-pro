@@ -4757,3 +4757,66 @@ body.admin-bar .site-header {
         top: calc(37px + 46px) !important;
     }
 }
+
+/* --- HERO PEEK CONTROLS (ARROWS & DOTS) --- */
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(17, 17, 14, 0.6);
+    color: var(--brand-gold-light, #C5A059);
+    border: 1px solid var(--brand-gold-light, #C5A059);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 120;
+    transition: all 0.3s ease;
+    line-height: 1;
+    padding: 0;
+}
+
+.carousel-nav:hover {
+    background: var(--brand-gold-light, #C5A059);
+    color: #111;
+}
+
+.carousel-nav.prev {
+    left: 25px;
+}
+
+.carousel-nav.next {
+    right: 25px;
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 120;
+}
+
+.carousel-dot,
+.hero-peek-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(197, 160, 89, 0.6);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.carousel-dot.active,
+.hero-peek-dot.active {
+    background: var(--brand-gold-light, #C5A059);
+    transform: scale(1.25);
+}
