@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3003.54
+Version: 3003.55
 Text Domain: gary-wedding
 */
 
@@ -923,11 +923,13 @@ body:not(.home) h1.entry-title {
     right: 50% !important;
     margin-left: -50vw !important;
     margin-right: -50vw !important;
-    height: 65vh; /* Proportional balance for 'Great Wedding...' visibility */
-    min-height: 400px; 
+    height: 56vh;
+    max-height: 560px;
+    min-height: 380px; 
     overflow: hidden; 
     background: var(--brand-white);
     margin-top: 0 !important; 
+    margin-bottom: 0 !important;
     border: none !important;
     box-sizing: border-box !important;
 }
@@ -1006,13 +1008,13 @@ body:not(.home) h1.entry-title {
 
 .hero-peek-caption-stable { 
     position: absolute; 
-    bottom: 60px; 
+    bottom: 36px; 
     left: 50%; 
     transform: translateX(-50%); 
-    width: 1100px; /* Expanded cinematic width */
+    width: 1000px; /* Expanded cinematic width */
     max-width: 95vw; /* Responsive safety */
-    min-height: 280px; 
-    padding: 50px 80px; 
+    min-height: auto; 
+    padding: 24px 50px; 
     background: rgba(0, 0, 0, 0.65); 
     backdrop-filter: blur(12px); 
     border-radius: 12px; 
@@ -4796,7 +4798,7 @@ body.admin-bar .site-header {
 
 .carousel-dots {
     position: absolute;
-    bottom: 20px;
+    bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -4820,4 +4822,18 @@ body.admin-bar .site-header {
 .hero-peek-dot.active {
     background: var(--brand-gold-light, #C5A059);
     transform: scale(1.25);
+}
+
+
+/* Smooth Transition from Hero Slider into Content */
+body.home .site-main.home {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+body.home .site-main.home .home-intro {
+    margin-top: 0 !important;
+    padding-top: 15px !important;
+}
+body.home .site-main.home .home-intro > *:first-child {
+    margin-top: 0 !important;
 }
