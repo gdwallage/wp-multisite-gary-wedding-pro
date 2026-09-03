@@ -4667,6 +4667,93 @@ body.admin-bar .scrolling-text-container {
     }
 }
 
+/* ==========================================================================
+   CROSS-SITE GENRE NAVIGATION BAR
+   ========================================================================== */
+.gw-genre-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 37px;
+    z-index: 5100; /* above .site-header (5000) */
+    background: #0d0d0d;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
+.gw-genre-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
 
+.gw-genre-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
 
+.gw-genre-list li {
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.gw-genre-link {
+    display: block;
+    padding: 10px 18px;
+    font-family: var(--font-primary);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    line-height: 14px;
+}
+
+.gw-genre-link:hover,
+.gw-genre-link.is-current {
+    color: var(--brand-gold-light);
+    border-bottom-color: var(--brand-gold-light);
+}
+
+/* Push existing fixed header down by the genre bar's height (37px) */
+.site-header {
+    top: 37px !important;
+}
+
+body {
+    padding-top: calc(var(--header-actual-height, 82px) + 37px) !important;
+}
+
+@media (max-width: 1024px) {
+    body {
+        padding-top: calc(var(--header-actual-height, 72px) + 37px) !important;
+    }
+}
+
+/* Admin Bar Stacking */
+body.admin-bar .gw-genre-bar {
+    top: 32px;
+}
+
+body.admin-bar .site-header {
+    top: calc(37px + 32px) !important;
+}
+
+@media (max-width: 782px) {
+    body.admin-bar .gw-genre-bar {
+        top: 46px;
+    }
+    body.admin-bar .site-header {
+        top: calc(37px + 46px) !important;
+    }
+}

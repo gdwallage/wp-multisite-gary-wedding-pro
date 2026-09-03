@@ -15,12 +15,12 @@
     <?php wp_head(); ?>
 
     <style id="emergency-menu-fix">
-        /* EMERGENCY OVERRIDE FOR CACHED CSS */
+        /* EMERGENCY OVERRIDE FOR CACHED CSS & GENRE BAR STACKING */
         @media (min-width: 1025px) {
-            body { padding-top: var(--header-actual-height, 82px) !important; }
+            body { padding-top: calc(var(--header-actual-height, 82px) + 37px) !important; }
             .site-header {
                 position: fixed !important;
-                top: 0 !important;
+                top: 37px !important;
                 left: 0 !important;
                 width: 100% !important;
                 z-index: 5000 !important;
@@ -30,14 +30,14 @@
             }
             /* Admin Bar Correction */
             body.admin-bar .site-header {
-                top: 32px !important;
+                top: calc(37px + 32px) !important;
             }
         }
         @media (max-width: 1024px) {
-            body { padding-top: var(--header-actual-height, 72px) !important; }
+            body { padding-top: calc(var(--header-actual-height, 72px) + 37px) !important; }
             .site-header {
                 position: fixed !important;
-                top: 0 !important;
+                top: 37px !important;
                 left: 0 !important;
                 width: 100% !important;
                 z-index: 5000 !important;
@@ -47,11 +47,11 @@
                 border-bottom: 2px solid var(--brand-gold-light) !important;
             }
             body.admin-bar .site-header {
-                top: 46px !important;
+                top: calc(37px + 46px) !important;
             }
             @media (min-width: 783px) {
                 body.admin-bar .site-header {
-                    top: 32px !important;
+                    top: calc(37px + 32px) !important;
                 }
             }
         }
@@ -79,8 +79,59 @@
     </style>
 </head>
 <body <?php body_class(); ?>>
-    <!-- VERSION 3003.47 -->
 <?php wp_body_open(); ?>
+
+<?php
+$gw_current_host = parse_url( home_url(), PHP_URL_HOST );
+$gw_genres = array(
+    'boudoir' => array(
+        'label' => 'Boudoir',
+        'url'   => 'https://boudoir.garywallage.uk',
+        'host'  => 'boudoir.garywallage.uk',
+    ),
+    'portrait' => array(
+        'label' => 'Portrait',
+        'url'   => 'https://garywallage.uk',
+        'host'  => 'garywallage.uk',
+        'alt_hosts' => array('portrait.garywallage.uk'),
+    ),
+    'family' => array(
+        'label' => 'Family',
+        'url'   => 'https://family.garywallage.uk',
+        'host'  => 'family.garywallage.uk',
+    ),
+    'wedding' => array(
+        'label' => 'Wedding',
+        'url'   => 'https://wedding.garywallage.uk',
+        'host'  => 'wedding.garywallage.uk',
+    ),
+    'fashion' => array(
+        'label' => 'Fashion',
+        'url'   => 'https://fashion.garywallage.uk',
+        'host'  => 'fashion.garywallage.uk',
+    ),
+    'cosplay' => array(
+        'label' => 'Cosplay',
+        'url'   => 'https://cosplay.garywallage.uk',
+        'host'  => 'cosplay.garywallage.uk',
+    ),
+    'glamour' => array(
+        'label' => 'Glamour',
+        'url'   => 'https://glamour.garywallage.uk',
+        'host'  => 'glamour.garywallage.uk',
+    ),
+);
+?>
+<nav class="gw-genre-bar" aria-label="Photography genres">
+    <ul class="gw-genre-list">
+        <?php foreach ( $gw_genres as $gw_key => $gw_genre ) :
+            $is_current = ( $gw_current_host === $gw_genre['host'] ) || ( ! empty( $gw_genre['alt_hosts'] ) && in_array( $gw_current_host, $gw_genre['alt_hosts'], true ) );
+            $current_class = $is_current ? ' is-current' : '';
+        ?>
+            <li><a href="<?php echo esc_url( $gw_genre['url'] ); ?>" class="gw-genre-link gw-genre-<?php echo esc_attr( $gw_key ); ?><?php echo esc_attr( $current_class ); ?>"><?php echo esc_html( $gw_genre['label'] ); ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+</nav>
 
 <header class="site-header">
     <div class="header-focal-container">
