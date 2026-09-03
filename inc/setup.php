@@ -45,3 +45,17 @@ function gary_add_my_bookings_endpoint() {
     add_rewrite_endpoint( 'my-bookings', EP_PAGES );
 }
 add_action( 'init', 'gary_add_my_bookings_endpoint' );
+
+/**
+ * 301 Redirect Legacy Slugs & Cleaned Endpoints
+ */
+add_action( 'template_redirect', function() {
+    // Wedding legacy About Me url /home/about-me/ -> /about-me/
+    if ( get_current_blog_id() === 2 ) {
+        $uri = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '';
+        if ( strpos( $uri, '/home/about-me' ) !== false ) {
+            wp_redirect( home_url( '/about-me/' ), 301 );
+            exit;
+        }
+    }
+} );
