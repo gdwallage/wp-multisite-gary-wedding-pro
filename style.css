@@ -376,6 +376,7 @@ body:not(.home) h1.entry-title {
 }
 
 .site-title-blacksword {
+    font-family: 'Blacksword', cursive !important;
     color: var(--brand-accent);
     font-size: 1.9rem;
     margin: 0;
