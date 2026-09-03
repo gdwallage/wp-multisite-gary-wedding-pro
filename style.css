@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3003.56
+Version: 3003.57
 Text Domain: gary-wedding
 */
 
@@ -378,32 +378,34 @@ body:not(.home) h1.entry-title {
 .branding-group {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Bottom align branding elements */
+    justify-content: center;
     max-width: calc(50vw - 90px); /* Strict clearance boundary from center logo */
+    overflow: visible;
+    padding-top: 4px;
 }
 
 .site-title-blacksword {
     font-family: 'Blacksword', cursive !important;
     color: var(--brand-accent);
-    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+    font-size: 2.1rem; /* Restored full generous sizing */
     margin: 0;
-    line-height: 1.1;
+    line-height: 1.25; /* Ample line-height so tall Blacksword flourishes never clip */
+    padding-top: 4px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible; /* Never crop top ascends or swashes */
 }
 
 .site-tagline-lato {
     font-family: var(--font-primary, 'Lato', sans-serif);
-    font-size: clamp(0.65rem, 0.9vw, 0.74rem);
+    font-size: 0.72rem;
     letter-spacing: 1.5px;
     text-transform: none;
-    opacity: 0.75;
-    margin-top: 5px;
+    opacity: 0.85;
+    margin-top: 4px;
     margin-bottom: 0;
     white-space: nowrap; /* Strictly single line */
     overflow: hidden;
-    text-overflow: ellipsis; /* Graceful cutoff if screen is narrow */
+    text-overflow: ellipsis;
     max-width: 100%;
 }
 
