@@ -49,10 +49,17 @@ function gary_get_hero_slides() {
             $subtitle = wp_strip_all_tags( $m[1] );
         }
 
+        $thumb_id = get_post_thumbnail_id( $page_id );
+        // Use wp_get_attachment_url to get direct canonical media URL, bypassing Photon downsize filter
+        $raw_img = $thumb_id ? wp_get_attachment_url( $thumb_id ) : get_the_post_thumbnail_url( $page_id, 'full' );
+        if ( $raw_img ) {
+            $raw_img = add_query_arg( 'v', GARY_THEME_VERSION, $raw_img );
+        }
+
         $slides[] = array(
             'title'    => get_the_title( $page_id ),
             'subtitle' => $subtitle,
-            'image'    => get_the_post_thumbnail_url( $page_id, 'full' ),
+            'image'    => $raw_img,
             'url'      => get_permalink( $page_id ),
         );
     }
