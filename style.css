@@ -4,7 +4,7 @@ Theme URI: https://garywallage.com/
 Author: Gary Wallage
 Author URI: https://garywallage.com/
 Description: Boutique Editorial Photography Theme
-Version: 3003.55
+Version: 3003.56
 Text Domain: gary-wedding
 */
 
@@ -375,20 +375,36 @@ body:not(.home) h1.entry-title {
     transition: transform 0.3s ease;
 }
 
+.branding-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Bottom align branding elements */
+    max-width: calc(50vw - 90px); /* Strict clearance boundary from center logo */
+}
+
 .site-title-blacksword {
     font-family: 'Blacksword', cursive !important;
     color: var(--brand-accent);
-    font-size: 1.9rem;
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
     margin: 0;
     line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .site-tagline-lato {
-    font-size: 0.72rem;
-    letter-spacing: 2px;
+    font-family: var(--font-primary, 'Lato', sans-serif);
+    font-size: clamp(0.65rem, 0.9vw, 0.74rem);
+    letter-spacing: 1.5px;
     text-transform: none;
-    opacity: 0.7;
-    margin-top: 8px;
+    opacity: 0.75;
+    margin-top: 5px;
+    margin-bottom: 0;
+    white-space: nowrap; /* Strictly single line */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Graceful cutoff if screen is narrow */
+    max-width: 100%;
 }
 
 
