@@ -34,17 +34,19 @@
             }
         }
         @media (max-width: 1024px) {
-            body { padding-top: calc(var(--header-actual-height, 72px) + 37px) !important; }
+            body { padding-top: calc(70px + 37px) !important; }
             .site-header {
                 position: fixed !important;
                 top: 37px !important;
                 left: 0 !important;
                 width: 100% !important;
+                max-width: 100vw !important;
                 z-index: 5000 !important;
-                background: var(--brand-bg, #F9F9F7) !important;
+                background: #FFFFFF !important;
                 box-shadow: none !important;
                 height: 70px !important;
-                border-bottom: 2px solid var(--brand-gold-light) !important;
+                border-bottom: 2px solid var(--brand-accent, #C5A059) !important;
+                box-sizing: border-box !important;
             }
             body.admin-bar .site-header {
                 top: calc(37px + 46px) !important;
