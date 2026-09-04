@@ -16,6 +16,88 @@
 
     <style id="emergency-menu-fix">
         /* EMERGENCY OVERRIDE FOR CACHED CSS & GENRE BAR STACKING */
+        /* --- GENRE BAR CRITICAL CSS --- */
+        .gw-genre-bar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            max-width: 100vw !important;
+            height: 37px !important;
+            z-index: 50000 !important;
+            background: #0d0d0d !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        body.admin-bar .gw-genre-bar {
+            top: 32px !important;
+        }
+        @media (max-width: 782px) {
+            body.admin-bar .gw-genre-bar {
+                top: 46px !important;
+            }
+        }
+        .gw-genre-list {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            list-style: none !important;
+            margin: 0 !important;
+            padding: 0 10px !important;
+            width: 100% !important;
+            max-width: 100vw !important;
+            height: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: auto !important;
+            white-space: nowrap !important;
+            -webkit-overflow-scrolling: touch !important;
+            scrollbar-width: none !important;
+        }
+        .gw-genre-list::-webkit-scrollbar {
+            display: none !important;
+        }
+        .gw-genre-list li {
+            margin: 0 !important;
+            padding: 0 !important;
+            flex-shrink: 0 !important;
+            display: inline-block !important;
+        }
+        .gw-genre-link {
+            display: block !important;
+            padding: 10px 14px !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+            font-size: 11px !important;
+            letter-spacing: 1.5px !important;
+            text-transform: uppercase !important;
+            color: #d1d1d1 !important;
+            text-decoration: none !important;
+            border-bottom: 3px solid transparent !important;
+            line-height: 17px !important;
+            white-space: nowrap !important;
+            transition: color 0.2s, border-color 0.2s !important;
+        }
+        .gw-genre-link:hover,
+        .gw-genre-link.is-current {
+            color: var(--brand-gold-light, #C5A059) !important;
+            border-bottom-color: var(--brand-gold-light, #C5A059) !important;
+        }
+        @media (max-width: 768px) {
+            .gw-genre-list {
+                justify-content: flex-start !important;
+                padding: 0 12px !important;
+            }
+            .gw-genre-link {
+                padding: 10px 9px !important;
+                font-size: 10px !important;
+                letter-spacing: 1px !important;
+            }
+        }
+
+        /* --- FIXED HEADER STACKING --- */
         @media (min-width: 1025px) {
             body { padding-top: calc(var(--header-actual-height, 82px) + 37px) !important; }
             .site-header {
