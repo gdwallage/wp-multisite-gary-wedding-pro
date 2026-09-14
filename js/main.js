@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (wrappers.length === 0) return;
 
         function isVisibleContent(el) {
-            if (!el) return false;
+            if (!el || el.nodeType !== 1) return false;
             const ignoredTags = ['SCRIPT', 'STYLE', 'TEMPLATE', 'LINK', 'NOSCRIPT', 'IFRAME'];
             if (ignoredTags.includes(el.tagName)) return false;
             
@@ -295,13 +295,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
             
-            const style = window.getComputedStyle(el);
-            if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
-            
-            const rect = el.getBoundingClientRect();
-            if (rect.height === 0) return false;
-            
-            if (el.tagName === 'P' && el.innerHTML.replace(/&nbsp;|\s|<br\s*\/?>/g, '') === '') return false;
+            if (el.hidden || el.getAttribute('aria-hidden') === 'true') return false;
+            if (el.tagName === 'P' && (el.textContent || '').trim() === '') return false;
             
             return true;
         }
@@ -542,57 +537,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initialize states on load
-    updateScrollytelling();
-    updateColumnFillers();
-
-    function sendFrontendDebugInfo() {
-        const fillers = document.querySelectorAll('.gw-column-window-photo');
-        if (fillers.length === 0) return;
-
-        let debugText = 'URL: ' + window.location.href + ' | Screen: ' + window.innerWidth + 'x' + window.innerHeight + '\n';
-        fillers.forEach((filler, idx) => {
-            const img = filler.querySelector('.gw-column-window-parallax-img');
-            const col = filler.closest('.wp-block-column');
-            const row = filler.closest('.wp-block-columns');
-            const rowStyle = row ? window.getComputedStyle(row) : null;
-            const colStyle = col ? window.getComputedStyle(col) : null;
-            const fillerStyle = window.getComputedStyle(filler);
-            const imgStyle = img ? window.getComputedStyle(img) : null;
-
-            debugText += `Block #${idx + 1}:\n`;
-            if (row) {
-                debugText += `- Row: class="${row.className}" display="${rowStyle ? rowStyle.display : 'N/A'}" align="${rowStyle ? rowStyle.alignItems : 'N/A'}" height=${row.offsetHeight}px\n`;
-                const cols = row.querySelectorAll('.wp-block-column');
-                cols.forEach((c, cIdx) => {
-                    const cStyle = window.getComputedStyle(c);
-                    debugText += `  - Col #${cIdx + 1}: class="${c.className}" basis="${cStyle.flexBasis}" display="${cStyle.display}" height=${c.offsetHeight}px (scrollH=${c.scrollHeight}px)\n`;
-                });
-            }
-            if (col) {
-                debugText += `- Col Children Heights:\n`;
-                Array.from(col.children).forEach(child => {
-                    debugText += `  - <${child.tagName.toLowerCase()}> class="${child.className}" h=${child.offsetHeight}px (top=${child.offsetTop}px)\n`;
-                });
-            }
-            debugText += `- Container: height=${filler.offsetHeight}px display=${fillerStyle.display} position=${fillerStyle.position} bg=${fillerStyle.backgroundColor}\n`;
-            if (img) {
-                debugText += `- Img: src="${img.src}" natW=${img.naturalWidth} natH=${img.naturalHeight} w=${img.offsetWidth}px h=${img.offsetHeight}px op=${imgStyle ? imgStyle.opacity : 'N/A'} vis=${imgStyle ? imgStyle.visibility : 'N/A'} tf=${imgStyle ? imgStyle.transform : 'N/A'}\n`;
-            } else {
-                debugText += `- Img: NOT FOUND\n`;
-            }
-        });
-
-        fetch('/wp-json/gw/v1/frontend-debug', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                debug_data: debugText
-            })
-        }).catch(err => console.error('Debug send failed', err));
-    }
+    // Initialize states asynchronously after initial render
+    requestAnimationFrame(function() {
+        updateScrollytelling();
+        updateColumnFillers();
+    });
 
     // Bind scroll, resize, and load events with requestAnimationFrame throttling
     let scrollTimeout;
@@ -604,20 +553,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             scrollTimeout = true;
         }
-    });
+    }, { passive: true });
+
     window.addEventListener('resize', function() {
         updateScrollytelling();
         updateColumnFillers();
-        scheduleDetectScrollytellingPlacement();
     }, { passive: true });
+
     window.addEventListener('load', function() {
         updateScrollytelling();
         updateColumnFillers();
-        scheduleDetectScrollytellingPlacement();
     }, { passive: true });
-
-    // Send debug info 1 second after DOMContentLoaded
-    setTimeout(sendFrontendDebugInfo, 1000);
 
 });
 

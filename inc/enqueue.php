@@ -6,15 +6,19 @@
 function gary_wedding_scripts() {
     $theme_dir = get_template_directory();
     
-    // Core CSS - filemtime for dynamic cache busting
-    $css_ver = file_exists( $theme_dir . '/style.css' ) ? filemtime( $theme_dir . '/style.css' ) : wp_get_theme()->get('Version');
-    wp_enqueue_style( 'gary-wedding-v3-editorial', get_template_directory_uri() . '/style.css', array(), $css_ver );
+    // Core CSS - filemtime for dynamic cache busting (prefer minified in production)
+    $css_file = file_exists( $theme_dir . '/style.min.css' ) ? '/style.min.css' : '/style.css';
+    $css_ver  = filemtime( $theme_dir . $css_file );
+    wp_enqueue_style( 'gary-wedding-v3-editorial', get_template_directory_uri() . $css_file, array(), $css_ver );
     
-    // Core JS
-    wp_enqueue_script( 'jquery' );
+    // Core JS - front page uses Vanilla JS, avoid loading jQuery
+    if ( ! is_front_page() ) {
+        wp_enqueue_script( 'jquery' );
+    }
     
-    $js_ver = file_exists( $theme_dir . '/js/main.js' ) ? filemtime( $theme_dir . '/js/main.js' ) : $css_ver;
-    wp_enqueue_script( 'gary-wedding-main', get_template_directory_uri() . '/js/main.js', array(), $js_ver, true );
+    $js_file = file_exists( $theme_dir . '/js/main.min.js' ) ? '/js/main.min.js' : '/js/main.js';
+    $js_ver  = filemtime( $theme_dir . $js_file );
+    wp_enqueue_script( 'gary-wedding-main', get_template_directory_uri() . $js_file, array(), $js_ver, true );
 
     // Page-Specific
     if ( is_front_page() ) {

@@ -882,7 +882,7 @@ function gary_render_scrollytelling_container( $attributes, $content ) {
                 $img_markup = wp_get_attachment_image( $slide['img_id'], 'large', false, array(
                     'class'         => 'scroll-bg-image align-img-' . esc_attr($img_align),
                     'alt'           => esc_attr($alt_text),
-                    'sizes'         => '(max-width: 768px) 768px, 1920px',
+                    'sizes'         => '(max-width: 768px) 384px, 1920px',
                     'loading'       => ($slide['index'] === 1 ? 'eager' : 'lazy'),
                     'fetchpriority' => ($slide['index'] === 1 ? 'high' : 'auto'),
                     'decoding'      => 'async',

@@ -23,7 +23,7 @@ $gw_slides = function_exists( 'gary_get_hero_slides' ) ? gary_get_hero_slides() 
            data-url="<?php echo esc_url( $slide['url'] ); ?>">
             <?php
             if ( ! empty( $slide['thumb_id'] ) ) {
-                echo wp_get_attachment_image( $slide['thumb_id'], 'large', false, array(
+                echo wp_get_attachment_image( $slide['thumb_id'], 'gw-hero-mobile', false, array(
                     'class'         => 'hero-peek-img',
                     'sizes'         => '(max-width: 600px) 384px, (max-width: 1024px) 680px, 860px',
                     'loading'       => $i === 0 ? 'eager' : 'lazy',

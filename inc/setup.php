@@ -27,6 +27,8 @@ if ( ! function_exists( 'gary_wedding_setup' ) ) :
         add_image_size( 'gw-card-thumb', 500, 500, true );
         add_image_size( 'gw-service-icon', 160, 160, true ); 
         add_image_size( 'gw-hero', 1920, 1080, true );
+        add_image_size( 'gw-hero-mobile', 384, 576, false );
+        add_image_size( 'gw-hero-tablet', 680, 1020, false );
         add_image_size( 'gw-logo', 250, 250, false ); 
     }
 endif;
