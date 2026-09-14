@@ -50,8 +50,18 @@ function gary_get_hero_slides() {
         }
 
         $thumb_id = get_post_thumbnail_id( $page_id );
-        // Use wp_get_attachment_url to get direct canonical media URL, bypassing Photon downsize filter
-        $raw_img = $thumb_id ? wp_get_attachment_url( $thumb_id ) : get_the_post_thumbnail_url( $page_id, 'full' );
+        // Use optimized image derivative (gw-hero or large) instead of full uncompressed master
+        $raw_img = '';
+        if ( $thumb_id ) {
+            $raw_img = wp_get_attachment_image_url( $thumb_id, 'gw-hero' )
+                ?: wp_get_attachment_image_url( $thumb_id, 'large' )
+                ?: wp_get_attachment_url( $thumb_id );
+        }
+        if ( ! $raw_img ) {
+            $raw_img = get_the_post_thumbnail_url( $page_id, 'gw-hero' )
+                ?: get_the_post_thumbnail_url( $page_id, 'large' )
+                ?: get_the_post_thumbnail_url( $page_id, 'full' );
+        }
         if ( $raw_img ) {
             $raw_img = add_query_arg( 'v', GARY_THEME_VERSION, $raw_img );
         }

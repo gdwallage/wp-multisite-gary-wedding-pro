@@ -25,9 +25,17 @@ function gary_render_z_pattern_block( $attributes, $content ) {
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'left';
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
-    $img_html = $img_id ? wp_get_attachment_image( $img_id, $size ) : '';
+    $alt = $img_id ? ( get_post_meta( $img_id, '_wp_attachment_image_alt', true ) ?: get_the_title( $img_id ) ) : '';
+    if ( empty( $alt ) ) {
+        $alt = 'Bespoke Portraits & Executive Sessions - Gary Wallage Photography';
+    }
+    $img_html = $img_id ? wp_get_attachment_image( $img_id, $size, false, array(
+        'alt'     => esc_attr( $alt ),
+        'loading' => 'lazy',
+        'style'   => 'width:100%; height:auto; object-fit:cover; border-radius:6px;',
+    ) ) : '';
     if ( empty( $img_html ) && ! empty( $attributes['image_url'] ) ) {
-        $img_html = '<img src="' . esc_url( $attributes['image_url'] ) . '" class="attachment-large size-large" style="width:100%; height:auto; object-fit:cover; border-radius:6px;" alt="Photography" />';
+        $img_html = '<img src="' . esc_url( $attributes['image_url'] ) . '" class="attachment-large size-large" style="width:100%; height:auto; object-fit:cover; border-radius:6px;" alt="' . esc_attr( $alt ) . '" width="669" height="1024" loading="lazy" />';
     }
     
     ob_start(); ?>

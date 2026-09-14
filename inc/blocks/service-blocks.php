@@ -487,10 +487,24 @@ function gary_render_z_pattern_block( $attributes, $content ) {
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'left';
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
+    $alt = $img_id ? ( get_post_meta( $img_id, '_wp_attachment_image_alt', true ) ?: get_the_title( $img_id ) ) : '';
+    if ( empty( $alt ) ) {
+        $alt = 'Bespoke Portraits & Executive Sessions - Gary Wallage Photography';
+    }
+    if ( $img_id ) {
+        $img_html = wp_get_attachment_image( $img_id, $size, false, array(
+            'alt'     => esc_attr( $alt ),
+            'loading' => 'lazy',
+            'style'   => 'width:100%; height:auto; object-fit:cover; border-radius:6px;',
+        ) );
+    } elseif ( !empty($attributes['image_url']) ) {
+        $img_html = '<img src="' . esc_url($attributes['image_url']) . '" alt="' . esc_attr($alt) . '" width="669" height="1024" loading="lazy" style="width:100%; height:auto; object-fit:cover; border-radius:6px;" />';
+    } else {
+        $img_html = '';
+    }
     ob_start(); ?>
     <div class="gw-z-pattern container is-<?php echo esc_attr($pos); ?>">
-        <div class="gw-z-image"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
+        <div class="gw-z-image"><?php echo $img_html; ?></div>
         <div class="gw-z-content"><?php echo $content; ?></div>
     </div>
     <?php return ob_get_clean();
@@ -511,10 +525,10 @@ function gary_render_trio_gallery_block( $attributes ) {
             </h2>
         <?php endif; ?>
         <div class="gw-trio-gallery">
-            <div class="gw-trio-main"><?php if($imgs[1]): ?><img src="<?php echo esc_url($imgs[1]); ?>" /><?php endif; ?></div>
+            <div class="gw-trio-main"><?php if($imgs[1]): ?><img src="<?php echo esc_url($imgs[1]); ?>" alt="<?php echo esc_attr(!empty($attributes['trio_title']) ? $attributes['trio_title'] : 'Gallery'); ?>" loading="lazy" /><?php endif; ?></div>
             <div class="gw-trio-side">
-                <div class="gw-trio-top"><?php if($imgs[2]): ?><img src="<?php echo esc_url($imgs[2]); ?>" /><?php endif; ?></div>
-                <div class="gw-trio-bottom"><?php if($imgs[3]): ?><img src="<?php echo esc_url($imgs[3]); ?>" /><?php endif; ?></div>
+                <div class="gw-trio-top"><?php if($imgs[2]): ?><img src="<?php echo esc_url($imgs[2]); ?>" alt="<?php echo esc_attr(!empty($attributes['trio_title']) ? $attributes['trio_title'] : 'Gallery'); ?>" loading="lazy" /><?php endif; ?></div>
+                <div class="gw-trio-bottom"><?php if($imgs[3]): ?><img src="<?php echo esc_url($imgs[3]); ?>" alt="<?php echo esc_attr(!empty($attributes['trio_title']) ? $attributes['trio_title'] : 'Gallery'); ?>" loading="lazy" /><?php endif; ?></div>
             </div>
         </div>
     </div>
@@ -525,10 +539,21 @@ function gary_render_split_block( $attributes, $content ) {
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
     $pos = !empty($attributes['image_pos']) ? $attributes['image_pos'] : 'right';
     $size = !empty($attributes['image_size']) ? $attributes['image_size'] : 'large';
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, $size) : '';
+    $alt = $img_id ? ( get_post_meta( $img_id, '_wp_attachment_image_alt', true ) ?: get_the_title( $img_id ) ) : 'Gary Wallage Photography';
+    if ( $img_id ) {
+        $img_html = wp_get_attachment_image( $img_id, $size, false, array(
+            'alt'     => esc_attr( $alt ),
+            'loading' => 'lazy',
+            'style'   => 'width:100%; height:auto; object-fit:cover; border-radius:6px;',
+        ) );
+    } elseif ( !empty($attributes['image_url']) ) {
+        $img_html = '<img src="' . esc_url($attributes['image_url']) . '" alt="' . esc_attr($alt) . '" loading="lazy" style="width:100%; height:auto; object-fit:cover; border-radius:6px;" />';
+    } else {
+        $img_html = '';
+    }
     ob_start(); ?>
     <div class="gw-editorial-split container is-<?php echo esc_attr($pos); ?>">
-        <div class="gw-split-media"><?php if($img_url): ?><img src="<?php echo esc_url($img_url); ?>" /><?php endif; ?></div>
+        <div class="gw-split-media"><?php echo $img_html; ?></div>
         <div class="gw-split-content"><?php echo $content; ?></div>
     </div>
     <?php return ob_get_clean();
@@ -850,8 +875,10 @@ function gary_render_scrollytelling_container( $attributes, $content ) {
         foreach ( $gw_scrollytelling_slides as $slide ) {
             $active_class = ($slide['index'] === 1) ? 'is-active' : '';
             $img_align = !empty($slide['img_align']) ? $slide['img_align'] : 'center';
+            $alt_text = !empty($slide['title']) ? $slide['title'] . ' - Gary Wallage Photography' : 'Gary Wallage Photography';
+            $loading_attr = ($slide['index'] === 1) ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
             $bg_html .= '<div class="scroll-bg-wrapper ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '">';
-            $bg_html .= '<img src="' . esc_url($slide['image_url']) . '" class="scroll-bg-image skip-lazy no-lazy align-img-' . esc_attr($img_align) . '" alt="" width="1920" height="1080" loading="eager" data-no-lazy="1" />';
+            $bg_html .= '<img src="' . esc_url($slide['image_url']) . '" class="scroll-bg-image align-img-' . esc_attr($img_align) . '" alt="' . esc_attr($alt_text) . '" width="1920" height="1080" ' . $loading_attr . ' />';
             $bg_html .= '</div>';
         }
     }
@@ -885,7 +912,7 @@ function gary_render_scrollytelling_slide( $attributes, $content ) {
     $index = count( $gw_scrollytelling_slides ) + 1;
 
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
-    $img_url = $img_id ? wp_get_attachment_image_url($img_id, 'full') : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
+    $img_url = $img_id ? ( wp_get_attachment_image_url( $img_id, 'gw-hero' ) ?: wp_get_attachment_image_url( $img_id, 'large' ) ?: wp_get_attachment_image_url( $img_id, 'full' ) ) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
     
     // Fallback if no image enqueued
     if ( !$img_url ) {
@@ -900,9 +927,10 @@ function gary_render_scrollytelling_slide( $attributes, $content ) {
 
     // Register slide in global queue for the parent container
     $gw_scrollytelling_slides[] = array(
-        'index' => $index,
+        'index'     => $index,
         'image_url' => $img_url,
         'img_align' => $img_align,
+        'title'     => $title,
     );
 
     // Return the scroll-step text box
@@ -940,17 +968,20 @@ function gary_render_scrollytelling_twocol_container( $attributes, $content ) {
         $right_bg_html = '';
         foreach ( $gw_scrollytelling_twocol_slides as $slide ) {
             $active_class = ($slide['index'] === 1) ? 'is-active' : '';
+            $left_alt = !empty($slide['left_title']) ? $slide['left_title'] . ' - Gary Wallage Photography' : 'Gary Wallage Photography';
+            $right_alt = !empty($slide['right_title']) ? $slide['right_title'] . ' - Gary Wallage Photography' : 'Gary Wallage Photography';
+            $loading_attr = ($slide['index'] === 1) ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
             
             // Left Column BG
             $left_img_align = !empty($slide['left_img_align']) ? $slide['left_img_align'] : 'center';
             $left_bg_html .= '<div class="scroll-bg-wrapper ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '">';
-            $left_bg_html .= '<img src="' . esc_url($slide['left_image_url']) . '" class="scroll-bg-image skip-lazy no-lazy align-img-' . esc_attr($left_img_align) . '" alt="" width="960" height="1080" loading="eager" data-no-lazy="1" />';
+            $left_bg_html .= '<img src="' . esc_url($slide['left_image_url']) . '" class="scroll-bg-image align-img-' . esc_attr($left_img_align) . '" alt="' . esc_attr($left_alt) . '" width="960" height="1080" ' . $loading_attr . ' />';
             $left_bg_html .= '</div>';
             
             // Right Column BG
             $right_img_align = !empty($slide['right_img_align']) ? $slide['right_img_align'] : 'center';
             $right_bg_html .= '<div class="scroll-bg-wrapper ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '">';
-            $right_bg_html .= '<img src="' . esc_url($slide['right_image_url']) . '" class="scroll-bg-image skip-lazy no-lazy align-img-' . esc_attr($right_img_align) . '" alt="" width="960" height="1080" loading="eager" data-no-lazy="1" />';
+            $right_bg_html .= '<img src="' . esc_url($slide['right_image_url']) . '" class="scroll-bg-image align-img-' . esc_attr($right_img_align) . '" alt="' . esc_attr($right_alt) . '" width="960" height="1080" ' . $loading_attr . ' />';
             $right_bg_html .= '</div>';
         }
         
@@ -992,10 +1023,10 @@ function gary_render_scrollytelling_twocol_slide( $attributes, $content ) {
     $logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'large' ) : 'data:image/svg+xml;utf8,%3Csvg width="100%25" height="100%25" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23111"/%3E%3C/svg%3E';
 
     $left_img_id = !empty($attributes['left_image_id']) ? $attributes['left_image_id'] : 0;
-    $left_img_url = $left_img_id ? wp_get_attachment_image_url($left_img_id, 'full') : (!empty($attributes['left_image_url']) ? $attributes['left_image_url'] : $logo_url);
+    $left_img_url = $left_img_id ? ( wp_get_attachment_image_url($left_img_id, 'gw-hero') ?: wp_get_attachment_image_url($left_img_id, 'large') ?: wp_get_attachment_image_url($left_img_id, 'full') ) : (!empty($attributes['left_image_url']) ? $attributes['left_image_url'] : $logo_url);
 
     $right_img_id = !empty($attributes['right_image_id']) ? $attributes['right_image_id'] : 0;
-    $right_img_url = $right_img_id ? wp_get_attachment_image_url($right_img_id, 'full') : (!empty($attributes['right_image_url']) ? $attributes['right_image_url'] : $logo_url);
+    $right_img_url = $right_img_id ? ( wp_get_attachment_image_url($right_img_id, 'gw-hero') ?: wp_get_attachment_image_url($right_img_id, 'large') ?: wp_get_attachment_image_url($right_img_id, 'full') ) : (!empty($attributes['right_image_url']) ? $attributes['right_image_url'] : $logo_url);
 
     $left_title = !empty($attributes['left_title']) ? $attributes['left_title'] : '';
     $left_text  = !empty($attributes['left_content']) ? $attributes['left_content'] : '';
@@ -1009,11 +1040,13 @@ function gary_render_scrollytelling_twocol_slide( $attributes, $content ) {
 
     // Register slide in global queue for the parent container
     $gw_scrollytelling_twocol_slides[] = array(
-        'index' => $index,
-        'left_image_url' => $left_img_url,
-        'left_img_align' => $left_img_align,
+        'index'           => $index,
+        'left_image_url'  => $left_img_url,
+        'left_img_align'  => $left_img_align,
+        'left_title'      => $left_title,
         'right_image_url' => $right_img_url,
         'right_img_align' => $right_img_align,
+        'right_title'     => $right_title,
     );
 
     // Return the scroll-step text box with side-by-side content

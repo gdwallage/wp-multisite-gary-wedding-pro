@@ -21,7 +21,7 @@ $gw_slides = function_exists( 'gary_get_hero_slides' ) ? gary_get_hero_slides() 
            data-subtitle="<?php echo esc_attr( $slide['subtitle'] ); ?>"
            data-cta="View"
            data-url="<?php echo esc_url( $slide['url'] ); ?>">
-            <img class="hero-peek-img" src="<?php echo esc_url( $slide['image'] ); ?>" alt="<?php echo esc_attr( $slide['title'] ); ?>" />
+            <img class="hero-peek-img" src="<?php echo esc_url( $slide['image'] ); ?>" alt="<?php echo esc_attr( $slide['title'] ); ?>" width="1920" height="1080" <?php echo $i === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"'; ?> />
         </a>
         <?php endforeach; ?>
     </div>
