@@ -21,7 +21,21 @@ $gw_slides = function_exists( 'gary_get_hero_slides' ) ? gary_get_hero_slides() 
            data-subtitle="<?php echo esc_attr( $slide['subtitle'] ); ?>"
            data-cta="View"
            data-url="<?php echo esc_url( $slide['url'] ); ?>">
-            <img class="hero-peek-img" src="<?php echo esc_url( $slide['image'] ); ?>" alt="<?php echo esc_attr( $slide['title'] ); ?>" width="1920" height="1080" <?php echo $i === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"'; ?> />
+            <?php
+            if ( ! empty( $slide['thumb_id'] ) ) {
+                echo wp_get_attachment_image( $slide['thumb_id'], 'large', false, array(
+                    'class'         => 'hero-peek-img',
+                    'sizes'         => '(max-width: 600px) 384px, (max-width: 1024px) 680px, 860px',
+                    'loading'       => $i === 0 ? 'eager' : 'lazy',
+                    'fetchpriority' => $i === 0 ? 'high' : 'auto',
+                    'decoding'      => 'async',
+                ) );
+            } else {
+                ?>
+                <img class="hero-peek-img" src="<?php echo esc_url( $slide['image'] ); ?>" alt="<?php echo esc_attr( $slide['title'] ); ?>" width="683" height="1024" <?php echo $i === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"'; ?> decoding="async" />
+                <?php
+            }
+            ?>
         </a>
         <?php endforeach; ?>
     </div>

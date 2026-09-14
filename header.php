@@ -241,7 +241,7 @@ $gw_genres = array(
 
         <!-- Zone 3: Navigation -->
         <div class="focal-side focal-right nav-toggle-container">
-            <button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">
+            <button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false" aria-label="Open Navigation Menu">
                 <span class="hamburger-box">
                     <span class="hamburger-inner"></span>
                 </span>

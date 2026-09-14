@@ -877,8 +877,22 @@ function gary_render_scrollytelling_container( $attributes, $content ) {
             $img_align = !empty($slide['img_align']) ? $slide['img_align'] : 'center';
             $alt_text = !empty($slide['title']) ? $slide['title'] . ' - Gary Wallage Photography' : 'Gary Wallage Photography';
             $loading_attr = ($slide['index'] === 1) ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+            
+            if ( ! empty( $slide['img_id'] ) ) {
+                $img_markup = wp_get_attachment_image( $slide['img_id'], 'large', false, array(
+                    'class'         => 'scroll-bg-image align-img-' . esc_attr($img_align),
+                    'alt'           => esc_attr($alt_text),
+                    'sizes'         => '(max-width: 768px) 768px, 1920px',
+                    'loading'       => ($slide['index'] === 1 ? 'eager' : 'lazy'),
+                    'fetchpriority' => ($slide['index'] === 1 ? 'high' : 'auto'),
+                    'decoding'      => 'async',
+                ) );
+            } else {
+                $img_markup = '<img src="' . esc_url($slide['image_url']) . '" class="scroll-bg-image align-img-' . esc_attr($img_align) . '" alt="' . esc_attr($alt_text) . '" width="1920" height="1080" ' . $loading_attr . ' decoding="async" />';
+            }
+
             $bg_html .= '<div class="scroll-bg-wrapper ' . $active_class . '" data-step="' . esc_attr($slide['index']) . '">';
-            $bg_html .= '<img src="' . esc_url($slide['image_url']) . '" class="scroll-bg-image align-img-' . esc_attr($img_align) . '" alt="' . esc_attr($alt_text) . '" width="1920" height="1080" ' . $loading_attr . ' />';
+            $bg_html .= $img_markup;
             $bg_html .= '</div>';
         }
     }
@@ -912,7 +926,7 @@ function gary_render_scrollytelling_slide( $attributes, $content ) {
     $index = count( $gw_scrollytelling_slides ) + 1;
 
     $img_id = !empty($attributes['image_id']) ? $attributes['image_id'] : 0;
-    $img_url = $img_id ? ( wp_get_attachment_image_url( $img_id, 'gw-hero' ) ?: wp_get_attachment_image_url( $img_id, 'large' ) ?: wp_get_attachment_image_url( $img_id, 'full' ) ) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
+    $img_url = $img_id ? ( wp_get_attachment_image_url( $img_id, 'large' ) ?: wp_get_attachment_image_url( $img_id, 'gw-hero' ) ?: wp_get_attachment_image_url( $img_id, 'full' ) ) : (!empty($attributes['image_url']) ? $attributes['image_url'] : '');
     
     // Fallback if no image enqueued
     if ( !$img_url ) {
@@ -928,6 +942,7 @@ function gary_render_scrollytelling_slide( $attributes, $content ) {
     // Register slide in global queue for the parent container
     $gw_scrollytelling_slides[] = array(
         'index'     => $index,
+        'img_id'    => $img_id,
         'image_url' => $img_url,
         'img_align' => $img_align,
         'title'     => $title,

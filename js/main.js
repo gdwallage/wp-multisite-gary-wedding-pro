@@ -26,14 +26,20 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Gary Wedding: --header-height set to ' + h + 'px, --header-actual-height set to ' + headerActualHeight + 'px');
     }
 
-    // Set immediately, then update on resize/orientation change
-    setHeaderHeight();
-    window.addEventListener('resize', setHeaderHeight);
+    let headerRaf = null;
+    function scheduleSetHeaderHeight() {
+        if (headerRaf) cancelAnimationFrame(headerRaf);
+        headerRaf = requestAnimationFrame(setHeaderHeight);
+    }
+
+    // Measure via rAF to prevent forced layout reflow during initial DOMContentLoaded
+    scheduleSetHeaderHeight();
+    window.addEventListener('resize', scheduleSetHeaderHeight, { passive: true });
     window.addEventListener('orientationchange', function() {
-        setTimeout(setHeaderHeight, 100); // small delay for orientation to settle
+        setTimeout(scheduleSetHeaderHeight, 100); // small delay for orientation to settle
     });
     // Also re-measure after fonts/images may have loaded and shifted layout
-    window.addEventListener('load', setHeaderHeight);
+    window.addEventListener('load', scheduleSetHeaderHeight, { passive: true });
 
 
     const menuToggle = document.querySelector('.menu-toggle');
@@ -364,8 +370,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Run placement detection immediately
-    detectScrollytellingPlacement();
+    let placementRaf = null;
+    function scheduleDetectScrollytellingPlacement() {
+        if (placementRaf) cancelAnimationFrame(placementRaf);
+        placementRaf = requestAnimationFrame(detectScrollytellingPlacement);
+    }
+
+    // Run placement detection via rAF to prevent forced synchronous reflow
+    scheduleDetectScrollytellingPlacement();
 
     // ── Scroll-Based Scrollytelling Active Step Logic ────────────────────────
     function updateScrollytelling() {
@@ -596,13 +608,13 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('resize', function() {
         updateScrollytelling();
         updateColumnFillers();
-        detectScrollytellingPlacement();
-    });
+        scheduleDetectScrollytellingPlacement();
+    }, { passive: true });
     window.addEventListener('load', function() {
         updateScrollytelling();
         updateColumnFillers();
-        detectScrollytellingPlacement();
-    });
+        scheduleDetectScrollytellingPlacement();
+    }, { passive: true });
 
     // Send debug info 1 second after DOMContentLoaded
     setTimeout(sendFrontendDebugInfo, 1000);

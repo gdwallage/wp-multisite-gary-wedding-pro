@@ -4910,3 +4910,25 @@ body.home .site-main.home .home-intro {
 body.home .site-main.home .home-intro > *:first-child {
     margin-top: 0 !important;
 }
+
+/* Category Cards High-Contrast & Accessibility */
+.gw-category-card {
+    background-color: #16191E !important;
+    color: #FFFFFF !important;
+    border: 1px solid #D4AF37 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+.gw-category-card .gw-card-body,
+.gw-category-card > div:last-child {
+    background-color: #16191E !important;
+}
+.gw-category-card h3 {
+    color: #D4AF37 !important;
+    background-color: transparent !important;
+}
+.gw-category-card p {
+    color: #CCCCCC !important;
+    background-color: transparent !important;
+}
+

@@ -70,6 +70,7 @@ function gary_get_hero_slides() {
             'title'    => get_the_title( $page_id ),
             'subtitle' => $subtitle,
             'image'    => $raw_img,
+            'thumb_id' => $thumb_id,
             'url'      => get_permalink( $page_id ),
         );
     }
